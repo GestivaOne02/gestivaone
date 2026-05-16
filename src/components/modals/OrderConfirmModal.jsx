@@ -10,9 +10,22 @@ import { useClientStore } from '@/store/useClientStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
+import { useAuthStore } from '@/store/useAuthStore'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { format as dateFormat } from 'date-fns'
+
+const TAX_RATES = {
+  CO: 0.19,
+  MX: 0.16,
+  US: 0.0,
+  ES: 0.21,
+  AR: 0.21,
+  CL: 0.19,
+  PE: 0.18,
+  CR: 0.13,
+  DO: 0.18,
+}
 
 const TYPES = [
   { id: 'immediate', label: 'Inmediato', icon: Zap, desc: 'Pago recibido ahora', color: 'text-success-400' },
@@ -28,6 +41,13 @@ export default function OrderConfirmModal({ open }) {
   const items = useCartStore((s) => s.items)
   const subtotal = useCartStore(selectSubtotal)
   const clearCart = useCartStore((s) => s.clearCart)
+  const includeTax = useCartStore((s) => s.includeTax)
+
+  const user = useAuthStore((s) => s.user)
+  const country = user?.country || 'CO'
+  const taxRate = TAX_RATES[country] ?? 0
+  const taxAmount = includeTax ? subtotal * taxRate : 0
+  const total = subtotal + taxAmount
 
   const client = useClientStore((s) => s.getSelected())
 
@@ -44,9 +64,11 @@ export default function OrderConfirmModal({ open }) {
       client,
       items,
       subtotal,
-      total: subtotal,
+      total,
       paymentType,
       scheduledDate: scheduledDate || null,
+      taxAmount,
+      taxRate: includeTax ? taxRate : 0,
     })
 
     if (!invoice) return toast.error('Error al generar factura')
@@ -90,7 +112,7 @@ export default function OrderConfirmModal({ open }) {
               <p className="text-lg font-bold text-white">¡Pedido Confirmado!</p>
               <p className="text-sm text-muted-400 mt-1">Factura generada exitosamente</p>
             </div>
-            <div className="text-2xl font-bold text-gradient">{format(subtotal)}</div>
+            <div className="text-2xl font-bold text-gradient">{format(total)}</div>
           </motion.div>
         ) : (
           <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
@@ -104,9 +126,15 @@ export default function OrderConfirmModal({ open }) {
                 <span className="text-muted-400">Productos</span>
                 <span className="text-white">{items.length} ítem(s)</span>
               </div>
+              {includeTax && taxRate > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-400">IVA ({(taxRate * 100).toFixed(0)}%)</span>
+                  <span className="text-white">{format(taxAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-base font-bold pt-1 border-t border-subtle mt-2">
                 <span className="text-white">Total</span>
-                <span className="text-gradient">{format(subtotal)}</span>
+                <span className="text-gradient">{format(total)}</span>
               </div>
             </div>
 

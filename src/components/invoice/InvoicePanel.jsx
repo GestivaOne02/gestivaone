@@ -4,7 +4,20 @@ import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
+import { useAuthStore } from '@/store/useAuthStore'
 import Button from '@/components/ui/Button'
+
+const TAX_RATES = {
+  CO: 0.19,
+  MX: 0.16,
+  US: 0.0,
+  ES: 0.21,
+  AR: 0.21,
+  CL: 0.19,
+  PE: 0.18,
+  CR: 0.13,
+  DO: 0.18,
+}
 import clsx from 'clsx'
 
 export default function InvoicePanel({ isMobile }) {
@@ -13,6 +26,14 @@ export default function InvoicePanel({ isMobile }) {
   const updateQty   = useCartStore((s) => s.updateQty)
   const clearCart   = useCartStore((s) => s.clearCart)
   const subtotal    = useCartStore(selectSubtotal)
+  const includeTax  = useCartStore((s) => s.includeTax)
+  const toggleTax   = useCartStore((s) => s.toggleTax)
+
+  const user = useAuthStore((s) => s.user)
+  const country = user?.country || 'CO'
+  const taxRate = TAX_RATES[country] ?? 0
+  const taxAmount = includeTax ? subtotal * taxRate : 0
+  const total = subtotal + taxAmount
 
   const selectedClient = useClientStore((s) => s.getSelected())
   const clearClientSel = useClientStore((s) => s.clearSelection)
@@ -151,9 +172,23 @@ export default function InvoicePanel({ isMobile }) {
                     <span>Subtotal</span>
                     <span className="text-white font-medium">{format(subtotal)}</span>
                   </div>
+                  {taxRate > 0 && (
+                    <div className="flex items-center justify-between text-xs text-muted-400">
+                      <label className="flex items-center gap-2 cursor-pointer group">
+                        <input 
+                          type="checkbox" 
+                          checked={includeTax} 
+                          onChange={toggleTax}
+                          className="rounded border-subtle bg-surface-700 text-brand-500 focus:ring-brand-500 focus:ring-offset-surface-800"
+                        />
+                        <span className="group-hover:text-white transition-colors">IVA ({(taxRate * 100).toFixed(0)}%)</span>
+                      </label>
+                      <span className="text-white font-medium">{format(taxAmount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm font-bold text-white">
                     <span>Total</span>
-                    <span>{format(subtotal)}</span>
+                    <span>{format(total)}</span>
                   </div>
                   <Button
                     variant="primary"
@@ -303,15 +338,29 @@ export default function InvoicePanel({ isMobile }) {
                 <span>Subtotal</span>
                 <span className="text-white font-medium">{format(subtotal)}</span>
               </div>
+              {taxRate > 0 && (
+                <div className="flex items-center justify-between text-xs text-muted-400">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <input 
+                      type="checkbox" 
+                      checked={includeTax} 
+                      onChange={toggleTax}
+                      className="rounded border-subtle bg-surface-700 text-brand-500 focus:ring-brand-500 focus:ring-offset-surface-800"
+                    />
+                    <span className="group-hover:text-white transition-colors">IVA ({(taxRate * 100).toFixed(0)}%)</span>
+                  </label>
+                  <span className="text-white font-medium">{format(taxAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm font-bold text-white">
                 <span>Total</span>
                 <motion.span
-                  key={subtotal}
+                  key={total}
                   initial={{ scale: 1.05, color: '#a78bfa' }}
                   animate={{ scale: 1, color: 'var(--text-foreground)' }}
                   transition={{ duration: 0.2 }}
                 >
-                  {format(subtotal)}
+                  {format(total)}
                 </motion.span>
               </div>
               <Button

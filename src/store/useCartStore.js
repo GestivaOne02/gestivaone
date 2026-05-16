@@ -3,6 +3,9 @@ import { create } from 'zustand'
 export const useCartStore = create((set, get) => ({
   items: [],   // { id, productId, name, price, qty, unit, isCustom }
   note: '',
+  includeTax: false,
+
+  toggleTax: () => set((s) => ({ includeTax: !s.includeTax })),
 
   addItem: (product, qty = 1) => {
     set((s) => {
@@ -66,7 +69,7 @@ export const useCartStore = create((set, get) => ({
 
   setNote: (note) => set({ note }),
 
-  clearCart: () => set({ items: [], note: '' }),
+  clearCart: () => set({ items: [], note: '', includeTax: false }),
 
   get subtotal() {
     return get().items.reduce((sum, i) => sum + i.price * i.qty, 0)
