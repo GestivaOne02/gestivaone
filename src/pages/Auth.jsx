@@ -137,20 +137,33 @@ function RegisterFlow() {
   const [loading, setLoading]   = useState(false)
 
   const goNext = (data = {}) => {
-    setFormData((f) => ({ ...f, ...data }))
+    const nextData = { ...formData, ...data }
+    setFormData(nextData)
+    
+    if (step === 'datos' && plan === 'standard') {
+      // Skip payment for free plan
+      handlePayment({}, nextData)
+      return
+    }
+    
     setStep(STEPS[STEPS.indexOf(step) + 1])
   }
 
-  const handlePayment = async (paymentData) => {
+  const handlePayment = async (paymentData, currentData = formData) => {
     setLoading(true)
     const res = await register({ 
-      ...formData, 
+      ...currentData, 
       plan, 
-      email: formData.email?.trim().toLowerCase(),
+      email: currentData.email?.trim().toLowerCase(),
       ...paymentData
     })
     setLoading(false)
-    if (!res.success) return toast.error(res.error)
+    if (!res.success) {
+      if (res.error?.includes('security purposes')) {
+        return toast.error('Espera un momento antes de intentar de nuevo (seguridad)')
+      }
+      return toast.error(res.error)
+    }
     setStep('listo')
   }
 
