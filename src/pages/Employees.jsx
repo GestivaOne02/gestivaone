@@ -6,6 +6,7 @@ import { ROLES } from '@/store/useAuthStore'
 import { useUIStore } from '@/store/useUIStore'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Modal from '@/components/ui/Modal'
 
 const ROLE_META = {
   administrador: { icon: ShieldCheck, color: 'text-brand-400',   bg: 'bg-brand-600/15   border-brand-500/30'  },
@@ -204,11 +205,11 @@ export default function Employees() {
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600/40 to-brand-800/40 flex items-center justify-center text-brand-300 font-bold text-sm shrink-0">
-                      {emp.name.charAt(0).toUpperCase()}
+                      {(emp.name || emp.full_name || 'E')?.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{emp.name}</p>
-                      <p className="text-[11px] text-muted-400 truncate">{emp.email}</p>
+                      <p className="text-sm font-semibold text-white truncate">{emp.name || emp.full_name || 'Sin nombre'}</p>
+                      <p className="text-[11px] text-muted-400 truncate">{emp.email || 'Sin correo'}</p>
                     </div>
                     <div className="relative">
                       <button onClick={() => setMenuId(menuId === emp.id ? null : emp.id)}
@@ -244,7 +245,7 @@ export default function Employees() {
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-400">
-                    Desde {new Date(emp.joinedAt).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    Desde {emp.joinedAt || emp.created_at ? new Date(emp.joinedAt || emp.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Fecha no disp.'}
                   </p>
                 </motion.div>
               )
