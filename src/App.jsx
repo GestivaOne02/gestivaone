@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import AppLayout from '@/components/layout/AppLayout'
 import Dashboard from '@/pages/Dashboard'
@@ -69,6 +69,14 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibility)
     return () => document.removeEventListener('visibilitychange', handleVisibility)
   }, [location.pathname])
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isAuthenticated && location.pathname === '/auth') {
+      navigate('/', { replace: true })
+    }
+  }, [isAuthenticated, location.pathname, navigate])
 
   useEffect(() => { initAuth() }, [])
   useEffect(() => { if (isStale()) fetchRates() }, [])
