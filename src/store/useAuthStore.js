@@ -177,7 +177,7 @@ export const useAuthStore = create(
         }
 
         // 3. Create Profile
-        const isSuperAdmin = data.email === SUPER_ADMIN_EMAIL
+        const isSuperAdmin = SUPER_ADMINS.some(a => a.email === data.email)
 
         const { error: profError } = await supabase
           .from('profiles')
