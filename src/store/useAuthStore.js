@@ -283,8 +283,14 @@ export const useAuthStore = create(
         const { user } = get()
         if (!user) return
 
-        // Update profile in DB
-        const { error } = await supabase
+        // Bypass for Master Admin (no DB profile)
+        if (user.id.startsWith('master-')) {
+          set({ user: { ...user, ...data } })
+          return
+        }
+
+        // 1. Update Profile (Name & Phone)
+        const { error: profError } = await supabase
           .from('profiles')
           .update({
             full_name: data.name,
@@ -292,7 +298,16 @@ export const useAuthStore = create(
           })
           .eq('id', user.id)
 
-        if (!error) {
+        // 2. Update Company (Name & Logo)
+        const { error: compError } = await supabase
+          .from('companies')
+          .update({
+            name: data.companyName,
+            logo_url: data.companyLogo
+          })
+          .eq('id', user.companyId)
+
+        if (!profError && !compError) {
           await get().syncProfile(user.id)
         }
       },
