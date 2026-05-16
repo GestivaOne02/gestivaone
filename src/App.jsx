@@ -90,7 +90,6 @@ export default function App() {
   return (
     <>
       <Routes>
-        {/* Public route */}
         {/* Public Route */}
         <Route 
           path="/auth" 
@@ -100,24 +99,16 @@ export default function App() {
         {/* Protected Routes */}
         <Route
           path="/*"
-          element={
-            isAuthenticated ? (
-              <AppLayout>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
-                  <Route path="/products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
-                  <Route path="/employees" element={<RequirePermission perm="employees"><Employees /></RequirePermission>} />
-                  <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
-                  <Route path="/account" element={<Account />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </AppLayout>
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
+          element={isAuthenticated ? <AppLayout /> : <Navigate to="/auth" replace />}
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
+          <Route path="products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
+          <Route path="employees" element={<RequirePermission perm="employees"><Employees /></RequirePermission>} />
+          <Route path="settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
+          <Route path="account" element={<Account />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
       </Routes>
 
       <CookieBanner />

@@ -14,6 +14,7 @@ import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 
 export default function AppLayout() {
+  console.log('🏗️ AppLayout Rendering...')
   const activeModal = useUIStore((s) => s.activeModal)
   const user        = useAuthStore((s) => s.user)
   
@@ -34,13 +35,13 @@ export default function AppLayout() {
 
   // ─── Fetch data on login ───
   useEffect(() => {
-    if (user?.companyId) {
+    if (user?.id) {
       fetchClients()
       fetchProducts()
       fetchInvoices()
       if (user.role === 'administrador') fetchEmployees()
     }
-  }, [user?.id, user?.companyId])
+  }, [user?.id])
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-900">
