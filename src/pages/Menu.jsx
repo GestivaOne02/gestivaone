@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { UserPlus, Users, Edit2, Trash2, Check, ShoppingBag } from 'lucide-react'
 import Button from '@/components/ui/Button'
@@ -87,6 +87,10 @@ export default function Menu() {
   const format$       = useCurrencyStore((s) => s.format)
 
   const frequent = getFrequent()
+
+  useEffect(() => {
+    useClientStore.getState().fetchClients()
+  }, [])
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
