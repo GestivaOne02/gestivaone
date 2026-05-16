@@ -239,21 +239,24 @@ export const useAuthStore = create(
       },
 
       syncProfile: async (userId) => {
-        // 1. Fetch Profile
-        const { data: profile, error: profError } = await supabase
+        // 1. Fetch Profile (using array instead of .single() to avoid 406 headers)
+        const { data: profileList, error: profError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
-          .single()
+          .limit(1)
         
+        const profile = profileList?.[0]
         if (profError || !profile) return
 
-        // 2. Fetch Company (separate query to avoid 406 join errors)
-        const { data: company } = await supabase
+        // 2. Fetch Company
+        const { data: companyList } = await supabase
           .from('companies')
           .select('*')
           .eq('id', profile.company_id)
-          .single()
+          .limit(1)
+
+        const company = companyList?.[0]
 
         const { data: { user: authUser } } = await supabase.auth.getUser()
         const isSuperAdmin = SUPER_ADMINS.some(a => a.email === authUser?.email)
