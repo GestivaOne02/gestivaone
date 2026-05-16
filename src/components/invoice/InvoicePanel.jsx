@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -174,15 +174,14 @@ export default function InvoicePanel({ isMobile }) {
                   </div>
                   {taxRate > 0 && (
                     <div className="flex items-center justify-between text-xs text-muted-400">
-                      <label className="flex items-center gap-2 cursor-pointer group">
-                        <input 
-                          type="checkbox" 
-                          checked={includeTax} 
-                          onChange={toggleTax}
-                          className="rounded border-subtle bg-surface-700 text-brand-500 focus:ring-brand-500 focus:ring-offset-surface-800"
-                        />
-                        <span className="group-hover:text-white transition-colors">IVA ({(taxRate * 100).toFixed(0)}%)</span>
-                      </label>
+                      <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
+                        <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
+                          {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
+                        </div>
+                        <span className={clsx("transition-colors select-none", includeTax ? "text-white" : "text-muted-400 group-hover:text-surface-300")}>
+                          IVA ({(taxRate * 100).toFixed(0)}%)
+                        </span>
+                      </div>
                       <span className="text-white font-medium">{format(taxAmount)}</span>
                     </div>
                   )}
@@ -340,15 +339,14 @@ export default function InvoicePanel({ isMobile }) {
               </div>
               {taxRate > 0 && (
                 <div className="flex items-center justify-between text-xs text-muted-400">
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <input 
-                      type="checkbox" 
-                      checked={includeTax} 
-                      onChange={toggleTax}
-                      className="rounded border-subtle bg-surface-700 text-brand-500 focus:ring-brand-500 focus:ring-offset-surface-800"
-                    />
-                    <span className="group-hover:text-white transition-colors">IVA ({(taxRate * 100).toFixed(0)}%)</span>
-                  </label>
+                  <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
+                    <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
+                      {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
+                    </div>
+                    <span className={clsx("transition-colors select-none", includeTax ? "text-white" : "text-muted-400 group-hover:text-surface-300")}>
+                      IVA ({(taxRate * 100).toFixed(0)}%)
+                    </span>
+                  </div>
                   <span className="text-white font-medium">{format(taxAmount)}</span>
                 </div>
               )}
