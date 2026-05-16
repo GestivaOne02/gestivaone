@@ -34,8 +34,13 @@ export default function App() {
   const checkOverdue = useInvoiceStore((s) => s.checkOverdue)
   const initAuth = useAuthStore((s) => s.init)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const user = useAuthStore((s) => s.user)
 
   const location = useLocation()
+  useEffect(() => {
+    console.log('🛡️ Gestiva Auth State:', { isAuthenticated, user: user?.email, path: location.pathname })
+  }, [isAuthenticated, user, location.pathname])
+
   const pageTitles = {
     '/': 'Dashboard',
     '/menu': 'Menú',
