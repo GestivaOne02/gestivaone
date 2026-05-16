@@ -184,9 +184,10 @@ export const useAuthStore = create(
           .insert([{
             id: userId,
             company_id: company.id,
-            full_name: data.name,
-            phone: data.phone,
-            plan: isSuperAdmin ? 'master' : data.plan,
+            full_name: data.name || 'Usuario',
+            email: data.email,
+            phone: data.phone || '',
+            plan: isSuperAdmin ? 'master' : (data.plan || 'standard'),
             role: 'administrador'
           }])
 
