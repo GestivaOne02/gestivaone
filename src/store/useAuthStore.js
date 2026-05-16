@@ -89,10 +89,7 @@ export const PLANS = {
   }
 }
 
-const SUPER_ADMINS = [
-  { email: 'admin@gestivaone.com', pass: 'Admin220307@' },
-  { email: 'soporte@gestivaone.com', pass: 'Gestiva2026!' }
-]
+// Removed hardcoded SUPER_ADMINS for security. Use Supabase roles instead.
 
 export const ROLES = {
   administrador: {
@@ -177,8 +174,6 @@ export const useAuthStore = create(
         }
 
         // 3. Create Profile
-        const isSuperAdmin = SUPER_ADMINS.some(a => a.email === data.email)
-
         const { error: profError } = await supabase
           .from('profiles')
           .insert([{
@@ -187,7 +182,7 @@ export const useAuthStore = create(
             full_name: data.name || 'Usuario',
             email: data.email,
             phone: data.phone || '',
-            plan: isSuperAdmin ? 'master' : (data.plan || 'standard'),
+            plan: data.plan || 'standard',
             role: 'administrador'
           }])
 
@@ -203,27 +198,6 @@ export const useAuthStore = create(
 
       login: async (email, password) => {
         set({ loading: true })
-        
-        // ── Master Admin Bypass (Hardcoded Session) ─────────────────
-        const adminEntry = SUPER_ADMINS.find(a => a.email === email && a.pass === password)
-        
-        if (adminEntry) {
-          const mockUser = {
-            id: adminEntry.email === SUPER_ADMINS[0].email ? 'master-owner-id' : 'master-support-id',
-            name: adminEntry.email === SUPER_ADMINS[0].email ? 'Administrador Dueño' : 'Soporte Gestiva',
-            email: adminEntry.email,
-            role: 'administrador',
-            plan: 'master',
-            companyId: 'master-company-id',
-            companyName: 'GestivaOne Master',
-            companyLogo: null,
-          }
-          
-          set({ isAuthenticated: true, user: mockUser })
-          set({ loading: false })
-          toast.success('Acceso Maestro Concedido')
-          return { success: true, role: 'administrador' }
-        }
         
         // ── Normal Supabase Login ────────────────────────────────────
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -259,7 +233,6 @@ export const useAuthStore = create(
         const company = companyList?.[0]
 
         const { data: { user: authUser } } = await supabase.auth.getUser()
-        const isSuperAdmin = SUPER_ADMINS.some(a => a.email === authUser?.email)
 
         const user = {
           id: profile.id,
@@ -267,7 +240,7 @@ export const useAuthStore = create(
           email: authUser?.email,
           phone: profile.phone,
           role: profile.role,
-          plan: isSuperAdmin ? 'master' : profile.plan,
+          plan: profile.plan,
           companyId: profile.company_id,
           companyName: company?.name || 'Mi Empresa',
           companyLogo: company?.logo_url,
