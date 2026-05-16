@@ -13,7 +13,7 @@ export const useProductStore = create((set, get) => ({
 
   fetchProducts: async (force = false) => {
     const { user, productsFetched } = get()
-    if (!user || (productsFetched && !force)) return
+    if (!user?.companyId || (productsFetched && !force)) return
     
     set({ loading: true })
     const { data, error } = await supabase

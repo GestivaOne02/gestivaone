@@ -229,16 +229,25 @@ export const useAuthStore = create(
           const { data: { user: authUser } } = await supabase.auth.getUser()
 
           if (profError || !profile) {
-            console.warn('Profile not found, using defaults')
-            // Fallback user if profile is missing
+            console.warn('Profile not found, attempting to recover company...')
+            // Try to find a company owned by this user
+            const { data: ownedCompanies } = await supabase
+              .from('companies')
+              .select('id, name')
+              .eq('owner_id', userId)
+              .limit(1)
+
+            const ownedCompany = ownedCompanies?.[0]
+            
+            // Fallback user with recovered company or temp one
             const fallbackUser = {
               id: userId,
               name: authUser?.email?.split('@')[0] || 'Usuario',
               email: authUser?.email,
               role: 'administrador',
               plan: 'standard',
-              companyId: null,
-              companyName: 'GestivaOne',
+              companyId: ownedCompany?.id || null,
+              companyName: ownedCompany?.name || 'GestivaOne',
               companyLogo: null,
             }
             set({ isAuthenticated: true, user: fallbackUser })

@@ -11,7 +11,7 @@ export const useInvoiceStore = create((set, get) => ({
 
   fetchInvoices: async (force = false) => {
     const { user, invoicesFetched } = get()
-    if (!user || (invoicesFetched && !force)) return
+    if (!user?.companyId || (invoicesFetched && !force)) return
     
     set({ loading: true })
     const { data, error } = await supabase
