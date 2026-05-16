@@ -11,7 +11,7 @@ export const useClientStore = create((set, get) => ({
 
   fetchClients: async (force = false) => {
     const { user, clientsFetched } = get()
-    if (!user || (clientsFetched && !force)) return
+    if (!user?.companyId || (clientsFetched && !force)) return
     
     set({ loading: true })
     const { data, error } = await supabase
