@@ -51,13 +51,16 @@ function WorkerLogin() {
   const [email, setEmail]   = useState('')
   const [pass, setPass]     = useState('')
   const [showPw, setShowPw] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    const emp = loginEmployee(email.trim().toLowerCase(), pass)
+    setLoading(true)
+    const emp = await loginEmployee(email.trim().toLowerCase(), pass)
+    setLoading(false)
     if (!emp) return toast.error('Credenciales incorrectas o cuenta inactiva')
     loginAsWorker({ ...emp, isWorker: true })
-    toast.success(`Bienvenido, ${emp.name}!`)
+    toast.success(`¡Bienvenido, ${emp.full_name || emp.name}!`)
     navigate('/')
   }
 
