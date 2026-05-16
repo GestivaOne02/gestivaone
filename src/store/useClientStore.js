@@ -40,10 +40,13 @@ export const useClientStore = create((set, get) => ({
       .select()
       .single()
 
-    if (!error) {
-      set((s) => ({ clients: [saved, ...s.clients] }))
-      return saved
+    if (error) {
+      console.error('❌ Error adding client:', error)
+      return null
     }
+
+    set((s) => ({ clients: [saved, ...s.clients] }))
+    return saved
   },
 
   updateClient: async (id, data) => {

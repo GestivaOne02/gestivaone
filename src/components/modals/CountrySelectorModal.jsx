@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Globe, Check, ArrowRight, Zap } from 'lucide-react'
 import { SUPPORTED_CURRENCIES, useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore } from '@/store/useAuthStore'
+import { supabase } from '@/lib/supabase'
 import Button from '@/components/ui/Button'
 import clsx from 'clsx'
 
@@ -34,15 +35,34 @@ export default function CountrySelectorModal() {
     const countryData = COUNTRIES.find(c => c.id === selected)
     setSourceCurrency(countryData.currency)
     
-    // Save to profile and local storage
+    let companyId = user.companyId
+
+    // 1. Create company if missing
+    if (!companyId) {
+      const { data: newComp, error: compErr } = await supabase
+        .from('companies')
+        .insert([{ 
+          name: user.companyName || 'Mi Empresa', 
+          owner_id: user.id,
+          country: countryData.id,
+          currency: countryData.currency
+        }])
+        .select()
+        .single()
+      
+      if (!compErr) companyId = newComp.id
+    }
+
+    // 2. Update profile with country and company link
     await updateProfile({ 
       country: countryData.id,
       base_currency: countryData.currency,
-      language: countryData.lang 
+      language: countryData.lang,
+      company_id: companyId
     })
     
     localStorage.setItem('gestiva-country-set', 'true')
-    window.location.reload() // Force global update
+    window.location.reload()
   }
 
   return (
