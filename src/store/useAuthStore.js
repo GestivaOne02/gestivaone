@@ -239,19 +239,23 @@ export const useAuthStore = create(
       },
 
       syncProfile: async (userId) => {
+        // 1. Fetch Profile
         const { data: profile, error: profError } = await supabase
           .from('profiles')
-          .select(`
-            *,
-            companies (*)
-          `)
+          .select('*')
           .eq('id', userId)
           .single()
-
+        
         if (profError || !profile) return
 
-        const { data: { user: authUser } } = await supabase.auth.getUser()
+        // 2. Fetch Company (separate query to avoid 406 join errors)
+        const { data: company } = await supabase
+          .from('companies')
+          .select('*')
+          .eq('id', profile.company_id)
+          .single()
 
+        const { data: { user: authUser } } = await supabase.auth.getUser()
         const isSuperAdmin = SUPER_ADMINS.some(a => a.email === authUser?.email)
 
         const user = {
@@ -262,9 +266,9 @@ export const useAuthStore = create(
           role: profile.role,
           plan: isSuperAdmin ? 'master' : profile.plan,
           companyId: profile.company_id,
-          companyName: profile.companies?.name,
-          companyLogo: profile.companies?.logo_url,
-          settings: profile.companies?.settings
+          companyName: company?.name || 'Mi Empresa',
+          companyLogo: company?.logo_url,
+          settings: company?.settings
         }
 
         set({ isAuthenticated: true, user })
