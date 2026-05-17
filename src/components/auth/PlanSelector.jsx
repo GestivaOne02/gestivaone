@@ -59,7 +59,7 @@ export default function PlanSelector({ selected, onSelect }) {
                   {isSelected && <Check size={11} className="text-white" />}
                 </div>
               </div>
-              <ul className="mt-3 grid grid-cols-2 gap-1">
+              <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-center gap-1.5 text-[11px] text-muted-400">
                     <Check size={9} className={isSelected ? 'text-brand-400' : 'text-muted-500'} />

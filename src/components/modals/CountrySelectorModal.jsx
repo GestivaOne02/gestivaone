@@ -69,7 +69,7 @@ export default function CountrySelectorModal() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-2xl bg-surface-800 border border-subtle rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-[500px]"
+        className="w-full max-w-2xl bg-surface-800 border border-subtle rounded-3xl md:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh] md:h-[500px]"
       >
         {/* Left Side: Visual */}
         <div className="hidden md:flex w-1/3 bg-gradient-to-br from-brand-600 to-brand-900 p-8 flex-col justify-between text-white">
@@ -92,7 +92,7 @@ export default function CountrySelectorModal() {
             <h3 className="text-2xl font-bold text-white">Selecciona tu país</h3>
           </div>
 
-          <div className="flex-1 overflow-y-auto no-scrollbar grid grid-cols-2 gap-3 pb-6">
+          <div className="flex-1 overflow-y-auto no-scrollbar grid grid-cols-1 sm:grid-cols-2 gap-3 pb-6">
             {COUNTRIES.map((c) => (
               <button
                 key={c.id}
