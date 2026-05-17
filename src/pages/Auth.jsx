@@ -296,8 +296,14 @@ export default function Auth() {
       </div>
 
       {/* Right: form panel */}
-      <div className="flex-1 flex items-center justify-center p-5 overflow-y-auto">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center p-5 overflow-y-auto relative overflow-hidden">
+        {/* Ambient Background Elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(124,58,237,0.03)_1.5px,transparent_1.5px)] [background-size:32px_32px] pointer-events-none z-0" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-600/5 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse-slow" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/8 rounded-full blur-[100px] pointer-events-none z-0" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-700/4 rounded-full blur-[120px] pointer-events-none z-0" />
+
+        <div className="w-full max-w-md relative z-10">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 justify-center mb-6">
             <Zap size={20} className="text-brand-400" />
