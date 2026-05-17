@@ -145,7 +145,6 @@ input[type="checkbox"]:not(.peer):checked::after {
   transform: rotate(45deg);
   margin-bottom: 2px;
 }
-}
 input[type="number"] {
   -moz-appearance: textfield;
 }
