@@ -101,6 +101,16 @@ textarea::placeholder {
   color: var(--muted-400) !important;
 }
 
+/* ─── Hide number input spin buttons ─── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* ─── border-subtle utility ─── */
 .border-subtle {
   border-color: var(--border-subtle) !important;
