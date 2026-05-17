@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import clsx from 'clsx'
 import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package, Calendar, Coins } from 'lucide-react'
 import {
   AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid,
