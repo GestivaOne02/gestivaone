@@ -1,6 +1,6 @@
 import { useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock } from 'lucide-react'
+import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package } from 'lucide-react'
 import {
   AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie
