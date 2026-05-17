@@ -248,7 +248,7 @@ export const useAuthStore = create(
             // 1. Create a default company
             const { data: newComp } = await supabase
               .from('companies')
-              .insert([{ name: 'Mi Empresa (Auto-Recuperada)' }])
+              .insert([{ name: 'Mi Empresa' }])
               .select()
               .single()
 
