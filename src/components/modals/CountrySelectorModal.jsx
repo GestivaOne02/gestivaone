@@ -43,7 +43,6 @@ export default function CountrySelectorModal() {
         .from('companies')
         .insert([{ 
           name: user.companyName || 'Mi Empresa', 
-          owner_id: user.id,
           country: countryData.id,
           currency: countryData.currency
         }])

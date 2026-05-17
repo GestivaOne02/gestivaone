@@ -166,8 +166,7 @@ export const useAuthStore = create(
           .from('companies')
           .insert([{ 
             name: data.companyName, 
-            logo_url: data.companyLogo,
-            owner_id: userId // Linking the creator as the owner
+            logo_url: data.companyLogo
           }])
           .select()
           .single()
@@ -230,26 +229,18 @@ export const useAuthStore = create(
 
           if (profError || !profile) {
             console.warn('Profile not found, attempting to recover company...')
-            // Try to find a company owned by this user
-            const { data: ownedCompanies } = await supabase
-              .from('companies')
-              .select('id, name')
-              .eq('owner_id', userId)
-              .limit(1)
-
-            const ownedCompany = ownedCompanies?.[0]
-            
-            // Fallback user with recovered company or temp one
+            // Without an owner_id column, we cannot easily recover a lost company.
+            // We just let the onboarding modal handle creating a new one if needed.
             const fallbackUser = {
               id: userId,
               name: authUser?.email?.split('@')[0] || 'Usuario',
               email: authUser?.email,
               role: 'administrador',
               plan: 'standard',
-              companyId: ownedCompany?.id || null,
-              companyName: ownedCompany?.name || 'GestivaOne',
+              companyId: null,
+              companyName: 'GestivaOne',
               companyLogo: null,
-              country: ownedCompany?.country || null,
+              country: null,
             }
             set({ isAuthenticated: true, user: fallbackUser })
             return
