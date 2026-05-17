@@ -299,7 +299,7 @@ export const useAuthStore = create(
             useCurrencyStore.getState().setSourceCurrency(company.currency)
           }
 
-          const isFreePremium = authUser?.email?.toLowerCase() === 'randymendozasalas42@gmail.com'
+
           const user = {
             id: profile.id,
             name: profile.full_name,
