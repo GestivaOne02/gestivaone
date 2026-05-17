@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Building2, User, Mail, Phone, Upload, X, Check } from 'lucide-react'
+import { Building2, User, Mail, Phone, Upload, X, Check, Eye, EyeOff } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import clsx from 'clsx'
 
@@ -12,12 +12,17 @@ const schema = z.object({
   email:       z.string().email('Correo inválido'),
   phone:       z.string().min(7, 'Teléfono inválido'),
   password:    z.string().min(6, 'Mínimo 6 caracteres'),
+  repeatPassword: z.string(),
   terms:       z.literal(true, { errorMap: () => ({ message: 'Debes aceptar los términos' }) }),
   cookies:     z.literal(true, { errorMap: () => ({ message: 'Debes aceptar las cookies' }) }),
+}).refine((data) => data.password === data.repeatPassword, {
+  message: "Las contraseñas no coinciden",
+  path: ["repeatPassword"],
 })
 
 export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
   const [logo, setLogo]         = useState(defaultValues?.companyLogo || null)
+  const [showPassword, setShowPassword] = useState(false)
   const fileRef                 = useRef()
 
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -86,8 +91,37 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
           error={errors.phone?.message} {...register('phone')} />
       </div>
 
-      <Input label="Contraseña *" type="password" icon={<User size={14} />} placeholder="Establecer contraseña"
-        error={errors.password?.message} {...register('password')} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Input 
+          label="Contraseña *" 
+          type={showPassword ? "text" : "password"} 
+          icon={<User size={14} />} 
+          placeholder="Establecer contraseña"
+          error={errors.password?.message} 
+          {...register('password')} 
+          iconRight={
+            <button 
+              type="button"
+              onMouseDown={() => setShowPassword(true)}
+              onMouseUp={() => setShowPassword(false)}
+              onMouseLeave={() => setShowPassword(false)}
+              onTouchStart={() => setShowPassword(true)}
+              onTouchEnd={() => setShowPassword(false)}
+              className="text-muted-400 hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          }
+        />
+        <Input 
+          label="Repetir contraseña *" 
+          type={showPassword ? "text" : "password"} 
+          icon={<User size={14} />} 
+          placeholder="Confirmar contraseña"
+          error={errors.repeatPassword?.message} 
+          {...register('repeatPassword')} 
+        />
+      </div>
 
       {/* Checkboxes */}
       <div className="space-y-1.5 pt-0.5">

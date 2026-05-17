@@ -76,7 +76,15 @@ function WorkerLogin() {
         <label className="text-xs text-muted-400 mb-1 block">Contraseña</label>
         <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••" type={showPw ? 'text' : 'password'} required
           className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 pr-10" />
-        <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 bottom-2.5 text-muted-400 hover:text-white">
+        <button 
+          type="button" 
+          onMouseDown={() => setShowPw(true)}
+          onMouseUp={() => setShowPw(false)}
+          onMouseLeave={() => setShowPw(false)}
+          onTouchStart={() => setShowPw(true)}
+          onTouchEnd={() => setShowPw(false)}
+          className="absolute right-3 bottom-2.5 text-muted-400 hover:text-white"
+        >
           {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
       </div>
@@ -125,7 +133,15 @@ function LoginForm() {
         <label className="text-xs text-muted-400 mb-1 block">Contraseña</label>
         <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••" type={showPw ? 'text' : 'password'} required
           className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 pr-10" />
-        <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 bottom-2.5 text-muted-400 hover:text-white">
+        <button 
+          type="button" 
+          onMouseDown={() => setShowPw(true)}
+          onMouseUp={() => setShowPw(false)}
+          onMouseLeave={() => setShowPw(false)}
+          onTouchStart={() => setShowPw(true)}
+          onTouchEnd={() => setShowPw(false)}
+          className="absolute right-3 bottom-2.5 text-muted-400 hover:text-white"
+        >
           {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
       </div>
