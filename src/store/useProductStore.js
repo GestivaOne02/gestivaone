@@ -42,10 +42,14 @@ export const useProductStore = create((set, get) => ({
       .select()
       .single()
 
-    if (!error) {
-      set((s) => ({ products: [...s.products, saved] }))
-      return saved
+    if (error) {
+      console.error('❌ Error adding product:', error)
+      import('react-hot-toast').then(m => m.default.error(`Error DB: ${error.message}`))
+      return null
     }
+
+    set((s) => ({ products: [...s.products, saved] }))
+    return saved
   },
 
   updateProduct: async (id, data) => {

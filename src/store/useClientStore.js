@@ -43,6 +43,7 @@ export const useClientStore = create((set, get) => ({
 
     if (error) {
       console.error('❌ Error adding client:', error)
+      import('react-hot-toast').then(m => m.default.error(`Error: ${error.message}`))
       return null
     }
 
