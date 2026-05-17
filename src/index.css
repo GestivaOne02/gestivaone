@@ -10,6 +10,7 @@
 
 /* ─── DARK MODE (default) ─── */
 :root {
+  color-scheme: dark;
   --surface-900: #0a0a0f;
   --surface-800: #0f0f18;
   --surface-750: #13131e;
@@ -42,6 +43,7 @@
 
 /* ─── LIGHT MODE ─── */
 :root:not(.dark) {
+  color-scheme: light;
   --surface-900: #f0f2f8;
   --surface-800: #ffffff;
   --surface-750: #f8f9fc;

@@ -58,14 +58,13 @@ export const useInvoiceStore = create((set, get) => ({
     if (!error) {
       set((s) => ({ invoices: [saved, ...s.invoices] }))
 
-      // Deduct stock for each invoiced item
       const { products, updateProduct } = useProductStore.getState()
       items.forEach(async (item) => {
-        if (!item.id) return
-        const product = products.find((p) => p.id === item.id)
+        if (!item.productId) return
+        const product = products.find((p) => p.id === item.productId)
         if (product && typeof product.stock === 'number') {
           const newStock = Math.max(0, product.stock - item.qty)
-          await updateProduct(item.id, { stock: newStock })
+          await updateProduct(item.productId, { stock: newStock })
         }
       })
 
