@@ -190,7 +190,7 @@ function RegisterFlow() {
           transition={{ duration: 0.2 }}
         >
           {step === 'plan'  && <PlanSelector selected={plan} onSelect={setPlan} />}
-          {step === 'datos' && <CompanyForm  onSubmit={goNext} defaultValues={formData} />}
+          {step === 'datos' && <CompanyForm  onSubmit={goNext} defaultValues={formData} plan={plan} />}
           {step === 'pago'  && <PaymentForm  plan={plan} onSubmit={handlePayment} loading={loading} />}
           {step === 'listo' && (
             <div className="text-center space-y-4 py-6">

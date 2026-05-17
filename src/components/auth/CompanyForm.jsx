@@ -16,7 +16,7 @@ const schema = z.object({
   cookies:     z.literal(true, { errorMap: () => ({ message: 'Debes aceptar las cookies' }) }),
 })
 
-export default function CompanyForm({ onSubmit: onNext, defaultValues }) {
+export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
   const [logo, setLogo]         = useState(defaultValues?.companyLogo || null)
   const fileRef                 = useRef()
 
@@ -115,7 +115,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues }) {
 
       <button type="submit"
         className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition-colors mt-1">
-        Continuar al pago →
+        {plan === 'standard' ? 'Continuar con el plan gratuito →' : 'Continuar al pago →'}
       </button>
     </form>
   )
