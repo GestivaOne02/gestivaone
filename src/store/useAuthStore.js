@@ -240,8 +240,21 @@ export const useAuthStore = create(
             .eq('id', userId)
             .limit(1)
           
-          const profile = profileList?.[0]
+          let profile = profileList?.[0]
           const { data: { user: authUser } } = await supabase.auth.getUser()
+
+          // Auto-upgrade for administrator Randy Mendoza in database
+          const isFreePremium = authUser?.email?.toLowerCase() === 'randymendozasalas42@gmail.com'
+          if (isFreePremium && profile && profile.plan !== 'empresarial') {
+            const { data: updatedList } = await supabase
+              .from('profiles')
+              .update({ plan: 'empresarial' })
+              .eq('id', userId)
+              .select()
+            if (updatedList?.[0]) {
+              profile = updatedList[0]
+            }
+          }
 
           if (profError || !profile) {
             console.warn('Profile not found, attempting to auto-recover...')
