@@ -13,7 +13,7 @@ import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
-function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, status }) {
+function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, totalBilled, status }) {
   return (
     <motion.div
       layout
@@ -56,10 +56,13 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
         <button
           onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
           className="h-9 px-3 rounded-lg border border-success-500/30 bg-success-500/10 hover:bg-success-500/20 text-success-400 flex items-center justify-center gap-2 transition-colors shrink-0"
-          title="Historial de facturación"
+          title="Ver lista de facturas"
         >
-          <History size={15} />
-          <span className="text-[11px] font-bold uppercase tracking-wider hidden sm:block">Historial</span>
+          <History size={15} className="hidden sm:block opacity-70" />
+          <div className="flex flex-col items-center sm:items-start justify-center">
+            <span className="text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5">Total Fra.</span>
+            <span className="text-[11px] font-bold leading-none">{format$(totalBilled)}</span>
+          </div>
         </button>
         {lastInvoice && (
           <div className="h-9 px-3 rounded-lg border border-danger-500/30 bg-danger-500/10 text-danger-400 flex items-center justify-center gap-2 shrink-0">
@@ -126,11 +129,16 @@ export default function Menu() {
   }
 
   const getLastInvoice = (clientId) =>
-    invoices.filter((i) => i.client_id === clientId)[0] ?? null
+    invoices.filter((i) => i.client_id === clientId).sort((a,b) => new Date(b.created_at) - new Date(a.created_at))[0] ?? null
 
   const getPending = (clientId) =>
     invoices
       .filter((i) => i.client_id === clientId && i.payment_status !== 'paid')
+      .reduce((s, i) => s + i.total, 0)
+
+  const getTotalBilled = (clientId) =>
+    invoices
+      .filter((i) => i.client_id === clientId)
       .reduce((s, i) => s + i.total, 0)
 
   const handleDelete = (client) => {
@@ -219,6 +227,7 @@ export default function Menu() {
                   format$={format$}
                   lastInvoice={getLastInvoice(client.id)}
                   pendingAmount={getPending(client.id)}
+                  totalBilled={getTotalBilled(client.id)}
                   status={getClientStatus(client.id)}
                 />
               ))
