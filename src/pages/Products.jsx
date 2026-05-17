@@ -84,21 +84,45 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           min={1}
           value={qty}
           onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
-          className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-white text-center focus:outline-none focus:ring-1 focus:ring-brand-500"
+          disabled={product.stock !== undefined && product.stock <= 0}
+          className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-white text-center focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={handleAdd}
+          whileTap={product.stock !== undefined && product.stock <= 0 ? {} : { scale: 0.95 }}
+          onClick={product.stock !== undefined && product.stock <= 0 ? undefined : handleAdd}
+          disabled={product.stock !== undefined && product.stock <= 0}
           className={clsx(
             'flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold transition-all',
-            added
-              ? 'bg-success-500 text-white'
-              : 'bg-brand-600 hover:bg-brand-500 text-white'
+            product.stock !== undefined && product.stock <= 0
+              ? 'bg-surface-700 text-muted-500 cursor-not-allowed border border-subtle'
+              : added
+                ? 'bg-success-500 text-white'
+                : 'bg-brand-600 hover:bg-brand-500 text-white'
           )}
         >
-          {added ? '✓ Añadido' : <><ShoppingCart size={13} /> Añadir</>}
+          {product.stock !== undefined && product.stock <= 0 ? 'Sin stock' : added ? '✓ Añadido' : <><ShoppingCart size={13} /> Añadir</>}
         </motion.button>
       </div>
+
+      {/* Out of stock action */}
+      <AnimatePresence>
+        {product.stock !== undefined && product.stock <= 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <button
+              onClick={() => onEdit(product)}
+              className="w-full mt-1 border border-warning-500/30 bg-warning-500/10 hover:bg-warning-500/20 text-warning-400 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+            >
+              <Package size={13} />
+              ¿Añadir Stock?
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
