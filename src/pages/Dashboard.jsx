@@ -506,7 +506,7 @@ export default function Dashboard() {
         <>
           {/* Advanced Multi-Timeline Analytics Dashboard */}
           <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-subtle/50 pb-5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-5">
               <div>
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <TrendingUp className="text-brand-400" size={18} />
