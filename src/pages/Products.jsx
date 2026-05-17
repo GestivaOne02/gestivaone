@@ -116,6 +116,7 @@ export default function Products() {
   const addItem     = useCartStore((s) => s.addItem)
   const addCustomItem = useCartStore((s) => s.addCustomItem)
   const format$     = useCurrencyStore((s) => s.format)
+  const baseCurrency = useCurrencyStore((s) => s.baseCurrency)
 
   const filtered = useMemo(() => {
     let list = products
@@ -194,7 +195,7 @@ export default function Products() {
                 />
               </div>
               <div className="w-36">
-                <label className="text-xs text-muted-400 font-medium mb-1.5 block uppercase tracking-wide">Precio (USD) *</label>
+                <label className="text-xs text-muted-400 font-medium mb-1.5 block uppercase tracking-wide">Precio ({baseCurrency}) *</label>
                 <input
                   type="number"
                   value={freePrice}

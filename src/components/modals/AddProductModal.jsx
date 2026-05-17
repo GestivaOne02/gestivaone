@@ -8,6 +8,7 @@ import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { useProductStore, CATEGORIES } from '@/store/useProductStore'
 import { useUIStore } from '@/store/useUIStore'
+import { useCurrencyStore } from '@/store/useCurrencyStore'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
@@ -26,6 +27,7 @@ export default function AddProductModal({ open }) {
   const updateProduct = useProductStore((s) => s.updateProduct)
   const closeModal    = useUIStore((s) => s.closeModal)
   const editing       = useUIStore((s) => s.editingProduct)
+  const baseCurrency  = useCurrencyStore((s) => s.baseCurrency)
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -63,7 +65,7 @@ export default function AddProductModal({ open }) {
 
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Precio (USD) *"
+            label={`Precio (${baseCurrency}) *`}
             icon={<DollarSign size={14} />}
             error={errors.price?.message}
             placeholder="0.00"
