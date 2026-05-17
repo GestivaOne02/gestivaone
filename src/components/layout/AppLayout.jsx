@@ -6,6 +6,7 @@ import InvoicePanel from '@/components/invoice/InvoicePanel'
 import AddClientModal  from '@/components/modals/AddClientModal'
 import AddProductModal from '@/components/modals/AddProductModal'
 import OrderConfirmModal from '@/components/modals/OrderConfirmModal'
+import ClientHistoryModal from '@/components/modals/ClientHistoryModal'
 import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useClientStore } from '@/store/useClientStore'
@@ -68,6 +69,7 @@ export default function AppLayout() {
       <AddClientModal  open={activeModal === 'addClient'}  />
       <AddProductModal open={activeModal === 'addProduct'} />
       <OrderConfirmModal open={activeModal === 'orderConfirm'} />
+      <ClientHistoryModal open={activeModal === 'clientHistory'} />
     </div>
   )
 }

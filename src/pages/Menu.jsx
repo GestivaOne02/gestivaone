@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { UserPlus, Users, Edit2, Trash2, Check, ShoppingBag } from 'lucide-react'
+import { UserPlus, Users, Edit2, Trash2, Check, ShoppingBag, History, CalendarDays } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import SearchBar from '@/components/ui/SearchBar'
@@ -13,7 +13,7 @@ import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
-function ClientCard({ client, selected, onSelect, onEdit, onDelete, format$, lastInvoice, pendingAmount, status }) {
+function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, status }) {
   return (
     <motion.div
       layout
@@ -38,7 +38,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, format$, las
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 pr-2">
         <div className="flex items-center gap-2">
           <p className="text-sm font-semibold text-white truncate">{client.name}</p>
           {selected && <Check size={12} className="text-brand-400 shrink-0" />}
@@ -49,10 +49,26 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, format$, las
             <span className="text-[11px] text-danger-400 font-medium">{format$(pendingAmount)} pendiente</span>
           )}
         </div>
+      </div>
+
+      {/* Requested Visual Indicators (Green/Red) */}
+      <div className="flex items-center gap-2 mr-2">
+        <button
+          onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
+          className="h-9 px-3 rounded-lg border border-success-500/30 bg-success-500/10 hover:bg-success-500/20 text-success-400 flex items-center justify-center gap-2 transition-colors shrink-0"
+          title="Historial de facturación"
+        >
+          <History size={15} />
+          <span className="text-[11px] font-bold uppercase tracking-wider hidden sm:block">Historial</span>
+        </button>
         {lastInvoice && (
-          <p className="text-[11px] text-muted-400 mt-1">
-            Última factura: {format(new Date(lastInvoice.createdAt), "d MMM yyyy", { locale: es })}
-          </p>
+          <div className="h-9 px-3 rounded-lg border border-danger-500/30 bg-danger-500/10 text-danger-400 flex items-center justify-center gap-2 shrink-0">
+            <CalendarDays size={15} className="hidden sm:block" />
+            <div className="flex flex-col items-center sm:items-start justify-center">
+              <span className="text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5">Última fra.</span>
+              <span className="text-[11px] font-bold leading-none">{format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}</span>
+            </div>
+          </div>
         )}
       </div>
 
@@ -102,19 +118,19 @@ export default function Menu() {
   }, [frequent, search])
 
   const getClientStatus = (clientId) => {
-    const clientInvoices = invoices.filter((i) => i.clientId === clientId)
-    if (clientInvoices.some((i) => i.paymentStatus === 'overdue')) return 'overdue'
-    if (clientInvoices.some((i) => i.paymentStatus === 'pending')) return 'pending'
+    const clientInvoices = invoices.filter((i) => i.client_id === clientId)
+    if (clientInvoices.some((i) => i.payment_status === 'overdue')) return 'overdue'
+    if (clientInvoices.some((i) => i.payment_status === 'pending')) return 'pending'
     if (clientInvoices.length > 0) return 'paid'
     return 'default'
   }
 
   const getLastInvoice = (clientId) =>
-    invoices.filter((i) => i.clientId === clientId)[0] ?? null
+    invoices.filter((i) => i.client_id === clientId)[0] ?? null
 
   const getPending = (clientId) =>
     invoices
-      .filter((i) => i.clientId === clientId && i.paymentStatus !== 'paid')
+      .filter((i) => i.client_id === clientId && i.payment_status !== 'paid')
       .reduce((s, i) => s + i.total, 0)
 
   const handleDelete = (client) => {
@@ -199,6 +215,7 @@ export default function Menu() {
                   onSelect={() => selectClient(client.id)}
                   onEdit={() => openModal('addClient', { client })}
                   onDelete={() => handleDelete(client)}
+                  onOpenHistory={() => openModal('clientHistory', { client })}
                   format$={format$}
                   lastInvoice={getLastInvoice(client.id)}
                   pendingAmount={getPending(client.id)}
