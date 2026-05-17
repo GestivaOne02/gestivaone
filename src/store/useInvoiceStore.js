@@ -10,7 +10,8 @@ export const useInvoiceStore = create((set, get) => ({
   invoicesFetched: false,
 
   fetchInvoices: async (force = false) => {
-    const { user, invoicesFetched } = get()
+    const { invoicesFetched } = get()
+    const { user } = useAuthStore.getState()
     if (!user?.companyId || (invoicesFetched && !force)) return
     
     set({ loading: true })

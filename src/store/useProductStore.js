@@ -12,7 +12,8 @@ export const useProductStore = create((set, get) => ({
   productsFetched: false,
 
   fetchProducts: async (force = false) => {
-    const { user, productsFetched } = get()
+    const { productsFetched } = get()
+    const { user } = useAuthStore.getState()
     if (!user?.companyId || (productsFetched && !force)) return
     
     set({ loading: true })
