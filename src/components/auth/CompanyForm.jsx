@@ -14,7 +14,6 @@ const schema = z.object({
   password:    z.string().min(6, 'Mínimo 6 caracteres'),
   repeatPassword: z.string(),
   terms:       z.literal(true, { errorMap: () => ({ message: 'Debes aceptar los términos' }) }),
-  cookies:     z.literal(true, { errorMap: () => ({ message: 'Debes aceptar las cookies' }) }),
 }).refine((data) => data.password === data.repeatPassword, {
   message: "Las contraseñas no coinciden",
   path: ["repeatPassword"],
@@ -27,7 +26,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { terms: false, cookies: false, ...defaultValues },
+    defaultValues: { terms: false, ...defaultValues },
   })
 
   const handleLogo = (e) => {
@@ -125,25 +124,22 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
 
       {/* Checkboxes */}
       <div className="space-y-1.5 pt-0.5">
-        {[
-          { name: 'terms',   label: 'Acepto los términos y condiciones de uso' },
-          { name: 'cookies', label: 'Acepto la política de cookies' },
-        ].map(({ name, label }) => (
-          <label key={name} className="flex items-center gap-2.5 cursor-pointer group">
-            <input type="checkbox" {...register(name)} className="peer hidden" />
-            <div className={clsx(
-              'w-3.5 h-3.5 rounded border-2 flex items-center justify-center shrink-0 transition-all duration-200',
-              'border-surface-400 group-hover:border-brand-500',
-              'peer-checked:border-brand-500 peer-checked:bg-brand-600/20',
-              errors[name] && 'border-danger-400'
-            )}>
-              <Check size={8} className="text-brand-400 opacity-0 peer-checked:opacity-100 transition-opacity" />
-            </div>
-            <span className="text-[11px] text-muted-400 group-hover:text-white leading-relaxed transition-colors">{label}</span>
-          </label>
-        ))}
-        {(errors.terms || errors.cookies) && (
-          <p className="text-[10px] text-danger-400 mt-1">{errors.terms?.message || errors.cookies?.message}</p>
+        <label className="flex items-center gap-2.5 cursor-pointer group">
+          <input type="checkbox" {...register('terms')} className="peer hidden" />
+          <div className={clsx(
+            'w-3.5 h-3.5 rounded border-2 flex items-center justify-center shrink-0 transition-all duration-200',
+            'border-surface-400 group-hover:border-brand-500',
+            'peer-checked:border-brand-500 peer-checked:bg-brand-600/20',
+            errors.terms && 'border-danger-400'
+          )}>
+            <Check size={8} className="text-brand-400 opacity-0 peer-checked:opacity-100 transition-opacity" />
+          </div>
+          <span className="text-[11px] text-muted-400 group-hover:text-white leading-relaxed transition-colors">
+            Acepto los términos y condiciones de uso
+          </span>
+        </label>
+        {errors.terms && (
+          <p className="text-[10px] text-danger-400 mt-1">{errors.terms.message}</p>
         )}
       </div>
 
