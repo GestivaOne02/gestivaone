@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
+import { useProductStore } from './useProductStore'
 import { isAfter, parseISO, differenceInDays } from 'date-fns'
 
 export const useInvoiceStore = create((set, get) => ({
@@ -56,6 +57,18 @@ export const useInvoiceStore = create((set, get) => ({
 
     if (!error) {
       set((s) => ({ invoices: [saved, ...s.invoices] }))
+
+      // Deduct stock for each invoiced item
+      const { products, updateProduct } = useProductStore.getState()
+      items.forEach(async (item) => {
+        if (!item.id) return
+        const product = products.find((p) => p.id === item.id)
+        if (product && typeof product.stock === 'number') {
+          const newStock = Math.max(0, product.stock - item.qty)
+          await updateProduct(item.id, { stock: newStock })
+        }
+      })
+
       return saved
     }
   },

@@ -65,9 +65,9 @@ export default function Dashboard() {
   // Auto check overdue on mount
   useEffect(() => { checkOverdue() }, [])
 
-  const paid    = invoices.filter((i) => i.paymentStatus === 'paid')
-  const pending = invoices.filter((i) => i.paymentStatus === 'pending')
-  const overdue = invoices.filter((i) => i.paymentStatus === 'overdue')
+  const paid    = invoices.filter((i) => i.payment_status === 'paid')
+  const pending = invoices.filter((i) => i.payment_status === 'pending')
+  const overdue = invoices.filter((i) => i.payment_status === 'overdue')
 
   const totalRevenue   = paid.reduce((s, i) => s + i.total, 0)
   const pendingRevenue = [...pending, ...overdue].reduce((s, i) => s + i.total, 0)
@@ -78,7 +78,7 @@ export default function Dashboard() {
       const date = subMonths(new Date(), 5 - idx)
       const key  = format(date, 'yyyy-MM')
       const revenue = paid
-        .filter((i) => i.createdAt.startsWith(key))
+        .filter((i) => i.created_at && i.created_at.startsWith(key))
         .reduce((s, i) => s + i.total, 0)
       return { month: format(date, 'MMM', { locale: es }), revenue }
     })
@@ -101,7 +101,7 @@ export default function Dashboard() {
     overdue
       .map((inv) => ({
         ...inv,
-        days: Math.max(0, Math.floor((Date.now() - new Date(inv.scheduledDate || inv.createdAt)) / 86400000))
+        days: Math.max(0, Math.floor((Date.now() - new Date(inv.scheduled_date || inv.created_at)) / 86400000))
       }))
       .sort((a, b) => b.days - a.days),
   [overdue])
@@ -336,7 +336,7 @@ export default function Dashboard() {
                   {overdueList.map((inv) => (
                     <div key={inv.id} className="flex items-center gap-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{inv.clientName}</p>
+                        <p className="text-xs font-medium text-white truncate">{inv.client_name}</p>
                         <p className="text-[10px] text-danger-400">{inv.days} días de atraso</p>
                       </div>
                       <span className="text-xs font-semibold text-danger-400">{format$(inv.total)}</span>
