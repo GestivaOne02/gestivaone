@@ -255,7 +255,7 @@ export default function Auth() {
       {/* Left decorative panel (hidden on mobile) */}
       <div className="hidden lg:flex flex-col justify-between w-96 shrink-0 bg-gradient-to-b from-brand-900/60 to-surface-800 border-r border-subtle p-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-glow">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
             <Zap size={20} className="text-white" />
           </div>
           <div>
@@ -305,7 +305,7 @@ export default function Auth() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 justify-center mb-6">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-glow-sm">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
               <Zap size={15} className="text-white" />
             </div>
             <span className="font-bold text-white uppercase tracking-wider">Gestiva <span className="text-brand-400 font-extrabold">One</span></span>
