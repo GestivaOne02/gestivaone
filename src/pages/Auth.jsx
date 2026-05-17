@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Zap, Mail, Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Check } from 'lucide-react'
@@ -103,11 +103,29 @@ function LoginForm() {
   const [email, setEmail]   = useState('')
   const [pass, setPass]     = useState('')
   const [showPw, setShowPw] = useState(false)
+  const [rememberMe, setRememberMe] = useState(() => {
+    const saved = localStorage.getItem('gestiva-remembered-email')
+    return !!saved
+  })
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('gestiva-remembered-email')
+    if (savedEmail) {
+      setEmail(savedEmail)
+    }
+  }, [])
 
   const submit = async (e) => {
     e.preventDefault()
     const result = await login(email.trim().toLowerCase(), pass)
     if (!result.success) return toast.error(result.error)
+    
+    if (rememberMe) {
+      localStorage.setItem('gestiva-remembered-email', email.trim().toLowerCase())
+    } else {
+      localStorage.removeItem('gestiva-remembered-email')
+    }
+
     toast.success('¡Bienvenido!')
     
     // Force a small delay to ensure state is saved, then jump to dashboard
@@ -130,8 +148,8 @@ function LoginForm() {
           className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
       </div>
       <div className="relative">
-        <label className="text-xs text-muted-400 mb-1 block">Contraseña</label>
-        <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••" type={showPw ? 'text' : 'password'} required
+        <label className="text-xs text-muted-400 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
+        <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Introduce la contraseña" type={showPw ? 'text' : 'password'} required
           className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 pr-10" />
         <button 
           type="button" 
@@ -145,6 +163,28 @@ function LoginForm() {
           {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
       </div>
+      
+      {/* Remember me checkbox */}
+      <div className="flex items-center justify-between pb-1 select-none">
+        <label className="flex items-center gap-2.5 cursor-pointer group">
+          <input 
+            type="checkbox" 
+            checked={rememberMe} 
+            onChange={(e) => setRememberMe(e.target.checked)} 
+            className="sr-only" 
+          />
+          <div className={clsx(
+            'w-[18px] h-[18px] rounded border flex items-center justify-center transition-all',
+            rememberMe 
+              ? 'bg-amber-500 border-amber-500 text-white' 
+              : 'border-subtle bg-surface-700 group-hover:border-surface-400'
+          )}>
+            {rememberMe && <Check size={12} strokeWidth={3} className="text-white animate-scale-up" />}
+          </div>
+          <span className="text-xs font-semibold text-muted-300 group-hover:text-white transition-colors">Acuérdate de mí</span>
+        </label>
+      </div>
+
       <button type="submit" disabled={loading}
         className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors">
         {loading ? 'Ingresando...' : 'Iniciar sesión'}

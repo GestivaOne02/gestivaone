@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { FileText, Clock, AlertTriangle, CheckCircle, Package } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { FileText, Clock, AlertTriangle, CheckCircle, Package, Plus, Coins, Check, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
@@ -7,6 +7,29 @@ import { useUIStore } from '@/store/useUIStore'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import clsx from 'clsx'
+import toast from 'react-hot-toast'
+
+// Helper for parsing note structured abonos
+export function parseInvoiceNote(note) {
+  if (!note) return { text: '', payments: [], paidAmount: 0 }
+  try {
+    if (note.trim().startsWith('{') && note.trim().endsWith('}')) {
+      const parsed = JSON.parse(note)
+      if (parsed && (parsed.payments || parsed.notes !== undefined)) {
+        const payments = parsed.payments || []
+        const paidAmount = payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+        return {
+          text: parsed.notes || '',
+          payments,
+          paidAmount
+        }
+      }
+    }
+  } catch (e) {
+    // Ignore and treat as plain text
+  }
+  return { text: note, payments: [], paidAmount: 0 }
+}
 
 function StatusBadge({ status }) {
   const cfg = {
@@ -21,6 +44,176 @@ function StatusBadge({ status }) {
     <div className={clsx('flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider', cfg.color)}>
       <Icon size={12} />
       {cfg.label}
+    </div>
+  )
+}
+
+function InvoiceItemCard({ inv, format$ }) {
+  const registerAbono = useInvoiceStore((s) => s.registerAbono)
+  const [showAbonoForm, setShowAbonoForm] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [amount, setAmount] = useState('')
+  const [ref, setRef] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const { text: noteText, payments, paidAmount } = parseInvoiceNote(inv.note)
+  const remaining = Math.max(0, inv.total - paidAmount)
+
+  const handleAbonoSubmit = async (e) => {
+    e.preventDefault()
+    const val = Number(amount)
+    if (!val || val <= 0) {
+      return toast.error('Ingresa un monto válido mayor a 0')
+    }
+    if (val > remaining) {
+      return toast.error(`El abono no puede superar el saldo pendiente de ${format$(remaining)}`)
+    }
+
+    setSubmitting(true)
+    const res = await registerAbono(inv.id, val, ref.trim())
+    setSubmitting(false)
+
+    if (res.success) {
+      toast.success('Abono registrado con éxito')
+      setAmount('')
+      setRef('')
+      setShowAbonoForm(false)
+    } else {
+      toast.error(res.error || 'Error al registrar abono')
+    }
+  }
+
+  return (
+    <div className="bg-surface-800 border border-subtle rounded-xl p-4 hover:border-surface-400 transition-colors">
+      <div className="flex items-start justify-between mb-2">
+        <div>
+          <h4 className="text-sm font-bold text-white mb-1">Factura #{inv.id.slice(0, 8)}</h4>
+          <p className="text-xs text-muted-400">
+            {format(new Date(inv.created_at), "d 'de' MMMM, yyyy - HH:mm", { locale: es })}
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-1.5">
+          <StatusBadge status={inv.payment_status} />
+          {noteText && <span className="text-[10px] text-muted-400 max-w-[150px] truncate" title={noteText}>Nota: {noteText}</span>}
+        </div>
+      </div>
+
+      {/* Debt details if unpaid */}
+      {inv.payment_status !== 'paid' && (
+        <div className="mt-2.5 p-2.5 rounded-lg bg-surface-700/40 border border-subtle/50 flex flex-col gap-1.5 text-xs">
+          <div className="flex justify-between text-muted-400">
+            <span>Total Factura:</span>
+            <span className="font-semibold text-white">{format$(inv.total)}</span>
+          </div>
+          <div className="flex justify-between text-muted-400">
+            <span>Abonado:</span>
+            <span className="font-semibold text-success-400">{format$(paidAmount)}</span>
+          </div>
+          <div className="flex justify-between border-t border-subtle/30 pt-1.5 font-bold">
+            <span className="text-muted-200">Saldo Pendiente:</span>
+            <span className="text-danger-400">{format$(remaining)}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Payments History Toggle */}
+      {payments.length > 0 && (
+        <div className="mt-2 text-xs">
+          <button 
+            type="button"
+            onClick={() => setShowHistory(!showHistory)}
+            className="text-brand-400 hover:text-brand-300 flex items-center gap-1 font-semibold"
+          >
+            {showHistory ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+            <span>Ver historial de abonos ({payments.length})</span>
+          </button>
+          {showHistory && (
+            <div className="mt-1.5 pl-3 border-l-2 border-subtle space-y-1.5 py-1">
+              {payments.map((p, idx) => (
+                <div key={idx} className="flex justify-between text-[11px] text-muted-400">
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-muted-300">{p.reference || 'Abono'}</span>
+                    <span>{format(new Date(p.date), "dd/MM/yyyy - HH:mm")}</span>
+                  </div>
+                  <span className="font-bold text-success-400">+{format$(p.amount)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Action panel */}
+      <div className="flex items-center justify-between pt-3 border-t border-subtle/50 mt-3">
+        <div className="flex items-center gap-1.5 text-muted-400">
+          <Package size={14} />
+          <span className="text-xs">{inv.items?.length || 0} artículos</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {inv.payment_status !== 'paid' && (
+            <button
+              onClick={() => setShowAbonoForm(!showAbonoForm)}
+              className="text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1.5 transition-colors"
+            >
+              <Coins size={12} />
+              Abonar
+            </button>
+          )}
+          <span className="text-sm font-bold text-white">{format$(inv.total)}</span>
+        </div>
+      </div>
+
+      {/* Inline Abono Form */}
+      {showAbonoForm && (
+        <form onSubmit={handleAbonoSubmit} className="mt-4 p-3 rounded-xl bg-surface-700/60 border border-amber-500/30 space-y-2.5 animate-slide-up">
+          <div className="text-xs font-bold text-amber-400 flex items-center gap-1">
+            <Coins size={12} />
+            <span>Registrar Abono a Factura #{inv.id.slice(0, 8)}</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label className="text-[10px] text-muted-400 uppercase font-bold tracking-wider block mb-1">Monto del abono</label>
+              <input
+                type="number"
+                required
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder={`Máx ${remaining}`}
+                max={remaining}
+                min={1}
+                className="w-full bg-surface-800 border border-subtle rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-muted-400 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-400 uppercase font-bold tracking-wider block mb-1">Referencia (Ej: Nequi, PSE)</label>
+              <input
+                type="text"
+                value={ref}
+                onChange={(e) => setRef(e.target.value)}
+                placeholder="Nequi, Efectivo..."
+                className="w-full bg-surface-800 border border-subtle rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-muted-400 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => setShowAbonoForm(false)}
+              className="text-xs font-semibold text-muted-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-surface-600 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="text-xs font-bold bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+            >
+              {submitting ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+              Confirmar Abono
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   )
 }
@@ -40,8 +233,19 @@ export default function ClientHistoryModal({ open }) {
 
   if (!client) return null
 
-  const totalSpent = clientInvoices.filter(i => i.payment_status === 'paid').reduce((s, i) => s + i.total, 0)
-  const totalDebt  = clientInvoices.filter(i => i.payment_status !== 'paid').reduce((s, i) => s + i.total, 0)
+  // Calculate sum using parseInvoiceNote for partial payments!
+  const totalSpent = clientInvoices.reduce((s, i) => {
+    if (i.payment_status === 'paid') return s + i.total
+    const { paidAmount } = parseInvoiceNote(i.note)
+    return s + paidAmount
+  }, 0)
+
+  const totalDebt = clientInvoices
+    .filter(i => i.payment_status !== 'paid')
+    .reduce((s, i) => {
+      const { paidAmount } = parseInvoiceNote(i.note)
+      return s + (i.total - paidAmount)
+    }, 0)
 
   return (
     <Modal open={open} onClose={closeModal} title={`Historial: ${client.name}`} size="md">
@@ -67,25 +271,7 @@ export default function ClientHistoryModal({ open }) {
             </div>
           ) : (
             clientInvoices.map((inv) => (
-              <div key={inv.id} className="bg-surface-800 border border-subtle rounded-xl p-4 hover:border-surface-300 transition-colors">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h4 className="text-sm font-bold text-white mb-1">Factura #{inv.id.slice(0, 8)}</h4>
-                    <p className="text-xs text-muted-400">
-                      {format(new Date(inv.created_at), "d 'de' MMMM, yyyy - HH:mm", { locale: es })}
-                    </p>
-                  </div>
-                  <StatusBadge status={inv.payment_status} />
-                </div>
-                
-                <div className="flex items-center justify-between pt-3 border-t border-subtle/50 mt-2">
-                  <div className="flex items-center gap-1.5 text-muted-400">
-                    <Package size={14} />
-                    <span className="text-xs">{inv.items?.length || 0} artículos</span>
-                  </div>
-                  <span className="text-sm font-bold text-white">{format$(inv.total)}</span>
-                </div>
-              </div>
+              <InvoiceItemCard key={inv.id} inv={inv} format$={format$} />
             ))
           )}
         </div>

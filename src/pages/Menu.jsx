@@ -134,7 +134,20 @@ export default function Menu() {
   const getPending = (clientId) =>
     invoices
       .filter((i) => i.client_id === clientId && i.payment_status !== 'paid')
-      .reduce((s, i) => s + i.total, 0)
+      .reduce((s, i) => {
+        let paidAmount = 0
+        if (i.note) {
+          try {
+            if (i.note.trim().startsWith('{') && i.note.trim().endsWith('}')) {
+              const parsed = JSON.parse(i.note)
+              if (parsed && parsed.payments) {
+                paidAmount = parsed.payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+              }
+            }
+          } catch (e) {}
+        }
+        return s + (i.total - paidAmount)
+      }, 0)
 
   const getTotalBilled = (clientId) =>
     invoices

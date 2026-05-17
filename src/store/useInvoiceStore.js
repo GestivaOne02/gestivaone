@@ -88,6 +88,72 @@ export const useInvoiceStore = create((set, get) => ({
     }
   },
 
+  registerAbono: async (invoiceId, abonoAmount, reference = '') => {
+    const inv = get().invoices.find(i => i.id === invoiceId)
+    if (!inv) return { success: false, error: 'Factura no encontrada' }
+
+    let noteData = { notes: '', payments: [] }
+    if (inv.note) {
+      try {
+        if (inv.note.trim().startsWith('{') && inv.note.trim().endsWith('}')) {
+          const parsed = JSON.parse(inv.note)
+          if (parsed && (parsed.payments || parsed.notes !== undefined)) {
+            noteData = {
+              notes: parsed.notes || '',
+              payments: parsed.payments || []
+            }
+          }
+        } else {
+          noteData.notes = inv.note
+        }
+      } catch (e) {
+        noteData.notes = inv.note
+      }
+    }
+
+    const newPayment = {
+      amount: Number(abonoAmount),
+      date: new Date().toISOString(),
+      reference: reference || 'Abono registrado'
+    }
+    const updatedPayments = [...noteData.payments, newPayment]
+    const totalPaidSoFar = updatedPayments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+
+    let newStatus = inv.payment_status
+    let paidAt = inv.paid_at
+    if (totalPaidSoFar >= inv.total) {
+      newStatus = 'paid'
+      paidAt = new Date().toISOString()
+    }
+
+    const updatedNote = JSON.stringify({
+      notes: noteData.notes,
+      payments: updatedPayments
+    })
+
+    const { error } = await supabase
+      .from('invoices')
+      .update({ 
+        note: updatedNote,
+        payment_status: newStatus,
+        paid_at: paidAt
+      })
+      .eq('id', invoiceId)
+
+    if (!error) {
+      set((s) => ({
+        invoices: s.invoices.map((i) => 
+          i.id === invoiceId 
+            ? { ...i, note: updatedNote, payment_status: newStatus, paid_at: paidAt }
+            : i
+        )
+      }))
+      return { success: true }
+    } else {
+      return { success: false, error: error.message }
+    }
+  },
+
   deleteInvoice: async (id) => {
     const { error } = await supabase
       .from('invoices')
