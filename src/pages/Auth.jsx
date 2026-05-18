@@ -292,15 +292,15 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-surface-900 flex">
-      <div className="hidden lg:flex flex-col justify-between w-96 shrink-0 bg-gradient-to-b from-brand-900/60 to-surface-800 border-r border-subtle p-10">
-        <div className="flex items-center gap-4 pb-6 border-b border-brand-500/30">
-          <Zap size={32} className="text-brand-400" />
+      <div className="hidden lg:flex flex-col justify-between w-96 shrink-0 bg-gradient-to-b from-[#1c1236] to-[#0a0a0f] border-r border-white/5 p-10 select-none">
+        <div className="flex items-center gap-4 pb-6 border-b border-purple-500/20">
+          <Zap size={32} className="text-purple-400" />
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <p className="font-bold text-white text-2xl leading-none">Gestiva</p>
-              <Check size={16} className="text-brand-400" />
+              <Check size={16} className="text-purple-400" />
             </div>
-            <p className="text-brand-400 text-xs font-semibold tracking-widest uppercase">One</p>
+            <p className="text-purple-400 text-xs font-semibold tracking-widest uppercase">One</p>
           </div>
         </div>
 
@@ -312,7 +312,7 @@ export default function Auth() {
             className="text-4xl font-extrabold text-white leading-tight"
           >
             La plataforma comercial <br />
-            <span className="text-brand-400">que tu empresa merece</span>
+            <span className="text-purple-400">que tu empresa merece</span>
           </motion.h1>
           <ul className="space-y-4">
             {['Facturación en tiempo real', 'Gestión de clientes e inventario', 'Dashboard con analíticas', 'Control de empleados por roles', 'Tasas de cambio automáticas'].map((f, i) => (
@@ -321,10 +321,10 @@ export default function Auth() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + (i * 0.1) }}
-                className="flex items-center gap-3.5 text-sm text-muted-400 font-medium"
+                className="flex items-center gap-3.5 text-sm text-gray-300 font-medium"
               >
-                <div className="w-6 h-6 rounded-lg bg-brand-500/10 flex items-center justify-center shrink-0 border border-brand-500/20">
-                  <Zap size={12} className="text-brand-400" />
+                <div className="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0 border border-purple-500/20">
+                  <Zap size={12} className="text-purple-400" />
                 </div>
                 {f}
               </motion.li>
@@ -332,7 +332,7 @@ export default function Auth() {
           </ul>
         </div>
 
-        <p className="text-[11px] text-muted-400">© 2026 GestivaOne. Todos los derechos reservados.</p>
+        <p className="text-[11px] text-gray-400">© 2026 GestivaOne. Todos los derechos reservados.</p>
       </div>
 
       {/* Right: form panel */}
