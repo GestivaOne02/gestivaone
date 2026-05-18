@@ -67,7 +67,7 @@ export const useExpenseStore = create(
       }
     }),
     {
-      name: 'gestiva-expenses'
+      name: 'gestiva-expenses-v2'
     }
   )
 )

@@ -109,7 +109,7 @@ export const useCurrencyStore = create(
       },
     }),
     {
-      name: 'gestiva-currency',
+      name: 'gestiva-currency-v2',
       partialize: (state) => ({
         baseCurrency: state.baseCurrency,
         rates: state.rates,
