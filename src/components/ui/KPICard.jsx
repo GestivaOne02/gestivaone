@@ -38,9 +38,9 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
         </div>
         {icon && (
           <div className={clsx(
-            'rounded-xl shrink-0 transition-all duration-500 ease-out-expo',
+            'rounded-xl shrink-0 flex items-center justify-center transition-all duration-500 ease-out-expo',
             iconColors[color],
-            collapsed ? 'p-3 scale-110' : 'p-2 sm:p-2.5'
+            collapsed ? 'w-12 h-12 scale-110' : 'w-10 h-10'
           )}>
             {icon}
           </div>

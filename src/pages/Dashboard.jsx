@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react'
+import { useMemo, useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package, Calendar, Coins, Download, Plus, Trash2 } from 'lucide-react'
@@ -99,6 +99,25 @@ export default function Dashboard() {
   // React state variables defined at the very top of the component to prevent TDZ errors
   const [selectedYears, setSelectedYears] = useState([new Date().getFullYear().toString()])
   const [hoveredKpi, setHoveredKpi] = useState(null)
+  const hoverTimeoutRef = useRef(null)
+
+  const handleKpiMouseEnter = (index) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredKpi(index)
+    }, 1500)
+  }
+
+  const handleKpiMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+      hoverTimeoutRef.current = null
+    }
+    setHoveredKpi(null)
+  }
+
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
   const [chartView, setChartView] = useState('monthly')
   const [revenueYearFilter, setRevenueYearFilter] = useState(new Date().getFullYear().toString())
@@ -686,8 +705,8 @@ export default function Dashboard() {
         ].map((kpi, i) => (
           <div
             key={kpi.title}
-            onMouseEnter={() => setHoveredKpi(i)}
-            onMouseLeave={() => setHoveredKpi(null)}
+            onMouseEnter={() => handleKpiMouseEnter(i)}
+            onMouseLeave={handleKpiMouseLeave}
             className={clsx(
               "h-full shrink-0",
               hoveredKpi === i
