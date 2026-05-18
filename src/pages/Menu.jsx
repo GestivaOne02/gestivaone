@@ -13,6 +13,43 @@ import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
+function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <motion.button
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={(e) => { e.stopPropagation(); onClick() }}
+      className={clsx(
+        "h-10 rounded-full flex items-center justify-center gap-2 border transition-all duration-300 cursor-pointer select-none shrink-0 shadow-sm",
+        isPurple
+          ? "bg-brand-600 hover:bg-brand-500 text-white border-brand-500/40 hover:shadow-glow-sm"
+          : "bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-white border-white/5"
+      )}
+      animate={{ width: hovered ? 'auto' : 40, paddingLeft: hovered ? 14 : 10, paddingRight: hovered ? 14 : 10 }}
+      transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+      style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
+    >
+      <Icon size={15} className="shrink-0" />
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            initial={{ opacity: 0, width: 0, x: -10 }}
+            animate={{ opacity: 1, width: 'auto', x: 0 }}
+            exit={{ opacity: 0, width: 0, x: -10 }}
+            transition={{ duration: 0.15 }}
+            className="flex flex-col items-start leading-none text-left shrink-0"
+          >
+            <span className="text-[9px] font-bold uppercase tracking-wider opacity-85">{label}</span>
+            {value && <span className="text-xs font-black mt-0.5">{value}</span>}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  )
+}
+
 function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, totalBilled, status }) {
   return (
     <motion.div
@@ -20,19 +57,19 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ y: -1 }}
+      whileHover={{ y: -2, scale: 1.005 }}
       onClick={onSelect}
       className={clsx(
-        'relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all group',
+        'relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 group',
         selected
-          ? 'border-brand-500 bg-brand-600/10'
-          : 'border-subtle bg-surface-800 hover:border-surface-300'
+          ? 'border-brand-500 bg-brand-600/10 shadow-glow-sm'
+          : 'border-subtle bg-surface-800 hover:border-brand-500/30 hover:bg-surface-800/80'
       )}
     >
       {/* Avatar */}
       <div className={clsx(
-        'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0',
-        selected ? 'bg-brand-600/40 text-brand-200' : 'bg-surface-600 text-white'
+        'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 transition-all duration-300',
+        selected ? 'bg-brand-600/40 text-brand-200' : 'bg-surface-600 text-white group-hover:bg-brand-600/20 group-hover:text-brand-300'
       )}>
         {client.name[0].toUpperCase()}
       </div>
@@ -57,44 +94,28 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
         )}
       </div>
 
-      {/* Visual Indicators division & Action Button */}
-      <div className="flex items-center gap-3 shrink-0 border-l border-subtle/80 pl-3 h-10 my-auto">
-        <button
-          onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
-          className={clsx(
-            "h-10 px-3.5 rounded-xl border flex flex-col justify-center items-end transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
-            pendingAmount > 0
-              ? "border-warning-500/40 bg-warning-500/5 hover:bg-warning-500/10 text-warning-400"
-              : "border-success-500/40 bg-success-500/5 hover:bg-success-500/10 text-success-400"
-          )}
-          title="Ver historial de facturación y abonos"
-        >
-          <div className="flex items-center gap-1.5">
-            <span className="text-[9px] font-bold uppercase tracking-wider opacity-85">Total Facturado</span>
-            <History size={11} className="opacity-80" />
-          </div>
-          <span className="text-xs font-bold mt-0.5 leading-none">{format$(totalBilled)}</span>
-          {pendingAmount > 0 && (
-            <span className="text-[8px] font-semibold tracking-wider uppercase mt-1 px-1 py-0.2 rounded bg-danger-500/15 text-danger-400 border border-danger-500/20">
-              Ver Abonos / Saldo
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Actions */}
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-1 shrink-0">
-        <button
-          onClick={(e) => { e.stopPropagation(); onEdit() }}
-          className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600"
-        >
-          <Edit2 size={13} />
-        </button>
+      {/* Responsive Visual Indicators & Interactive Expandable Buttons */}
+      <div className="flex items-center gap-2 shrink-0 border-l border-brand-500/20 pl-3 h-10 my-auto">
+        <ExpandableButton
+          icon={History}
+          label="Total Facturado"
+          value={format$(totalBilled)}
+          onClick={onOpenHistory}
+          isPurple={true}
+        />
+        <ExpandableButton
+          icon={Edit2}
+          label="Editar Cliente"
+          value="Modificar"
+          onClick={onEdit}
+          isPurple={false}
+        />
         <button
           onClick={(e) => { e.stopPropagation(); onDelete() }}
-          className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30"
+          className="h-10 w-10 rounded-full flex items-center justify-center border border-danger-500/10 bg-danger-500/5 hover:bg-danger-500/20 text-danger-400 transition-all duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
+          title="Eliminar cliente"
         >
-          <Trash2 size={13} />
+          <Trash2 size={14} />
         </button>
       </div>
     </motion.div>
