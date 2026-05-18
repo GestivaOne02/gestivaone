@@ -16,7 +16,7 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
   }
 
   const premiumTransition = {
-    transition: 'all 650ms cubic-bezier(0.16, 1, 0.3, 1)'
+    transition: 'all 850ms cubic-bezier(0.4, 0, 0.2, 1)'
   }
 
   return (

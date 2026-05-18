@@ -107,7 +107,7 @@ export default function Dashboard() {
     }
     hoverTimeoutRef.current = setTimeout(() => {
       setHoveredKpi(index)
-    }, 1500)
+    }, 500)
   }
 
   const handleKpiMouseLeave = () => {
@@ -716,7 +716,7 @@ export default function Dashboard() {
                   : "flex-1"
             )}
             style={{
-              transition: 'all 650ms cubic-bezier(0.16, 1, 0.3, 1)'
+              transition: 'all 850ms cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
             <KPICard
