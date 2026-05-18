@@ -159,18 +159,62 @@ export default function Dashboard() {
     })
   }, [paid, pending, overdue, expenses, revenueYearFilter])
 
+  // Dynamic aggregations from invoices to keep dashboard charts populated and auto-updated
+  const clientInvoiceStats = useMemo(() => {
+    const stats = {}
+    invoices.forEach((inv) => {
+      if (inv.client_id) {
+        if (!stats[inv.client_id]) {
+          stats[inv.client_id] = { count: 0, revenue: 0 }
+        }
+        stats[inv.client_id].count += 1
+        stats[inv.client_id].revenue += (inv.total || 0)
+      }
+    })
+    return stats
+  }, [invoices])
+
+  const productSalesStats = useMemo(() => {
+    const stats = {}
+    invoices.forEach((inv) => {
+      if (Array.isArray(inv.items)) {
+        inv.items.forEach((item) => {
+          if (item.productId) {
+            stats[item.productId] = (stats[item.productId] || 0) + (item.qty || 0)
+          }
+        })
+      }
+    })
+    return stats
+  }, [invoices])
+
   // Top clients
-  const topClients = useMemo(() =>
-    [...clients]
+  const topClients = useMemo(() => {
+    return [...clients]
+      .map((c) => {
+        const cStats = clientInvoiceStats[c.id] || { count: 0, revenue: 0 }
+        return {
+          ...c,
+          invoiceCount: cStats.count,
+          totalRevenue: cStats.revenue
+        }
+      })
       .filter((c) => c.totalRevenue > 0)
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
-      .slice(0, 5),
-  [clients])
+      .slice(0, 5)
+  }, [clients, clientInvoiceStats])
 
   // Top products — use stable selector, compute in memo
-  const topProducts = useMemo(() =>
-    [...products].sort((a, b) => (b.salesCount ?? 0) - (a.salesCount ?? 0)).slice(0, 5),
-  [products])
+  const topProducts = useMemo(() => {
+    return [...products]
+      .map((p) => ({
+        ...p,
+        salesCount: productSalesStats[p.id] || 0
+      }))
+      .filter((p) => p.salesCount > 0)
+      .sort((a, b) => b.salesCount - a.salesCount)
+      .slice(0, 5)
+  }, [products, productSalesStats])
 
   const overdueList = useMemo(() =>
     overdue
@@ -185,14 +229,15 @@ export default function Dashboard() {
     const counts = {}
     products.forEach((p) => {
       const cat = p.category || 'Otros'
-      counts[cat] = (counts[cat] || 0) + (p.salesCount || 0)
+      const sold = productSalesStats[p.id] || 0
+      counts[cat] = (counts[cat] || 0) + sold
     })
     const colors = ['#7c3aed', '#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#14b8a6']
     return Object.entries(counts)
       .map(([name, value], idx) => ({ name, value, fill: colors[idx % colors.length] }))
       .filter((c) => c.value > 0)
       .sort((a, b) => b.value - a.value)
-  }, [products])
+  }, [products, productSalesStats])
 
 
 
