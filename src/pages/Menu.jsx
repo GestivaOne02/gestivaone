@@ -188,7 +188,7 @@ export default function Menu() {
     <div className="p-6 h-full flex flex-col gap-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-white">Menú Operativo</h1>
+        <h1 className="text-xl font-bold text-brand-600 dark:text-white">Menú Operativo</h1>
         <p className="text-sm text-muted-400 mt-0.5">Selecciona o añade un cliente para iniciar</p>
       </div>
 

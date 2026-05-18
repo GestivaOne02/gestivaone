@@ -558,7 +558,7 @@ export default function Dashboard() {
       <motion.div variants={itemVariants}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg md:text-xl font-bold text-white">Dashboard</h1>
+            <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Dashboard</h1>
             <p className="text-sm text-muted-400 mt-0.5">Vista general del negocio</p>
           </div>
           {plan.id === 'standard' && (
@@ -574,7 +574,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <TrendingUp size={20} className="text-brand-400 shrink-0" />
           <div>
-            <h3 className="text-sm font-bold text-white">Reportes Financieros Ejecutivos</h3>
+            <h3 className="text-sm font-bold text-brand-600 dark:text-white">Reportes Financieros Ejecutivos</h3>
             <p className="text-xs text-muted-400 mt-0.5">Exporta reportes oficiales de facturación, abonos y gastos operacionales</p>
           </div>
         </div>
@@ -817,7 +817,7 @@ export default function Dashboard() {
           <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-5">
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-brand-600 dark:text-white flex items-center gap-2">
                   <TrendingUp className="text-brand-400" size={18} />
                   Analíticas Avanzadas de Ventas
                 </h3>
@@ -1137,7 +1137,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b border-white/5">
             <Coins size={18} className="text-brand-400" />
-            <h3 className="text-sm font-bold text-white">Registrar Egreso / Gasto</h3>
+            <h3 className="text-sm font-bold text-brand-600 dark:text-white">Registrar Egreso / Gasto</h3>
           </div>
           <form onSubmit={handleExpenseSubmit} className="space-y-4">
             <div>
@@ -1189,7 +1189,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-brand-400" />
-              <h3 className="text-sm font-bold text-white">Historial de Egresos</h3>
+              <h3 className="text-sm font-bold text-brand-600 dark:text-white">Historial de Egresos</h3>
             </div>
             <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
               {expenses.length} Transacciones

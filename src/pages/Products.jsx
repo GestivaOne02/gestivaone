@@ -176,7 +176,7 @@ export default function Products() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-white">Productos</h1>
+          <h1 className="text-xl font-bold text-brand-600 dark:text-white">Productos</h1>
           <p className="text-sm text-muted-400 mt-0.5">{products.length} productos en catálogo</p>
         </div>
         <div className="flex gap-2">

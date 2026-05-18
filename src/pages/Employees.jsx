@@ -164,7 +164,7 @@ export default function Employees() {
     >
       <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-white">Empleados</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-brand-600 dark:text-white">Empleados</h1>
           <p className="text-sm text-muted-400 mt-0.5">{employees.length} colaboradores registrados</p>
         </div>
         <button onClick={() => setModalOpen(true)}

@@ -97,7 +97,7 @@ export default function Settings() {
       className="page-container max-w-2xl space-y-6 md:space-y-8"
     >
       <motion.div variants={itemVariants}>
-        <h1 className="text-xl md:text-2xl font-bold text-white">Configuración</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-brand-600 dark:text-white">Configuración</h1>
         <p className="text-sm text-muted-400 mt-0.5">Personaliza tu plataforma</p>
       </motion.div>
 

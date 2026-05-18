@@ -299,7 +299,7 @@ export default function Account() {
       className="page-container max-w-2xl space-y-5"
     >
       <motion.div variants={itemVariants}>
-        <h1 className="text-xl md:text-2xl font-bold text-white">Cuenta</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-brand-600 dark:text-white">Cuenta</h1>
         <p className="text-sm text-muted-400 mt-0.5">Perfil y configuración de usuario</p>
       </motion.div>
 
