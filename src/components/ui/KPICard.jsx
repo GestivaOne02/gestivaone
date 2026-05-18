@@ -15,20 +15,40 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
     danger:  'text-danger-400 bg-danger-500/10',
   }
 
+  const premiumTransition = {
+    transition: 'all 650ms cubic-bezier(0.16, 1, 0.3, 1)'
+  }
+
   return (
     <motion.div
       whileHover={collapsed ? undefined : { y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}
       className={clsx(
-        'relative overflow-hidden bg-gradient-to-br border rounded-2xl p-4 sm:p-5 transition-all duration-300 ease-in-out h-full flex flex-col justify-center select-none',
+        'relative overflow-hidden bg-gradient-to-br border rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-center select-none',
         colors[color],
         collapsed ? 'items-center justify-center p-3 border-subtle bg-surface-800/40' : ''
       )}
+      style={premiumTransition}
     >
-      <div className={clsx("flex items-center justify-between gap-2.5 w-full", collapsed && "justify-center")}>
-        <div className={clsx(
-          "flex-1 min-w-0 transition-all duration-300 ease-in-out origin-left",
-          collapsed ? "w-0 opacity-0 pointer-events-none scale-75 overflow-hidden" : "w-full opacity-100 scale-100"
-        )}>
+      <div className={clsx("flex items-center gap-2.5 w-full", collapsed ? "justify-center" : "justify-start")}>
+        {icon && (
+          <div 
+            className={clsx(
+              'rounded-xl shrink-0 flex items-center justify-center',
+              iconColors[color],
+              collapsed ? 'w-12 h-12 scale-110' : 'w-10 h-10'
+            )}
+            style={premiumTransition}
+          >
+            {icon}
+          </div>
+        )}
+        <div 
+          className={clsx(
+            "flex-1 min-w-0 origin-left",
+            collapsed ? "w-0 opacity-0 pointer-events-none scale-75 overflow-hidden" : "w-full opacity-100 scale-100"
+          )}
+          style={premiumTransition}
+        >
           <p className="text-[10px] sm:text-xs text-muted-400 uppercase tracking-wider font-semibold mb-1 truncate">{title}</p>
           {loading
             ? <div className="h-7 w-24 bg-surface-400 rounded animate-pulse" />
@@ -36,15 +56,6 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
           }
           {subtitle && <p className="text-[10px] sm:text-xs text-muted-400 mt-1 truncate">{subtitle}</p>}
         </div>
-        {icon && (
-          <div className={clsx(
-            'rounded-xl shrink-0 flex items-center justify-center transition-all duration-500 ease-out-expo',
-            iconColors[color],
-            collapsed ? 'w-12 h-12 scale-110' : 'w-10 h-10'
-          )}>
-            {icon}
-          </div>
-        )}
       </div>
       {!collapsed && trend !== undefined && (
         <div className={clsx('flex items-center gap-1 mt-3 text-[10px] sm:text-xs font-medium', trend >= 0 ? 'text-success-400' : 'text-danger-400')}>

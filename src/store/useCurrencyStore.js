@@ -81,6 +81,15 @@ export const useCurrencyStore = create(
           ? amount
           : (amount / rates[sourceCurrency]) * rates[baseCurrency]
 
+        if (baseCurrency === 'COP') {
+          const rounded = Math.round(converted)
+          const formattedNumber = new Intl.NumberFormat('de-DE', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }).format(rounded)
+          return `$${formattedNumber}`
+        }
+
         return new Intl.NumberFormat('es', {
           style: 'currency',
           currency: baseCurrency,

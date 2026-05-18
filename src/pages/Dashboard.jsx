@@ -716,7 +716,7 @@ export default function Dashboard() {
                   : "flex-1"
             )}
             style={{
-              transition: 'all 500ms cubic-bezier(0.16, 1, 0.3, 1)'
+              transition: 'all 650ms cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >
             <KPICard
