@@ -92,11 +92,6 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* ─── text-white: responds to theme ─── */
-.text-white {
-  color: var(--text-foreground) !important;
-}
-
 /* ─── Inputs & selects: respond to theme ─── */
 input:not([type="checkbox"]):not([type="radio"]),
 select,

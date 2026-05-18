@@ -49,34 +49,41 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
             <span className="text-[11px] text-danger-400 font-medium">{format$(pendingAmount)} pendiente</span>
           )}
         </div>
-      </div>
-
-      {/* Requested Visual Indicators (Green/Red) */}
-      <div className="flex items-center gap-2 mr-2">
-        <button
-          onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
-          className="h-9 px-3 rounded-lg border border-success-500/30 bg-success-500/10 hover:bg-success-500/20 text-success-400 flex items-center justify-center gap-2 transition-colors shrink-0"
-          title="Ver lista de facturas"
-        >
-          <History size={15} className="hidden sm:block opacity-70" />
-          <div className="flex flex-col items-center sm:items-start justify-center">
-            <span className="text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5">Total Fra.</span>
-            <span className="text-[11px] font-bold leading-none">{format$(totalBilled)}</span>
-          </div>
-        </button>
         {lastInvoice && (
-          <div className="h-9 px-3 rounded-lg border border-danger-500/30 bg-danger-500/10 text-danger-400 flex items-center justify-center gap-2 shrink-0">
-            <CalendarDays size={15} className="hidden sm:block" />
-            <div className="flex flex-col items-center sm:items-start justify-center">
-              <span className="text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5">Última fra.</span>
-              <span className="text-[11px] font-bold leading-none">{format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}</span>
-            </div>
-          </div>
+          <p className="text-[10px] text-muted-400 flex items-center gap-1 mt-1.5">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60"></span>
+            Última factura realizada: {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
+          </p>
         )}
       </div>
 
+      {/* Visual Indicators division & Action Button */}
+      <div className="flex items-center gap-3 shrink-0 border-l border-subtle/80 pl-3 h-10 my-auto">
+        <button
+          onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
+          className={clsx(
+            "h-10 px-3.5 rounded-xl border flex flex-col justify-center items-end transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
+            pendingAmount > 0
+              ? "border-warning-500/40 bg-warning-500/5 hover:bg-warning-500/10 text-warning-400"
+              : "border-success-500/40 bg-success-500/5 hover:bg-success-500/10 text-success-400"
+          )}
+          title="Ver historial de facturación y abonos"
+        >
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] font-bold uppercase tracking-wider opacity-85">Total Facturado</span>
+            <History size={11} className="opacity-80" />
+          </div>
+          <span className="text-xs font-bold mt-0.5 leading-none">{format$(totalBilled)}</span>
+          {pendingAmount > 0 && (
+            <span className="text-[8px] font-semibold tracking-wider uppercase mt-1 px-1 py-0.2 rounded bg-danger-500/15 text-danger-400 border border-danger-500/20">
+              Ver Abonos / Saldo
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* Actions */}
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-1 shrink-0">
         <button
           onClick={(e) => { e.stopPropagation(); onEdit() }}
           className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600"
