@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
-import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package, Calendar, Coins } from 'lucide-react'
+import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package, Calendar, Coins, Download, Plus, Trash2 } from 'lucide-react'
 import {
   AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, LineChart, Line, Legend
@@ -14,6 +14,10 @@ import { useClientStore } from '@/store/useClientStore'
 import { useProductStore } from '@/store/useProductStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore, ROLES, PLANS } from '@/store/useAuthStore'
+import { useExpenseStore } from '@/store/useExpenseStore'
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable'
+import * as XLSX from 'xlsx'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -86,6 +90,15 @@ export default function Dashboard() {
   const format$     = useCurrencyStore((s) => s.format)
   const checkOverdue = useInvoiceStore((s) => s.checkOverdue)
 
+  const expenses      = useExpenseStore((s) => s.expenses)
+  const addExpense    = useExpenseStore((s) => s.addExpense)
+  const deleteExpense = useExpenseStore((s) => s.deleteExpense)
+
+  // Expense form state
+  const [expAmount, setExpAmount] = useState('')
+  const [expCategory, setExpCategory] = useState('Inventario/Mercancía')
+  const [expDesc, setExpDesc] = useState('')
+
   // React state variables defined at the very top of the component to prevent TDZ errors
   const [selectedYears, setSelectedYears] = useState([new Date().getFullYear().toString()])
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
@@ -104,6 +117,7 @@ export default function Dashboard() {
 
   const totalRevenue   = paid.reduce((s, i) => s + i.total, 0)
   const pendingRevenue = [...pending, ...overdue].reduce((s, i) => s + i.total, 0)
+  const totalExpenses  = expenses.reduce((s, e) => s + (e.amount || 0), 0)
 
   // Monthly chart — last 6 months
   const monthlyData = useMemo(() => {
@@ -134,13 +148,19 @@ export default function Dashboard() {
           return s + (i.total - paidAmount)
         }, 0)
 
+      const expenseAmt = expenses
+        .filter((e) => e.created_at && e.created_at.startsWith(key))
+        .reduce((s, e) => s + (e.amount || 0), 0)
+
       return {
         month: format(date, 'MMM', { locale: es }).toUpperCase(),
         revenue: revenueAmt,
         pending: pendingAmt,
+        expenses: expenseAmt,
+        netProfit: revenueAmt - expenseAmt
       }
     })
-  }, [paid, pending, overdue, revenueYearFilter])
+  }, [paid, pending, overdue, expenses, revenueYearFilter])
 
   // Top clients
   const topClients = useMemo(() =>
@@ -340,6 +360,147 @@ export default function Dashboard() {
     )
   }
 
+  const exportToExcel = () => {
+    try {
+      const invData = invoices.map(i => ({
+        'ID Factura': i.id,
+        'Cliente': i.client_name,
+        'Total': i.total,
+        'Subtotal': i.subtotal,
+        'Método Pago': i.payment_type === 'immediate' ? 'Inmediato' : 'Programado (Crédito)',
+        'Estado': i.payment_status === 'paid' ? 'Pagada' : i.payment_status === 'overdue' ? 'Atrasada' : 'Pendiente',
+        'Fecha Creación': format(new Date(i.created_at), 'yyyy-MM-dd HH:mm')
+      }))
+
+      const expData = expenses.map(e => ({
+        'ID Egreso': e.id,
+        'Monto': e.amount,
+        'Categoría': e.category,
+        'Descripción': e.description,
+        'Fecha Registro': format(new Date(e.created_at), 'yyyy-MM-dd HH:mm')
+      }))
+
+      const wb = XLSX.utils.book_new()
+      const wsInvoices = XLSX.utils.json_to_sheet(invData)
+      const wsExpenses = XLSX.utils.json_to_sheet(expData)
+
+      XLSX.utils.book_append_sheet(wb, wsInvoices, 'Facturación')
+      XLSX.utils.book_append_sheet(wb, wsExpenses, 'Egresos_Gastos')
+
+      XLSX.writeFile(wb, `Reporte_Financiero_GestivaOne_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`)
+      toast.success('Reporte Excel generado con éxito')
+    } catch (e) {
+      toast.error('Error al exportar reporte Excel: ' + e.message)
+    }
+  }
+
+  const exportToPDF = () => {
+    try {
+      const doc = new jsPDF()
+      const companyName = user?.companyName || 'Mi Empresa'
+      
+      // Header branding
+      doc.setFillColor(124, 58, 237)
+      doc.rect(0, 0, 210, 40, 'F')
+      
+      doc.setFontSize(22)
+      doc.setTextColor(255, 255, 255)
+      doc.text('GESTIVAONE - REPORTE FINANCIERO', 14, 25)
+      
+      doc.setFontSize(10)
+      doc.text(`Empresa: ${companyName} | Generado el: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 33)
+      
+      // Executive summary
+      doc.setFontSize(14)
+      doc.setTextColor(124, 58, 237)
+      doc.text('RESUMEN EJECUTIVO', 14, 52)
+      
+      doc.setFontSize(10)
+      doc.setTextColor(71, 85, 105)
+      doc.text(`Ingresos Totales (Recaudado): ${format$(totalRevenue)}`, 14, 62)
+      doc.text(`Cuentas Pendientes por Cobrar: ${format$(pendingRevenue)}`, 14, 68)
+      doc.text(`Egresos Totales (Gastos): ${format$(totalExpenses)}`, 14, 74)
+      
+      // Calculate net profit
+      const profit = totalRevenue - totalExpenses
+      doc.setFontSize(11)
+      doc.setTextColor(profit >= 0 ? 16 : 220, profit >= 0 ? 185 : 38, profit >= 0 ? 129 : 38)
+      doc.text(`Utilidad Neta Real (Ingresos - Gastos): ${format$(profit)}`, 14, 82)
+      
+      // Add visual border line
+      doc.setDrawColor(226, 232, 240)
+      doc.line(14, 87, 196, 87)
+      
+      // Recent Invoices Table
+      doc.setFontSize(12)
+      doc.setTextColor(30, 41, 59)
+      doc.text('HISTORIAL RECIENTE DE INVOICES', 14, 96)
+      
+      const invBody = invoices.slice(0, 15).map(i => [
+        i.id.slice(0, 8),
+        i.client_name,
+        format$(i.total),
+        i.payment_type === 'immediate' ? 'Inmediato' : 'Crédito',
+        i.payment_status === 'paid' ? 'Pagada' : 'Pendiente'
+      ])
+
+      doc.autoTable({
+        startY: 102,
+        head: [['ID', 'Cliente', 'Total', 'Método', 'Estado']],
+        body: invBody,
+        theme: 'striped',
+        headStyles: { fillColor: [124, 58, 237] },
+        styles: { fontSize: 9 }
+      })
+      
+      // Recent Expenses Table
+      const finalY = doc.lastAutoTable.finalY + 12
+      doc.setFontSize(12)
+      doc.setTextColor(30, 41, 59)
+      doc.text('HISTORIAL RECIENTE DE GASTOS / EGRESOS', 14, finalY)
+      
+      const expBody = expenses.slice(0, 15).map(e => [
+        e.id.slice(0, 8),
+        e.category,
+        e.description || 'Gasto operacional',
+        format$(e.amount),
+        new Date(e.created_at).toLocaleDateString('es-CO')
+      ])
+
+      doc.autoTable({
+        startY: finalY + 6,
+        head: [['ID', 'Categoría', 'Descripción', 'Monto', 'Fecha']],
+        body: expBody,
+        theme: 'striped',
+        headStyles: { fillColor: [239, 68, 68] },
+        styles: { fontSize: 9 }
+      })
+      
+      doc.save(`Reporte_Financiero_GestivaOne_${Date.now()}.pdf`)
+      toast.success('Reporte PDF descargado con éxito')
+    } catch (e) {
+      toast.error('Error al generar PDF: ' + e.message)
+    }
+  }
+
+  const handleExpenseSubmit = (e) => {
+    e.preventDefault()
+    const amt = Number(expAmount)
+    if (!amt || amt <= 0) {
+      return toast.error('Ingresa un monto válido para el gasto')
+    }
+    const res = addExpense({
+      amount: amt,
+      category: expCategory,
+      description: expDesc.trim(),
+    })
+    if (res.success) {
+      toast.success('Gasto registrado exitosamente')
+      setExpAmount('')
+      setExpDesc('')
+    }
+  }
+
   return (
     <motion.div
       variants={containerVariants}
@@ -362,36 +523,68 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
-      {/* KPIs: 2 col mobile → 4 col desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      {/* Financial Export Panel */}
+      <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <TrendingUp size={20} className="text-brand-400 shrink-0" />
+          <div>
+            <h3 className="text-sm font-bold text-white">Reportes Financieros Ejecutivos</h3>
+            <p className="text-xs text-muted-400 mt-0.5">Exporta reportes oficiales de facturación, abonos y gastos operacionales</p>
+          </div>
+        </div>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button
+            onClick={exportToPDF}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-glow-sm"
+          >
+            <Download size={14} /> Exportar PDF
+          </button>
+          <button
+            onClick={exportToExcel}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 border border-subtle text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors"
+          >
+            <Download size={14} /> Exportar Excel
+          </button>
+        </div>
+      </motion.div>
+
+      {/* KPIs: 2 col mobile → 3 col tablet → 5 col desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
         {[
           {
-            title: "Revenue Total",
+            title: "Ingresos (Recaudado)",
             value: format$(totalRevenue),
             icon: <DollarSign size={18} />,
             color: "brand",
             subtitle: `${paid.length} facturas pagadas`
           },
           {
-            title: "Pendiente",
+            title: "Pendiente por Cobrar",
             value: format$(pendingRevenue),
             icon: <Clock size={18} />,
             color: "warning",
             subtitle: `${pending.length + overdue.length} facturas`
           },
           {
-            title: "Atrasadas",
-            value: overdue.length,
-            icon: <AlertTriangle size={18} />,
+            title: "Gastos (Egresos)",
+            value: format$(totalExpenses),
+            icon: <Coins size={18} />,
             color: "danger",
-            subtitle: overdue.length > 0 ? `${format$(overdueList.reduce((s,i)=>s+i.total,0))} en riesgo` : 'Sin atrasos'
+            subtitle: `${expenses.length} egresos registrados`
           },
           {
-            title: "Clientes Activos",
+            title: "Utilidad Neta Real",
+            value: format$(totalRevenue - totalExpenses),
+            icon: <DollarSign size={18} />,
+            color: "success",
+            subtitle: "Total Ingresos - Gastos"
+          },
+          {
+            title: "Clientes Frecuentes",
             value: clients.filter((c) => c.type === 'frequent').length,
             icon: <Users size={18} />,
-            color: "success",
-            subtitle: `${products.length} productos`
+            color: "brand",
+            subtitle: `${clients.length} clientes totales`
           }
         ].map((kpi, i) => (
           <motion.div 
@@ -412,7 +605,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-brand-400" />
-              <span className="text-sm font-semibold text-white">Revenue vs Pendiente</span>
+              <span className="text-sm font-semibold text-white">Flujo de Caja: Ingresos vs Gastos vs Utilidad</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Filtrar:</span>
@@ -435,17 +628,23 @@ export default function Dashboard() {
                   <stop offset="5%"  stopColor="#7c3aed" stopOpacity={0.25} />
                   <stop offset="95%" stopColor="#7c3aed" stopOpacity={0}   />
                 </linearGradient>
-                <linearGradient id="pendingGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#f59e0b" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}   />
+                <linearGradient id="expensesGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#ef4444" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0}   />
+                </linearGradient>
+                <linearGradient id="netProfitGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#10b981" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}   />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
               <XAxis dataKey="month" tick={{ fill: '#6b7280', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v}`} />
               <Tooltip content={<CustomTooltip formatFn={format$} />} />
-              <Area type="monotone" dataKey="revenue" name="revenue" stroke="#7c3aed" strokeWidth={2} fill="url(#revenueGrad)" />
-              <Area type="monotone" dataKey="pending" name="pending" stroke="#f59e0b" strokeWidth={2} fill="url(#pendingGrad)" />
+              <Legend verticalAlign="top" height={36} iconSize={10} wrapperStyle={{ fontSize: 10 }} />
+              <Area type="monotone" dataKey="revenue" name="Ingresos" stroke="#7c3aed" strokeWidth={2} fill="url(#revenueGrad)" />
+              <Area type="monotone" dataKey="expenses" name="Gastos" stroke="#ef4444" strokeWidth={2} fill="url(#expensesGrad)" />
+              <Area type="monotone" dataKey="netProfit" name="Utilidad" stroke="#10b981" strokeWidth={2} fill="url(#netProfitGrad)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -794,6 +993,112 @@ export default function Dashboard() {
           </motion.div>
         </>
       )}
+
+      {/* Operating Expenses Section */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        {/* Form: Register Expense */}
+        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b border-white/5">
+            <Coins size={18} className="text-brand-400" />
+            <h3 className="text-sm font-bold text-white">Registrar Egreso / Gasto</h3>
+          </div>
+          <form onSubmit={handleExpenseSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs text-muted-400 mb-1 block">Monto del gasto ($) *</label>
+              <input 
+                type="number"
+                required
+                value={expAmount}
+                onChange={e => setExpAmount(e.target.value)}
+                placeholder="Ej: 50000"
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-400 mb-1 block">Categoría *</label>
+              <select
+                value={expCategory}
+                onChange={e => setExpCategory(e.target.value)}
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+              >
+                <option value="Inventario/Mercancía">Inventario/Mercancía</option>
+                <option value="Alquiler/Servicios">Alquiler/Servicios</option>
+                <option value="Marketing/Publicidad">Marketing/Publicidad</option>
+                <option value="Salarios/Nómina">Salarios/Nómina</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-muted-400 mb-1 block">Descripción / Detalle</label>
+              <textarea 
+                value={expDesc}
+                onChange={e => setExpDesc(e.target.value)}
+                placeholder="Ej: Pago de recibo de energía eléctrica o compra de bolsas..."
+                rows={3}
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
+              />
+            </div>
+            <button 
+              type="submit"
+              className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow-sm transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus size={14} /> Registrar Egreso
+            </button>
+          </form>
+        </div>
+
+        {/* List: Recent Expenses */}
+        <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[350px]">
+          <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4 shrink-0">
+            <div className="flex items-center gap-2">
+              <FileText size={18} className="text-brand-400" />
+              <h3 className="text-sm font-bold text-white">Historial de Egresos</h3>
+            </div>
+            <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
+              {expenses.length} Transacciones
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto no-scrollbar space-y-2">
+            {expenses.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center text-muted-400">
+                <Coins size={32} className="text-muted-500 mb-2" />
+                <p className="text-xs">No se han registrado gastos operacionales aún.</p>
+              </div>
+            ) : (
+              expenses.map((e) => (
+                <div key={e.id} className="flex items-center justify-between p-3 rounded-xl bg-surface-700/20 border border-white/5 hover:border-white/10 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-danger-500/10 border border-danger-500/20 flex items-center justify-center text-danger-400 font-bold text-xs shrink-0">
+                      $
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white">{e.description || 'Gasto Operacional'}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[9px] bg-surface-600 text-muted-300 px-1.5 py-0.2 rounded font-medium">{e.category}</span>
+                        <span className="text-[9px] text-muted-500">{new Date(e.created_at).toLocaleDateString('es-CO')}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-extrabold text-danger-400">-{format$(e.amount)}</span>
+                    <button
+                      onClick={() => {
+                        deleteExpense(e.id)
+                        toast.success('Egreso eliminado')
+                      }}
+                      className="p-1 rounded text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
+                      title="Eliminar registro"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
   )
 }

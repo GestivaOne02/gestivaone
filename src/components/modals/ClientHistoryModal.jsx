@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
-import { FileText, Clock, AlertTriangle, CheckCircle, Package, Plus, Coins, Check, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
+import { FileText, Clock, AlertTriangle, CheckCircle, Package, Plus, Coins, Check, Loader2, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useUIStore } from '@/store/useUIStore'
+import { useAuthStore } from '@/store/useAuthStore'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import clsx from 'clsx'
@@ -48,7 +49,7 @@ function StatusBadge({ status }) {
   )
 }
 
-function InvoiceItemCard({ inv, format$ }) {
+function InvoiceItemCard({ inv, format$, client }) {
   const registerAbono = useInvoiceStore((s) => s.registerAbono)
   const [showAbonoForm, setShowAbonoForm] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
@@ -58,6 +59,26 @@ function InvoiceItemCard({ inv, format$ }) {
 
   const { text: noteText, payments, paidAmount } = parseInvoiceNote(inv.note)
   const remaining = Math.max(0, inv.total - paidAmount)
+
+  const handleWhatsAppShare = () => {
+    const user = useAuthStore.getState().user
+    const companyName = user?.companyName || 'Mi Empresa'
+    const clientName = client?.name || 'Cliente'
+    const clientPhone = client?.phone || ''
+    
+    let text = ''
+    if (inv.payment_status === 'paid') {
+      text = `Hola *${clientName}*, te saluda *${companyName}*. \n\nConfirmamos que tu *Factura #${inv.id.slice(0, 8)}* por un total de *${format$(inv.total)}* ha sido *PAGADA* con éxito. ¡Muchas gracias por tu confianza! 🌟`
+    } else {
+      text = `Hola *${clientName}*, te saluda *${companyName}*. \n\nTe compartimos el estado de cuenta de tu *Factura #${inv.id.slice(0, 8)}*:\n• Total Factura: *${format$(inv.total)}*\n• Total Abonado: *${format$(paidAmount)}*\n• *Saldo Pendiente: ${format$(remaining)}*\n\nPuedes realizar tus abonos o el pago del saldo a través de nuestros canales habituales. ¡Muchas gracias! 🙏`
+    }
+    
+    const cleanPhone = clientPhone.replace(/[^0-9]/g, '')
+    const formattedPhone = cleanPhone.length === 10 ? `57${cleanPhone}` : cleanPhone
+    
+    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(text)}`
+    window.open(url, '_blank')
+  }
 
   const handleAbonoSubmit = async (e) => {
     e.preventDefault()
@@ -150,6 +171,15 @@ function InvoiceItemCard({ inv, format$ }) {
           <span className="text-xs">{inv.items?.length || 0} artículos</span>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleWhatsAppShare}
+            title={inv.payment_status === 'paid' ? "Compartir Factura por WhatsApp" : "Enviar Recordatorio por WhatsApp"}
+            className="p-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center justify-center gap-1 text-[11px] font-bold"
+          >
+            <MessageSquare size={12} />
+            <span>{inv.payment_status === 'paid' ? 'Compartir' : 'Recordar'}</span>
+          </button>
           {inv.payment_status !== 'paid' && (
             <button
               onClick={() => setShowAbonoForm(!showAbonoForm)}
@@ -271,7 +301,7 @@ export default function ClientHistoryModal({ open }) {
             </div>
           ) : (
             clientInvoices.map((inv) => (
-              <InvoiceItemCard key={inv.id} inv={inv} format$={format$} />
+              <InvoiceItemCard key={inv.id} inv={inv} format$={format$} client={client} />
             ))
           )}
         </div>
