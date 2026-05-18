@@ -15,9 +15,6 @@ import { useProductStore } from '@/store/useProductStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore, ROLES, PLANS } from '@/store/useAuthStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
-import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
-import * as XLSX from 'xlsx'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -360,8 +357,9 @@ export default function Dashboard() {
     )
   }
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     try {
+      const XLSX = await import('xlsx')
       const invData = invoices.map(i => ({
         'ID Factura': i.id,
         'Cliente': i.client_name,
@@ -394,8 +392,10 @@ export default function Dashboard() {
     }
   }
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     try {
+      const { jsPDF } = await import('jspdf')
+      await import('jspdf-autotable')
       const doc = new jsPDF()
       const companyName = user?.companyName || 'Mi Empresa'
       
