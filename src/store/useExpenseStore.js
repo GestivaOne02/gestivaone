@@ -6,9 +6,16 @@ export const useExpenseStore = create(
     (set, get) => ({
       expenses: [
         // Mock data to pre-populate beautifully for the demo
-        { id: 'exp-1', amount: 450000, category: 'Inventario/Mercancía', description: 'Compra de stock inicial', created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString() },
-        { id: 'exp-2', amount: 150000, category: 'Alquiler/Servicios', description: 'Pago de electricidad y local', created_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString() },
-        { id: 'exp-3', amount: 80000, category: 'Marketing/Publicidad', description: 'Campaña de anuncios Facebook', created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
+        { id: 'exp-1', amount: 180000, category: 'Marketing/Publicidad', description: 'Campaña anuncios Facebook Ads', created_at: '2025-08-25T11:00:00Z' },
+        { id: 'exp-2', amount: 320000, category: 'Inventario/Mercancía', description: 'Compra de stock inicial granos de café', created_at: '2025-09-10T14:30:00Z' },
+        { id: 'exp-3', amount: 150000, category: 'Alquiler/Servicios', description: 'Servicio de Internet y Electricidad local', created_at: '2025-10-18T09:00:00Z' },
+        { id: 'exp-4', amount: 480000, category: 'Salarios/Nómina', description: 'Pago de honorarios soporte', created_at: '2025-11-25T17:00:00Z' },
+        { id: 'exp-5', amount: 620000, category: 'Inventario/Mercancía', description: 'Importación tazas y accesorios de empaque', created_at: '2025-12-15T15:30:00Z' },
+        { id: 'exp-6', amount: 220000, category: 'Alquiler/Servicios', description: 'Pago arriendo oficina coworking principal', created_at: '2026-01-10T10:00:00Z' },
+        { id: 'exp-7', amount: 190000, category: 'Marketing/Publicidad', description: 'Material POP impreso y volantes', created_at: '2026-02-20T11:45:00Z' },
+        { id: 'exp-8', amount: 350000, category: 'Inventario/Mercancía', description: 'Reabastecimiento inventario té matcha', created_at: '2026-03-15T16:20:00Z' },
+        { id: 'exp-9', amount: 280000, category: 'Salarios/Nómina', description: 'Nómina soporte técnico del mes', created_at: '2026-04-20T12:00:00Z' },
+        { id: 'exp-10', amount: 140000, category: 'Otros', description: 'Gastos de papelería y cafetería oficina', created_at: '2026-05-10T14:30:00Z' }
       ],
 
       addExpense: (expense) => {
