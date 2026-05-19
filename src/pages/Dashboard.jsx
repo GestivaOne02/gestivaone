@@ -1107,39 +1107,34 @@ export default function Dashboard() {
                           if (activeCat) {
                             const activePercentage = Math.round((activeCat.value / totalCategoryUnits) * 100)
                             return (
-                              <>
-                                <span className="text-[20px] font-black text-brand-400 drop-shadow-[0_0_8px_rgba(139,92,246,0.3)] leading-none">
+                              <div className="flex flex-col items-center leading-tight">
+                                <span className="text-[22px] font-black text-brand-400 drop-shadow-[0_0_8px_rgba(139,92,246,0.3)] leading-none">
                                   {activePercentage}%
                                 </span>
-                                <span className="text-[9px] text-muted-400 font-bold uppercase tracking-wider mt-1.5 truncate max-w-[80px]">
+                                <span className="text-[10px] text-white font-extrabold uppercase tracking-wide mt-1.5 truncate max-w-[90px] text-center">
                                   {activeCat.name}
                                 </span>
-                              </>
+                                <span className="text-[8px] text-muted-400 font-bold mt-0.5">
+                                  {activeCat.value} uds
+                                </span>
+                              </div>
                             )
                           }
                           return (
-                            <>
-                              <span className="text-[17px] font-black text-white leading-none">
+                            <div className="flex flex-col items-center leading-tight">
+                              <span className="text-[18px] font-black text-white leading-none">
                                 {totalCategoryUnits}
                               </span>
-                              <span className="text-[8.5px] text-muted-400 font-bold uppercase tracking-widest mt-1.5">
+                              <span className="text-[9px] text-muted-400 font-extrabold uppercase tracking-widest mt-1.5">
                                 unidades
                               </span>
-                            </>
+                            </div>
                           )
                         })()}
                       </div>
 
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Tooltip content={({ active, payload }) => 
-                            active && payload?.length ? (
-                              <div className="glass border border-subtle rounded-xl px-3 py-2 text-xs">
-                                <p className="text-muted-400 mb-1">{payload[0].name}</p>
-                                <p className="text-white font-semibold">{payload[0].value} uds vendidas</p>
-                              </div>
-                            ) : null
-                          } />
                           <Pie
                             data={categoryData}
                             dataKey="value"
