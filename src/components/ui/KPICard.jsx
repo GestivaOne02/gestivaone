@@ -3,10 +3,10 @@ import clsx from 'clsx'
 
 export default function KPICard({ title, value, subtitle, icon, trend, color = 'brand', loading = false, collapsed = false }) {
   const colors = {
-    brand:   'from-brand-500 to-brand-700 border-white/10 text-white shadow-glow-sm',
-    success: 'from-success-500 to-emerald-600 border-white/10 text-white',
-    warning: 'from-amber-500 to-warning-600 border-white/10 text-white',
-    danger:  'from-danger-500 to-red-600 border-white/10 text-white',
+    brand:   'bg-brand-600 border-white/10 text-white shadow-glow-sm',
+    success: 'bg-success-500 border-white/10 text-white',
+    warning: 'bg-warning-500 border-white/10 text-white',
+    danger:  'bg-danger-500 border-white/10 text-white',
   }
 
   const premiumTransition = {
@@ -17,7 +17,7 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
     <motion.div
       whileHover={collapsed ? undefined : { y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}
       className={clsx(
-        'relative overflow-hidden bg-gradient-to-br border rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-center select-none',
+        'relative overflow-hidden border rounded-2xl p-4 sm:p-5 h-full flex flex-col justify-center select-none',
         colors[color],
         collapsed ? 'items-center justify-center p-3 border-subtle bg-surface-700/50 backdrop-blur-sm' : ''
       )}

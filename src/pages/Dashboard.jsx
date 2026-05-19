@@ -709,10 +709,12 @@ export default function Dashboard() {
             subtitle: `${clients.length} clientes totales`
           }
         ].map((kpi, i) => (
-          <div
+          <motion.div
             key={kpi.title}
             onMouseEnter={() => handleKpiMouseEnter(i)}
             onMouseLeave={handleKpiMouseLeave}
+            layout
+            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
             className={clsx(
               "h-full shrink-0",
               hoveredKpi === i
@@ -721,15 +723,12 @@ export default function Dashboard() {
                   ? "flex-[0.62] max-w-[85px]"
                   : "flex-1"
             )}
-            style={{
-              transition: 'all 850ms cubic-bezier(0.4, 0, 0.2, 1)'
-            }}
           >
             <KPICard
               {...kpi}
               collapsed={hoveredKpi !== null && hoveredKpi !== i}
             />
-          </div>
+          </motion.div>
         ))}
       </div>
 
