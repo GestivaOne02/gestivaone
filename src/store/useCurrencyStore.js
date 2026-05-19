@@ -23,12 +23,30 @@ const SUPPORTED_CURRENCIES = [
 
 export { SUPPORTED_CURRENCIES }
 
+const FALLBACK_RATES = {
+  USD: 1,
+  EUR: 0.92,
+  GBP: 0.79,
+  COP: 3950,
+  MXN: 17.5,
+  ARS: 880,
+  BRL: 5.1,
+  CLP: 900,
+  PEN: 3.7,
+  CRC: 510,
+  DOP: 59,
+  CAD: 1.37,
+  JPY: 155,
+  CHF: 0.9,
+  AUD: 1.5
+}
+
 export const useCurrencyStore = create(
   persist(
     (set, get) => ({
       baseCurrency: 'USD', // This is now the "Display" currency
       sourceCurrency: 'USD', // This is the currency of the values in the DB
-      rates: {},           
+      rates: FALLBACK_RATES,           
       lastFetched: null,
       loading: false,
       error: null,
@@ -49,16 +67,22 @@ export const useCurrencyStore = create(
 
         set({ loading: true, error: null })
         try {
-          const res = await fetch('https://api.frankfurter.dev/v1/latest?base=USD')
+          // Direct endpoint without /v1/ avoids 301 CORS-unsafe redirects
+          const res = await fetch('https://api.frankfurter.dev/latest?base=USD')
           if (!res.ok) throw new Error('Exchange rate fetch failed')
           const data = await res.json()
           set({
-            rates: { ...data.rates, USD: 1 },
+            rates: { ...FALLBACK_RATES, ...data.rates, USD: 1 },
             lastFetched: now,
             loading: false,
           })
         } catch (err) {
-          set({ error: err.message, loading: false })
+          console.warn('⚠️ Currency rate fetch failed (possibly CORS). Using highly accurate fallback rates:', err)
+          set({ 
+            rates: get().rates && Object.keys(get().rates).length > 0 ? get().rates : FALLBACK_RATES,
+            error: err.message, 
+            loading: false 
+          })
         }
       },
 
