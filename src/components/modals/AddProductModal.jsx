@@ -109,7 +109,7 @@ export default function AddProductModal({ open }) {
           <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Categoría</label>
           <select
             {...register('category')}
-            className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+            className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50"
           >
             {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>

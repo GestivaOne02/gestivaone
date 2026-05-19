@@ -27,7 +27,7 @@ const Input = forwardRef(({
         <input
           ref={ref}
           className={clsx(
-            'w-full bg-surface-700 border rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-muted-400 outline-none transition-all duration-150',
+            'w-full bg-surface-700 border rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-400 outline-none transition-all duration-150',
             'focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500',
             error
               ? 'border-danger-500 focus:ring-danger-500/50'

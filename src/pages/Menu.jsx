@@ -74,7 +74,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
       {/* Info */}
       <div className="flex-1 min-w-0 pr-2">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-white truncate">{client.name}</p>
+          <p className="text-sm font-semibold text-foreground truncate">{client.name}</p>
           {selected && <Check size={12} className="text-brand-400 shrink-0" />}
         </div>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -227,7 +227,7 @@ export default function Menu() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users size={16} className="text-brand-400" />
-            <span className="text-sm font-semibold text-white">Clientes Frecuentes</span>
+            <span className="text-sm font-semibold text-foreground">Clientes Frecuentes</span>
             <span className="text-xs text-muted-400 bg-surface-600 px-2 py-0.5 rounded-full">{frequent.length}</span>
           </div>
         </div>

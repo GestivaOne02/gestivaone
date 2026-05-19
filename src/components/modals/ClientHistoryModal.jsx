@@ -108,7 +108,7 @@ function InvoiceItemCard({ inv, format$, client }) {
     <div className="bg-surface-800 border border-white/5 rounded-xl p-4 hover:border-white/20 transition-all duration-300">
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h4 className="text-sm font-bold text-white mb-1">Factura #{inv.id.slice(0, 8)}</h4>
+          <h4 className="text-sm font-bold text-foreground mb-1">Factura #{inv.id.slice(0, 8)}</h4>
           <p className="text-xs text-muted-400">
             {format(new Date(inv.created_at), "d 'de' MMMM, yyyy - HH:mm", { locale: es })}
           </p>
@@ -124,7 +124,7 @@ function InvoiceItemCard({ inv, format$, client }) {
         <div className="mt-2.5 p-2.5 rounded-lg bg-surface-700/20 border border-white/5 flex flex-col gap-1.5 text-xs">
           <div className="flex justify-between text-muted-400">
             <span>Total Factura:</span>
-            <span className="font-semibold text-white">{format$(inv.total)}</span>
+            <span className="font-semibold text-foreground">{format$(inv.total)}</span>
           </div>
           <div className="flex justify-between text-muted-400">
             <span>Abonado:</span>
@@ -189,7 +189,7 @@ function InvoiceItemCard({ inv, format$, client }) {
               Abonar
             </button>
           )}
-          <span className="text-sm font-bold text-white">{format$(inv.total)}</span>
+          <span className="text-sm font-bold text-foreground">{format$(inv.total)}</span>
         </div>
       </div>
 
@@ -211,7 +211,7 @@ function InvoiceItemCard({ inv, format$, client }) {
                 placeholder={`Máx ${remaining}`}
                 max={remaining}
                 min={1}
-                className="w-full bg-surface-800 border border-subtle rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-muted-400 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                className="w-full bg-surface-800 border border-subtle rounded-lg px-3 py-1.5 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
               />
             </div>
             <div>
@@ -221,7 +221,7 @@ function InvoiceItemCard({ inv, format$, client }) {
                 value={ref}
                 onChange={(e) => setRef(e.target.value)}
                 placeholder="Nequi, Efectivo..."
-                className="w-full bg-surface-800 border border-subtle rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-muted-400 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                className="w-full bg-surface-800 border border-subtle rounded-lg px-3 py-1.5 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
               />
             </div>
           </div>

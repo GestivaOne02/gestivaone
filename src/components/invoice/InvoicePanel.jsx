@@ -80,7 +80,7 @@ export default function InvoicePanel({ isMobile }) {
                   </div>
                   <div className="flex items-center gap-2 px-5 py-3 border-b border-subtle">
                     <FileText size={16} className="text-brand-400" />
-                    <span className="text-sm font-semibold text-white flex-1">Factura en Tiempo Real</span>
+                    <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1">Factura en Tiempo Real</span>
                     {items.length > 0 && (
                       <button
                         onClick={clearCart}
@@ -92,7 +92,7 @@ export default function InvoicePanel({ isMobile }) {
                     )}
                     <button
                       onClick={togglePanel}
-                      className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600 transition-colors"
+                      className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors"
                     >
                       <ChevronDown size={16} />
                     </button>
@@ -107,10 +107,10 @@ export default function InvoicePanel({ isMobile }) {
                         <User size={12} className="text-brand-300" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-white truncate">{selectedClient.name}</p>
+                        <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
                         <p className="text-[10px] text-muted-400 truncate">{selectedClient.email || 'Sin correo'}</p>
                       </div>
-                      <button onClick={clearClientSel} className="text-muted-400 hover:text-white">
+                      <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground">
                         <X size={12} />
                       </button>
                     </div>
@@ -141,7 +141,7 @@ export default function InvoicePanel({ isMobile }) {
                         >
                           <div className="flex items-start gap-2">
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-white truncate">{item.name}</p>
+                              <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
                               <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
                             </div>
                             <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 p-0.5">
@@ -153,7 +153,7 @@ export default function InvoicePanel({ isMobile }) {
                               <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
                                 <Minus size={10} />
                               </button>
-                              <span className="text-xs font-semibold text-white w-6 text-center">{item.qty}</span>
+                              <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
                               <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
                                 <Plus size={10} />
                               </button>
@@ -185,7 +185,7 @@ export default function InvoicePanel({ isMobile }) {
                       <span className="text-white font-medium">{format(taxAmount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-sm font-bold text-white">
+                  <div className="flex justify-between text-sm font-bold text-foreground">
                     <span>Total</span>
                     <span>{format(total)}</span>
                   </div>
@@ -217,7 +217,7 @@ export default function InvoicePanel({ isMobile }) {
         onClick={togglePanel}
         animate={{ right: panelOpen ? 284 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-        className="fixed top-1/2 -translate-y-1/2 z-20 bg-surface-700 border border-subtle rounded-l-xl px-1.5 py-4 text-muted-400 hover:text-white hover:bg-surface-600 transition-colors"
+        className="fixed top-1/2 -translate-y-1/2 z-20 bg-surface-700 border border-subtle rounded-l-xl px-1.5 py-4 text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors"
       >
         <motion.div animate={{ rotate: panelOpen ? 0 : 180 }}>
           <ChevronRight size={14} />
@@ -234,7 +234,7 @@ export default function InvoicePanel({ isMobile }) {
         animate={{ width: panelOpen ? 288 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
         className={clsx(
-          "sidebar-premium-dark h-screen bg-surface-800 flex flex-col overflow-hidden shrink-0 z-10",
+          "h-screen bg-surface-800 flex flex-col overflow-hidden shrink-0 z-10",
           panelOpen ? "border-l border-subtle" : "border-l-0"
         )}
       >
@@ -243,7 +243,7 @@ export default function InvoicePanel({ isMobile }) {
           {/* Header */}
           <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
             <FileText size={16} className="text-brand-400" />
-            <span className="text-sm font-semibold text-white flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
+            <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
             {items.length > 0 && (
               <button onClick={clearCart} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors shrink-0" title="Limpiar carrito">
                 <Trash2 size={13} />
@@ -259,10 +259,10 @@ export default function InvoicePanel({ isMobile }) {
                   <User size={12} className="text-brand-300" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-white truncate">{selectedClient.name}</p>
+                  <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
                   <p className="text-[10px] text-muted-400 truncate">{selectedClient.email || 'Sin correo'}</p>
                 </div>
-                <button onClick={clearClientSel} className="text-muted-400 hover:text-white shrink-0">
+                <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground shrink-0">
                   <X size={12} />
                 </button>
               </div>
@@ -299,7 +299,7 @@ export default function InvoicePanel({ isMobile }) {
                   >
                     <div className="flex items-start gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{item.name}</p>
+                        <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
                         <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
                       </div>
                       <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5 shrink-0">
@@ -311,7 +311,7 @@ export default function InvoicePanel({ isMobile }) {
                         <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
                           <Minus size={9} />
                         </button>
-                        <span className="text-xs font-semibold text-white w-6 text-center">{item.qty}</span>
+                        <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
                         <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
                           <Plus size={9} />
                         </button>
@@ -335,7 +335,7 @@ export default function InvoicePanel({ isMobile }) {
           <div className="p-4 border-t border-subtle shrink-0 space-y-3">
             <div className="flex justify-between text-xs text-muted-400">
               <span>Subtotal</span>
-              <span className="text-white font-medium">{format(subtotal)}</span>
+              <span className="text-foreground font-medium">{format(subtotal)}</span>
             </div>
             {taxRate > 0 && (
               <div className="flex items-center justify-between text-xs text-muted-400">
@@ -343,14 +343,14 @@ export default function InvoicePanel({ isMobile }) {
                   <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
                     {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
                   </div>
-                  <span className={clsx("transition-colors select-none", includeTax ? "text-white" : "text-muted-400 group-hover:text-surface-300")}>
+                  <span className={clsx("transition-colors select-none", includeTax ? "text-foreground font-semibold" : "text-muted-400 group-hover:text-muted-500")}>
                     IVA ({(taxRate * 100).toFixed(0)}%)
                   </span>
                 </div>
-                <span className="text-white font-medium">{format(taxAmount)}</span>
+                <span className="text-foreground font-medium">{format(taxAmount)}</span>
               </div>
             )}
-            <div className="flex justify-between text-sm font-bold text-white">
+            <div className="flex justify-between text-sm font-bold text-foreground">
               <span>Total</span>
               <motion.span
                 key={total}

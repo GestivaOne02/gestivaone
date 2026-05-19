@@ -43,7 +43,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">{product.name}</p>
+          <p className="text-sm font-semibold text-foreground truncate">{product.name}</p>
           <p className="text-[11px] text-muted-400 mt-0.5">{product.category}</p>
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -58,7 +58,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
 
       {/* Price & unit */}
       <div className="flex items-center justify-between">
-        <span className="text-lg font-bold text-white">{format$(product.price)}</span>
+        <span className="text-lg font-bold text-foreground">{format$(product.price)}</span>
         <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
           {product.unit}
         </span>
@@ -85,7 +85,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           value={qty}
           onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
           disabled={product.stock !== undefined && product.stock <= 0}
-          className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-white text-center focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <motion.button
           whileTap={product.stock !== undefined && product.stock <= 0 ? {} : { scale: 0.95 }}
@@ -215,7 +215,7 @@ export default function Products() {
                   value={freeName}
                   onChange={(e) => setFreeName(e.target.value)}
                   placeholder="Ej: Transporte, Descuento..."
-                  className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-2 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                  className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
                 />
               </div>
               <div className="w-36">
@@ -226,7 +226,7 @@ export default function Products() {
                   onChange={(e) => setFreePrice(e.target.value)}
                   placeholder="0.00"
                   step="0.01"
-                  className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-2 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                  className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
                 />
               </div>
               <Button variant="primary" size="md" icon={<Plus size={14} />} onClick={handleFreeAdd}>

@@ -29,7 +29,7 @@ function SectionTitle({ icon: Icon, title, desc }) {
         <Icon size={18} />
       </div>
       <div>
-        <h2 className="text-sm font-semibold text-white">{title}</h2>
+        <h2 className="text-sm font-bold text-brand-600 dark:text-brand-400">{title}</h2>
         {desc && <p className="text-xs text-muted-400 mt-0.5">{desc}</p>}
       </div>
     </div>
@@ -113,7 +113,7 @@ export default function Settings() {
         <div className="flex items-center gap-3 bg-surface-700 border border-subtle rounded-xl p-4">
           <div className="text-2xl">{selectedCurrency?.flag}</div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-white">
+            <p className="text-sm font-bold text-brand-600 dark:text-brand-400">
               {selectedCurrency?.name} ({baseCurrency})
             </p>
             {rates[baseCurrency] && baseCurrency !== 'USD' ? (
@@ -153,12 +153,12 @@ export default function Settings() {
 
         {/* Currency selector */}
         <div className="space-y-3">
-          <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Seleccionar divisa</label>
+          <label className="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wide">Seleccionar divisa</label>
           <input
             value={currencySearch}
             onChange={(e) => setCurrencySearch(e.target.value)}
             placeholder="Buscar divisa..."
-            className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+            className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
           />
           <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
             {filteredCurrencies.map((currency) => (
@@ -179,10 +179,10 @@ export default function Settings() {
               >
                 <span className="text-lg">{currency.flag}</span>
                 <div className="flex-1 min-w-0">
-                  <p className={clsx('text-xs font-bold', baseCurrency === currency.code ? 'text-brand-300' : 'text-white')}>
+                  <p className={clsx('text-xs font-bold transition-colors', baseCurrency === currency.code ? 'text-brand-600 dark:text-brand-300' : 'text-foreground')}>
                     {currency.code}
                   </p>
-                  <p className="text-[10px] text-muted-400 truncate">{currency.name}</p>
+                  <p className={clsx('text-[10px] truncate transition-colors', baseCurrency === currency.code ? 'text-brand-500/80 dark:text-brand-400/80' : 'text-muted-500 dark:text-muted-400')}>{currency.name}</p>
                 </div>
                 {baseCurrency === currency.code && (
                   <Check size={13} className="text-brand-400 shrink-0" />
@@ -250,7 +250,7 @@ export default function Settings() {
                   <Icon size={18} />
                 </div>
                 <div>
-                  <p className={clsx('text-sm font-semibold', active ? 'text-white' : 'text-muted-400')}>
+                  <p className={clsx('text-sm font-semibold', active ? 'text-foreground font-bold' : 'text-muted-400')}>
                     {label}
                   </p>
                   <p className="text-[10px] text-muted-400 mt-0.5 leading-tight">{desc}</p>
@@ -345,7 +345,7 @@ function CfgInput({ label, value, onChange, placeholder, type = 'text' }) {
     <div>
       <label className="text-xs text-muted-400 mb-1 block">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+        className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
     </div>
   )
 }
@@ -392,7 +392,7 @@ function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon size={16} /></div>
         <div className="flex-1 text-left">
-          <p className="text-sm font-semibold text-white">{title}</p>
+          <p className="text-sm font-semibold text-foreground">{title}</p>
           <p className="text-xs text-muted-400">{desc}</p>
         </div>
         <Toggle checked={cfg.enabled} onChange={v => { setCfg({ enabled: v }); toast(v ? `${title} activado` : `${title} desactivado`, { duration: 1500 }) }} />
@@ -454,7 +454,7 @@ function ApiBlock() {
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Server size={16} /></div>
         <div className="flex-1 text-left">
-          <p className="text-sm font-semibold text-white">Backend API REST</p>
+          <p className="text-sm font-semibold text-foreground">Backend API REST</p>
           <p className="text-xs text-muted-400">Sincronización multi-dispositivo</p>
         </div>
         <span className={clsx('text-[10px] font-semibold px-2 py-0.5 rounded-full border', statusColor,
@@ -516,7 +516,7 @@ function ExportBlock() {
           <Lock size={20} />
         </div>
         <div>
-          <p className="text-sm font-bold text-white">Reportes PDF/Excel bloqueados</p>
+          <p className="text-sm font-bold text-foreground">Reportes PDF/Excel bloqueados</p>
           <p className="text-xs text-muted-400 max-w-xs mx-auto">Mejora tu plan a Pro para descargar reportes detallados y análisis de tu negocio.</p>
         </div>
         <button className="text-[11px] font-bold text-brand-400 uppercase tracking-widest hover:text-brand-300 transition-colors">

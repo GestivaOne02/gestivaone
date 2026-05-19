@@ -612,7 +612,7 @@ export default function Dashboard() {
           </button>
           <button
             onClick={exportToExcel}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 border border-subtle text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors"
           >
             <Download size={14} /> Exportar Excel
           </button>
@@ -740,7 +740,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-brand-400" />
-              <span className="text-sm font-semibold text-white">Flujo de Caja: Ingresos vs Gastos vs Utilidad</span>
+              <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Flujo de Caja: Ingresos vs Gastos vs Utilidad</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Filtrar:</span>
@@ -788,7 +788,7 @@ export default function Dashboard() {
         <div className="bg-surface-800 border border-subtle rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <FileText size={16} className="text-brand-400" />
-            <span className="text-sm font-semibold text-white">Facturas por estado</span>
+            <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Facturas por estado</span>
           </div>
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={[
@@ -803,7 +803,7 @@ export default function Dashboard() {
                 active && payload?.length ? (
                   <div className="glass border border-subtle rounded-xl px-3 py-2 text-xs">
                     <p className="text-muted-400 mb-1">{label}</p>
-                    <p className="text-white font-semibold">{payload[0].value} facturas</p>
+                    <p className="text-foreground font-semibold">{payload[0].value} facturas</p>
                   </div>
                 ) : null
               } />
@@ -827,7 +827,7 @@ export default function Dashboard() {
             <TrendingUp size={30} />
           </div>
           <div className="max-w-md space-y-2">
-            <h2 className="text-xl font-bold text-white">Análisis Avanzado Bloqueado</h2>
+            <h2 className="text-xl font-bold text-foreground">Análisis Avanzado Bloqueado</h2>
             <p className="text-sm text-muted-400">
               Mejora a un plan <span className="text-brand-400 font-bold">Pro</span> o <span className="text-brand-400 font-bold">Empresarial</span> para visualizar métricas avanzadas, top de ventas, segmentación de clientes y análisis de deuda.
             </p>
@@ -842,7 +842,7 @@ export default function Dashboard() {
           <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-5">
               <div>
-                <h3 className="text-base font-bold text-brand-600 dark:text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-brand-600 dark:text-brand-400 flex items-center gap-2">
                   <TrendingUp className="text-brand-400" size={18} />
                   Analíticas Avanzadas de Ventas
                 </h3>
@@ -861,7 +861,7 @@ export default function Dashboard() {
                         "px-3 py-1 rounded-xl text-xs font-bold border transition-all select-none",
                         selectedYears.includes(yr)
                           ? "bg-brand-600/20 border-brand-500 text-brand-300 shadow-glow-sm"
-                          : "border-subtle bg-surface-700/50 text-muted-400 hover:text-white"
+                          : "border-subtle bg-surface-700/50 text-muted-400 hover:text-foreground"
                       )}
                     >
                       {yr}
@@ -885,8 +885,8 @@ export default function Dashboard() {
                     className={clsx(
                       "px-4 py-1.5 rounded-lg text-xs font-bold transition-all",
                       chartView === t.id
-                        ? "bg-surface-700 text-white shadow"
-                        : "text-muted-400 hover:text-white"
+                        ? "bg-surface-700 text-foreground shadow"
+                        : "text-muted-400 hover:text-foreground"
                     )}
                   >
                     {t.label}
@@ -901,7 +901,7 @@ export default function Dashboard() {
                   <select
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                    className="bg-surface-700 border border-subtle rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand-500/50 cursor-pointer"
+                    className="bg-surface-700 border border-subtle rounded-xl px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500/50 cursor-pointer"
                   >
                     {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'].map((m, idx) => (
                       <option key={m} value={idx}>{m}</option>
@@ -933,7 +933,7 @@ export default function Dashboard() {
                       if (!active || !payload?.length) return null
                       return (
                         <div className="glass border border-subtle rounded-2xl p-3.5 space-y-2 shadow-xl min-w-[160px] animate-scale-up">
-                          <p className="text-xs font-bold text-white border-b border-subtle/50 pb-1.5">
+                          <p className="text-xs font-bold text-foreground border-b border-subtle/50 pb-1.5">
                             {chartView === 'monthly' ? `Día ${label}` : label}
                           </p>
                           <div className="space-y-1">
@@ -941,19 +941,19 @@ export default function Dashboard() {
                               <span className="text-success-400 font-semibold flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-success-500" /> Reconocidas:
                               </span>
-                              <span className="font-bold text-white">{format$(payload[0].value)}</span>
+                              <span className="font-bold text-foreground">{format$(payload[0].value)}</span>
                             </div>
                             <div className="flex items-center justify-between gap-4 text-[11px]">
                               <span className="text-warning-400 font-semibold flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-warning-500" /> Pendientes:
                               </span>
-                              <span className="font-bold text-white">{format$(payload[1].value)}</span>
+                              <span className="font-bold text-foreground">{format$(payload[1].value)}</span>
                             </div>
                             <div className="flex items-center justify-between gap-4 text-[11px]">
                               <span className="text-danger-400 font-semibold flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-danger-500" /> Atrasadas:
                               </span>
-                              <span className="font-bold text-white">{format$(payload[2].value)}</span>
+                              <span className="font-bold text-foreground">{format$(payload[2].value)}</span>
                             </div>
                           </div>
                         </div>
@@ -1014,7 +1014,7 @@ export default function Dashboard() {
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Users size={16} className="text-brand-400" />
-                <span className="text-sm font-semibold text-white">Top Clientes</span>
+                <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Top Clientes</span>
               </div>
               {topClients.length === 0 ? (
                 <p className="text-xs text-muted-400 text-center py-6">Sin datos aún</p>
@@ -1027,7 +1027,7 @@ export default function Dashboard() {
                         {c.name[0].toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{c.name}</p>
+                        <p className="text-xs font-medium text-foreground truncate">{c.name}</p>
                         <p className="text-[10px] text-muted-400">{c.invoiceCount ?? 0} compras</p>
                       </div>
                       <span className="text-xs font-semibold text-success-400">{format$(c.totalRevenue ?? 0)}</span>
@@ -1041,7 +1041,7 @@ export default function Dashboard() {
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp size={16} className="text-brand-400" />
-                <span className="text-sm font-semibold text-white">Productos más vendidos</span>
+                <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Productos más vendidos</span>
               </div>
               {topProducts.length === 0 ? (
                 <p className="text-xs text-muted-400 text-center py-6">Sin ventas aún</p>
@@ -1051,7 +1051,7 @@ export default function Dashboard() {
                     <div key={p.id} className="flex items-center gap-3">
                       <span className="w-5 text-xs text-muted-400 font-semibold">{i + 1}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{p.name}</p>
+                        <p className="text-xs font-medium text-foreground truncate">{p.name}</p>
                         <p className="text-[10px] text-muted-400">{p.category}</p>
                       </div>
                       <span className="text-xs font-semibold text-brand-300">{p.salesCount ?? 0} uds</span>
@@ -1065,7 +1065,7 @@ export default function Dashboard() {
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <AlertTriangle size={16} className="text-danger-400" />
-                <span className="text-sm font-semibold text-white">Clientes con deuda</span>
+                <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Clientes con deuda</span>
               </div>
               {overdueList.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-6">
@@ -1077,7 +1077,7 @@ export default function Dashboard() {
                   {overdueList.map((inv) => (
                     <div key={inv.id} className="flex items-center gap-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-white truncate">{inv.client_name}</p>
+                        <p className="text-xs font-medium text-foreground truncate">{inv.client_name}</p>
                         <p className="text-[10px] text-danger-400">{inv.days} días de atraso</p>
                       </div>
                       <span className="text-xs font-semibold text-danger-400">{format$(inv.total)}</span>
@@ -1090,7 +1090,7 @@ export default function Dashboard() {
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 flex flex-col">
               <div className="flex items-center gap-2 mb-2">
                 <Package size={16} className="text-brand-400" />
-                <span className="text-sm font-semibold text-white">Ventas por Categoría</span>
+                <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Ventas por Categoría</span>
               </div>
               <div className="flex-1 flex flex-col justify-center">
                 {categoryData.length === 0 ? (
@@ -1111,7 +1111,7 @@ export default function Dashboard() {
                                 <span className="text-[22px] font-black text-brand-400 drop-shadow-[0_0_8px_rgba(139,92,246,0.3)] leading-none">
                                   {activePercentage}%
                                 </span>
-                                <span className="text-[10px] text-white font-extrabold uppercase tracking-wide mt-1.5 truncate max-w-[90px] text-center">
+                                <span className="text-[10px] text-foreground font-extrabold uppercase tracking-wide mt-1.5 truncate max-w-[90px] text-center">
                                   {activeCat.name}
                                 </span>
                                 <span className="text-[8px] text-muted-400 font-bold mt-0.5">
@@ -1122,7 +1122,7 @@ export default function Dashboard() {
                           }
                           return (
                             <div className="flex flex-col items-center leading-tight">
-                              <span className="text-[18px] font-black text-white leading-none">
+                              <span className="text-[18px] font-black text-foreground leading-none">
                                 {totalCategoryUnits}
                               </span>
                               <span className="text-[9px] text-muted-400 font-extrabold uppercase tracking-widest mt-1.5">
@@ -1186,7 +1186,7 @@ export default function Dashboard() {
                                 )}
                                 style={{ backgroundColor: cat.fill }}
                               />
-                              <span className={clsx("font-medium truncate transition-colors duration-300", isHovered ? "text-brand-300 font-bold" : "text-white")}>
+                              <span className={clsx("font-medium truncate transition-colors duration-300", isHovered ? "text-brand-300 font-bold" : "text-foreground")}>
                                 {cat.name}
                               </span>
                             </div>
@@ -1213,7 +1213,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b border-white/5">
             <Coins size={18} className="text-brand-400" />
-            <h3 className="text-sm font-bold text-brand-600 dark:text-white">Registrar Egreso / Gasto</h3>
+            <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Registrar Egreso / Gasto</h3>
           </div>
           <form onSubmit={handleExpenseSubmit} className="space-y-4">
             <div>
@@ -1224,7 +1224,7 @@ export default function Dashboard() {
                 value={expAmount}
                 onChange={e => setExpAmount(e.target.value)}
                 placeholder="Ej: 50000"
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
               />
             </div>
             <div>
@@ -1232,7 +1232,7 @@ export default function Dashboard() {
               <select
                 value={expCategory}
                 onChange={e => setExpCategory(e.target.value)}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
               >
                 <option value="Inventario/Mercancía">Inventario/Mercancía</option>
                 <option value="Alquiler/Servicios">Alquiler/Servicios</option>
@@ -1248,7 +1248,7 @@ export default function Dashboard() {
                 onChange={e => setExpDesc(e.target.value)}
                 placeholder="Ej: Pago de recibo de energía eléctrica o compra de bolsas..."
                 rows={3}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
               />
             </div>
             <button 
@@ -1265,7 +1265,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-brand-400" />
-              <h3 className="text-sm font-bold text-brand-600 dark:text-white">Historial de Egresos</h3>
+              <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Historial de Egresos</h3>
             </div>
             <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
               {expenses.length} Transacciones
@@ -1286,7 +1286,7 @@ export default function Dashboard() {
                       $
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-white truncate">{e.description || 'Gasto Operacional'}</p>
+                      <p className="text-xs font-bold text-foreground truncate">{e.description || 'Gasto Operacional'}</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <span className="text-[9px] bg-surface-600 text-muted-300 px-1.5 py-0.2 rounded font-medium">{e.category}</span>
                         <span className="text-[9px] text-muted-500">{new Date(e.created_at).toLocaleDateString('es-CO')}</span>

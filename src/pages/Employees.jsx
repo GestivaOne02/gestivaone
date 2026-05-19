@@ -94,12 +94,12 @@ function AddEmployeeModal({ open, onClose }) {
           <div>
             <label className="text-xs text-muted-400 mb-1 block">Nombre del empleado *</label>
             <input value={name} onChange={e => setName(e.target.value)} placeholder="Ej: María Rodríguez"
-              className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+              className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
           </div>
           <div>
             <label className="text-xs text-muted-400 mb-1 block">Correo electrónico *</label>
             <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="correo@empresa.com"
-              className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+              className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
           </div>
           
           <div>
@@ -179,7 +179,7 @@ export default function Employees() {
             <Users size={28} className="text-muted-400" />
           </div>
           <div>
-            <p className="text-white font-medium">Sin empleados aún</p>
+            <p className="text-foreground font-medium">Sin empleados aún</p>
             <p className="text-sm text-muted-400 mt-1">Añade colaboradores y asígnales roles.</p>
           </div>
         </motion.div>
@@ -208,7 +208,7 @@ export default function Employees() {
                       {(emp.name || emp.full_name || 'E')?.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{emp.name || emp.full_name || 'Sin nombre'}</p>
+                      <p className="text-sm font-semibold text-foreground truncate">{emp.name || emp.full_name || 'Sin nombre'}</p>
                       <p className="text-[11px] text-muted-400 truncate">{emp.email || 'Sin correo'}</p>
                     </div>
                     <div className="relative">
