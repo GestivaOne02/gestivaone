@@ -49,10 +49,15 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
           )}
           style={premiumTransition}
         >
-          <p className="text-[10px] sm:text-xs text-muted-400 uppercase tracking-wider font-semibold mb-1 truncate">{title}</p>
+          <p className="text-[10px] sm:text-xs text-muted-400 uppercase tracking-wider font-semibold mb-1 truncate" title={title}>{title}</p>
           {loading
             ? <div className="h-7 w-24 bg-surface-400 rounded animate-pulse ml-auto" />
-            : <p className="text-base sm:text-xl xl:text-2xl font-black text-white truncate">{value}</p>
+            : <p 
+                className="text-base sm:text-xl xl:text-2xl font-black text-white truncate cursor-help hover:text-brand-300 transition-colors" 
+                title={value}
+              >
+                {value}
+              </p>
           }
           {subtitle && <p className="text-[10px] sm:text-xs text-muted-400 mt-1 truncate">{subtitle}</p>}
         </div>

@@ -104,6 +104,7 @@ export default function Dashboard() {
   // React state variables defined at the very top of the component to prevent TDZ errors
   const [selectedYears, setSelectedYears] = useState([new Date().getFullYear().toString()])
   const [hoveredKpi, setHoveredKpi] = useState(null)
+  const [activeCatIndex, setActiveCatIndex] = useState(null)
   const hoverTimeoutRef = useRef(null)
 
   const handleKpiMouseEnter = (index) => {
@@ -1096,7 +1097,39 @@ export default function Dashboard() {
                   <p className="text-xs text-muted-400 text-center py-10">Sin ventas registradas</p>
                 ) : (
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-1 py-2">
-                    <div className="w-[160px] h-[160px] shrink-0">
+                    {/* Ring Chart wrapper with relative center text */}
+                    <div className="w-[160px] h-[160px] shrink-0 relative flex items-center justify-center">
+                      {/* Interactive Center Ring Info */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-10">
+                        {(() => {
+                          const totalCategoryUnits = categoryData.reduce((acc, c) => acc + c.value, 0)
+                          const activeCat = activeCatIndex !== null ? categoryData[activeCatIndex] : null
+                          if (activeCat) {
+                            const activePercentage = Math.round((activeCat.value / totalCategoryUnits) * 100)
+                            return (
+                              <>
+                                <span className="text-[20px] font-black text-brand-400 drop-shadow-[0_0_8px_rgba(139,92,246,0.3)] leading-none">
+                                  {activePercentage}%
+                                </span>
+                                <span className="text-[9px] text-muted-400 font-bold uppercase tracking-wider mt-1.5 truncate max-w-[80px]">
+                                  {activeCat.name}
+                                </span>
+                              </>
+                            )
+                          }
+                          return (
+                            <>
+                              <span className="text-[17px] font-black text-white leading-none">
+                                {totalCategoryUnits}
+                              </span>
+                              <span className="text-[8.5px] text-muted-400 font-bold uppercase tracking-widest mt-1.5">
+                                unidades
+                              </span>
+                            </>
+                          )
+                        })()}
+                      </div>
+
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Tooltip content={({ active, payload }) => 
@@ -1116,31 +1149,55 @@ export default function Dashboard() {
                             innerRadius={45}
                             outerRadius={65}
                             paddingAngle={4}
+                            onMouseEnter={(_, index) => setActiveCatIndex(index)}
+                            onMouseLeave={() => setActiveCatIndex(null)}
                           >
                             {categoryData.map((entry, i) => (
-                              <Cell key={`cell-${i}`} fill={entry.fill} />
+                              <Cell 
+                                key={`cell-${i}`} 
+                                fill={entry.fill}
+                                style={{
+                                  filter: activeCatIndex === i ? 'drop-shadow(0 0 6px rgba(139,92,246,0.5))' : 'none',
+                                  transform: activeCatIndex === i ? 'scale(1.02)' : 'scale(1)',
+                                  transformOrigin: '50% 50%',
+                                  transition: 'all 0.3s ease'
+                                }}
+                              />
                             ))}
                           </Pie>
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                    <div className="flex-1 w-full space-y-2 max-h-[160px] overflow-y-auto pr-1">
-                      {categoryData.map((cat) => {
-                        const totalUnits = categoryData.reduce((acc, c) => acc + c.value, 0)
-                        const percentage = Math.round((cat.value / totalUnits) * 100)
+
+                    {/* Symmetrical Legend List */}
+                    <div className="flex-1 w-full space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                      {categoryData.map((cat, idx) => {
+                        const isHovered = activeCatIndex === idx
                         return (
-                          <div key={cat.name} className="flex items-center justify-between text-xs gap-3">
+                          <div 
+                            key={cat.name} 
+                            className={clsx(
+                              "flex items-center justify-between text-xs gap-3 py-0.5 px-2 rounded-lg transition-all duration-300 cursor-pointer",
+                              isHovered ? "bg-brand-500/10 scale-102" : "hover:bg-surface-700/40"
+                            )}
+                            onMouseEnter={() => setActiveCatIndex(idx)}
+                            onMouseLeave={() => setActiveCatIndex(null)}
+                          >
                             <div className="flex items-center gap-2 min-w-0">
                               <span 
-                                className="w-2.5 h-2.5 rounded-full shrink-0" 
+                                className={clsx(
+                                  "w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-300",
+                                  isHovered && "scale-110 shadow-glow"
+                                )}
                                 style={{ backgroundColor: cat.fill }}
                               />
-                              <span className="text-white font-medium truncate">{cat.name}</span>
+                              <span className={clsx("font-medium truncate transition-colors duration-300", isHovered ? "text-brand-300 font-bold" : "text-white")}>
+                                {cat.name}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-muted-400">{cat.value} uds</span>
-                              <span className="text-[10px] font-bold bg-surface-700/60 px-1.5 py-0.5 rounded text-brand-300">
-                                {percentage}%
+                              <span className={clsx("transition-colors duration-300", isHovered ? "text-brand-200 font-bold" : "text-muted-400")}>
+                                {cat.value} uds
                               </span>
                             </div>
                           </div>
