@@ -49,7 +49,7 @@ function Section({ icon: Icon, title, desc, children, defaultOpen = false, varia
       <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400 shrink-0"><Icon size={16} /></div>
         <div className="flex-1 text-left">
-          <p className="text-sm font-semibold text-white">{title}</p>
+          <p className="text-sm font-semibold text-brand-600 dark:text-white">{title}</p>
           <p className="text-xs text-muted-400">{desc}</p>
         </div>
         <motion.div
@@ -80,7 +80,7 @@ function Field({ label, value, onChange, type = 'text', placeholder }) {
     <div>
       <label className="text-xs text-muted-400 mb-1 block">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+        className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
     </div>
   )
 }
@@ -124,7 +124,7 @@ function ProfileSection({ user, updateProfile, variants }) {
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleLogo} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">{user?.name || '—'}</p>
+          <p className="text-sm font-semibold text-brand-600 dark:text-white">{user?.name || '—'}</p>
           <p className="text-xs text-muted-400">{user?.email}</p>
           <button onClick={() => fileRef.current?.click()} className="text-[11px] text-brand-400 hover:text-brand-300 mt-1">Cambiar foto/logo</button>
         </div>
@@ -181,7 +181,7 @@ function SecuritySection({ user, updateProfile, variants }) {
     <div className="relative">
       <label className="text-xs text-muted-400 mb-1 block">{label}</label>
       <input type={show ? 'text' : 'password'} value={value} onChange={e => onChange(e.target.value)} placeholder="••••••••"
-        className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 pr-10 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+        className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
       <button type="button" onClick={() => setShow(!show)} className="absolute right-3 bottom-2.5 text-muted-400">
         {show ? <EyeOff size={14} /> : <Eye size={14} />}
       </button>
@@ -205,7 +205,7 @@ function SecuritySection({ user, updateProfile, variants }) {
       <div className="border-t border-subtle pt-4 space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-white">Autenticación de dos factores (2FA)</p>
+            <p className="text-sm font-medium text-foreground">Autenticación de dos factores (2FA)</p>
             <p className="text-xs text-muted-400">Añade una capa extra de seguridad a tu cuenta</p>
           </div>
           <Toggle checked={twoFA} onChange={(v) => { setTwoFA(v); toast(v ? '2FA activado (simulado)' : '2FA desactivado', { icon: v ? '✅' : '🔓' }) }} />
@@ -223,7 +223,7 @@ function SecuritySection({ user, updateProfile, variants }) {
                     className="text-[11px] text-brand-400 flex items-center gap-1"><Copy size={10} /> Copiar</button>
                 </div>
                 <div className="grid grid-cols-4 gap-1.5">
-                  {codes.map(c => <span key={c} className="font-mono text-[11px] text-white bg-surface-700 px-2 py-1 rounded text-center">{c}</span>)}
+                  {codes.map(c => <span key={c} className="font-mono text-[11px] text-foreground bg-surface-700 px-2 py-1 rounded text-center">{c}</span>)}
                 </div>
               </div>
             )}
@@ -237,7 +237,7 @@ function SecuritySection({ user, updateProfile, variants }) {
         <div className="flex items-center gap-3 bg-surface-700 rounded-xl p-3">
           <div className="w-2 h-2 rounded-full bg-success-400 shrink-0" />
           <div className="flex-1">
-            <p className="text-sm text-white font-medium">Dispositivo actual</p>
+            <p className="text-sm text-foreground font-medium">Dispositivo actual</p>
             <p className="text-[11px] text-muted-400">Navegador web · {new Date().toLocaleDateString('es-CO')}</p>
           </div>
           <span className="text-[10px] bg-success-900/30 text-success-400 px-2 py-0.5 rounded-full">Activa</span>
@@ -267,7 +267,7 @@ function NotificationsSection({ variants }) {
         {items.map(({ key, label, desc }) => (
           <div key={key} className="flex items-center justify-between py-2.5 border-b border-subtle last:border-0">
             <div className="flex-1">
-              <p className="text-sm font-medium text-white">{label}</p>
+              <p className="text-sm font-medium text-foreground">{label}</p>
               <p className="text-[11px] text-muted-400">{desc}</p>
             </div>
             <Toggle checked={!!notifications[key]} onChange={(v) => { setNotification(key, v); toast(v ? `${label} activado` : `${label} desactivado`, { icon: v ? '🔔' : '🔕', duration: 1500 }) }} />
@@ -312,7 +312,7 @@ export default function Account() {
             : <span className="text-2xl font-bold text-white">{initial}</span>}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-lg font-bold text-white truncate">{user?.name || 'Usuario'}</p>
+          <p className="text-lg font-bold text-brand-600 dark:text-white truncate">{user?.name || 'Usuario'}</p>
           <p className="text-sm text-muted-400 truncate">{user?.email}</p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             <span className="text-[10px] bg-brand-600/20 text-brand-300 border border-brand-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
