@@ -46,8 +46,8 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
           <Check size={18} className="text-success-400" />
         </div>
         <div className="space-y-0.5">
-          <h2 className="text-base font-bold text-white">Datos de tu empresa</h2>
-          <p className="text-[11px] text-muted-400">Esta información aparecerá en tus facturas</p>
+          <h2 className="text-base font-extrabold text-neutral-900 dark:text-white">Datos de tu empresa</h2>
+          <p className="text-[11px] text-muted-600 dark:text-muted-400">Esta información aparecerá en tus facturas</p>
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
           )}>
             <Check size={8} className="text-brand-400 opacity-0 peer-checked:opacity-100 transition-opacity" />
           </div>
-          <span className="text-[11px] text-muted-400 group-hover:text-white leading-relaxed transition-colors">
+          <span className="text-[11px] text-muted-600 dark:text-muted-400 group-hover:text-neutral-900 dark:group-hover:text-white leading-relaxed transition-colors">
             Acepto los términos y condiciones de uso
           </span>
         </label>

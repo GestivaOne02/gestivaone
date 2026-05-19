@@ -169,7 +169,7 @@ function WorkerLogin() {
   }
 
   return (
-    <form onSubmit={handleRegister} className="space-y-4 max-h-[480px] overflow-y-auto pr-1 no-scrollbar">
+    <form onSubmit={handleRegister} className="space-y-4">
       <p className="text-center text-xs text-muted-500 mb-2">Coloca tu información y el código de vinculación de tu empresa.</p>
 
       {/* Avatar circular selector */}
@@ -383,10 +383,9 @@ function LoginForm() {
 }
 
 // ── Register multi-step ───────────────────────────────────────
-function RegisterFlow() {
+function RegisterFlow({ step, setStep }) {
   const navigate  = useNavigate()
   const register  = useAuthStore((s) => s.register)
-  const [step, setStep]   = useState('plan')
   const [plan, setPlan]   = useState('pro')
   const [formData, setFormData] = useState({})
   const [loading, setLoading]   = useState(false)
@@ -478,6 +477,7 @@ const TABS = [
 
 export default function Auth() {
   const [tab, setTab] = useState('login')
+  const [regStep, setRegStep] = useState('plan')
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -533,14 +533,17 @@ export default function Auth() {
       </div>
 
       {/* Right: form panel */}
-      <div className="flex-1 flex items-center justify-center p-5 overflow-y-auto relative overflow-hidden">
+      <div className="flex-1 flex flex-col items-center justify-start sm:justify-center p-4 md:p-6 overflow-y-auto relative min-h-screen">
         {/* Ambient Background Elements */}
         <div className="absolute inset-0 bg-[radial-gradient(rgba(124,58,237,0.03)_1.5px,transparent_1.5px)] [background-size:32px_32px] pointer-events-none z-0" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-600/5 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse-slow" />
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/8 rounded-full blur-[100px] pointer-events-none z-0" />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-700/4 rounded-full blur-[120px] pointer-events-none z-0" />
 
-        <div className="w-full max-w-md relative z-10">
+        <div className={clsx(
+          "w-full relative z-10 transition-all duration-500",
+          (tab === 'register' && regStep === 'plan') ? "max-w-5xl" : "max-w-md"
+        )}>
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 justify-center mb-6">
             <Zap size={20} className="text-brand-400" />
@@ -581,7 +584,7 @@ export default function Auth() {
                 transition={{ duration: 0.18 }}
               >
                 {tab === 'login'    && <LoginForm />}
-                {tab === 'register' && <RegisterFlow />}
+                {tab === 'register' && <RegisterFlow step={regStep} setStep={setRegStep} />}
                 {tab === 'worker'   && <WorkerLogin />}
               </motion.div>
             </AnimatePresence>
