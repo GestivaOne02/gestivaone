@@ -109,7 +109,7 @@ export default function OrderConfirmModal({ open }) {
               <PartyPopper size={28} className="text-success-400" />
             </motion.div>
             <div>
-              <p className="text-lg font-bold text-white">¡Pedido Confirmado!</p>
+              <p className="text-lg font-bold text-foreground">¡Pedido Confirmado!</p>
               <p className="text-sm text-muted-400 mt-1">Factura generada exitosamente</p>
             </div>
             <div className="text-2xl font-bold text-gradient">{format(total)}</div>
@@ -120,20 +120,20 @@ export default function OrderConfirmModal({ open }) {
             <div className="bg-surface-700 border border-subtle rounded-xl p-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-400">Cliente</span>
-                <span className="text-white font-medium">{client?.name ?? 'Express'}</span>
+                <span className="text-foreground font-medium">{client?.name ?? 'Express'}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-400">Productos</span>
-                <span className="text-white">{items.length} ítem(s)</span>
+                <span className="text-foreground">{items.length} ítem(s)</span>
               </div>
               {includeTax && taxRate > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-400">IVA ({(taxRate * 100).toFixed(0)}%)</span>
-                  <span className="text-white">{format(taxAmount)}</span>
+                  <span className="text-foreground">{format(taxAmount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-base font-bold pt-1 border-t border-subtle mt-2">
-                <span className="text-white">Total</span>
+                <span className="text-foreground">Total</span>
                 <span className="text-gradient">{format(total)}</span>
               </div>
             </div>
@@ -156,7 +156,7 @@ export default function OrderConfirmModal({ open }) {
                   >
                     <Icon size={18} className={paymentType === id ? color : 'text-muted-400'} />
                     <div>
-                      <p className={clsx('text-sm font-semibold', paymentType === id ? 'text-white' : 'text-muted-400')}>{label}</p>
+                      <p className={clsx('text-sm font-semibold', paymentType === id ? 'text-brand-600 dark:text-white' : 'text-muted-400')}>{label}</p>
                       <p className="text-xs text-muted-400">{desc}</p>
                     </div>
                     {paymentType === id && (

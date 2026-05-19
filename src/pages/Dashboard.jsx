@@ -138,6 +138,11 @@ export default function Dashboard() {
   const pending = invoices.filter((i) => i.payment_status === 'pending')
   const overdue = invoices.filter((i) => i.payment_status === 'overdue')
 
+  // Express Invoices metrics
+  const expressInvoices = invoices.filter((i) => !i.client_id || i.client_name === 'Cliente Express')
+  const expressCount = expressInvoices.length
+  const expressRevenue = expressInvoices.reduce((s, i) => s + (i.total || 0), 0)
+
   const totalRevenue   = paid.reduce((s, i) => s + i.total, 0)
   const pendingRevenue = [...pending, ...overdue].reduce((s, i) => s + i.total, 0)
   const totalExpenses  = expenses.reduce((s, e) => s + (e.amount || 0), 0)
@@ -580,7 +585,10 @@ export default function Dashboard() {
       className="page-container space-y-6"
     >
       {/* Header */}
-      <motion.div variants={itemVariants}>
+      <motion.div 
+        variants={itemVariants}
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20"
+      >
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Dashboard</h1>
@@ -657,8 +665,15 @@ export default function Dashboard() {
             icon: <Users size={18} />,
             color: "brand",
             subtitle: `${clients.length} clientes totales`
+          },
+          {
+            title: "Facturas Express",
+            value: expressCount,
+            icon: <Zap size={18} />,
+            color: "brand",
+            subtitle: `Facturado: ${format$(expressRevenue)}`
           }
-        ].map((kpi) => (
+        ].map((kpi, idx) => (
           <motion.div 
             key={kpi.title} 
             variants={itemVariants}
@@ -707,6 +722,13 @@ export default function Dashboard() {
             icon: <Users size={18} />,
             color: "brand",
             subtitle: `${clients.length} clientes totales`
+          },
+          {
+            title: "Facturas Express",
+            value: expressCount,
+            icon: <Zap size={18} />,
+            color: "brand",
+            subtitle: `Facturado: ${format$(expressRevenue)}`
           }
         ].map((kpi, i) => (
           <motion.div

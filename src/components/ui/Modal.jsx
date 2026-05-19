@@ -55,6 +55,11 @@ export default function Modal({ open, onClose, title, children, size = 'md', hid
               ${widths[size]}
             `}
           >
+            {/* Drag handle on mobile (appears at the very top of bottom sheets) */}
+            <div className="flex justify-center pt-3 sm:hidden">
+              <div className="w-10 h-1.5 rounded-full bg-surface-500" />
+            </div>
+
             {/* Header */}
             {(title || !hideClose) && (
               <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-subtle">
@@ -69,10 +74,6 @@ export default function Modal({ open, onClose, title, children, size = 'md', hid
                 )}
               </div>
             )}
-            {/* Drag handle on mobile */}
-            <div className="flex justify-center pt-2 sm:hidden">
-              <div className="w-8 h-1 rounded-full bg-surface-400" />
-            </div>
             {/* Body */}
             <div className="p-5 sm:p-6 max-h-[80vh] overflow-y-auto">{children}</div>
           </motion.div>

@@ -223,6 +223,101 @@ export const useAuthStore = create(
         return { success: true }
       },
 
+      linkWorkerAndRegister: async (data) => {
+        set({ loading: true })
+        const codeInput = data.linkCode?.trim()
+
+        if (!codeInput) {
+          set({ loading: false })
+          return { success: false, error: 'Por favor ingresa un código de vinculación' }
+        }
+
+        // 1. Find the company issuing this invitation code in Supabase
+        const { data: companies, error: compFetchError } = await supabase
+          .from('companies')
+          .select('*')
+
+        if (compFetchError || !companies) {
+          set({ loading: false })
+          return { success: false, error: 'Error al buscar el código en el servidor' }
+        }
+
+        let targetCompany = null
+        let activeInvite = null
+
+        for (const company of companies) {
+          const invitations = company.settings?.invitations || []
+          const found = invitations.find(
+            (inv) => inv.code === codeInput && !inv.used && new Date(inv.expiresAt) > new Date()
+          )
+          if (found) {
+            targetCompany = company
+            activeInvite = found
+            break
+          }
+        }
+
+        if (!targetCompany || !activeInvite) {
+          set({ loading: false })
+          return { success: false, error: 'Código de vinculación inválido, ya usado o caducado.' }
+        }
+
+        // 2. Auth Sign Up for the worker
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+        })
+
+        if (authError) {
+          set({ loading: false })
+          return { success: false, error: authError.message }
+        }
+
+        const workerId = authData.user.id
+
+        // 3. Create the profile for the worker, linking to the company
+        const { error: profError } = await supabase
+          .from('profiles')
+          .insert([{
+            id: workerId,
+            company_id: targetCompany.id,
+            full_name: data.name,
+            email: data.email,
+            phone: data.phone || '',
+            avatar_url: data.avatar || '',
+            role: activeInvite.role || 'despachador',
+            plan: targetCompany.plan || 'standard'
+          }])
+
+        if (profError) {
+          set({ loading: false })
+          return { success: false, error: 'Error al vincular el perfil: ' + profError.message }
+        }
+
+        // 4. Mark invitation code as used in the company settings
+        const updatedInvitations = targetCompany.settings.invitations.map((inv) =>
+          inv.code === codeInput ? { ...inv, used: true, usedBy: data.email } : inv
+        )
+        const updatedSettings = {
+          ...targetCompany.settings,
+          invitations: updatedInvitations
+        }
+
+        const { error: updateCompError } = await supabase
+          .from('companies')
+          .update({ settings: updatedSettings })
+          .eq('id', targetCompany.id)
+
+        if (updateCompError) {
+          console.warn('Could not consume invitation code in database settings:', updateCompError.message)
+        }
+
+        // 5. Sync profile & finalize
+        await get().syncProfile(workerId)
+        set({ loading: false })
+        return { success: true, role: activeInvite.role }
+      },
+
       login: async (email, password) => {
         set({ loading: true })
         
@@ -368,6 +463,7 @@ export const useAuthStore = create(
           if (data.companyLogo !== undefined) companyUpdates.logo_url = data.companyLogo
           if (data.country !== undefined) companyUpdates.country = data.country
           if (data.base_currency !== undefined) companyUpdates.currency = data.base_currency
+          if (data.settings !== undefined) companyUpdates.settings = data.settings
 
           if (Object.keys(companyUpdates).length > 0) {
             await supabase.from('companies').update(companyUpdates).eq('id', targetCompanyId)

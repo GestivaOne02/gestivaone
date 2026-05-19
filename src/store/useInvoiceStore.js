@@ -30,6 +30,12 @@ export const useInvoiceStore = create((set, get) => ({
     const { user } = useAuthStore.getState()
     if (!user) return
 
+    // Prevent blank invoices
+    if (!items || items.length === 0 || total <= 0) {
+      console.error("Cannot create invoice: items list is empty or total is zero.")
+      return null
+    }
+
     const now = new Date()
     const invoiceId = `INV-${Math.random().toString(36).substring(2, 10).toUpperCase()}`
 

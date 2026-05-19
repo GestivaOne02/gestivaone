@@ -8,6 +8,8 @@ import Settings from '@/pages/Settings'
 import Account from '@/pages/Account'
 import Employees from '@/pages/Employees'
 import Auth from '@/pages/Auth'
+import Notifications from '@/pages/Notifications'
+import Terms from '@/pages/Terms'
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -39,6 +41,30 @@ export default function App() {
   const initialized = useAuthStore((s) => s.initialized)
 
   const location = useLocation()
+
+  useEffect(() => {
+    const CURRENT_VERSION = '2.3'
+    const lastVersion = localStorage.getItem('gestiva-app-version')
+    if (lastVersion !== CURRENT_VERSION) {
+      console.log('🧹 New version detected! Purging old persisted caches and cookies...')
+      const storesToClear = [
+        'gestiva-auth-v2.2',
+        'gestiva-auth-v2.1',
+        'gestiva-auth-v2.0',
+        'gestiva-auth',
+        'gestiva-settings',
+        'gestiva-notifications',
+        'gestiva-expenses',
+        'gestiva-currencies',
+        'gestiva-ui',
+        'gestiva-cookies-accepted' // Clear old accepted status so the gorgeous banner displays!
+      ]
+      storesToClear.forEach(k => localStorage.removeItem(k))
+      localStorage.setItem('gestiva-app-version', CURRENT_VERSION)
+      window.location.reload()
+    }
+  }, [])
+
   useEffect(() => {
     console.log('🛡️ Gestiva Auth State:', { isAuthenticated, user: user?.email, path: location.pathname })
   }, [isAuthenticated, user, location.pathname])
@@ -50,18 +76,24 @@ export default function App() {
     '/employees': 'Empleados',
     '/settings': 'Configuración',
     '/account': 'Cuenta',
-    '/auth': 'Acceso'
+    '/auth': 'Acceso',
+    '/notifications': 'Notificaciones',
+    '/terms': 'Términos'
   }
 
   useEffect(() => {
-    applyTheme(theme)
-    if (theme === 'system') {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)')
-      const handler = () => applyTheme('system')
-      mq.addEventListener('change', handler)
-      return () => mq.removeEventListener('change', handler)
+    if (location.pathname === '/auth') {
+      document.documentElement.classList.remove('dark')
+    } else {
+      applyTheme(theme)
+      if (theme === 'system') {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)')
+        const handler = () => applyTheme('system')
+        mq.addEventListener('change', handler)
+        return () => mq.removeEventListener('change', handler)
+      }
     }
-  }, [theme])
+  }, [theme, location.pathname])
 
   useEffect(() => {
     const originalTitle = `GO | ${pageTitles[location.pathname] || 'GestivaOne'}`
@@ -136,6 +168,7 @@ export default function App() {
           path="/auth" 
           element={isAuthenticated ? <Navigate to="/" replace /> : <Auth />} 
         />
+        <Route path="/terms" element={<Terms />} />
 
         {/* Protected Routes */}
         <Route
@@ -147,6 +180,7 @@ export default function App() {
           <Route path="/employees" element={<RequirePermission perm="employees"><Employees /></RequirePermission>} />
           <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
           <Route path="/account" element={<Account />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

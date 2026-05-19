@@ -1,6 +1,8 @@
-import { Menu, FileText } from 'lucide-react'
+import { Menu, FileText, Bell } from 'lucide-react'
 import { useUIStore } from '@/store/useUIStore'
 import { useCartStore } from '@/store/useCartStore'
+import { useNotificationStore } from '@/store/useNotificationStore'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 export default function TopBar() {
@@ -8,6 +10,9 @@ export default function TopBar() {
   const toggleInvoicePanel = useUIStore((s) => s.toggleInvoicePanel)
   const invoiceOpen        = useUIStore((s) => s.invoicePanelOpen)
   const cartCount          = useCartStore((s) => s.items.length)
+  const getUnreadCount     = useNotificationStore((s) => s.getUnreadCount)
+  const navigate           = useNavigate()
+  const unreadCount        = getUnreadCount()
 
   return (
     <header className="h-14 shrink-0 bg-surface-800 border-b border-subtle flex items-center justify-between px-4 z-30">
@@ -15,35 +20,54 @@ export default function TopBar() {
       <div className="flex items-center gap-3">
         <button
           onClick={openMobileSidebar}
-          className="p-2 rounded-xl text-muted-400 hover:text-white hover:bg-surface-600 transition-colors"
+          className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-700 transition-colors"
           aria-label="Abrir menú"
         >
           <Menu size={18} />
         </button>
         <div className="flex flex-col leading-tight">
-          <span className="text-sm font-bold text-white uppercase tracking-wider">Gestiva</span>
-          <span className="text-[10px] text-brand-400 font-medium tracking-widest uppercase">One</span>
+          <span className="text-sm font-bold text-foreground uppercase tracking-wider animate-pulse-slow">Gestiva</span>
+          <span className="text-[10px] text-brand-500 dark:text-brand-400 font-semibold tracking-widest uppercase">One</span>
         </div>
       </div>
 
-      {/* Right: invoice toggle button */}
-      <button
-        onClick={toggleInvoicePanel}
-        className="relative p-2 rounded-xl text-muted-400 hover:text-white hover:bg-surface-600 transition-colors"
-        aria-label="Abrir factura"
-      >
-        <FileText size={18} />
-        {cartCount > 0 && (
-          <motion.span
-            key={cartCount}
-            initial={{ scale: 1.4 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-brand-600 rounded-full text-[9px] text-white flex items-center justify-center font-bold"
-          >
-            {cartCount}
-          </motion.span>
-        )}
-      </button>
+      {/* Right: Actions */}
+      <div className="flex items-center gap-1.5">
+        {/* Notification Bell */}
+        <button
+          onClick={() => navigate('/notifications')}
+          className="relative p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-700 transition-colors"
+          aria-label="Notificaciones"
+        >
+          <Bell size={18} />
+          {unreadCount > 0 && (
+            <motion.span
+              initial={{ scale: 0.6 }}
+              animate={{ scale: 1 }}
+              className="absolute top-1 right-1 w-3 h-3 bg-brand-600 border-2 border-surface-800 rounded-full flex items-center justify-center animate-pulse"
+            />
+          )}
+        </button>
+
+        {/* Invoice toggle button */}
+        <button
+          onClick={toggleInvoicePanel}
+          className="relative p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-700 transition-colors"
+          aria-label="Abrir factura"
+        >
+          <FileText size={18} />
+          {cartCount > 0 && (
+            <motion.span
+              key={cartCount}
+              initial={{ scale: 1.4 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-brand-600 rounded-full text-[9px] text-white flex items-center justify-center font-bold"
+            >
+              {cartCount}
+            </motion.span>
+          )}
+        </button>
+      </div>
     </header>
   )
 }

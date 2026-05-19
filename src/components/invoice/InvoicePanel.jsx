@@ -158,7 +158,7 @@ export default function InvoicePanel({ isMobile }) {
                                 <Plus size={10} />
                               </button>
                             </div>
-                            <span className="text-xs font-bold text-white">{format(item.price * item.qty)}</span>
+                            <span className="text-xs font-bold text-foreground">{format(item.price * item.qty)}</span>
                           </div>
                         </motion.div>
                       ))
@@ -170,7 +170,7 @@ export default function InvoicePanel({ isMobile }) {
                 <div className="p-5 border-t border-subtle shrink-0 space-y-3 pb-safe">
                   <div className="flex justify-between text-xs text-muted-400">
                     <span>Subtotal</span>
-                    <span className="text-white font-medium">{format(subtotal)}</span>
+                    <span className="text-foreground font-medium">{format(subtotal)}</span>
                   </div>
                   {taxRate > 0 && (
                     <div className="flex items-center justify-between text-xs text-muted-400">
@@ -178,11 +178,11 @@ export default function InvoicePanel({ isMobile }) {
                         <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
                           {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
                         </div>
-                        <span className={clsx("transition-colors select-none", includeTax ? "text-white" : "text-muted-400 group-hover:text-surface-300")}>
+                        <span className={clsx("transition-colors select-none", includeTax ? "text-foreground font-semibold" : "text-muted-400 group-hover:text-muted-500")}>
                           IVA ({(taxRate * 100).toFixed(0)}%)
                         </span>
                       </div>
-                      <span className="text-white font-medium">{format(taxAmount)}</span>
+                      <span className="text-foreground font-medium">{format(taxAmount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm font-bold text-foreground">

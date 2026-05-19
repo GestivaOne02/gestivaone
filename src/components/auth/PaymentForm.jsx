@@ -66,43 +66,43 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
       {method === 'card' && (
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-muted-400 mb-1 block">Número de tarjeta</label>
+            <label className="text-xs text-muted-500 font-bold mb-1 block">Número de tarjeta</label>
             <input value={card.number} onChange={(e) => handleCard('number', formatCard(e.target.value))}
               placeholder="1234 5678 9012 3456" maxLength={19}
-              className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 font-mono" />
+              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-mono" />
           </div>
           <input value={card.name} onChange={(e) => handleCard('name', e.target.value)}
             placeholder="Nombre en la tarjeta"
-            className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-muted-400 mb-1 block">Vencimiento</label>
+              <label className="text-xs text-muted-500 font-bold mb-1 block">Vencimiento</label>
               <input value={card.expiry} onChange={(e) => handleCard('expiry', e.target.value)}
                 placeholder="MM/AA" maxLength={5}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+                className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
             </div>
             <div>
-              <label className="text-xs text-muted-400 mb-1 block">CVV</label>
+              <label className="text-xs text-muted-500 font-bold mb-1 block">CVV</label>
               <input value={card.cvv} onChange={(e) => handleCard('cvv', e.target.value.replace(/\D/g, '').slice(0, 3))}
                 placeholder="123" type="password" maxLength={3}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+                className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
             </div>
           </div>
         </div>
       )}
 
       {method === 'pse' && (
-        <div className="bg-surface-700 border border-subtle rounded-xl p-4 text-center">
+        <div className="bg-surface-900 border border-subtle rounded-xl p-4 text-center">
           <Building size={32} className="text-brand-400 mx-auto mb-2" />
-          <p className="text-sm text-white font-medium">Pago por PSE</p>
+          <p className="text-sm text-foreground font-bold">Pago por PSE</p>
           <p className="text-xs text-muted-400 mt-1">Serás redirigido a tu banco para completar el pago de forma segura.</p>
         </div>
       )}
       {method === 'nequi' && (
         <div className="space-y-2">
-          <label className="text-xs text-muted-400 mb-1 block">Número Nequi</label>
+          <label className="text-xs text-muted-500 font-bold mb-1 block">Número Nequi</label>
           <input placeholder="Ej: 300 000 0000"
-            className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
         </div>
       )}
 

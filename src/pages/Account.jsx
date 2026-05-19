@@ -298,7 +298,10 @@ export default function Account() {
       variants={containerVariants}
       className="page-container max-w-2xl space-y-5"
     >
-      <motion.div variants={itemVariants}>
+      <motion.div 
+        variants={itemVariants}
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20"
+      >
         <h1 className="text-xl md:text-2xl font-bold text-brand-600 dark:text-white">Cuenta</h1>
         <p className="text-sm text-muted-400 mt-0.5">Perfil y configuración de usuario</p>
       </motion.div>

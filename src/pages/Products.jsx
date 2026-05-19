@@ -46,7 +46,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           <p className="text-sm font-semibold text-foreground truncate">{product.name}</p>
           <p className="text-[11px] text-muted-400 mt-0.5">{product.category}</p>
         </div>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
           <button onClick={() => onEdit(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600">
             <Edit2 size={12} />
           </button>
@@ -174,17 +174,18 @@ export default function Products() {
   return (
     <div className="p-6 flex flex-col gap-5 h-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-6 px-6 border-b border-subtle/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-brand-600 dark:text-white">Productos</h1>
           <p className="text-sm text-muted-400 mt-0.5">{products.length} productos en catálogo</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Button
             variant="secondary"
             size="sm"
             icon={<DollarSign size={14} />}
             onClick={() => setShowFree((v) => !v)}
+            className="flex-1 sm:flex-none justify-center"
           >
             Valor Libre
           </Button>
@@ -193,6 +194,7 @@ export default function Products() {
             size="sm"
             icon={<Plus size={14} />}
             onClick={() => openModal('addProduct')}
+            className="flex-1 sm:flex-none justify-center"
           >
             Añadir Producto
           </Button>

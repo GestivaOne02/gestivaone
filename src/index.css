@@ -207,6 +207,20 @@ input[type="number"] {
     border: 1px solid var(--glass-border);
   }
 
+  .liquid-glass {
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    background: rgba(15, 15, 24, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05) !important;
+  }
+
+  :root:not(.dark) .liquid-glass {
+    background: rgba(255, 255, 255, 0.75) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  }
+
   .text-gradient {
     background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #4f46e5 100%);
     -webkit-background-clip: text;

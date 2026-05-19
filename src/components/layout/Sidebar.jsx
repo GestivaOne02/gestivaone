@@ -1,11 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  LayoutDashboard, UtensilsCrossed, Package,
-  Settings, User, ChevronLeft, Zap, X, Users, Lock
+  LayoutDashboard, Receipt, Package,
+  Settings, User, ChevronLeft, Zap, X, Users, Lock, Bell, Shield
 } from 'lucide-react'
 import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
+import { useNotificationStore } from '@/store/useNotificationStore'
 import clsx from 'clsx'
 
 export default function Sidebar({ isMobile }) {
@@ -15,15 +16,17 @@ export default function Sidebar({ isMobile }) {
   const closeMobile    = useUIStore((s) => s.closeMobileSidebar)
   const user           = useAuthStore((s) => s.user)
   const location       = useLocation()
+  const getUnreadCount = useNotificationStore((s) => s.getUnreadCount)
 
   const role        = user?.role || 'despachador'
   const permissions = ROLES[role]?.permissions || {}
 
   const NAV = [
     { to: '/',          icon: LayoutDashboard, label: 'Dashboard',    perm: 'dashboard'  },
-    { to: '/menu',      icon: UtensilsCrossed, label: 'Menú',         perm: 'menu'       },
+    { to: '/menu',      icon: Receipt,         label: 'Menú',         perm: 'menu'       },
     { to: '/products',  icon: Package,         label: 'Productos',    perm: 'products'   },
     { to: '/employees', icon: Users,           label: 'Empleados',    perm: 'employees'  },
+    { to: '/notifications', icon: Bell,        label: 'Notificaciones', perm: 'dashboard' },
   ]
 
   const handleNavClick = () => { if (isMobile) closeMobile() }
@@ -39,7 +42,7 @@ export default function Sidebar({ isMobile }) {
       }
       {showText && (
         <div className="flex flex-col leading-tight overflow-hidden whitespace-nowrap">
-          <span className="text-[16px] font-black text-white uppercase tracking-wide truncate max-w-[135px]" title={user?.companyName || 'Mi Empresa'}>
+          <span className="text-[16px] font-black text-foreground uppercase tracking-wide truncate max-w-[135px]" title={user?.companyName || 'Mi Empresa'}>
             {user?.companyName || 'Mi Empresa'}
           </span>
           <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">
@@ -54,6 +57,7 @@ export default function Sidebar({ isMobile }) {
   const NavItem = ({ to, icon: Icon, label, perm, layoutId }) => {
     const isActive   = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
     const allowed    = permissions[perm] ?? true
+    const unreadCount = to === '/notifications' ? getUnreadCount() : 0
 
     return (
       <motion.div 
@@ -81,16 +85,26 @@ export default function Sidebar({ isMobile }) {
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             />
           )}
-          <Icon size={18} className="shrink-0 relative z-10" />
+          <div className="relative shrink-0 z-10 flex items-center justify-center">
+            <Icon size={18} />
+            {collapsed && unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-brand-500 border border-surface-800 animate-pulse" />
+            )}
+          </div>
           <AnimatePresence mode="popLayout">
             {!collapsed && (
               <motion.span 
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="relative z-10 whitespace-nowrap overflow-hidden flex-1"
+                className="relative z-10 whitespace-nowrap overflow-hidden flex-1 flex items-center justify-between"
               >
-                {label}
+                <span>{label}</span>
+                {unreadCount > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-brand-600 border border-brand-500 text-[10px] font-bold text-white flex items-center justify-center animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
               </motion.span>
             )}
           </AnimatePresence>
@@ -152,7 +166,14 @@ export default function Sidebar({ isMobile }) {
                           className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
                           transition={{ type: 'spring', stiffness: 400, damping: 35 }} />}
                         <Icon size={18} className="shrink-0 relative z-10" />
-                        <span className="relative z-10 flex-1">{label}</span>
+                        <span className="relative z-10 flex-1 flex items-center justify-between">
+                          <span>{label}</span>
+                          {to === '/notifications' && getUnreadCount() > 0 && (
+                            <span className="w-5 h-5 rounded-full bg-brand-600 border border-brand-500 text-[10px] font-bold text-white flex items-center justify-center animate-pulse">
+                              {getUnreadCount()}
+                            </span>
+                          )}
+                        </span>
                         {!allowed && <Lock size={12} className="text-muted-400 relative z-10" />}
                       </NavLink>
                     </motion.div>
@@ -194,6 +215,24 @@ export default function Sidebar({ isMobile }) {
                   </NavLink>
                 </div>
               </nav>
+              {/* User Profile for Mobile Drawer */}
+              <div className="p-4 border-t border-subtle bg-surface-900/40">
+                <div className="flex items-center gap-3">
+                  {user?.companyLogo ? (
+                    <img src={user.companyLogo} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
+                      {user?.name?.charAt(0).toUpperCase() || 'G'}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-white truncate leading-tight">{user?.name || 'Invitado'}</p>
+                    <p className="text-[10px] text-brand-400 font-medium uppercase tracking-widest mt-0.5">
+                      {ROLES[user?.role]?.label || 'Usuario'}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </motion.aside>
           </>
         )}
@@ -221,18 +260,22 @@ export default function Sidebar({ isMobile }) {
         ))}
       </nav>
 
-      {/* Separated Cuenta and Configuración above User Profile */}
       <div className="px-2 py-1.5 border-t border-subtle shrink-0 flex flex-col gap-1">
         <NavItem to="/account" icon={User} label="Cuenta" perm="account" layoutId="activeIndicator" />
         <NavItem to="/settings" icon={Settings} label="Configuración" perm="settings" layoutId="activeIndicator" />
+        <NavItem to="/terms" icon={Shield} label="Términos y Privacidad" layoutId="activeIndicator" />
       </div>
 
       {/* User Profile */}
       <div className="p-3 border-t border-subtle">
         <div className="flex items-center gap-3 px-1 py-1">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
-            {user?.name?.charAt(0).toUpperCase() || 'G'}
-          </div>
+          {user?.companyLogo ? (
+            <img src={user.companyLogo} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
+              {user?.name?.charAt(0).toUpperCase() || 'G'}
+            </div>
+          )}
           <AnimatePresence>
             {!collapsed && (
               <motion.div 

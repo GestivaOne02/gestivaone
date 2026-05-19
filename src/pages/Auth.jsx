@@ -43,17 +43,42 @@ function StepIndicator({ step }) {
   )
 }
 
-// ── Worker login tab ──────────────────────────────────────────
+// ── Worker login/register tab ──────────────────────────────────
+const WORKER_AVATARS = [
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80'
+]
+
 function WorkerLogin() {
   const navigate = useNavigate()
   const loginAsWorker = useAuthStore((s) => s.loginAsWorker)
+  const linkWorkerAndRegister = useAuthStore((s) => s.linkWorkerAndRegister)
   const loginEmployee  = useEmployeeStore((s) => s.loginEmployee)
+  
+  const [mode, setMode] = useState('login') // 'login' or 'register'
   const [email, setEmail]   = useState('')
   const [pass, setPass]     = useState('')
+  const [name, setName]     = useState('')
+  const [phone, setPhone]   = useState('')
+  const [linkCode, setLinkCode] = useState('')
+  const [avatar, setAvatar] = useState(WORKER_AVATARS[0])
+  
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const submit = async (e) => {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    if (code) {
+      setLinkCode(code.toUpperCase())
+      setMode('register')
+    }
+  }, [])
+
+  const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
     const emp = await loginEmployee(email.trim().toLowerCase(), pass)
@@ -64,18 +89,155 @@ function WorkerLogin() {
     navigate('/')
   }
 
+  const handleRegister = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const res = await linkWorkerAndRegister({
+      email: email.trim().toLowerCase(),
+      password: pass,
+      name: name.trim(),
+      phone: phone.trim(),
+      linkCode: linkCode.trim().toUpperCase(),
+      avatar
+    })
+    setLoading(false)
+    if (!res.success) return toast.error(res.error)
+    
+    toast.success('¡Vinculación y registro exitoso! Bienvenido a bordo.')
+    navigate('/')
+  }
+
+  if (mode === 'login') {
+    return (
+      <form onSubmit={handleLogin} className="space-y-4">
+        <p className="text-center text-xs text-muted-500 mb-4">Ingresa con tus credenciales vinculadas a la empresa.</p>
+        
+        <div>
+          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+          <input 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="tu@empresa.com" 
+            type="email" 
+            required
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+          />
+        </div>
+        
+        <div className="relative">
+          <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
+          <input 
+            value={pass} 
+            onChange={(e) => setPass(e.target.value)} 
+            placeholder="••••••" 
+            type={showPw ? 'text' : 'password'} 
+            required
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+          />
+          <button 
+            type="button" 
+            onMouseDown={() => setShowPw(true)}
+            onMouseUp={() => setShowPw(false)}
+            onMouseLeave={() => setShowPw(false)}
+            onTouchStart={() => setShowPw(true)}
+            onTouchEnd={() => setShowPw(false)}
+            className="absolute right-3 bottom-3 text-muted-400 hover:text-foreground"
+          >
+            {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+          </button>
+        </div>
+        
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
+        >
+          {loading ? 'Ingresando...' : 'Entrar como trabajador'}
+        </button>
+
+        <div className="text-center pt-2">
+          <button 
+            type="button"
+            onClick={() => setMode('register')}
+            className="text-xs font-bold text-brand-600 hover:text-brand-700 transition-colors"
+          >
+            ¿Aún no te has vinculado? Regístrate aquí
+          </button>
+        </div>
+      </form>
+    )
+  }
+
   return (
-    <form onSubmit={submit} className="space-y-4">
-      <p className="text-center text-sm text-muted-400 mb-4">Ingresa con las credenciales que tu administrador configuró.</p>
-      <div>
-        <label className="text-xs text-muted-400 mb-1 block">Correo electrónico</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@empresa.com" type="email" required
-          className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+    <form onSubmit={handleRegister} className="space-y-4 max-h-[480px] overflow-y-auto pr-1 no-scrollbar">
+      <p className="text-center text-xs text-muted-500 mb-2">Coloca tu información y el código de vinculación de tu empresa.</p>
+
+      {/* Avatar circular selector */}
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-muted-600 block text-center font-medium">Selecciona tu foto</label>
+        <div className="flex justify-center gap-2">
+          {WORKER_AVATARS.map((url) => (
+            <button
+              key={url}
+              type="button"
+              onClick={() => setAvatar(url)}
+              className={clsx(
+                "w-11 h-11 rounded-full overflow-hidden transition-all duration-300 border-2",
+                avatar === url ? "border-brand-600 scale-110 shadow-glow-sm" : "border-transparent opacity-60 hover:opacity-100"
+              )}
+            >
+              <img src={url} alt="Avatar" className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
       </div>
+
+      <div>
+        <label className="text-xs font-bold text-muted-600 mb-1 block">Tu Nombre</label>
+        <input 
+          value={name} 
+          onChange={(e) => setName(e.target.value)} 
+          placeholder="Nombre completo" 
+          type="text" 
+          required
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+        />
+      </div>
+
+      <div>
+        <label className="text-xs font-bold text-muted-600 mb-1 block">Número de Teléfono</label>
+        <input 
+          value={phone} 
+          onChange={(e) => setPhone(e.target.value)} 
+          placeholder="+57 300 000 0000" 
+          type="tel" 
+          required
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+        />
+      </div>
+
+      <div>
+        <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+        <input 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          placeholder="tu@correo.com" 
+          type="email" 
+          required
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+        />
+      </div>
+
       <div className="relative">
-        <label className="text-xs text-muted-400 mb-1 block">Contraseña</label>
-        <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••" type={showPw ? 'text' : 'password'} required
-          className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 pr-10" />
+        <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
+        <input 
+          value={pass} 
+          onChange={(e) => setPass(e.target.value)} 
+          placeholder="••••••" 
+          type={showPw ? 'text' : 'password'} 
+          required
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+        />
         <button 
           type="button" 
           onMouseDown={() => setShowPw(true)}
@@ -83,14 +245,41 @@ function WorkerLogin() {
           onMouseLeave={() => setShowPw(false)}
           onTouchStart={() => setShowPw(true)}
           onTouchEnd={() => setShowPw(false)}
-          className="absolute right-3 bottom-2.5 text-muted-400 hover:text-white"
+          className="absolute right-3 bottom-2 text-muted-400 hover:text-foreground"
         >
           {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
       </div>
-      <button type="submit" className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition-colors">
-        Entrar como trabajador
+
+      <div>
+        <label className="text-xs font-bold text-brand-600 mb-1 block">Código de Vinculación</label>
+        <input 
+          value={linkCode} 
+          onChange={(e) => setLinkCode(e.target.value)} 
+          placeholder="GO-XXXXXX" 
+          type="text" 
+          required
+          className="w-full bg-brand-50 border border-brand-500/30 rounded-xl px-4 py-2.5 text-sm text-brand-750 placeholder:text-brand-400/70 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-black text-center tracking-wider" 
+        />
+      </div>
+
+      <button 
+        type="submit" 
+        disabled={loading}
+        className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
+      >
+        {loading ? 'Procesando...' : 'Registrar y Vincular'}
       </button>
+
+      <div className="text-center pt-1">
+        <button 
+          type="button"
+          onClick={() => setMode('login')}
+          className="text-xs font-bold text-muted-500 hover:text-foreground transition-colors"
+        >
+          ¿Ya tienes cuenta vinculada? Inicia sesión aquí
+        </button>
+      </div>
     </form>
   )
 }
@@ -143,14 +332,14 @@ function LoginForm() {
   return (
     <form onSubmit={submit} className="space-y-4">
       <div>
-        <label className="text-xs text-muted-400 mb-1 block">Correo electrónico</label>
+        <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
         <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@empresa.com" type="email" required
-          className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
       </div>
       <div className="relative">
-        <label className="text-xs text-muted-400 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
+        <label className="text-xs font-bold text-muted-600 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
         <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Introduce la contraseña" type={showPw ? 'text' : 'password'} required
-          className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 pr-10" />
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" />
         <button 
           type="button" 
           onMouseDown={() => setShowPw(true)}
@@ -158,7 +347,7 @@ function LoginForm() {
           onMouseLeave={() => setShowPw(false)}
           onTouchStart={() => setShowPw(true)}
           onTouchEnd={() => setShowPw(false)}
-          className="absolute right-3 bottom-2.5 text-muted-400 hover:text-white"
+          className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground"
         >
           {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
@@ -177,16 +366,16 @@ function LoginForm() {
             'w-[18px] h-[18px] rounded border flex items-center justify-center transition-all',
             rememberMe 
               ? 'bg-amber-500 border-amber-500 text-white' 
-              : 'border-subtle bg-surface-700 group-hover:border-surface-400'
+              : 'border-subtle bg-surface-900 group-hover:border-surface-400'
           )}>
             {rememberMe && <Check size={12} strokeWidth={3} className="text-white animate-scale-up" />}
           </div>
-          <span className="text-xs font-semibold text-muted-300 group-hover:text-white transition-colors">Acuérdate de mí</span>
+          <span className="text-xs font-bold text-muted-500 group-hover:text-foreground transition-colors">Acuérdate de mí</span>
         </label>
       </div>
 
       <button type="submit" disabled={loading}
-        className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors">
+        className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm">
         {loading ? 'Ingresando...' : 'Iniciar sesión'}
       </button>
     </form>
@@ -289,6 +478,14 @@ const TABS = [
 
 export default function Auth() {
   const [tab, setTab] = useState('login')
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    if (code) {
+      setTab('worker')
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-surface-900 flex">

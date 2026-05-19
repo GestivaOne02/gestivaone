@@ -57,42 +57,44 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
       whileHover={{ y: -2, scale: 1.005 }}
       onClick={onSelect}
       className={clsx(
-        'relative flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 group',
+        'relative flex flex-col sm:flex-row sm:items-center gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 group',
         selected
           ? 'border-brand-500 bg-brand-600/10 shadow-glow-sm'
           : 'border-subtle bg-surface-800 hover:border-brand-500/30 hover:bg-surface-800/80'
       )}
     >
-      {/* Avatar */}
-      <div className={clsx(
-        'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 transition-all duration-300',
-        selected ? 'bg-brand-600/40 text-brand-200' : 'bg-surface-600 text-white group-hover:bg-brand-600/20 group-hover:text-brand-300'
-      )}>
-        {client.name[0].toUpperCase()}
-      </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0 pr-2">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-foreground truncate">{client.name}</p>
-          {selected && <Check size={12} className="text-brand-400 shrink-0" />}
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        {/* Avatar */}
+        <div className={clsx(
+          'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 transition-all duration-300',
+          selected ? 'bg-brand-600/40 text-brand-200' : 'bg-surface-600 text-white group-hover:bg-brand-600/20 group-hover:text-brand-300'
+        )}>
+          {client.name[0].toUpperCase()}
         </div>
-        <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <Badge status={status} />
-          {pendingAmount > 0 && (
-            <span className="text-[11px] text-danger-400 font-medium">{format$(pendingAmount)} pendiente</span>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0 pr-2">
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold text-foreground truncate">{client.name}</p>
+            {selected && <Check size={12} className="text-brand-400 shrink-0" />}
+          </div>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <Badge status={status} />
+            {pendingAmount > 0 && (
+              <span className="text-[11px] text-danger-400 font-medium">{format$(pendingAmount)} pendiente</span>
+            )}
+          </div>
+          {lastInvoice && (
+            <p className="text-[10px] text-muted-400 flex items-center gap-1 mt-1.5">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60"></span>
+              Última factura realizada: {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
+            </p>
           )}
         </div>
-        {lastInvoice && (
-          <p className="text-[10px] text-muted-400 flex items-center gap-1 mt-1.5">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60"></span>
-            Última factura realizada: {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
-          </p>
-        )}
       </div>
 
       {/* Responsive Visual Indicators & Interactive Expandable Buttons */}
-      <div className="flex items-center gap-2 shrink-0 border-l border-brand-500/20 pl-3 h-10 my-auto">
+      <div className="flex items-center justify-end gap-2 shrink-0 border-t sm:border-t-0 sm:border-l border-brand-500/20 pt-3 sm:pt-0 sm:pl-3 h-auto sm:h-10">
         <ExpandableButton
           icon={History}
           label="Total Facturado"
@@ -187,7 +189,7 @@ export default function Menu() {
   return (
     <div className="p-6 h-full flex flex-col gap-6">
       {/* Header */}
-      <div>
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-6 px-6 border-b border-subtle/20">
         <h1 className="text-xl font-bold text-brand-600 dark:text-white">Menú Operativo</h1>
         <p className="text-sm text-muted-400 mt-0.5">Selecciona o añade un cliente para iniciar</p>
       </div>
