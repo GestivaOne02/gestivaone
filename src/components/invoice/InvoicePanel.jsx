@@ -229,151 +229,150 @@ export default function InvoicePanel({ isMobile }) {
         )}
       </motion.button>
 
-      {/* Panel */}
-      <AnimatePresence>
-        {panelOpen && (
-          <motion.aside
-            key="invoice-panel"
-            initial={{ x: 300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 300, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-            className="w-72 h-screen bg-surface-800 border-l border-subtle flex flex-col shrink-0"
-          >
-            {/* Header */}
-            <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
-              <FileText size={16} className="text-brand-400" />
-              <span className="text-sm font-semibold text-white flex-1">Factura en Tiempo Real</span>
-              {items.length > 0 && (
-                <button onClick={clearCart} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors" title="Limpiar carrito">
-                  <Trash2 size={13} />
-                </button>
-              )}
-            </div>
+      {/* Panel with smooth spring width animation */}
+      <motion.aside
+        animate={{ width: panelOpen ? 288 : 0 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+        className={clsx(
+          "sidebar-premium-dark h-screen bg-surface-800 flex flex-col overflow-hidden shrink-0 z-10",
+          panelOpen ? "border-l border-subtle" : "border-l-0"
+        )}
+      >
+        {/* Fixed-width content container prevents text squishing during collapse */}
+        <div className="w-[288px] h-full flex flex-col shrink-0">
+          {/* Header */}
+          <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
+            <FileText size={16} className="text-brand-400" />
+            <span className="text-sm font-semibold text-white flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
+            {items.length > 0 && (
+              <button onClick={clearCart} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors shrink-0" title="Limpiar carrito">
+                <Trash2 size={13} />
+              </button>
+            )}
+          </div>
 
-            {/* Client */}
-            <div className="px-4 py-3 border-b border-subtle shrink-0">
-              {selectedClient ? (
-                <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
-                  <div className="w-7 h-7 rounded-full bg-brand-600/30 flex items-center justify-center shrink-0">
-                    <User size={12} className="text-brand-300" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-white truncate">{selectedClient.name}</p>
-                    <p className="text-[10px] text-muted-400 truncate">{selectedClient.email || 'Sin correo'}</p>
-                  </div>
-                  <button onClick={clearClientSel} className="text-muted-400 hover:text-white">
-                    <X size={12} />
-                  </button>
+          {/* Client */}
+          <div className="px-4 py-3 border-b border-subtle shrink-0">
+            {selectedClient ? (
+              <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
+                <div className="w-7 h-7 rounded-full bg-brand-600/30 flex items-center justify-center shrink-0">
+                  <User size={12} className="text-brand-300" />
                 </div>
-              ) : (
-                <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
-              )}
-            </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">{selectedClient.name}</p>
+                  <p className="text-[10px] text-muted-400 truncate">{selectedClient.email || 'Sin correo'}</p>
+                </div>
+                <button onClick={clearClientSel} className="text-muted-400 hover:text-white shrink-0">
+                  <X size={12} />
+                </button>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
+            )}
+          </div>
 
-            {/* Items */}
-            <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
-              <AnimatePresence initial={false}>
-                {items.length === 0 ? (
+          {/* Items */}
+          <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
+            <AnimatePresence initial={false}>
+              {items.length === 0 ? (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center justify-center h-full gap-3 text-center"
+                >
+                  <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center shrink-0">
+                    <ShoppingCart size={20} className="text-muted-400" />
+                  </div>
+                  <p className="text-xs text-muted-400">El carrito está vacío.<br/>Añade productos desde el panel.</p>
+                </motion.div>
+              ) : (
+                items.map((item) => (
                   <motion.div
-                    key="empty"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center h-full gap-3 text-center"
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: 20, scale: 0.9 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    className="bg-surface-700 border border-subtle rounded-xl p-3 shrink-0"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center">
-                      <ShoppingCart size={20} className="text-muted-400" />
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-white truncate">{item.name}</p>
+                        <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
+                      </div>
+                      <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5 shrink-0">
+                        <X size={11} />
+                      </button>
                     </div>
-                    <p className="text-xs text-muted-400">El carrito está vacío.<br/>Añade productos desde el panel.</p>
-                  </motion.div>
-                ) : (
-                  items.map((item) => (
-                    <motion.div
-                      key={item.id}
-                      layout
-                      initial={{ opacity: 0, x: 20, scale: 0.95 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: 20, scale: 0.9 }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                      className="bg-surface-700 border border-subtle rounded-xl p-3"
-                    >
-                      <div className="flex items-start gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-white truncate">{item.name}</p>
-                          <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
-                        </div>
-                        <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5">
-                          <X size={11} />
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center gap-1.5">
+                        <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
+                          <Minus size={9} />
+                        </button>
+                        <span className="text-xs font-semibold text-white w-6 text-center">{item.qty}</span>
+                        <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
+                          <Plus size={9} />
                         </button>
                       </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center gap-1.5">
-                          <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
-                            <Minus size={9} />
-                          </button>
-                          <span className="text-xs font-semibold text-white w-6 text-center">{item.qty}</span>
-                          <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
-                            <Plus size={9} />
-                          </button>
-                        </div>
-                        <motion.span
-                          key={`${item.id}-${item.qty}-${item.price}`}
-                          initial={{ scale: 1.1, color: '#a78bfa' }}
-                          animate={{ scale: 1, color: 'var(--text-foreground)' }}
-                          className="text-xs font-bold"
-                        >
-                          {format(item.price * item.qty)}
-                        </motion.span>
-                      </div>
-                    </motion.div>
-                  ))
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-subtle shrink-0 space-y-3">
-              <div className="flex justify-between text-xs text-muted-400">
-                <span>Subtotal</span>
-                <span className="text-white font-medium">{format(subtotal)}</span>
-              </div>
-              {taxRate > 0 && (
-                <div className="flex items-center justify-between text-xs text-muted-400">
-                  <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
-                    <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
-                      {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
+                      <motion.span
+                        key={`${item.id}-${item.qty}-${item.price}`}
+                        initial={{ scale: 1.1, color: '#a78bfa' }}
+                        animate={{ scale: 1, color: 'var(--text-foreground)' }}
+                        className="text-xs font-bold shrink-0"
+                      >
+                        {format(item.price * item.qty)}
+                      </motion.span>
                     </div>
-                    <span className={clsx("transition-colors select-none", includeTax ? "text-white" : "text-muted-400 group-hover:text-surface-300")}>
-                      IVA ({(taxRate * 100).toFixed(0)}%)
-                    </span>
-                  </div>
-                  <span className="text-white font-medium">{format(taxAmount)}</span>
-                </div>
+                  </motion.div>
+                ))
               )}
-              <div className="flex justify-between text-sm font-bold text-white">
-                <span>Total</span>
-                <motion.span
-                  key={total}
-                  initial={{ scale: 1.05, color: '#a78bfa' }}
-                  animate={{ scale: 1, color: 'var(--text-foreground)' }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {format(total)}
-                </motion.span>
-              </div>
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full"
-                disabled={!canOrder}
-                onClick={() => openModal('orderConfirm')}
-              >
-                Realizar Pedido
-              </Button>
+            </AnimatePresence>
+          </div>
+
+          {/* Footer */}
+          <div className="p-4 border-t border-subtle shrink-0 space-y-3">
+            <div className="flex justify-between text-xs text-muted-400">
+              <span>Subtotal</span>
+              <span className="text-white font-medium">{format(subtotal)}</span>
             </div>
-          </motion.aside>
-        )}
-      </AnimatePresence>
+            {taxRate > 0 && (
+              <div className="flex items-center justify-between text-xs text-muted-400">
+                <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
+                  <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
+                    {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
+                  </div>
+                  <span className={clsx("transition-colors select-none", includeTax ? "text-white" : "text-muted-400 group-hover:text-surface-300")}>
+                    IVA ({(taxRate * 100).toFixed(0)}%)
+                  </span>
+                </div>
+                <span className="text-white font-medium">{format(taxAmount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-sm font-bold text-white">
+              <span>Total</span>
+              <motion.span
+                key={total}
+                initial={{ scale: 1.05, color: '#a78bfa' }}
+                animate={{ scale: 1, color: 'var(--text-foreground)' }}
+                transition={{ duration: 0.2 }}
+              >
+                {format(total)}
+              </motion.span>
+            </div>
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full"
+              disabled={!canOrder}
+              onClick={() => openModal('orderConfirm')}
+            >
+              Realizar Pedido
+            </Button>
+          </div>
+        </div>
+      </motion.aside>
     </>
   )
 }
