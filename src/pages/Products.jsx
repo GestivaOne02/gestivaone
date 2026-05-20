@@ -92,7 +92,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           onClick={product.stock !== undefined && product.stock <= 0 ? undefined : handleAdd}
           disabled={product.stock !== undefined && product.stock <= 0}
           className={clsx(
-            'flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold transition-all',
+            'flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl text-xs font-semibold transition-all',
             product.stock !== undefined && product.stock <= 0
               ? 'bg-surface-700 text-muted-500 cursor-not-allowed border border-subtle'
               : added
@@ -100,7 +100,19 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
                 : 'bg-brand-600 hover:bg-brand-500 text-white'
           )}
         >
-          {product.stock !== undefined && product.stock <= 0 ? 'Sin stock' : added ? '✓ Añadido' : <><ShoppingCart size={13} /> Añadir</>}
+          {product.stock !== undefined && product.stock <= 0 ? (
+            <span className="truncate">Agotado</span>
+          ) : added ? (
+            <>
+              <span>✓</span>
+              <span className="hidden sm:inline"> Añadido</span>
+            </>
+          ) : (
+            <>
+              <ShoppingCart size={13} className="shrink-0" />
+              <span className="hidden sm:inline">Añadir</span>
+            </>
+          )}
         </motion.button>
       </div>
 
@@ -172,105 +184,111 @@ export default function Products() {
   }
 
   return (
-    <div className="p-6 flex flex-col gap-5 h-full">
-      {/* Header */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-6 px-6 border-b border-subtle/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-brand-600 dark:text-white">Productos</h1>
-          <p className="text-sm text-muted-400 mt-0.5">{products.length} productos en catálogo</p>
+    <div className="page-container flex flex-col gap-5 h-full">
+      {/* Sticky Header & Control Panel */}
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20 flex flex-col gap-4">
+        {/* Title and Actions */}
+        <div className="flex flex-row items-center justify-between gap-4">
+          <div>
+            <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Productos</h1>
+            <p className="text-xs md:text-sm text-muted-400 mt-0.5">{products.length} productos en catálogo</p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<DollarSign size={14} />}
+              onClick={() => setShowFree((v) => !v)}
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+            >
+              <span className="hidden sm:inline">Valor Libre</span>
+              <span className="inline sm:hidden">Libre</span>
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              icon={<Plus size={14} />}
+              onClick={() => openModal('addProduct')}
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+            >
+              <span className="hidden sm:inline">Añadir Producto</span>
+              <span className="inline sm:hidden">Nuevo</span>
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={<DollarSign size={14} />}
-            onClick={() => setShowFree((v) => !v)}
-            className="flex-1 sm:flex-none justify-center"
-          >
-            Valor Libre
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            icon={<Plus size={14} />}
-            onClick={() => openModal('addProduct')}
-            className="flex-1 sm:flex-none justify-center"
-          >
-            Añadir Producto
-          </Button>
-        </div>
-      </div>
 
-      {/* Free price panel */}
-      <AnimatePresence>
-        {showFree && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="bg-surface-700 border-2 border-brand-500/30 rounded-2xl p-4 flex gap-3 items-end flex-wrap">
-              <div className="flex-1 min-w-[140px]">
-                <label className="text-xs text-muted-400 font-medium mb-1.5 block uppercase tracking-wide">Descripción (opcional)</label>
-                <input
-                  value={freeName}
-                  onChange={(e) => setFreeName(e.target.value)}
-                  placeholder="Ej: Transporte, Descuento..."
-                  className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                />
+        {/* Free price panel */}
+        <AnimatePresence>
+          {showFree && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="bg-surface-700/80 border border-brand-500/20 rounded-2xl p-3 md:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+                <div className="flex-1 min-w-[140px]">
+                  <label className="text-[10px] text-muted-400 font-bold mb-1 block uppercase tracking-wide">Descripción (opcional)</label>
+                  <input
+                    value={freeName}
+                    onChange={(e) => setFreeName(e.target.value)}
+                    placeholder="Ej: Transporte, Descuento..."
+                    className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  />
+                </div>
+                <div className="sm:w-36">
+                  <label className="text-[10px] text-muted-400 font-bold mb-1 block uppercase tracking-wide">Precio ({baseCurrency}) *</label>
+                  <input
+                    type="number"
+                    value={freePrice}
+                    onChange={(e) => setFreePrice(e.target.value)}
+                    placeholder="0.00"
+                    step="0.01"
+                    className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  />
+                </div>
+                <Button variant="primary" size="sm" icon={<Plus size={14} />} onClick={handleFreeAdd} className="py-2 text-xs">
+                  Añadir
+                </Button>
               </div>
-              <div className="w-36">
-                <label className="text-xs text-muted-400 font-medium mb-1.5 block uppercase tracking-wide">Precio ({baseCurrency}) *</label>
-                <input
-                  type="number"
-                  value={freePrice}
-                  onChange={(e) => setFreePrice(e.target.value)}
-                  placeholder="0.00"
-                  step="0.01"
-                  className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                />
-              </div>
-              <Button variant="primary" size="md" icon={<Plus size={14} />} onClick={handleFreeAdd}>
-                Añadir al carrito
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {/* Search & filters */}
-      <div className="flex gap-3 items-center flex-wrap">
-        <div className="flex-1 min-w-48">
-          <SearchBar value={search} onChange={setSearch} placeholder="Buscar producto..." />
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={() => setActiveCat(null)}
-            className={clsx(
-              'px-3 py-1.5 rounded-lg text-xs font-medium transition-all',
-              !activeCat ? 'bg-brand-600 text-white' : 'bg-surface-700 text-muted-400 hover:text-white border border-subtle'
-            )}
-          >
-            Todos
-          </button>
-          {CATEGORIES.map((cat) => (
+        {/* Search & filters */}
+        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+          <div className="flex-1">
+            <SearchBar value={search} onChange={setSearch} placeholder="Buscar producto..." />
+          </div>
+          {/* Categories Horizontal scrollable on mobile, flex wrap on tablet+ */}
+          <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar select-none -mx-4 px-4 md:mx-0 md:px-0">
             <button
-              key={cat}
-              onClick={() => setActiveCat(activeCat === cat ? null : cat)}
+              onClick={() => setActiveCat(null)}
               className={clsx(
-                'px-3 py-1.5 rounded-lg text-xs font-medium transition-all',
-                activeCat === cat ? 'bg-brand-600 text-white' : 'bg-surface-700 text-muted-400 hover:text-white border border-subtle'
+                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border',
+                !activeCat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-white'
               )}
             >
-              {cat}
+              Todos
             </button>
-          ))}
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCat(activeCat === cat ? null : cat)}
+                className={clsx(
+                  'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border',
+                  activeCat === cat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-white'
+                )}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Product grid */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1">
         <AnimatePresence>
           {filtered.length === 0 ? (
             <motion.div

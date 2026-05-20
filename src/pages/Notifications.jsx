@@ -95,68 +95,72 @@ export default function Notifications() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="page-container space-y-6"
+      className="page-container flex flex-col gap-6 h-full"
     >
-      {/* Sticky Header */}
+      {/* Sticky Header & Categories Wrapper */}
       <motion.div 
         variants={itemVariants}
-        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20 flex flex-col gap-4"
       >
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl md:text-2xl font-bold text-brand-600 dark:text-white">Notificaciones</h1>
-            {unreadCount > 0 && (
-              <Badge variant="primary" className="px-2 py-0.5 text-xs font-black animate-pulse">
-                {unreadCount} Nuevas
-              </Badge>
-            )}
+        {/* Row 1: Title and Actions */}
+        <div className="flex flex-row items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg md:text-2xl font-bold text-brand-600 dark:text-white">Notificaciones</h1>
+              {unreadCount > 0 && (
+                <Badge variant="primary" className="px-2 py-0.5 text-[10px] md:text-xs font-black animate-pulse shrink-0">
+                  {unreadCount} Nuevas
+                </Badge>
+              )}
+            </div>
+            <p className="text-xs md:text-sm text-muted-400 mt-0.5">Alertas importantes y anuncios</p>
           </div>
-          <p className="text-sm text-muted-400 mt-0.5">Alertas importantes y anuncios de facturación</p>
+
+          {unreadCount > 0 && (
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<Check size={14} />}
+              onClick={handleMarkAllRead}
+              className="px-2.5 py-1.5 text-xs rounded-xl shrink-0"
+            >
+              <span className="hidden sm:inline">Marcar todo como leído</span>
+              <span className="inline sm:hidden">Marcar Leído</span>
+            </Button>
+          )}
         </div>
 
-        {unreadCount > 0 && (
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={<Check size={16} />}
-            onClick={handleMarkAllRead}
-            className="w-full sm:w-auto"
-          >
-            Marcar todo como leído
-          </Button>
-        )}
-      </motion.div>
+        {/* Row 2: Categories Horizontal Tabs */}
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar select-none -mx-4 px-4 md:mx-0 md:px-0">
+          {categories.map((cat) => {
+            const count = cat === 'Todas' 
+              ? notifications.filter(n => !n.read).length
+              : notifications.filter(n => n.category === cat && !n.read).length
 
-      {/* Categories Horizontal Tabs */}
-      <motion.div variants={itemVariants} className="flex gap-2 overflow-x-auto pb-1 no-scrollbar select-none">
-        {categories.map((cat) => {
-          const count = cat === 'Todas' 
-            ? notifications.filter(n => !n.read).length
-            : notifications.filter(n => n.category === cat && !n.read).length
-
-          return (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={clsx(
-                "relative flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-300 whitespace-nowrap border",
-                activeCategory === cat
-                  ? "bg-brand-600 border-brand-500 text-white shadow-glow-sm"
-                  : "bg-surface-800 border-subtle text-muted-400 hover:text-foreground hover:bg-surface-700"
-              )}
-            >
-              <span>{cat}</span>
-              {count > 0 && (
-                <span className={clsx(
-                  "w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-bold",
-                  activeCategory === cat ? "bg-white text-brand-600" : "bg-brand-600 text-white animate-pulse"
-                )}>
-                  {count}
-                </span>
-              )}
-            </button>
-          )
-        })}
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={clsx(
+                  "relative flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-300 whitespace-nowrap border shrink-0",
+                  activeCategory === cat
+                    ? "bg-brand-600 border-brand-500 text-white shadow-glow-sm"
+                    : "bg-surface-800 border-subtle text-muted-400 hover:text-white hover:bg-surface-700"
+                )}
+              >
+                <span>{cat}</span>
+                {count > 0 && (
+                  <span className={clsx(
+                    "w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-bold",
+                    activeCategory === cat ? "bg-white text-brand-600" : "bg-brand-600 text-white"
+                  )}>
+                    {count}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
       </motion.div>
 
       {/* Notifications List */}

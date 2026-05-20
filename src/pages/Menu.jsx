@@ -187,45 +187,52 @@ export default function Menu() {
   }
 
   return (
-    <div className="p-6 h-full flex flex-col gap-6">
-      {/* Header */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-6 px-6 border-b border-subtle/20">
-        <h1 className="text-xl font-bold text-brand-600 dark:text-white">Menú Operativo</h1>
-        <p className="text-sm text-muted-400 mt-0.5">Selecciona o añade un cliente para iniciar</p>
-      </div>
+    <div className="page-container flex flex-col gap-5 h-full">
+      {/* Sticky Header & Control Panel */}
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20 flex flex-col gap-4">
+        {/* Title and Actions */}
+        <div className="flex flex-row items-center justify-between gap-4">
+          <div>
+            <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Menú Operativo</h1>
+            <p className="text-xs md:text-sm text-muted-400 mt-0.5">Selecciona o añade un cliente para iniciar</p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Button
+              variant="primary"
+              size="sm"
+              icon={<UserPlus size={15} />}
+              onClick={() => openModal('addClient')}
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+            >
+              <span className="hidden sm:inline">Añadir Cliente</span>
+              <span className="inline sm:hidden">Nuevo</span>
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<ShoppingBag size={15} />}
+              onClick={() => {
+                selectClient(null)
+                toast('Modo express activado — sin cliente asignado', { icon: '⚡' })
+              }}
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+            >
+              <span className="hidden sm:inline">Cliente Express</span>
+              <span className="inline sm:hidden">Express</span>
+            </Button>
+          </div>
+        </div>
 
-      {/* Top section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-          <Button
-            variant="primary"
-            size="lg"
-            icon={<UserPlus size={18} />}
-            className="w-full justify-center"
-            onClick={() => openModal('addClient')}
-          >
-            Añadir Cliente
-          </Button>
-        </motion.div>
-        <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
-          <Button
-            variant="secondary"
-            size="lg"
-            icon={<ShoppingBag size={18} />}
-            className="w-full justify-center"
-            onClick={() => {
-              // Express client: clear selection and proceed
-              selectClient(null)
-              toast('Modo express activado — sin cliente asignado', { icon: '⚡' })
-            }}
-          >
-            Cliente Express
-          </Button>
-        </motion.div>
+        {/* Search Bar inside sticky panel */}
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Buscar cliente por nombre, correo o teléfono..."
+        />
       </div>
 
       {/* Frequent clients */}
-      <div className="flex-1 flex flex-col gap-3 overflow-hidden">
+      <div className="flex-1 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users size={16} className="text-brand-400" />
@@ -234,45 +241,41 @@ export default function Menu() {
           </div>
         </div>
 
-        <SearchBar
-          value={search}
-          onChange={setSearch}
-          placeholder="Buscar cliente por nombre, correo o teléfono..."
-        />
-
-        <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-          <AnimatePresence>
-            {filtered.length === 0 ? (
-              <motion.div
-                key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-12"
-              >
-                <Users size={32} className="text-muted-400 mx-auto mb-3" />
-                <p className="text-sm text-muted-400">
-                  {search ? 'Sin resultados para tu búsqueda' : 'Aún no tienes clientes frecuentes'}
-                </p>
-              </motion.div>
-            ) : (
-              filtered.map((client) => (
-                <ClientCard
-                  key={client.id}
-                  client={client}
-                  selected={selectedId === client.id}
-                  onSelect={() => selectClient(client.id)}
-                  onEdit={() => openModal('addClient', { client })}
-                  onDelete={() => handleDelete(client)}
-                  onOpenHistory={() => openModal('clientHistory', { client })}
-                  format$={format$}
-                  lastInvoice={getLastInvoice(client.id)}
-                  pendingAmount={getPending(client.id)}
-                  totalBilled={getTotalBilled(client.id)}
-                  status={getClientStatus(client.id)}
-                />
-              ))
-            )}
-          </AnimatePresence>
+        <div className="flex-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <AnimatePresence>
+              {filtered.length === 0 ? (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="col-span-full text-center py-12"
+                >
+                  <Users size={32} className="text-muted-400 mx-auto mb-3" />
+                  <p className="text-sm text-muted-400">
+                    {search ? 'Sin resultados para tu búsqueda' : 'Aún no tienes clientes frecuentes'}
+                  </p>
+                </motion.div>
+              ) : (
+                filtered.map((client) => (
+                  <ClientCard
+                    key={client.id}
+                    client={client}
+                    selected={selectedId === client.id}
+                    onSelect={() => selectClient(client.id)}
+                    onEdit={() => openModal('addClient', { client })}
+                    onDelete={() => handleDelete(client)}
+                    onOpenHistory={() => openModal('clientHistory', { client })}
+                    format$={format$}
+                    lastInvoice={getLastInvoice(client.id)}
+                    pendingAmount={getPending(client.id)}
+                    totalBilled={getTotalBilled(client.id)}
+                    status={getClientStatus(client.id)}
+                  />
+                ))
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
