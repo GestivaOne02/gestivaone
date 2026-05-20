@@ -21,13 +21,28 @@ export default function Sidebar({ isMobile }) {
   const role        = user?.role || 'despachador'
   const permissions = ROLES[role]?.permissions || {}
 
-  const NAV = [
-    { to: '/',          icon: LayoutDashboard, label: 'Dashboard',    perm: 'dashboard'  },
-    { to: '/menu',      icon: Receipt,         label: 'Menú',         perm: 'menu'       },
-    { to: '/products',  icon: Package,         label: 'Productos',    perm: 'products'   },
-    { to: '/employees', icon: Users,           label: 'Empleados',    perm: 'employees'  },
-    { to: '/notifications', icon: Bell,        label: 'Notificaciones', perm: 'dashboard' },
-    { to: '/facturero', icon: Printer,         label: 'Facturero',    perm: 'dashboard'  },
+  const NAV_GROUPS = [
+    {
+      title: 'Operaciones',
+      items: [
+        { to: '/menu',      icon: Receipt,         label: 'Menú (Ventas)', perm: 'menu'       },
+        { to: '/products',  icon: Package,         label: 'Productos',    perm: 'products'   },
+      ]
+    },
+    {
+      title: 'Gestión',
+      items: [
+        { to: '/',          icon: LayoutDashboard, label: 'Dashboard',    perm: 'dashboard'  },
+        { to: '/employees', icon: Users,           label: 'Empleados',    perm: 'employees'  },
+      ]
+    },
+    {
+      title: 'Herramientas',
+      items: [
+        { to: '/facturero', icon: Printer,         label: 'Facturero',    perm: 'dashboard'  },
+        { to: '/notifications', icon: Bell,        label: 'Notificaciones', perm: 'dashboard' },
+      ]
+    }
   ]
 
   const handleNavClick = () => { if (isMobile) closeMobile() }
@@ -145,41 +160,48 @@ export default function Sidebar({ isMobile }) {
                 <button onClick={closeMobile} className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600 transition-colors"><X size={16} /></button>
               </div>
               <nav className="flex-1 py-4 px-2 flex flex-col gap-1 overflow-y-auto no-scrollbar">
-                {NAV.map(({ to, icon: Icon, label, perm }, i) => {
-                  const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
-                  const allowed  = permissions[perm] ?? true
-                  return (
-                    <motion.div
-                      key={to}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                    >
-                      <NavLink to={allowed ? to : '#'}
-                        onClick={allowed ? handleNavClick : (e) => e.preventDefault()}
-                        target="_self"
-                        className={clsx(
-                          'relative flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-300',
-                          !allowed && 'opacity-50 cursor-not-allowed',
-                          isActive && allowed ? 'text-brand-300' : allowed ? 'text-muted-400 hover:text-white hover:bg-surface-600' : 'text-muted-400'
-                        )}>
-                        {isActive && allowed && <motion.div layoutId="activeIndicatorMobile"
-                          className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
-                          transition={{ type: 'spring', stiffness: 400, damping: 35 }} />}
-                        <Icon size={18} className="shrink-0 relative z-10" />
-                        <span className="relative z-10 flex-1 flex items-center justify-between">
-                          <span>{label}</span>
-                          {to === '/notifications' && getUnreadCount() > 0 && (
-                            <span className="w-5 h-5 rounded-full bg-brand-600 border border-brand-500 text-[10px] font-bold text-white flex items-center justify-center animate-pulse">
-                              {getUnreadCount()}
+                {NAV_GROUPS.map((group, gIdx) => (
+                  <div key={group.title} className="flex flex-col gap-1 mb-3">
+                    <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-3 mb-1 mt-2 first:mt-0 select-none">
+                      {group.title}
+                    </div>
+                    {group.items.map(({ to, icon: Icon, label, perm }, i) => {
+                      const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
+                      const allowed  = permissions[perm] ?? true
+                      return (
+                        <motion.div
+                          key={to}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: (gIdx * 2 + i) * 0.05 }}
+                        >
+                          <NavLink to={allowed ? to : '#'}
+                            onClick={allowed ? handleNavClick : (e) => e.preventDefault()}
+                            target="_self"
+                            className={clsx(
+                              'relative flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-300',
+                              !allowed && 'opacity-50 cursor-not-allowed',
+                              isActive && allowed ? 'text-brand-300' : allowed ? 'text-muted-400 hover:text-white hover:bg-surface-600' : 'text-muted-400'
+                            )}>
+                            {isActive && allowed && <motion.div layoutId="activeIndicatorMobile"
+                              className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
+                              transition={{ type: 'spring', stiffness: 400, damping: 35 }} />}
+                            <Icon size={18} className="shrink-0 relative z-10" />
+                            <span className="relative z-10 flex-1 flex items-center justify-between">
+                              <span>{label}</span>
+                              {to === '/notifications' && getUnreadCount() > 0 && (
+                                <span className="w-5 h-5 rounded-full bg-brand-600 border border-brand-500 text-[10px] font-bold text-white flex items-center justify-center animate-pulse">
+                                  {getUnreadCount()}
+                                </span>
+                              )}
                             </span>
-                          )}
-                        </span>
-                        {!allowed && <Lock size={12} className="text-muted-400 relative z-10" />}
-                      </NavLink>
-                    </motion.div>
-                  )
-                })}
+                            {!allowed && <Lock size={12} className="text-muted-400 relative z-10" />}
+                          </NavLink>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                ))}
 
                 {/* Separated Cuenta and Configuración at the bottom for Mobile Drawer */}
                 <div className="mt-auto pt-2 border-t border-subtle shrink-0 flex flex-col gap-1">
@@ -256,8 +278,19 @@ export default function Sidebar({ isMobile }) {
       </AnimatePresence>
 
       <nav className="flex-1 py-4 px-2 flex flex-col gap-1 overflow-y-auto no-scrollbar">
-        {NAV.map(({ to, icon, label, perm }) => (
-          <NavItem key={to} to={to} icon={icon} label={label} perm={perm} layoutId="activeIndicator" />
+        {NAV_GROUPS.map((group, gIdx) => (
+          <div key={group.title} className="flex flex-col gap-1">
+            {!collapsed ? (
+              <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-3 mb-1.5 mt-3.5 first:mt-0 select-none">
+                {group.title}
+              </div>
+            ) : gIdx > 0 ? (
+              <div className="border-t border-subtle/40 my-2 mx-2"></div>
+            ) : null}
+            {group.items.map(({ to, icon, label, perm }) => (
+              <NavItem key={to} to={to} icon={icon} label={label} perm={perm} layoutId="activeIndicator" />
+            ))}
+          </div>
         ))}
       </nav>
 
