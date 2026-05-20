@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Bell, Check, AlertTriangle, AlertCircle, 
   Info, CheckCircle2, ShoppingCart, Settings,
-  Calendar, Layers, Sparkles
+  Calendar, Layers, Sparkles, Trash2, X
 } from 'lucide-react'
 import { useNotificationStore } from '@/store/useNotificationStore'
 import Button from '@/components/ui/Button'
@@ -66,6 +66,8 @@ export default function Notifications() {
   const getNotifications = useNotificationStore((s) => s.getNotifications)
   const markAsRead = useNotificationStore((s) => s.markAsRead)
   const markAllAsRead = useNotificationStore((s) => s.markAllAsRead)
+  const deleteNotification = useNotificationStore((s) => s.deleteNotification)
+  const clearReadNotifications = useNotificationStore((s) => s.clearReadNotifications)
 
   const notifications = getNotifications()
   const unreadCount = notifications.filter(n => !n.read).length
@@ -90,6 +92,11 @@ export default function Notifications() {
       markAllAsRead(unreadIds)
       toast.success('Todas las notificaciones marcadas como leídas')
     }
+  }
+
+  const handleClearRead = () => {
+    clearReadNotifications()
+    toast.success('Notificaciones leídas eliminadas')
   }
 
   return (
@@ -118,18 +125,32 @@ export default function Notifications() {
             <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Alertas importantes y anuncios</p>
           </div>
 
-          {unreadCount > 0 && (
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={<Check size={14} />}
-              onClick={handleMarkAllRead}
-              className="px-2.5 py-1.5 text-xs rounded-xl shrink-0"
-            >
-              <span className="hidden sm:inline">Marcar todo como leído</span>
-              <span className="inline sm:hidden">Marcar Leído</span>
-            </Button>
-          )}
+          <div className="flex gap-2 shrink-0">
+            {unreadCount > 0 && (
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={<Check size={14} />}
+                onClick={handleMarkAllRead}
+                className="px-2.5 py-1.5 text-xs rounded-xl shrink-0"
+              >
+                <span className="hidden sm:inline">Marcar todo como leído</span>
+                <span className="inline sm:hidden">Marcar Leído</span>
+              </Button>
+            )}
+            {notifications.some(n => n.read) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<Trash2 size={14} />}
+                onClick={handleClearRead}
+                className="px-2.5 py-1.5 text-xs rounded-xl border border-subtle hover:border-danger-500/30 hover:text-danger-400 shrink-0"
+              >
+                <span className="hidden sm:inline">Limpiar leídas</span>
+                <span className="inline sm:hidden">Limpiar</span>
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Row 2: Categories Horizontal Tabs */}
@@ -246,20 +267,34 @@ export default function Notifications() {
                     </p>
                   </div>
 
-                  {/* Unread circle badge / read checkmark on right */}
-                  {!notif.read ? (
-                    <div className="flex items-center justify-center shrink-0">
-                      <span className={clsx("w-2 h-2 rounded-full animate-pulse", 
+                  {/* Action actions container (right side) */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    {!notif.read ? (
+                      <span className={clsx("w-2 h-2 rounded-full animate-pulse shrink-0", 
                         notif.type === 'danger' ? 'bg-danger-500' :
                         notif.type === 'warning' ? 'bg-warning-500' :
                         notif.type === 'success' ? 'bg-success-500' : 'bg-brand-500'
                       )} />
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center shrink-0 text-success-500 dark:text-success-400">
-                      <Check size={14} className="stroke-[3]" />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="text-success-500 dark:text-success-400 shrink-0">
+                        <Check size={14} className="stroke-[3]" />
+                      </div>
+                    )}
+
+                    {/* Individual delete action */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteNotification(notif.id)
+                        toast.success('Notificación eliminada', { id: `del-${notif.id}`, duration: 1500 })
+                      }}
+                      className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-surface-750 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 focus:outline-none"
+                      title="Eliminar"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
                 </motion.div>
               )
             })

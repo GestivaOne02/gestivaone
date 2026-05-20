@@ -194,6 +194,24 @@ export const useNotificationStore = create((set, get) => ({
     }
   },
 
+  // Delete a single notification from DB
+  deleteNotification: async (id) => {
+    // Optimistic update
+    set((state) => ({
+      notifications: state.notifications.filter(n => n.id !== id)
+    }))
+
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('❌ Error deleting notification:', error)
+      get().fetchNotifications()
+    }
+  },
+
   // Reset read status (mark all as unread or clear read ones)
   clearReadNotifications: async () => {
     const { user } = useAuthStore.getState()
