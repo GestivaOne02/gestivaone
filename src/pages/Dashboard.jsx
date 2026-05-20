@@ -508,6 +508,17 @@ export default function Dashboard() {
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
       const companyName = user?.companyName || 'Mi Empresa'
       
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '—'
+        const d = new Date(dateStr)
+        return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('es-CO')
+      }
+
+      const safeSliceId = (id) => {
+        if (!id) return '—'
+        return String(id).slice(-8).toUpperCase()
+      }
+
       // Calculate deep metrics
       let totalAbonadoGlobal = 0
       const abonosList = []
@@ -531,20 +542,20 @@ export default function Dashboard() {
             const amt = Number(p.amount) || 0
             totalAbonadoGlobal += amt
             abonosList.push([
-              inv.id?.slice(-8)?.toUpperCase() || '—',
+              safeSliceId(inv.id),
               inv.client_name || 'Sin cliente',
               format$(amt),
-              new Date(p.date).toLocaleDateString('es-CO'),
+              formatDate(p.date),
               p.reference || 'Abono registrado'
             ])
           })
         } else if (inv.payment_status === 'paid') {
           totalAbonadoGlobal += inv.total
           abonosList.push([
-            inv.id?.slice(-8)?.toUpperCase() || '—',
+            safeSliceId(inv.id),
             inv.client_name || 'Sin cliente',
             format$(inv.total),
-            new Date(inv.created_at).toLocaleDateString('es-CO'),
+            formatDate(inv.created_at || inv.date),
             'Pago total inmediato'
           ])
         }
@@ -662,12 +673,12 @@ export default function Dashboard() {
       doc.text('TODAS LAS FACTURAS EMITIDAS', 14, 24)
 
       const allInvoicesBody = invoices.map(i => [
-        i.id?.slice(-8)?.toUpperCase() || '—',
+        safeSliceId(i.id),
         i.client_name || 'Cliente Express',
         format$(i.total),
         i.payment_type === 'immediate' ? 'Inmediato' : 'Crédito',
         i.payment_status === 'paid' ? 'Pagada' : i.payment_status === 'overdue' ? 'Atrasada' : 'Pendiente',
-        new Date(i.created_at).toLocaleDateString('es-CO')
+        formatDate(i.created_at || i.date)
       ])
 
       autoTable(doc, {
@@ -680,18 +691,19 @@ export default function Dashboard() {
       })
 
       // Operating Expenses List
-      const nextY = doc.lastAutoTable.finalY + 10
+      const lastTableFinalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 28
+      const nextY = lastTableFinalY + 10
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(17, 24, 39)
       doc.text('DETALLE DE EGRESOS / GASTOS OPERATIVOS', 14, nextY)
 
       const expBody = expenses.map(e => [
-        e.id?.slice(-8)?.toUpperCase() || '—',
+        safeSliceId(e.id),
         e.category || 'Otros',
         e.description || 'Gasto registrado',
         format$(e.amount),
-        new Date(e.created_at).toLocaleDateString('es-CO')
+        formatDate(e.created_at)
       ])
 
       autoTable(doc, {
