@@ -47,21 +47,71 @@ export default function App() {
   useEffect(() => {
     const CURRENT_VERSION = '2.3'
     const lastVersion = localStorage.getItem('gestiva-app-version')
-    if (lastVersion !== CURRENT_VERSION) {
-      console.log('🧹 New version detected! Purging old persisted caches and cookies...')
-      const storesToClear = [
+    const hasVersionChanged = lastVersion !== CURRENT_VERSION
+
+    const ACTIVE_KEYS = [
+      'gestiva-app-version',
+      'gestiva-auth-v2.2',
+      'gestiva-currency-v2',
+      'gestiva-expenses-v2',
+      'gestiva-notifications',
+      'gestiva-settings-v2.3',
+      'gestiva-ui',
+      'gestiva-cookies-accepted'
+    ]
+
+    // If version changed, perform a full purge of all non-essential data
+    if (hasVersionChanged) {
+      console.log(`🧹 New version detected (${CURRENT_VERSION})! Purging old persisted caches...`)
+      
+      // Clear active keys too to force a complete reset of store states to avoid mismatches
+      const keysToForceClear = [
         'gestiva-auth-v2.2',
-        'gestiva-auth-v2.1',
-        'gestiva-auth-v2.0',
-        'gestiva-auth',
-        'gestiva-settings',
+        'gestiva-settings-v2.3',
         'gestiva-notifications',
-        'gestiva-expenses',
-        'gestiva-currencies',
+        'gestiva-expenses-v2',
+        'gestiva-currency-v2',
         'gestiva-ui',
-        'gestiva-cookies-accepted' // Clear old accepted status so the gorgeous banner displays!
+        'gestiva-cookies-accepted'
       ]
-      storesToClear.forEach(k => localStorage.removeItem(k))
+      keysToForceClear.forEach(k => localStorage.removeItem(k))
+    }
+
+    // Clean up any remaining/legacy keys starting with 'gestiva-'
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && key.startsWith('gestiva-') && !ACTIVE_KEYS.includes(key)) {
+          console.log(`🧹 Purging legacy cache key: ${key}`)
+          localStorage.removeItem(key)
+          i--
+        }
+      }
+    } catch (e) {
+      console.error('Error cleaning legacy localStorage:', e)
+    }
+
+    // Clear CacheStorage (browser cache buckets)
+    if (window.caches) {
+      caches.keys().then((keys) => {
+        keys.forEach((key) => {
+          console.log(`🧹 Deleting browser cache bucket: ${key}`)
+          caches.delete(key)
+        })
+      }).catch(err => console.error('Error clearing CacheStorage:', err))
+    }
+
+    // Unregister legacy Service Workers
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => {
+          console.log(`🧹 Unregistering Service Worker:`, registration)
+          registration.unregister()
+        })
+      }).catch(err => console.error('Error unregistering ServiceWorkers:', err))
+    }
+
+    if (hasVersionChanged) {
       localStorage.setItem('gestiva-app-version', CURRENT_VERSION)
       window.location.reload()
     }
