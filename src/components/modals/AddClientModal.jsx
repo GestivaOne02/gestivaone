@@ -13,11 +13,13 @@ import { motion } from 'framer-motion'
 import clsx from 'clsx'
 
 const schema = z.object({
-  name:    z.string().min(2, 'Mínimo 2 caracteres'),
-  address: z.string().optional(),
-  phone:   z.string().optional(),
-  email:   z.string().email('Correo inválido').optional().or(z.literal('')),
-  type:    z.enum(['frequent', 'express']),
+  name:          z.string().min(2, 'Mínimo 2 caracteres'),
+  address:       z.string().optional(),
+  phone:         z.string().optional(),
+  email:         z.string().email('Correo inválido').optional().or(z.literal('')),
+  type:          z.enum(['frequent', 'express']),
+  document_id:   z.string().optional().or(z.literal('')),
+  document_type: z.string().optional().or(z.literal('')),
 })
 
 export default function AddClientModal({ open }) {
@@ -29,7 +31,7 @@ export default function AddClientModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { type: 'frequent', name: '', address: '', phone: '', email: '' },
+    defaultValues: { type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13' },
   })
 
   const clientType = watch('type')
@@ -38,7 +40,7 @@ export default function AddClientModal({ open }) {
     if (open && editingClient) {
       reset({ ...editingClient })
     } else if (open) {
-      reset({ type: 'frequent', name: '', address: '', phone: '', email: '' })
+      reset({ type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13' })
     }
   }, [open, editingClient])
 
@@ -93,12 +95,34 @@ export default function AddClientModal({ open }) {
         )}
 
         <Input
-          label="Nombre *"
+          label="Nombre o Razón Social *"
           icon={<User size={14} />}
           error={errors.name?.message}
           placeholder="Nombre del cliente"
           {...register('name')}
         />
+
+        {/* DIAN document fields */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-muted-400 font-medium uppercase tracking-wide">Tipo de Documento</label>
+            <select
+              {...register('document_type')}
+              className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+            >
+              <option value="13">Cédula de Ciudadanía (CC)</option>
+              <option value="31">NIT (Número Identificación Tributaria)</option>
+              <option value="22">Cédula de Extranjería (CE)</option>
+              <option value="41">Pasaporte</option>
+            </select>
+          </div>
+          <Input
+            label="Número de Documento / NIT"
+            placeholder="Ej: 1020304050"
+            error={errors.document_id?.message}
+            {...register('document_id')}
+          />
+        </div>
 
         {clientType === 'frequent' && (
           <>

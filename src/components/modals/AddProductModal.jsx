@@ -15,6 +15,7 @@ import clsx from 'clsx'
 const schema = z.object({
   name:     z.string().min(2, 'Mínimo 2 caracteres'),
   price:    z.coerce.number().positive('Precio inválido'),
+  cost:     z.coerce.number().min(0, 'Costo inválido').optional().or(z.literal('')),
   unit:     z.enum(['KG', 'LB', 'UND', 'L', 'M']),
   category: z.string().optional(),
   stock:    z.coerce.number().min(0).optional(),
@@ -31,14 +32,14 @@ export default function AddProductModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { unit: 'UND', stock: 0, category: 'Otros' },
+    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0 },
   })
 
   const unit = watch('unit')
 
   useEffect(() => {
-    if (open && editing) reset({ ...editing, stock: editing.stock ?? 0 })
-    else if (open) reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '' })
+    if (open && editing) reset({ ...editing, stock: editing.stock ?? 0, cost: editing.cost ?? 0 })
+    else if (open) reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0 })
   }, [open, editing])
 
   const onSubmit = async (data) => {
@@ -65,7 +66,7 @@ export default function AddProductModal({ open }) {
 
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label={`Precio (${baseCurrency}) *`}
+            label={`Precio Venta (${baseCurrency}) *`}
             icon={<DollarSign size={14} />}
             error={errors.price?.message}
             placeholder="0.00"
@@ -73,6 +74,18 @@ export default function AddProductModal({ open }) {
             step="0.01"
             {...register('price')}
           />
+          <Input
+            label={`Costo Compra (${baseCurrency})`}
+            icon={<DollarSign size={14} />}
+            error={errors.cost?.message}
+            placeholder="0.00"
+            type="number"
+            step="0.01"
+            {...register('cost')}
+          />
+        </div>
+        
+        <div>
           <Input
             label="Stock disponible"
             icon={<Archive size={14} />}

@@ -427,8 +427,11 @@ export const useAuthStore = create(
             const { useNotificationStore } = await import('./useNotificationStore')
             if (company?.settings) {
               useSettingsStore.getState().loadFromSettings(company.settings)
-              useNotificationStore.getState().loadFromSettings(company.settings)
             }
+            // Fetch and synchronize notifications from cloud database
+            useNotificationStore.getState().fetchNotifications().then(() => {
+              useNotificationStore.getState().syncNotifications()
+            })
           } catch (e) {
             console.error('Error loading settings from DB to store:', e)
           }

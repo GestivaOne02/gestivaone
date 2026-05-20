@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Calculator, Download, AlertTriangle, ArrowUpRight, 
@@ -22,6 +22,16 @@ export default function DianAssistant() {
   const expenses = useExpenseStore((s) => s.expenses)
   const clients = useClientStore((s) => s.clients)
   const format$ = useCurrencyStore((s) => s.format)
+
+  const fetchInvoices = useInvoiceStore((s) => s.fetchInvoices)
+  const fetchExpenses = useExpenseStore((s) => s.fetchExpenses)
+  const fetchClients = useClientStore((s) => s.fetchClients)
+
+  useEffect(() => {
+    fetchInvoices()
+    fetchExpenses()
+    fetchClients()
+  }, [fetchInvoices, fetchExpenses, fetchClients])
 
   // ─── Filtered Data by Year ───
   const yearInvoices = useMemo(() => {
@@ -97,8 +107,12 @@ export default function DianAssistant() {
   }, [yearInvoices])
 
   const totalIvaDeductible = useMemo(() => {
-    // Estimate based on expenses categories that typically carry IVA (e.g. inventory, marketing, arriendos)
+    // Read actual IVA paid on expenses from DB or estimate if blank
     return yearExpenses.reduce((sum, exp) => {
+      if (exp.iva_paid !== undefined && exp.iva_paid !== null && Number(exp.iva_paid) > 0) {
+        return sum + Number(exp.iva_paid)
+      }
+      // Estimate based on expenses categories that typically carry IVA (e.g. inventory, marketing, arriendos)
       const applicableCategories = ['Inventario/Mercancía', 'Marketing/Publicidad', 'Alquiler/Servicios']
       if (applicableCategories.includes(exp.category)) {
         // Calculate estimated IVA included in expense
@@ -120,8 +134,8 @@ export default function DianAssistant() {
       const clientId = inv.client_id || 'CLIENTE_EXPRESS'
       const clientObj = clients.find(c => c.id === clientId)
       
-      const docType = clientObj?.documentType || '13' // Default Cédula de Ciudadanía
-      const docNum = clientObj?.phone || '222222222' // Placeholder or NIT
+      const docType = clientObj?.document_type || '13' // Real database column document_type
+      const docNum = clientObj?.document_id || '222222222' // Real database column document_id
       const name = clientObj?.name || 'Cliente Express / Consumidor Final'
       
       if (!clientMap[clientId]) {
@@ -190,14 +204,12 @@ export default function DianAssistant() {
 
     yearExpenses.forEach((exp) => {
       const concept = getConcept(exp.category)
-      const desc = exp.description || 'Proveedor Varios'
-      
-      // Synthesize mock supplier details for Excel editing
-      const docType = '31' // NIT
-      const docNum = '999999999' // Template NIT
-      const razonSocial = desc.substring(0, 30)
-      
-      csvContent += `${concept},${docType},${docNum},,"","${razonSocial}","Calle Ficticia 123",11,001,169,${Math.round(exp.amount)},0,0\r\n`
+      const providerName = exp.provider_name || 'Proveedor Varios'
+      const docType = exp.provider_doc_type || '31' // NIT
+      const docNum = exp.provider_doc_id || '999999999' // Provider doc/NIT
+      const ret = exp.retencion || 0
+
+      csvContent += `${concept},${docType},${docNum},,"","${providerName}","Calle Ficticia 123",11,001,169,${Math.round(exp.amount)},0,${Math.round(ret)}\r\n`
     })
 
     const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' })

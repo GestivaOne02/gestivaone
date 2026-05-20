@@ -100,6 +100,11 @@ export default function Dashboard() {
   const [expAmount, setExpAmount] = useState('')
   const [expCategory, setExpCategory] = useState('Inventario/Mercancía')
   const [expDesc, setExpDesc] = useState('')
+  const [expProviderName, setExpProviderName] = useState('')
+  const [expProviderDocType, setExpProviderDocType] = useState('31') // Default: NIT
+  const [expProviderDocId, setExpProviderDocId] = useState('')
+  const [expIvaPaid, setExpIvaPaid] = useState('0')
+  const [expRetencion, setExpRetencion] = useState('0')
 
   // React state variables defined at the very top of the component to prevent TDZ errors
   const [selectedYears, setSelectedYears] = useState([new Date().getFullYear().toString()])
@@ -705,21 +710,30 @@ export default function Dashboard() {
     }
   }
 
-  const handleExpenseSubmit = (e) => {
+  const handleExpenseSubmit = async (e) => {
     e.preventDefault()
     const amt = Number(expAmount)
     if (!amt || amt <= 0) {
       return toast.error('Ingresa un monto válido para el gasto')
     }
-    const res = addExpense({
+    const res = await addExpense({
       amount: amt,
       category: expCategory,
       description: expDesc.trim(),
+      provider_name: expProviderName.trim() || 'Proveedor Varios',
+      provider_doc_type: expProviderDocType,
+      provider_doc_id: expProviderDocId.trim() || '999999999',
+      iva_paid: Number(expIvaPaid || 0),
+      retencion: Number(expRetencion || 0)
     })
-    if (res.success) {
+    if (res) {
       toast.success('Gasto registrado exitosamente')
       setExpAmount('')
       setExpDesc('')
+      setExpProviderName('')
+      setExpProviderDocId('')
+      setExpIvaPaid('0')
+      setExpRetencion('0')
     }
   }
 
@@ -1413,11 +1427,76 @@ export default function Dashboard() {
               <textarea 
                 value={expDesc}
                 onChange={e => setExpDesc(e.target.value)}
-                placeholder="Ej: Pago de recibo de energía eléctrica o compra de bolsas..."
-                rows={3}
+                placeholder="Ej: Compra de bolsas..."
+                rows={2}
                 className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
               />
             </div>
+
+            {/* DIAN & Provider Details */}
+            <div className="pt-2 border-t border-white/5 space-y-3">
+              <span className="text-[11px] font-bold text-muted-400 uppercase tracking-widest block">Detalles Factura / DIAN</span>
+              
+              <div>
+                <label className="text-[10px] text-muted-400 mb-1 block">Proveedor</label>
+                <input 
+                  type="text"
+                  value={expProviderName}
+                  onChange={e => setExpProviderName(e.target.value)}
+                  placeholder="Ej: Distribuidora S.A.S. (Opcional)"
+                  className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] text-muted-400 mb-1 block">Tipo Doc</label>
+                  <select
+                    value={expProviderDocType}
+                    onChange={e => setExpProviderDocType(e.target.value)}
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-2 py-2 text-xs text-foreground focus:outline-none cursor-pointer"
+                  >
+                    <option value="31">NIT (Factura)</option>
+                    <option value="13">Cédula</option>
+                    <option value="22">C.E.</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-400 mb-1 block">N° Documento</label>
+                  <input 
+                    type="text"
+                    value={expProviderDocId}
+                    onChange={e => setExpProviderDocId(e.target.value)}
+                    placeholder="Ej: 900123456"
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] text-muted-400 mb-1 block">IVA Pagado ($)</label>
+                  <input 
+                    type="number"
+                    value={expIvaPaid}
+                    onChange={e => setExpIvaPaid(e.target.value)}
+                    placeholder="0"
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-muted-400 mb-1 block">Retención ($)</label>
+                  <input 
+                    type="number"
+                    value={expRetencion}
+                    onChange={e => setExpRetencion(e.target.value)}
+                    placeholder="0"
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                  />
+                </div>
+              </div>
+            </div>
+
             <button 
               type="submit"
               className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow-sm transition-colors flex items-center justify-center gap-2"
@@ -1428,7 +1507,7 @@ export default function Dashboard() {
         </div>
 
         {/* List: Recent Expenses */}
-        <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[350px]">
+        <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px]">
           <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-brand-400" />
@@ -1454,8 +1533,14 @@ export default function Dashboard() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-foreground truncate">{e.description || 'Gasto Operacional'}</p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                         <span className="text-[9px] bg-surface-600 text-muted-300 px-1.5 py-0.2 rounded font-medium">{e.category}</span>
+                        {e.provider_name && e.provider_name !== 'Proveedor Varios' && (
+                          <span className="text-[9px] text-brand-400 font-medium">Prov: {e.provider_name}</span>
+                        )}
+                        {e.retencion > 0 && (
+                          <span className="text-[9px] text-warning-400">Rete: -{format$(e.retencion)}</span>
+                        )}
                         <span className="text-[9px] text-muted-500">{new Date(e.created_at).toLocaleDateString('es-CO')}</span>
                       </div>
                     </div>
