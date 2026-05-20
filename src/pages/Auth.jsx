@@ -54,9 +54,8 @@ const WORKER_AVATARS = [
 
 function WorkerLogin() {
   const navigate = useNavigate()
-  const loginAsWorker = useAuthStore((s) => s.loginAsWorker)
+  const login = useAuthStore((s) => s.login)
   const linkWorkerAndRegister = useAuthStore((s) => s.linkWorkerAndRegister)
-  const loginEmployee  = useEmployeeStore((s) => s.loginEmployee)
   
   const [mode, setMode] = useState('login') // 'login' or 'register'
   const [email, setEmail]   = useState('')
@@ -81,11 +80,10 @@ function WorkerLogin() {
   const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const emp = await loginEmployee(email.trim().toLowerCase(), pass)
+    const res = await login(email.trim().toLowerCase(), pass)
     setLoading(false)
-    if (!emp) return toast.error('Credenciales incorrectas o cuenta inactiva')
-    loginAsWorker({ ...emp, isWorker: true })
-    toast.success(`¡Bienvenido, ${emp.full_name || emp.name}!`)
+    if (!res.success) return toast.error(res.error)
+    toast.success('¡Bienvenido!')
     navigate('/')
   }
 

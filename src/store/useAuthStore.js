@@ -227,44 +227,66 @@ export const useAuthStore = create(
 
       linkWorkerAndRegister: async (data) => {
         set({ loading: true })
-        const codeInput = data.linkCode?.trim()
+        const codeInput = data.linkCode?.trim().toUpperCase()
 
         if (!codeInput) {
           set({ loading: false })
           return { success: false, error: 'Por favor ingresa un código de vinculación' }
         }
 
-        // 1. Find the company issuing this invitation code in Supabase
-        const { data: companies, error: compFetchError } = await supabase
-          .from('companies')
-          .select('*')
+        // --- STEP 1: Attempt to use the RPC function (Secure, atomic & bypasses RLS) ---
+        try {
+          const { data: rpcData, error: rpcError } = await supabase.rpc('use_invitation_code', {
+            inv_code: codeInput,
+            worker_email: data.email
+          })
 
-        if (compFetchError || !companies) {
-          set({ loading: false })
-          return { success: false, error: 'Error al buscar el código en el servidor' }
-        }
+          if (!rpcError && rpcData && rpcData.length > 0) {
+            const { company_id, invite_role, company_plan } = rpcData[0]
 
-        let targetCompany = null
-        let activeInvite = null
+            // 1. Auth Sign Up
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+              email: data.email,
+              password: data.password,
+            })
 
-        for (const company of companies) {
-          const invitations = company.settings?.invitations || []
-          const found = invitations.find(
-            (inv) => inv.code === codeInput && !inv.used && new Date(inv.expiresAt) > new Date()
-          )
-          if (found) {
-            targetCompany = company
-            activeInvite = found
-            break
+            if (authError) {
+              set({ loading: false })
+              return { success: false, error: 'Error de autenticación: ' + authError.message }
+            }
+
+            const workerId = authData.user.id
+
+            // 2. Insert Profile
+            const { error: profError } = await supabase
+              .from('profiles')
+              .insert([{
+                id: workerId,
+                company_id: company_id,
+                full_name: data.name,
+                email: data.email,
+                phone: data.phone || '',
+                avatar_url: data.avatar || '',
+                role: invite_role || 'despachador',
+                plan: company_plan || 'standard'
+              }])
+
+            if (profError) {
+              await supabase.auth.signOut()
+              set({ loading: false })
+              return { success: false, error: 'Error al vincular el perfil: ' + profError.message }
+            }
+
+            await get().syncProfile(workerId)
+            set({ loading: false })
+            return { success: true, role: invite_role }
           }
+        } catch (rpcErr) {
+          console.warn('RPC use_invitation_code failed, falling back to JS implementation...', rpcErr)
         }
 
-        if (!targetCompany || !activeInvite) {
-          set({ loading: false })
-          return { success: false, error: 'Código de vinculación inválido, ya usado o caducado.' }
-        }
-
-        // 2. Auth Sign Up for the worker
+        // --- STEP 2: Fallback JS implementation (Compatible, no SQL run needed) ---
+        // 1. Perform auth sign up first to get authentication token (resolves select RLS issue)
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
@@ -272,12 +294,36 @@ export const useAuthStore = create(
 
         if (authError) {
           set({ loading: false })
-          return { success: false, error: authError.message }
+          return { success: false, error: 'Error de autenticación: ' + authError.message }
         }
 
         const workerId = authData.user.id
 
-        // 3. Create the profile for the worker, linking to the company
+        // 2. Query company using containment filter (only fetches matching company settings, extremely secure)
+        const { data: matchedCompanies, error: compFetchError } = await supabase
+          .from('companies')
+          .select('id, name, settings, plan')
+          .contains('settings', { invitations: [{ code: codeInput }] })
+
+        if (compFetchError || !matchedCompanies || matchedCompanies.length === 0) {
+          await supabase.auth.signOut()
+          set({ loading: false })
+          return { success: false, error: 'Código de vinculación inválido o caducado.' }
+        }
+
+        const targetCompany = matchedCompanies[0]
+        const invitations = targetCompany.settings?.invitations || []
+        const activeInvite = invitations.find(
+          (inv) => inv.code === codeInput && !inv.used && new Date(inv.expiresAt) > new Date()
+        )
+
+        if (!activeInvite) {
+          await supabase.auth.signOut()
+          set({ loading: false })
+          return { success: false, error: 'El código de vinculación ya ha sido usado o está vencido.' }
+        }
+
+        // 3. Create the profile
         const { error: profError } = await supabase
           .from('profiles')
           .insert([{
@@ -292,13 +338,14 @@ export const useAuthStore = create(
           }])
 
         if (profError) {
+          await supabase.auth.signOut()
           set({ loading: false })
           return { success: false, error: 'Error al vincular el perfil: ' + profError.message }
         }
 
-        // 4. Mark invitation code as used in the company settings
-        const updatedInvitations = targetCompany.settings.invitations.map((inv) =>
-          inv.code === codeInput ? { ...inv, used: true, usedBy: data.email } : inv
+        // 4. Try updating the company settings (might fail under RLS, but we swallow warning so login succeeds)
+        const updatedInvitations = invitations.map((inv) =>
+          inv.code === codeInput ? { ...inv, used: true, usedBy: data.email, usedAt: new Date().toISOString() } : inv
         )
         const updatedSettings = {
           ...targetCompany.settings,
