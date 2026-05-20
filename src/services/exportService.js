@@ -227,28 +227,73 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     }).format(val)
   }
 
+  const themeColor = settings.themeColor || 'indigo'
+  
+  const getThemeColorsRGB = (theme) => {
+    switch (theme) {
+      case 'emerald':
+        return {
+          dark: [6, 78, 59],
+          light: [167, 243, 208],
+          primary: [5, 150, 105]
+        }
+      case 'blue':
+        return {
+          dark: [30, 58, 138],
+          light: [191, 219, 254],
+          primary: [37, 99, 235]
+        }
+      case 'rose':
+        return {
+          dark: [76, 5, 25],
+          light: [254, 205, 211],
+          primary: [225, 29, 72]
+        }
+      case 'amber':
+        return {
+          dark: [120, 53, 15],
+          light: [253, 230, 138],
+          primary: [217, 119, 6]
+        }
+      case 'slate':
+        return {
+          dark: [15, 23, 42],
+          light: [203, 213, 225],
+          primary: [71, 85, 105]
+        }
+      case 'indigo':
+      default:
+        return {
+          dark: [30, 27, 75],
+          light: [199, 210, 254],
+          primary: [79, 70, 229]
+        }
+    }
+  }
+  const rgbColors = getThemeColorsRGB(themeColor)
+
   // 1. HEADER BRANDING
   if (!isMinimalist) {
     // Corporate Header (Vibrant background band)
-    doc.setFillColor(30, 27, 75) // Dark indigo bg
+    doc.setFillColor(...rgbColors.dark)
     doc.rect(0, 0, 210, 40, 'F')
     
-    doc.setTextColor(167, 139, 250) // Purple violet
+    doc.setTextColor(...rgbColors.light)
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(22)
     doc.text(companyName.toUpperCase(), 15, 18)
     
     doc.setFontSize(9)
-    doc.setTextColor(196, 181, 253)
+    doc.setTextColor(255, 255, 255)
     doc.text('FACTURA DE VENTA COMERCIAL', 15, 25)
     
     doc.setFontSize(8)
-    doc.setTextColor(224, 242, 254)
+    doc.setTextColor(255, 255, 255)
     if (companyPhone) doc.text(`Cel: ${companyPhone}`, 15, 30)
     if (companyEmail) doc.text(`Email: ${companyEmail}`, 15, 34)
 
     // Invoice badge
-    doc.setFillColor(124, 58, 237)
+    doc.setFillColor(...rgbColors.primary)
     doc.rect(145, 10, 50, 20, 'F')
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(9)
@@ -301,7 +346,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     // Left block: Client Info
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(9)
-    doc.setTextColor(124, 58, 237)
+    doc.setTextColor(...rgbColors.primary)
     doc.text('FACTURAR A:', 18, startY + 5)
     
     doc.setFont('helvetica', 'normal')
@@ -315,7 +360,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     // Right block: Invoice Metadata
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(9)
-    doc.setTextColor(124, 58, 237)
+    doc.setTextColor(...rgbColors.primary)
     doc.text('DETALLES DE FACTURA:', 114, startY + 5)
     
     doc.setFont('helvetica', 'normal')
@@ -371,7 +416,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
 
   const headStyles = isMinimalist 
     ? { fillColor: [15, 23, 42], textColor: 255, fontStyle: 'bold', fontSize: 8.5 }
-    : { fillColor: [124, 58, 237], textColor: 255, fontStyle: 'bold', fontSize: 9 }
+    : { fillColor: rgbColors.primary, textColor: 255, fontStyle: 'bold', fontSize: 9 }
 
   const alternateRowStyles = isMinimalist ? null : { fillColor: [248, 250, 252] }
 
@@ -422,7 +467,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     }
     
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(124, 58, 237)
+    doc.setTextColor(...rgbColors.primary)
     doc.text('TOTAL A PAGAR:', summaryX, currentY)
     doc.text(formatCurrency(totalVal), 195, currentY, { align: 'right' })
   } else {

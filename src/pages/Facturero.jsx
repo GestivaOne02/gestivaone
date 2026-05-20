@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Printer, FileText, Check, Save, Download, Image, HelpCircle, AlertCircle, Sparkles, Building2, Phone, Mail, FileCheck, Settings } from 'lucide-react'
+import { Printer, FileText, Check, Save, Download, Image, HelpCircle, AlertCircle, Sparkles, Building2, Phone, Mail, FileCheck, Settings, Palette } from 'lucide-react'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
@@ -29,6 +29,45 @@ const MOCK_INVOICE = {
   ]
 }
 
+const THEME_COLORS = {
+  indigo: {
+    name: 'Violeta / Indigo',
+    primary: '#4f46e5',
+    primaryLight: '#c7d2fe',
+    primaryDark: '#1e1b4b',
+  },
+  emerald: {
+    name: 'Verde Esmeralda',
+    primary: '#059669',
+    primaryLight: '#a7f3d0',
+    primaryDark: '#064e3b',
+  },
+  blue: {
+    name: 'Azul Eléctrico',
+    primary: '#2563eb',
+    primaryLight: '#bfdbfe',
+    primaryDark: '#1e3a8a',
+  },
+  rose: {
+    name: 'Rosa Fucsia',
+    primary: '#e11d48',
+    primaryLight: '#fecdd3',
+    primaryDark: '#4c0519',
+  },
+  amber: {
+    name: 'Ámbar Cálido',
+    primary: '#d97706',
+    primaryLight: '#fde68a',
+    primaryDark: '#78350f',
+  },
+  slate: {
+    name: 'Slate / Carbón',
+    primary: '#475569',
+    primaryLight: '#cbd5e1',
+    primaryDark: '#0f172a',
+  }
+}
+
 export default function Facturero() {
   const user = useAuthStore((s) => s.user)
   const updateProfile = useAuthStore((s) => s.updateProfile)
@@ -40,6 +79,7 @@ export default function Facturero() {
   // Local states for custom edit (we sync with settings on Save)
   const [pdfTemplate, setPdfTemplate] = useState(printer.pdfTemplate || 'corporate')
   const [thermalTemplate, setThermalTemplate] = useState(printer.template || 'classic')
+  const [themeColor, setThemeColor] = useState(printer.themeColor || 'indigo')
   const [autoPrint, setAutoPrint] = useState(printer.autoPrint || false)
   const [showLogo, setShowLogo] = useState(printer.showLogo !== false)
   const [showCompanyName, setShowCompanyName] = useState(printer.showCompanyName !== false)
@@ -73,6 +113,7 @@ export default function Facturero() {
         showContact,
         showTax,
         footerText,
+        themeColor,
       })
 
       // 2. Save user/company info in auth/database
@@ -113,7 +154,8 @@ export default function Facturero() {
       companyName,
       companyLogo: logoUrl,
       companyPhone,
-      companyEmail
+      companyEmail,
+      themeColor
     }
     printInvoice(MOCK_INVOICE, { name: MOCK_INVOICE.client_name, phone: MOCK_INVOICE.client_phone }, settingsObj)
     toast.success('Enviando ticket de prueba a la impresora...')
@@ -127,7 +169,8 @@ export default function Facturero() {
       companyLogo: logoUrl,
       companyPhone,
       companyEmail,
-      footerText
+      footerText,
+      themeColor
     }
     const mockInvWithTax = {
       ...MOCK_INVOICE,
@@ -141,7 +184,7 @@ export default function Facturero() {
       email: MOCK_INVOICE.client_email,
       address: MOCK_INVOICE.client_address
     }, settingsObj)
-    toast.success('Generando descarga de PDF de prueba...')
+    toast.success('Generando descarga de PDF de prueba.')
   }
 
   // Mock rendering helpers for the visual preview pane
@@ -149,19 +192,20 @@ export default function Facturero() {
     const totalVal = MOCK_INVOICE.total
     const taxVal = showTax ? MOCK_INVOICE.taxAmount : 0
     const subtotalVal = showTax ? MOCK_INVOICE.subtotal : totalVal
+    const activeColor = THEME_COLORS[themeColor] || THEME_COLORS.indigo
 
     if (previewType === 'pdf-corporate') {
       return (
         <div className="bg-white text-slate-800 rounded-2xl shadow-xl border border-slate-200 overflow-hidden font-sans text-[11px] leading-relaxed max-w-lg mx-auto transition-all duration-300">
           {/* Corporate Header */}
-          <div className="bg-indigo-950 text-white p-6 flex justify-between items-start">
+          <div className="text-white p-6 flex justify-between items-start" style={{ backgroundColor: activeColor.primaryDark }}>
             <div>
               {showLogo && logoUrl ? (
                 <img src={logoUrl} alt="Logo" className="w-10 h-10 rounded-full object-cover mb-2 border border-white/20" />
               ) : (
-                <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center mb-2"><Sparkles className="text-white w-4 h-4" /></div>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ backgroundColor: activeColor.primary }}><Sparkles className="text-white w-4 h-4" /></div>
               )}
-              {showCompanyName && <h4 className="text-sm font-black tracking-wide uppercase text-violet-300">{companyName}</h4>}
+              {showCompanyName && <h4 className="text-sm font-black tracking-wide uppercase" style={{ color: activeColor.primaryLight }}>{companyName}</h4>}
               <p className="text-[9px] text-slate-300 mt-1">NIT: 901.458.789-2</p>
               {showContact && (
                 <div className="text-[9px] text-slate-300 space-y-0.5 mt-1.5">
@@ -170,8 +214,8 @@ export default function Facturero() {
                 </div>
               )}
             </div>
-            <div className="bg-violet-600 px-4 py-2.5 rounded-lg text-right min-w-[120px]">
-              <span className="text-[9px] font-bold text-violet-200 uppercase block tracking-wider">Factura de Venta</span>
+            <div className="px-4 py-2.5 rounded-lg text-right min-w-[120px]" style={{ backgroundColor: activeColor.primary }}>
+              <span className="text-[9px] font-bold uppercase block tracking-wider" style={{ color: activeColor.primaryLight }}>Factura de Venta</span>
               <span className="text-xs font-black block mt-0.5">#{MOCK_INVOICE.id.toUpperCase()}</span>
             </div>
           </div>
@@ -180,14 +224,14 @@ export default function Facturero() {
             {/* Metadata and client */}
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5">
-                <span className="text-[9px] font-bold text-violet-600 block mb-1">FACTURAR A:</span>
+                <span className="text-[9px] font-bold block mb-1" style={{ color: activeColor.primary }}>FACTURAR A:</span>
                 <p className="font-bold text-slate-900">{MOCK_INVOICE.client_name}</p>
                 <p className="text-slate-500 text-[9px] mt-0.5">Tel: {MOCK_INVOICE.client_phone}</p>
                 <p className="text-slate-500 text-[9px]">{MOCK_INVOICE.client_email}</p>
                 <p className="text-slate-500 text-[9px] truncate">{MOCK_INVOICE.client_address}</p>
               </div>
               <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5">
-                <span className="text-[9px] font-bold text-violet-600 block mb-1">DETALLES:</span>
+                <span className="text-[9px] font-bold block mb-1" style={{ color: activeColor.primary }}>DETALLES:</span>
                 <p className="text-slate-700 text-[9px]">Fecha: {new Date(MOCK_INVOICE.created_at).toLocaleDateString('es-CO')}</p>
                 <p className="text-slate-700 text-[9px]">Método: Contado / Inmediato</p>
                 <p className="text-slate-700 text-[9px]">Estado: <span className="text-emerald-600 font-bold">PAGADA</span></p>
@@ -199,7 +243,7 @@ export default function Facturero() {
               <div className="border border-slate-100 rounded-xl overflow-hidden">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-violet-600 text-white text-[9px] text-left">
+                    <tr className="text-white text-[9px] text-left" style={{ backgroundColor: activeColor.primary }}>
                       <th className="p-2 w-8 text-center">#</th>
                       <th className="p-2">Producto</th>
                       <th className="p-2 w-10 text-center">Cant</th>
@@ -239,7 +283,7 @@ export default function Facturero() {
                   </>
                 )}
                 <div className="flex justify-between font-black text-slate-900 text-xs">
-                  <span className="text-violet-600">Total a Pagar:</span>
+                  <span style={{ color: activeColor.primary }}>Total a Pagar:</span>
                   <span>{format(totalVal)}</span>
                 </div>
               </div>
@@ -276,14 +320,14 @@ export default function Facturero() {
           {/* Client details */}
           <div className="grid grid-cols-2 gap-8 text-[9px]">
             <div>
-              <span className="font-bold text-slate-400 block mb-1">CLIENTE</span>
+              <span className="font-bold block mb-1" style={{ color: activeColor.primary }}>CLIENTE</span>
               <p className="font-black text-slate-800 text-sm">{MOCK_INVOICE.client_name}</p>
               <p className="text-slate-600 mt-1">Tel: {MOCK_INVOICE.client_phone}</p>
               <p className="text-slate-600">{MOCK_INVOICE.client_email}</p>
               <p className="text-slate-600 truncate">{MOCK_INVOICE.client_address}</p>
             </div>
             <div>
-              <span className="font-bold text-slate-400 block mb-1">DETALLES</span>
+              <span className="font-bold block mb-1" style={{ color: activeColor.primary }}>DETALLES</span>
               <p className="text-slate-600">Método de pago: Inmediato (Contado)</p>
               <p className="text-slate-600">Estado: <span className="font-bold text-slate-800">PAGADA</span></p>
               {showContact && (companyPhone || companyEmail) && (
@@ -331,7 +375,7 @@ export default function Facturero() {
                   </div>
                 </>
               )}
-              <div className="flex justify-between text-slate-900 font-bold text-xs pt-1">
+              <div className="flex justify-between font-bold text-xs pt-1" style={{ color: activeColor.primary }}>
                 <span>TOTAL:</span>
                 <span>{format(totalVal)}</span>
               </div>
@@ -491,7 +535,7 @@ export default function Facturero() {
                 </div>
               </>
             )}
-            <div className="flex justify-between font-black text-slate-900 text-xs bg-slate-50 p-1.5 rounded-lg mt-1">
+            <div className="flex justify-between font-black text-xs p-1.5 rounded-lg mt-1 text-white" style={{ backgroundColor: activeColor.primary }}>
               <span>Total COP:</span>
               <span>{format(totalVal)}</span>
             </div>
@@ -499,9 +543,9 @@ export default function Facturero() {
 
           <div className="my-3 border-t border-dashed border-slate-200"></div>
 
-          <div className="text-center text-[8.5px] text-slate-400 italic">
-            <p className="font-semibold text-slate-500">"{footerText}"</p>
-            <p className="mt-1 text-[7.5px]">GestivaOne — www.gestivaone.com</p>
+          <div className="text-center text-[9px] space-y-1 text-slate-500">
+            <p className="font-bold italic">"{footerText}"</p>
+            <p className="text-[7.5px]">GestivaOne</p>
           </div>
         </div>
       )
@@ -792,6 +836,43 @@ export default function Facturero() {
                   value={footerText}
                   onChange={(e) => setFooterText(e.target.value)}
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Color Theme Selector */}
+          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-subtle">
+              <Palette size={18} className="text-brand-400" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">4. Paleta de Color y Tema</h2>
+            </div>
+            
+            <div className="space-y-2">
+              <p className="text-xs text-muted-400">
+                Selecciona una paleta de color para tus plantillas y PDFs corporativos. El color se aplicará automáticamente a los encabezados, tablas y totales.
+              </p>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                {Object.entries(THEME_COLORS).map(([key, col]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setThemeColor(key)}
+                    className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all duration-300 ${
+                      themeColor === key
+                        ? 'bg-surface-700 border-brand-500 ring-2 ring-brand-500/20'
+                        : 'bg-surface-850 border-subtle hover:border-muted-500'
+                    }`}
+                  >
+                    <span 
+                      className="w-4 h-4 rounded-full shrink-0 border border-white/10" 
+                      style={{ backgroundColor: col.primary }}
+                    />
+                    <div className="min-w-0">
+                      <span className="block text-xs font-bold text-foreground truncate">{col.name}</span>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
