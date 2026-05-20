@@ -418,6 +418,16 @@ export const useAuthStore = create(
           }
 
           set({ isAuthenticated: true, user })
+
+          // Dynamically import useSettingsStore to sync DB settings to frontend store
+          try {
+            const { useSettingsStore } = await import('./useSettingsStore')
+            if (company?.settings) {
+              useSettingsStore.getState().loadFromSettings(company.settings)
+            }
+          } catch (e) {
+            console.error('Error loading settings from DB to store:', e)
+          }
         } catch (err) {
           console.error('Sync Profile Error:', err)
           // Last resort fallback to let user in

@@ -199,7 +199,7 @@ export default function Notifications() {
                   className={clsx(
                     "group relative overflow-hidden flex gap-4 p-4 rounded-2xl border transition-all duration-300 cursor-pointer",
                     notif.read 
-                      ? "bg-surface-800/40 border-subtle/50 opacity-75 hover:opacity-100 hover:bg-surface-800" 
+                      ? "bg-surface-800/20 dark:bg-surface-800/10 border-subtle/30 opacity-40 hover:opacity-85 hover:bg-surface-800/40" 
                       : clsx("bg-surface-800 border-subtle hover:border-brand-500/30 shadow-sm", style.border)
                   )}
                 >
@@ -215,7 +215,7 @@ export default function Notifications() {
                   {/* Left Icon with color scheme */}
                   <div className={clsx(
                     "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-transform duration-300 group-hover:scale-105",
-                    notif.read ? "bg-surface-700/50 border-subtle text-muted-400" : clsx(style.bg, style.border, style.text)
+                    notif.read ? "bg-surface-700/20 border-subtle/30 text-muted-500 grayscale opacity-60" : clsx(style.bg, style.border, style.text)
                   )}>
                     <IconComp size={20} />
                   </div>
@@ -223,15 +223,18 @@ export default function Notifications() {
                   {/* Message body */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className={clsx("text-sm font-bold truncate", notif.read ? "text-muted-500" : "text-foreground")}>
+                      <h4 className={clsx("text-sm font-bold truncate", notif.read ? "text-muted-500 line-through decoration-muted-500/30" : "text-foreground")}>
                         {notif.title}
                       </h4>
-                      <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-700/50 border border-subtle text-[10px] font-bold text-muted-400">
+                      <div className={clsx(
+                        "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border",
+                        notif.read ? "bg-surface-700/10 border-subtle/30 text-muted-500" : "bg-surface-700/50 border-subtle text-muted-400"
+                      )}>
                         <CatIcon size={10} />
                         <span>{notif.category}</span>
                       </div>
                     </div>
-                    <p className={clsx("text-xs mt-1.5 leading-relaxed", notif.read ? "text-muted-400/80" : "text-muted-400")}>
+                    <p className={clsx("text-xs mt-1.5 leading-relaxed", notif.read ? "text-muted-500/70" : "text-muted-400")}>
                       {notif.message}
                     </p>
                   </div>

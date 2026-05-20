@@ -8,6 +8,7 @@ import Settings from '@/pages/Settings'
 import Account from '@/pages/Account'
 import Employees from '@/pages/Employees'
 import Auth from '@/pages/Auth'
+import Landing from '@/pages/Landing'
 import Notifications from '@/pages/Notifications'
 import Terms from '@/pages/Terms'
 import { useUIStore, applyTheme } from '@/store/useUIStore'
@@ -96,7 +97,10 @@ export default function App() {
   }, [theme, location.pathname])
 
   useEffect(() => {
-    const originalTitle = `GO | ${pageTitles[location.pathname] || 'GestivaOne'}`
+    const pageTitle = (location.pathname === '/' && !isAuthenticated)
+      ? 'Inicio'
+      : (pageTitles[location.pathname] || 'GestivaOne')
+    const originalTitle = `GO | ${pageTitle}`
     const attentionTitle = '¡Tienes una factura pendiente! 📄'
     
     document.title = originalTitle
@@ -107,7 +111,7 @@ export default function App() {
 
     document.addEventListener('visibilitychange', handleVisibility)
     return () => document.removeEventListener('visibilitychange', handleVisibility)
-  }, [location.pathname])
+  }, [location.pathname, isAuthenticated])
 
   const navigate = useNavigate()
 
@@ -163,6 +167,14 @@ export default function App() {
   return (
     <>
       <Routes>
+        {/* Landing/Home Route (Conditional layout wrapper) */}
+        <Route 
+          path="/" 
+          element={isAuthenticated ? <AppLayout /> : <Landing />}
+        >
+          <Route index element={<Dashboard />} />
+        </Route>
+
         {/* Public Route */}
         <Route 
           path="/auth" 
@@ -174,7 +186,6 @@ export default function App() {
         <Route
           element={isAuthenticated ? <AppLayout /> : <Navigate to="/auth" replace />}
         >
-          <Route path="/" element={<Dashboard />} />
           <Route path="/menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
           <Route path="/products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
           <Route path="/employees" element={<RequirePermission perm="employees"><Employees /></RequirePermission>} />

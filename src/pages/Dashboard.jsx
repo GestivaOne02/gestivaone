@@ -437,29 +437,57 @@ export default function Dashboard() {
     try {
       const XLSX = await import('xlsx')
       const invData = invoices.map(i => ({
-        'ID Factura': i.id,
-        'Cliente': i.client_name,
-        'Total': i.total,
-        'Subtotal': i.subtotal,
+        'ID Factura': i.id?.slice(-8)?.toUpperCase() || '',
+        'Cliente': i.client_name || 'Cliente Express',
+        'Subtotal': i.subtotal || 0,
+        'Total': i.total || 0,
         'Método Pago': i.payment_type === 'immediate' ? 'Inmediato' : 'Programado (Crédito)',
         'Estado': i.payment_status === 'paid' ? 'Pagada' : i.payment_status === 'overdue' ? 'Atrasada' : 'Pendiente',
         'Fecha Creación': format(new Date(i.created_at), 'yyyy-MM-dd HH:mm')
       }))
 
       const expData = expenses.map(e => ({
-        'ID Egreso': e.id,
-        'Monto': e.amount,
-        'Categoría': e.category,
-        'Descripción': e.description,
+        'ID Egreso': e.id?.slice(-8)?.toUpperCase() || '',
+        'Monto': e.amount || 0,
+        'Categoría': e.category || 'Otros',
+        'Descripción': e.description || '',
         'Fecha Registro': format(new Date(e.created_at), 'yyyy-MM-dd HH:mm')
       }))
+
+      // Extract abonos from invoices note field
+      const abonosData = []
+      invoices.forEach(inv => {
+        if (inv.note) {
+          try {
+            const trimmed = inv.note.trim()
+            if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+              const parsed = JSON.parse(trimmed)
+              if (parsed.payments && Array.isArray(parsed.payments)) {
+                parsed.payments.forEach(p => {
+                  abonosData.push({
+                    'ID Factura': inv.id?.slice(-8)?.toUpperCase() || '',
+                    'Cliente': inv.client_name || 'Sin cliente',
+                    'Monto Abono': Number(p.amount) || 0,
+                    'Fecha Abono': format(new Date(p.date), 'yyyy-MM-dd HH:mm'),
+                    'Referencia / Nota': p.reference || 'Abono registrado'
+                  })
+                })
+              }
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      })
 
       const wb = XLSX.utils.book_new()
       const wsInvoices = XLSX.utils.json_to_sheet(invData)
       const wsExpenses = XLSX.utils.json_to_sheet(expData)
+      const wsAbonos = XLSX.utils.json_to_sheet(abonosData)
 
       XLSX.utils.book_append_sheet(wb, wsInvoices, 'Facturación')
       XLSX.utils.book_append_sheet(wb, wsExpenses, 'Egresos_Gastos')
+      XLSX.utils.book_append_sheet(wb, wsAbonos, 'Abonos_Recibidos')
 
       XLSX.writeFile(wb, `Reporte_Financiero_GestivaOne_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`)
       toast.success('Reporte Excel generado con éxito')
@@ -472,90 +500,208 @@ export default function Dashboard() {
     try {
       const { jsPDF } = await import('jspdf')
       await import('jspdf-autotable')
-      const doc = new jsPDF()
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
       const companyName = user?.companyName || 'Mi Empresa'
       
+      // Calculate deep metrics
+      let totalAbonadoGlobal = 0
+      const abonosList = []
+      
+      invoices.forEach(inv => {
+        let parsedPayments = []
+        if (inv.note) {
+          try {
+            const trimmed = inv.note.trim()
+            if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+              const parsed = JSON.parse(trimmed)
+              if (parsed.payments && Array.isArray(parsed.payments)) {
+                parsedPayments = parsed.payments
+              }
+            }
+          } catch (e) {}
+        }
+        
+        if (parsedPayments.length > 0) {
+          parsedPayments.forEach(p => {
+            const amt = Number(p.amount) || 0
+            totalAbonadoGlobal += amt
+            abonosList.push([
+              inv.id?.slice(-8)?.toUpperCase() || '—',
+              inv.client_name || 'Sin cliente',
+              format$(amt),
+              new Date(p.date).toLocaleDateString('es-CO'),
+              p.reference || 'Abono registrado'
+            ])
+          })
+        } else if (inv.payment_status === 'paid') {
+          totalAbonadoGlobal += inv.total
+          abonosList.push([
+            inv.id?.slice(-8)?.toUpperCase() || '—',
+            inv.client_name || 'Sin cliente',
+            format$(inv.total),
+            new Date(inv.created_at).toLocaleDateString('es-CO'),
+            'Pago total inmediato'
+          ])
+        }
+      })
+
       // Header branding
-      doc.setFillColor(124, 58, 237)
-      doc.rect(0, 0, 210, 40, 'F')
+      doc.setFillColor(12, 12, 18)
+      doc.rect(0, 0, 210, 36, 'F')
       
+      doc.setFont('helvetica', 'bold')
       doc.setFontSize(22)
+      doc.setTextColor(167, 139, 250) // Purple violet
+      doc.text('GESTIVAONE', 14, 15)
+      doc.setFontSize(10)
       doc.setTextColor(255, 255, 255)
-      doc.text('GESTIVAONE - REPORTE FINANCIERO', 14, 25)
+      doc.text('REPORTE FINANCIERO EJECUTIVO DE OPERACIONES', 14, 21)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8)
+      doc.setTextColor(156, 163, 175)
+      doc.text(`Empresa: ${companyName} | Generado el: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 29)
       
-      doc.setFontSize(10)
-      doc.text(`Empresa: ${companyName} | Generado el: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 14, 33)
-      
-      // Executive summary
-      doc.setFontSize(14)
+      // Page 1: Resumen ejecutivo
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(13)
       doc.setTextColor(124, 58, 237)
-      doc.text('RESUMEN EJECUTIVO', 14, 52)
+      doc.text('RESUMEN DE FLUJO DE CAJA (CASH FLOW)', 14, 46)
       
-      doc.setFontSize(10)
-      doc.setTextColor(71, 85, 105)
-      doc.text(`Ingresos Totales (Recaudado): ${format$(totalRevenue)}`, 14, 62)
-      doc.text(`Cuentas Pendientes por Cobrar: ${format$(pendingRevenue)}`, 14, 68)
-      doc.text(`Egresos Totales (Gastos): ${format$(totalExpenses)}`, 14, 74)
-      
-      // Calculate net profit
-      const profit = totalRevenue - totalExpenses
+      // Summary Card Boxes
+      // Card 1: Ventas Netas Facturadas
+      doc.setFillColor(243, 244, 246)
+      doc.rect(14, 52, 58, 22, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      doc.setTextColor(107, 114, 128)
+      doc.text('VENTAS FACTURADAS', 18, 58)
       doc.setFontSize(11)
-      doc.setTextColor(profit >= 0 ? 16 : 220, profit >= 0 ? 185 : 38, profit >= 0 ? 129 : 38)
-      doc.text(`Utilidad Neta Real (Ingresos - Gastos): ${format$(profit)}`, 14, 82)
+      doc.setTextColor(31, 41, 55)
+      const salesTotal = invoices.reduce((s, i) => s + (i.total || 0), 0)
+      doc.text(format$(salesTotal), 18, 67)
+
+      // Card 2: Ingresos Reales Cobrados (Cash In)
+      doc.setFillColor(240, 253, 244)
+      doc.rect(76, 52, 58, 22, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      doc.setTextColor(22, 101, 52)
+      doc.text('INGRESOS COBRADOS', 80, 58)
+      doc.setFontSize(11)
+      doc.setTextColor(21, 128, 61)
+      doc.text(format$(totalAbonadoGlobal), 80, 67)
+
+      // Card 3: Egresos/Gastos (Cash Out)
+      doc.setFillColor(254, 242, 242)
+      doc.rect(138, 52, 58, 22, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      doc.setTextColor(153, 27, 27)
+      doc.text('EGRESOS (GASTOS)', 142, 58)
+      doc.setFontSize(11)
+      doc.setTextColor(185, 28, 28)
+      doc.text(format$(totalExpenses), 142, 67)
+
+      // Subtotals & Balance
+      const netCashBalance = totalAbonadoGlobal - totalExpenses
+      doc.setDrawColor(229, 231, 235)
+      doc.line(14, 82, 196, 82)
+
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(9)
+      doc.setTextColor(55, 65, 81)
+      doc.text(`Cuentas pendientes por cobrar (Saldo total):`, 14, 88)
+      doc.setFont('helvetica', 'bold')
+      doc.text(format$(pendingRevenue), 196, 88, { align: 'right' })
+
+      doc.setFont('helvetica', 'normal')
+      doc.text(`Balance Neto de Flujo de Caja (Ingresos - Egresos):`, 14, 94)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(netCashBalance >= 0 ? 21 : 185, netCashBalance >= 0 ? 128 : 28, netCashBalance >= 0 ? 61 : 28)
+      doc.text(format$(netCashBalance), 196, 94, { align: 'right' })
+
+      // Visual line
+      doc.setDrawColor(124, 58, 237)
+      doc.setLineWidth(0.5)
+      doc.line(14, 99, 196, 99)
+      doc.setLineWidth(0.1)
+
+      // Table 1: Historial de Abonos / Cobros
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(11)
+      doc.setTextColor(17, 24, 39)
+      doc.text('HISTORIAL DETALLADO DE PAGOS Y ABONOS RECIBIDOS', 14, 107)
+
+      doc.autoTable({
+        startY: 112,
+        head: [['Factura ID', 'Cliente', 'Monto Recibido', 'Fecha de Pago', 'Concepto/Referencia']],
+        body: abonosList.slice(0, 12),
+        theme: 'striped',
+        headStyles: { fillColor: [16, 185, 129] },
+        styles: { fontSize: 8.5 }
+      })
+
+      // Go to page 2 for complete listings
+      doc.addPage()
       
-      // Add visual border line
-      doc.setDrawColor(226, 232, 240)
-      doc.line(14, 87, 196, 87)
-      
-      // Recent Invoices Table
-      doc.setFontSize(12)
-      doc.setTextColor(30, 41, 59)
-      doc.text('HISTORIAL RECIENTE DE INVOICES', 14, 96)
-      
-      const invBody = invoices.slice(0, 15).map(i => [
-        i.id.slice(0, 8),
-        i.client_name,
+      // Page 2 header
+      doc.setFillColor(30, 41, 59)
+      doc.rect(0, 0, 210, 16, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(10)
+      doc.setTextColor(255, 255, 255)
+      doc.text('GESTIVAONE - DETALLES COMPLEMENTARIOS DE TRANSACCIONES', 14, 10)
+
+      doc.setFontSize(11)
+      doc.setTextColor(17, 24, 39)
+      doc.text('TODAS LAS FACTURAS EMITIDAS', 14, 24)
+
+      const allInvoicesBody = invoices.map(i => [
+        i.id?.slice(-8)?.toUpperCase() || '—',
+        i.client_name || 'Cliente Express',
         format$(i.total),
         i.payment_type === 'immediate' ? 'Inmediato' : 'Crédito',
-        i.payment_status === 'paid' ? 'Pagada' : 'Pendiente'
+        i.payment_status === 'paid' ? 'Pagada' : i.payment_status === 'overdue' ? 'Atrasada' : 'Pendiente',
+        new Date(i.created_at).toLocaleDateString('es-CO')
       ])
 
       doc.autoTable({
-        startY: 102,
-        head: [['ID', 'Cliente', 'Total', 'Método', 'Estado']],
-        body: invBody,
+        startY: 28,
+        head: [['ID Factura', 'Cliente', 'Total', 'Método', 'Estado', 'Fecha']],
+        body: allInvoicesBody,
         theme: 'striped',
         headStyles: { fillColor: [124, 58, 237] },
-        styles: { fontSize: 9 }
+        styles: { fontSize: 8 }
       })
-      
-      // Recent Expenses Table
-      const finalY = doc.lastAutoTable.finalY + 12
-      doc.setFontSize(12)
-      doc.setTextColor(30, 41, 59)
-      doc.text('HISTORIAL RECIENTE DE GASTOS / EGRESOS', 14, finalY)
-      
-      const expBody = expenses.slice(0, 15).map(e => [
-        e.id.slice(0, 8),
-        e.category,
-        e.description || 'Gasto operacional',
+
+      // Operating Expenses List
+      const nextY = doc.lastAutoTable.finalY + 10
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(11)
+      doc.setTextColor(17, 24, 39)
+      doc.text('DETALLE DE EGRESOS / GASTOS OPERATIVOS', 14, nextY)
+
+      const expBody = expenses.map(e => [
+        e.id?.slice(-8)?.toUpperCase() || '—',
+        e.category || 'Otros',
+        e.description || 'Gasto registrado',
         format$(e.amount),
         new Date(e.created_at).toLocaleDateString('es-CO')
       ])
 
       doc.autoTable({
-        startY: finalY + 6,
-        head: [['ID', 'Categoría', 'Descripción', 'Monto', 'Fecha']],
+        startY: nextY + 4,
+        head: [['ID Egreso', 'Categoría', 'Descripción', 'Monto', 'Fecha']],
         body: expBody,
         theme: 'striped',
         headStyles: { fillColor: [239, 68, 68] },
-        styles: { fontSize: 9 }
+        styles: { fontSize: 8 }
       })
-      
-      doc.save(`Reporte_Financiero_GestivaOne_${Date.now()}.pdf`)
-      toast.success('Reporte PDF descargado con éxito')
+
+      doc.save(`Reporte_Ejecutivo_Financiero_GestivaOne_${Date.now()}.pdf`)
+      toast.success('Reporte Financiero PDF exportado con éxito')
     } catch (e) {
-      toast.error('Error al generar PDF: ' + e.message)
+      toast.error('Error al generar PDF ejecutivo: ' + e.message)
     }
   }
 

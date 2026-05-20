@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Globe, RefreshCw, Check, Moon, Sun, Building2, Bell, Database,
   AlertTriangle, Monitor, Mail, MessageSquare, Server, FileText,
-  FileSpreadsheet, Download, ChevronDown, ChevronUp, Loader2, Wifi, WifiOff, Lock
+  FileSpreadsheet, Download, ChevronDown, ChevronUp, Loader2, Wifi, WifiOff, Lock,
+  Printer
 } from 'lucide-react'
 import { useCurrencyStore, SUPPORTED_CURRENCIES } from '@/store/useCurrencyStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -336,6 +337,9 @@ export default function Settings() {
       {/* ─── API REST ─── */}
       <ApiBlock />
 
+      {/* ─── Impresión ─── */}
+      <PrinterBlock />
+
       {/* ─── Export ─── */}
       <ExportBlock />
     </motion.div>
@@ -548,6 +552,238 @@ function ExportBlock() {
         ))}
       </div>
       <p className="text-[11px] text-muted-400">Los reportes incluyen todos los datos actuales del sistema.</p>
+    </motion.section>
+  )
+}
+
+function PrinterBlock() {
+  const printer = useSettingsStore(s => s.printer)
+  const setPrinter = useSettingsStore(s => s.setPrinter)
+  const user = useAuthStore(s => s.user)
+  const [open, setOpen] = useState(false)
+
+  const companyName = user?.companyName || 'Mi Empresa'
+  const companyLogo = user?.companyLogo || null
+
+  const formatCurrency = (val) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0
+    }).format(val)
+  }
+
+  const previewItems = [
+    { name: 'Café Cappuccino Grande', price: 9500, quantity: 2 },
+    { name: 'Croissant de Almendras', price: 6500, quantity: 1 }
+  ]
+  const subtotal = 25500
+  const taxVal = subtotal * 0.19
+  const total = subtotal + (printer.showTax ? taxVal : 0)
+
+  return (
+    <motion.section 
+      initial={{ opacity: 0, y: 15 }} 
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden"
+    >
+      <button onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Printer size={16} /></div>
+        <div className="flex-1 text-left">
+          <p className="text-sm font-semibold text-foreground">Impresión de Facturas</p>
+          <p className="text-xs text-muted-400">Elige la plantilla y contenido de los recibos impresos</p>
+        </div>
+        <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `Impresión automática activada` : `Impresión automática desactivada`, { duration: 1500 }) }} />
+        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }} 
+            animate={{ height: 'auto', opacity: 1 }} 
+            exit={{ height: 0, opacity: 0 }} 
+            transition={{ duration: 0.2 }}
+          >
+            <div className="px-5 pb-5 border-t border-subtle pt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Controls Column */}
+              <div className="space-y-4">
+                <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider">Diseño y Campos</p>
+                
+                {/* Template picker */}
+                <div className="space-y-1.5">
+                  <label className="text-xs text-muted-400 block font-medium">Plantilla de Recibo</label>
+                  <div className="flex gap-2">
+                    {['classic', 'modern'].map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setPrinter({ template: t })}
+                        className={clsx(
+                          'flex-1 py-2 px-3 rounded-xl border text-xs font-bold transition-all uppercase tracking-wide',
+                          printer.template === t
+                            ? 'bg-brand-600/10 border-brand-500 text-brand-400'
+                            : 'bg-surface-700 border-subtle text-muted-400 hover:border-surface-300'
+                        )}
+                      >
+                        {t === 'classic' ? 'Clásica (Térmica)' : 'Moderna (Elegante)'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Individual toggles */}
+                <div className="space-y-3 bg-surface-700/50 p-4 rounded-2xl border border-subtle/40">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">Mostrar Logo de Empresa</span>
+                    <Toggle checked={printer.showLogo} onChange={v => setPrinter({ showLogo: v })} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">Mostrar Nombre de Empresa</span>
+                    <Toggle checked={printer.showCompanyName} onChange={v => setPrinter({ showCompanyName: v })} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">Mostrar Detalles de Productos</span>
+                    <Toggle checked={printer.showProducts} onChange={v => setPrinter({ showProducts: v })} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">Mostrar Info de Contacto</span>
+                    <Toggle checked={printer.showContact} onChange={v => setPrinter({ showContact: v })} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">Calcular IVA (19%)</span>
+                    <Toggle checked={printer.showTax} onChange={v => setPrinter({ showTax: v })} />
+                  </div>
+                </div>
+
+                {/* Footer text input */}
+                <div>
+                  <label className="text-xs text-muted-400 mb-1 block">Mensaje de pie de página</label>
+                  <textarea
+                    rows={2}
+                    value={printer.footerText}
+                    onChange={e => setPrinter({ footerText: e.target.value })}
+                    placeholder="Escribe un mensaje de agradecimiento..."
+                    className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
+                  />
+                </div>
+              </div>
+
+              {/* Preview Column */}
+              <div className="flex flex-col">
+                <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider mb-2">Vista Previa en Vivo</p>
+                <div className="flex-1 bg-surface-700/50 border border-subtle rounded-2xl p-4 flex justify-center items-start overflow-y-auto max-h-[360px]">
+                  
+                  {/* Paper Receipt Simulation */}
+                  <div 
+                    className={clsx(
+                      "w-[230px] bg-white text-black p-4 shadow-xl border border-gray-300 relative rounded-sm text-[11px]",
+                      printer.template === 'modern' ? 'font-sans' : 'font-mono'
+                    )}
+                    style={{ minHeight: '300px' }}
+                  >
+                    {/* Simulated Receipt top jagged edge */}
+                    <div className="absolute top-0 inset-x-0 h-1 bg-repeat-x bg-[linear-gradient(45deg,transparent_25%,#fff_25%,#fff_75%,transparent_75%,transparent),linear-gradient(-45deg,transparent_25%,#fff_25%,#fff_75%,transparent_75%,transparent)] bg-[size:6px_4px]" style={{ transform: 'translateY(-100%)' }}></div>
+
+                    {/* Header */}
+                    <div className="text-center">
+                      {printer.showLogo && companyLogo ? (
+                        <img src={companyLogo} alt="Logo" className="w-9 h-9 rounded-full object-cover mx-auto mb-1 border border-gray-200" />
+                      ) : printer.showLogo ? (
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 mx-auto mb-1 flex items-center justify-center text-[10px] font-bold text-white uppercase">{companyName.charAt(0)}</div>
+                      ) : null}
+
+                      {printer.showCompanyName ? (
+                        <p className="font-bold text-sm tracking-tight uppercase leading-tight">{companyName}</p>
+                      ) : (
+                        <p className="font-bold text-xs uppercase leading-tight">RECIBO DE VENTA</p>
+                      )}
+                      
+                      {printer.showContact && (
+                        <p className="text-[9px] text-gray-500 leading-normal mt-0.5">
+                          {user?.phone ? `Tel: ${user.phone}` : 'Tel: +57 300 000 0000'}<br/>
+                          {user?.email || 'contacto@empresa.com'}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="border-t border-dashed border-gray-400 my-2"></div>
+
+                    {/* Meta info */}
+                    <div className="text-[9px] text-gray-600 leading-tight">
+                      <p><span className="font-bold">FACTURA:</span> #A8B7CD9F</p>
+                      <p><span className="font-bold">FECHA:</span> {new Date().toLocaleString('es-CO')}</p>
+                      <p><span className="font-bold">METODO:</span> INMEDIATO</p>
+                    </div>
+
+                    <div className="border-t border-dashed border-gray-400 my-2"></div>
+
+                    {/* Items */}
+                    {printer.showProducts ? (
+                      <div>
+                        <table className="w-full text-[9px] leading-tight mb-2">
+                          <thead>
+                            <tr className="border-b border-gray-400">
+                              <th className="text-left py-0.5">Cant</th>
+                              <th className="text-left py-0.5">Detalle</th>
+                              <th className="text-right py-0.5">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {previewItems.map((item, idx) => (
+                              <tr key={idx}>
+                                <td className="py-1">{item.quantity}</td>
+                                <td className="py-1">
+                                  {item.name}
+                                  <br/><span className="text-[8px] text-gray-500">{formatCurrency(item.price)}</span>
+                                </td>
+                                <td className="text-right py-1">{formatCurrency(item.price * item.quantity)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <div className="border-t border-dashed border-gray-400 my-2"></div>
+                      </div>
+                    ) : null}
+
+                    {/* Totals */}
+                    <div className="space-y-0.5 text-[10px]">
+                      {printer.showTax ? (
+                        <>
+                          <div className="flex justify-between">
+                            <span>Subtotal Neto:</span>
+                            <span>{formatCurrency(subtotal)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>IVA (19%):</span>
+                            <span>{formatCurrency(taxVal)}</span>
+                          </div>
+                        </>
+                      ) : null}
+                      <div className="flex justify-between font-bold border-t border-gray-300 pt-1 text-[11px]">
+                        <span>TOTAL A PAGAR:</span>
+                        <span>{formatCurrency(total)}</span>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-dashed border-gray-400 my-2"></div>
+
+                    {/* Footer */}
+                    <div className="text-center text-[9px] text-gray-500 leading-normal">
+                      <p>{printer.footerText || '¡Gracias por su compra!'}</p>
+                      <p className="text-[7px] text-gray-400 mt-2">GestivaOne — www.gestivaone.com</p>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.section>
   )
 }

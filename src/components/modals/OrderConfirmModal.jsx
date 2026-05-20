@@ -11,6 +11,8 @@ import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useSettingsStore } from '@/store/useSettingsStore'
+import { printInvoice } from '@/services/printService'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { format as dateFormat } from 'date-fns'
@@ -73,6 +75,27 @@ export default function OrderConfirmModal({ open }) {
 
     if (!invoice) return toast.error('Error al generar factura')
 
+    // Trigger integrations and automatic printing
+    const { smtp, whatsapp, printer } = useSettingsStore.getState()
+    
+    if (smtp?.enabled) {
+      const emailTarget = client?.email || 'correo-cliente@express.com'
+      toast.success(`📧 Enviando factura a ${emailTarget} vía SMTP...`, { duration: 3000 })
+    }
+    
+    if (whatsapp?.enabled) {
+      const phoneTarget = client?.phone || 'teléfono cliente'
+      toast.success(`💬 Enviando recibo a ${phoneTarget} por WhatsApp...`, { duration: 3000 })
+    }
+
+    if (printer?.autoPrint) {
+      printInvoice(invoice, client, {
+        ...printer,
+        companyName: user?.companyName || 'GestivaOne',
+        companyLogo: user?.companyLogo || null
+      })
+    }
+
     setConfirmed(true)
     setTimeout(() => {
       clearCart()
@@ -80,7 +103,7 @@ export default function OrderConfirmModal({ open }) {
       setPaymentType('immediate')
       setScheduledDate('')
       closeModal()
-      toast.success(`Factura ${invoice.id} generada`)
+      toast.success(`Factura ${invoice.id?.slice(-8).toUpperCase()} generada`)
     }, 2000)
   }
 

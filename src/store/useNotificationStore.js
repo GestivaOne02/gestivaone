@@ -2,45 +2,79 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useProductStore } from './useProductStore'
 import { useInvoiceStore } from './useInvoiceStore'
+import { useAuthStore } from './useAuthStore'
 import { parseISO, format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
 export const useNotificationStore = create(
   persist(
     (set, get) => ({
-      readIds: [], // array of notification hashes/IDs that the user has marked as read
+      readIdsByUser: {}, // dictionary mapping userId -> array of read notification IDs
 
       // Mark a single notification as read
       markAsRead: (id) => {
+        const userId = useAuthStore.getState().user?.id || 'guest'
         set((state) => {
-          if (state.readIds.includes(id)) return state
-          return { readIds: [...state.readIds, id] }
+          const userReads = state.readIdsByUser[userId] || []
+          if (userReads.includes(id)) return state
+          return {
+            readIdsByUser: {
+              ...state.readIdsByUser,
+              [userId]: [...userReads, id]
+            }
+          }
         })
       },
 
       // Mark all notifications as read
       markAllAsRead: (allIds) => {
+        const userId = useAuthStore.getState().user?.id || 'guest'
         set((state) => {
-          const newReadIds = Array.from(new Set([...state.readIds, ...allIds]))
-          return { readIds: newReadIds }
+          const userReads = state.readIdsByUser[userId] || []
+          const newReadIds = Array.from(new Set([...userReads, ...allIds]))
+          return {
+            readIdsByUser: {
+              ...state.readIdsByUser,
+              [userId]: newReadIds
+            }
+          }
         })
       },
 
-      // Reset read status (optional debug/refresh)
+      // Reset read status for the current user
       clearReadNotifications: () => {
-        set({ readIds: [] })
+        const userId = useAuthStore.getState().user?.id || 'guest'
+        set((state) => ({
+          readIdsByUser: {
+            ...state.readIdsByUser,
+            [userId]: []
+          }
+        }))
       },
 
       // Dynamic selectors to generate notifications based on live app state
       getNotifications: () => {
         const { products } = useProductStore.getState()
         const { invoices } = useInvoiceStore.getState()
-        const { readIds } = get()
+        const userId = useAuthStore.getState().user?.id || 'guest'
+        const companyId = useAuthStore.getState().user?.companyId
+        
+        const readIdsByUser = get().readIdsByUser || {}
+        const readIds = readIdsByUser[userId] || []
 
         const list = []
 
+        // Filter products and invoices belonging to the active company if applicable
+        const companyProducts = companyId 
+          ? products.filter(p => p.company_id === companyId)
+          : products
+
+        const companyInvoices = companyId
+          ? invoices.filter(inv => inv.company_id === companyId)
+          : invoices
+
         // 1. Stock Alerts
-        products.forEach((p) => {
+        companyProducts.forEach((p) => {
           if (p.stock !== null && p.stock !== undefined) {
             if (p.stock === 0) {
               list.push({
@@ -49,30 +83,30 @@ export const useNotificationStore = create(
                 title: 'Producto Agotado',
                 message: `El producto "${p.name}" se encuentra sin inventario disponible.`,
                 category: 'Inventario',
-                date: new Date().toISOString(), // visual sorting
+                date: p.updated_at || new Date().toISOString(), // visual sorting
               })
-            } else if (p.stock <= 5) {
+            } else if (p.stock <= (p.minStock || 5)) {
               list.push({
                 id: `stock-low-${p.id}`,
                 type: 'warning',
                 title: 'Stock Crítico',
                 message: `Quedan solo ${p.stock} unidades de "${p.name}" en stock.`,
                 category: 'Inventario',
-                date: new Date().toISOString(),
+                date: p.updated_at || new Date().toISOString(),
               })
             }
           }
         })
 
         // 2. Invoice Alerts
-        invoices.forEach((inv) => {
+        companyInvoices.forEach((inv) => {
           if (inv.payment_status === 'overdue') {
             const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(inv.total)
             list.push({
               id: `invoice-overdue-${inv.id}`,
               type: 'danger',
               title: 'Factura Vencida',
-              message: `La factura ${inv.id} de "${inv.client_name}" por ${formattedTotal} está vencida.`,
+              message: `La factura #${inv.id.slice(-8).toUpperCase()} de "${inv.client_name}" por ${formattedTotal} está vencida.`,
               category: 'Cobros',
               date: inv.scheduled_date || inv.created_at,
             })
@@ -85,7 +119,7 @@ export const useNotificationStore = create(
               id: `invoice-pending-${inv.id}`,
               type: 'warning',
               title: 'Factura Pendiente',
-              message: `La factura ${inv.id} de "${inv.client_name}" por ${formattedTotal} vence el ${dueDateStr}.`,
+              message: `La factura #${inv.id.slice(-8).toUpperCase()} de "${inv.client_name}" por ${formattedTotal} vence el ${dueDateStr}.`,
               category: 'Cobros',
               date: inv.created_at,
             })
@@ -129,7 +163,7 @@ export const useNotificationStore = create(
     {
       name: 'gestiva-notifications',
       partialize: (s) => ({
-        readIds: s.readIds,
+        readIdsByUser: s.readIdsByUser || {},
       }),
     }
   )

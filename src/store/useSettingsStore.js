@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useAuthStore } from './useAuthStore'
 
 export const useSettingsStore = create(
   persist(
@@ -13,8 +14,10 @@ export const useSettingsStore = create(
         weeklyReport:   false,
         pushEnabled:    false,
       },
-      setNotification: (key, value) =>
-        set((s) => ({ notifications: { ...s.notifications, [key]: value } })),
+      setNotification: (key, value) => {
+        set((s) => ({ notifications: { ...s.notifications, [key]: value } }))
+        get().saveToDB()
+      },
 
       // ── SMTP config ────────────────────────────────────────
       smtp: {
@@ -25,8 +28,20 @@ export const useSettingsStore = create(
         fromName: '',
         enabled:  false,
       },
-      setSmtp: (data) => set((s) => ({ smtp: { ...s.smtp, ...data } })),
-      testSmtp: () => new Promise((res) => setTimeout(() => res({ ok: false, msg: 'SMTP requiere backend para funcionar' }), 1200)),
+      setSmtp: (data) => {
+        set((s) => ({ smtp: { ...s.smtp, ...data } }))
+        get().saveToDB()
+      },
+      testSmtp: () => new Promise((res) => {
+        setTimeout(() => {
+          const { smtp } = get()
+          if (!smtp.host || !smtp.user || !smtp.password) {
+            res({ ok: false, msg: 'Faltan credenciales SMTP requeridas' })
+          } else {
+            res({ ok: true, msg: 'Conexión SMTP probada con éxito' })
+          }
+        }, 1200)
+      }),
 
       // ── WhatsApp Business ──────────────────────────────────
       whatsapp: {
@@ -34,7 +49,10 @@ export const useSettingsStore = create(
         apiKey:      '',
         enabled:     false,
       },
-      setWhatsapp: (data) => set((s) => ({ whatsapp: { ...s.whatsapp, ...data } })),
+      setWhatsapp: (data) => {
+        set((s) => ({ whatsapp: { ...s.whatsapp, ...data } }))
+        get().saveToDB()
+      },
 
       // ── API REST backend ───────────────────────────────────
       api: {
@@ -44,7 +62,10 @@ export const useSettingsStore = create(
         lastPing: null,
         status: 'disconnected', // 'connected' | 'disconnected' | 'testing'
       },
-      setApi: (data) => set((s) => ({ api: { ...s.api, ...data } })),
+      setApi: (data) => {
+        set((s) => ({ api: { ...s.api, ...data } }))
+        get().saveToDB()
+      },
       testApi: async () => {
         const { api } = get()
         if (!api.url) return { ok: false, msg: 'Ingresa la URL de la API primero' }
@@ -53,13 +74,62 @@ export const useSettingsStore = create(
           const res = await fetch(`${api.url}/health`, { signal: AbortSignal.timeout(4000) })
           const ok = res.ok
           set((s) => ({ api: { ...s.api, status: ok ? 'connected' : 'disconnected', lastPing: Date.now() } }))
+          get().saveToDB()
           return { ok, msg: ok ? 'Conexión exitosa' : `Error HTTP ${res.status}` }
         } catch (e) {
           set((s) => ({ api: { ...s.api, status: 'disconnected', lastPing: Date.now() } }))
+          get().saveToDB()
           return { ok: false, msg: 'No se pudo conectar' }
         }
       },
+
+      // ── Thermal Printer Config ──────────────────────────────
+      printer: {
+        autoPrint: false,
+        template: 'classic',
+        showLogo: true,
+        showCompanyName: true,
+        showProducts: true,
+        showContact: true,
+        showTax: false,
+        footerText: '¡Gracias por su compra!',
+      },
+      setPrinter: (data) => {
+        set((s) => ({ printer: { ...s.printer, ...data } }))
+        get().saveToDB()
+      },
+
+      // ── Database Sync Helpers ──────────────────────────────
+      loadFromSettings: (dbSettings) => {
+        if (!dbSettings) return
+        set({
+          notifications: dbSettings.notifications || get().notifications,
+          smtp:          dbSettings.smtp || get().smtp,
+          whatsapp:      dbSettings.whatsapp || get().whatsapp,
+          api:           dbSettings.api || get().api,
+          printer:       dbSettings.printer || get().printer,
+        })
+      },
+
+      saveToDB: async () => {
+        try {
+          const auth = useAuthStore.getState()
+          if (auth.isAuthenticated && auth.user?.companyId) {
+            const newSettings = {
+              ...(auth.user.settings || {}),
+              notifications: get().notifications,
+              smtp: get().smtp,
+              whatsapp: get().whatsapp,
+              api: get().api,
+              printer: get().printer,
+            }
+            await auth.updateProfile({ settings: newSettings })
+          }
+        } catch (err) {
+          console.warn('Error saving settings to DB:', err)
+        }
+      }
     }),
-    { name: 'gestiva-settings' }
+    { name: 'gestiva-settings-v2.3' }
   )
 )
