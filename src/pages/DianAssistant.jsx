@@ -269,7 +269,7 @@ export default function DianAssistant() {
               className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all duration-300 ${
                 taxType === 'juridica'
                   ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm'
-                  : 'bg-surface-800 border-subtle text-muted-400 hover:text-white'
+                  : 'bg-surface-800 border-subtle text-muted-400 hover:text-foreground'
               }`}
             >
               Jurídica (35%)
@@ -279,7 +279,7 @@ export default function DianAssistant() {
               className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all duration-300 ${
                 taxType === 'natural'
                   ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm'
-                  : 'bg-surface-800 border-subtle text-muted-400 hover:text-white'
+                  : 'bg-surface-800 border-subtle text-muted-400 hover:text-foreground'
               }`}
             >
               Natural (UVT)

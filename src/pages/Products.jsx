@@ -35,7 +35,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}
-      className="bg-surface-800 border border-subtle rounded-3xl p-4 flex flex-col gap-3 group relative overflow-hidden"
+      className="bg-surface-800 border border-subtle rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex flex-col gap-3 group relative overflow-hidden"
     >
       {/* Hover glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-600/0 to-brand-600/0 group-hover:from-brand-600/5 group-hover:to-transparent transition-all rounded-2xl pointer-events-none" />
@@ -58,7 +58,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
 
       {/* Price & unit */}
       <div className="flex items-center justify-between">
-        <span className="text-lg font-bold text-foreground">{format$(product.price)}</span>
+        <span className="text-base sm:text-lg font-bold text-foreground">{format$(product.price)}</span>
         <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
           {product.unit}
         </span>
