@@ -549,7 +549,7 @@ export default function Auth() {
           </div>
 
           {/* Tab switcher */}
-          <div className="flex bg-surface-800 border border-subtle rounded-2xl p-1 mb-5 relative">
+          <div className="flex bg-surface-800 border border-subtle rounded-2xl p-1 mb-5 relative shadow-glow-sm">
             {TABS.map((t) => (
               <button
                 key={t.id}
