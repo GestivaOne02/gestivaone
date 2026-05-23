@@ -759,7 +759,7 @@ export default function Dashboard() {
       {/* Header */}
       <motion.div 
         variants={itemVariants}
-        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20"
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle"
       >
         <div className="flex items-center justify-between">
           <div>

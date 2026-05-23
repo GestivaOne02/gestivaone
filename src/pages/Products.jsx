@@ -186,7 +186,7 @@ export default function Products() {
   return (
     <div className="page-container flex flex-col gap-5 h-full">
       {/* Sticky Header & Control Panel */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20 flex flex-col gap-4">
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col gap-4">
         {/* Title and Actions */}
         <div className="flex flex-row items-center justify-between gap-4">
           <div>

@@ -161,7 +161,7 @@ export default function Employees() {
       {/* Dynamic Header */}
       <motion.div 
         variants={itemVariants}
-        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20 flex flex-row items-center justify-between gap-4"
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-row items-center justify-between gap-4"
       >
         <div>
           <h1 className="text-lg md:text-2xl font-bold text-brand-600 dark:text-white">Equipo de Trabajo</h1>

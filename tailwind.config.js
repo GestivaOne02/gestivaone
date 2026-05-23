@@ -23,6 +23,7 @@ export default {
           800: '#1e1b4b',
           900: '#312e81',
         },
+        subtle: 'var(--border-subtle)',
         // ─── Surface: CSS-variable-driven so dark/light mode works ───
         surface: {
           900: 'var(--surface-900)',

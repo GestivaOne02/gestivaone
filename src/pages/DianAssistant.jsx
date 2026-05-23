@@ -226,7 +226,7 @@ export default function DianAssistant() {
   return (
     <div className="page-container space-y-6 pb-12">
       {/* ── Fixed Sticky Page Header ─────────────────── */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle/20 flex flex-row items-center justify-between gap-4">
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-row items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-foreground uppercase tracking-wider flex items-center gap-2">
             <Calculator className="text-brand-400" />
