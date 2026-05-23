@@ -90,6 +90,8 @@ body {
   color: var(--text-foreground);
   min-height: 100vh;
   transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* ─── Inputs & selects: respond to theme ─── */
