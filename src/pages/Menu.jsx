@@ -26,7 +26,7 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
         "h-10 rounded-full flex items-center justify-start gap-2 border transition-all duration-300 ease-out-expo cursor-pointer select-none shrink-0 shadow-sm overflow-hidden",
         isPurple
           ? "bg-brand-600 hover:bg-brand-500 text-white border-brand-500/40 hover:shadow-glow-sm"
-          : "bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-white border-white/5",
+          : "bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground border-subtle",
         hovered ? "w-[170px] px-3.5" : "w-10 px-2.5 justify-center"
       )}
     >
@@ -68,7 +68,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
         {/* Avatar */}
         <div className={clsx(
           'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 transition-all duration-300',
-          selected ? 'bg-brand-600/40 text-brand-200' : 'bg-surface-600 text-white group-hover:bg-brand-600/20 group-hover:text-brand-300'
+          selected ? 'bg-brand-600/40 text-brand-600 dark:text-brand-200' : 'bg-surface-600 text-foreground group-hover:bg-brand-600/20 group-hover:text-brand-600 dark:group-hover:text-brand-300'
         )}>
           {client.name[0].toUpperCase()}
         </div>

@@ -52,7 +52,7 @@ const CustomTooltip = ({ active, payload, label, formatFn }) => {
             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: p.stroke || p.color }} />
             {p.name === 'revenue' || p.name === 'Revenue' ? 'Recaudado:' : 'Pendiente:'}
           </span>
-          <span className="text-white font-bold">{formatFn(p.value)}</span>
+          <span className="text-foreground font-bold">{formatFn(p.value)}</span>
         </div>
       ))}
     </div>
@@ -430,7 +430,7 @@ export default function Dashboard() {
           <Lock size={36} className="text-muted-400" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-white">Acceso restringido</h2>
+          <h2 className="text-lg font-bold text-foreground">Acceso restringido</h2>
           <p className="text-sm text-muted-400 mt-1">Tu rol de <span className="text-warning-400 font-medium">{ROLES[role]?.label}</span> no tiene acceso al Dashboard.</p>
           <p className="text-sm text-muted-400">Contacta a tu administrador si necesitas este acceso.</p>
         </div>
@@ -940,7 +940,7 @@ export default function Dashboard() {
               <select
                 value={revenueYearFilter}
                 onChange={(e) => setRevenueYearFilter(e.target.value)}
-                className="bg-surface-700 border border-subtle rounded-xl px-2 py-1 text-[11px] text-white focus:outline-none focus:ring-1 focus:ring-brand-500/50 cursor-pointer"
+                className="bg-surface-700 border border-subtle rounded-xl px-2 py-1 text-[11px] text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500/50 cursor-pointer"
               >
                 <option value="all">Histórico</option>
                 {availableYears.map(yr => (
@@ -1033,7 +1033,7 @@ export default function Dashboard() {
         <>
           {/* Advanced Multi-Timeline Analytics Dashboard */}
           <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-subtle pb-5">
               <div>
                 <h3 className="text-base font-bold text-brand-600 dark:text-brand-400 flex items-center gap-2">
                   <TrendingUp className="text-brand-400" size={18} />
@@ -1404,7 +1404,7 @@ export default function Dashboard() {
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         {/* Form: Register Expense */}
         <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4">
-          <div className="flex items-center gap-2 pb-3 border-b border-white/5">
+          <div className="flex items-center gap-2 pb-3 border-b border-subtle">
             <Coins size={18} className="text-brand-400" />
             <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Registrar Egreso / Gasto</h3>
           </div>
@@ -1446,7 +1446,7 @@ export default function Dashboard() {
             </div>
 
             {/* DIAN & Provider Details */}
-            <div className="pt-2 border-t border-white/5 space-y-3">
+            <div className="pt-2 border-t border-subtle space-y-3">
               <span className="text-[11px] font-bold text-muted-400 uppercase tracking-widest block">Detalles Factura / DIAN</span>
               
               <div>
@@ -1520,7 +1520,7 @@ export default function Dashboard() {
 
         {/* List: Recent Expenses */}
         <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px]">
-          <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4 shrink-0">
+          <div className="flex items-center justify-between pb-3 border-b border-subtle mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-brand-400" />
               <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Historial de Egresos</h3>
@@ -1538,7 +1538,7 @@ export default function Dashboard() {
               </div>
             ) : (
               expenses.map((e) => (
-                <div key={e.id} className="flex items-center justify-between p-3 rounded-xl bg-surface-700/20 border border-white/5 hover:border-white/10 transition-colors">
+                <div key={e.id} className="flex items-center justify-between p-3 rounded-xl bg-surface-700/20 border border-subtle hover:border-surface-400 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-danger-500/10 border border-danger-500/20 flex items-center justify-center text-danger-400 font-bold text-xs shrink-0">
                       $

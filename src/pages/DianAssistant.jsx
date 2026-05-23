@@ -346,7 +346,7 @@ export default function DianAssistant() {
             <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">Ingresos Brutos ({selectedYear})</span>
-                <h3 className="text-2xl font-black text-white mt-1.5">{format$(totalSales)}</h3>
+                <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalSales)}</h3>
                 <span className="text-[10px] text-brand-400 font-semibold block mt-1">Soportados por Factura Electrónica</span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-success-500/10 text-success-400 flex items-center justify-center">
@@ -357,7 +357,7 @@ export default function DianAssistant() {
             <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">Costos y Deducciones</span>
-                <h3 className="text-2xl font-black text-white mt-1.5">{format$(totalCost)}</h3>
+                <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalCost)}</h3>
                 <span className="text-[10px] text-brand-400 font-semibold block mt-1">Egresos operativos registrados</span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-danger-500/10 text-danger-400 flex items-center justify-center">
@@ -368,7 +368,7 @@ export default function DianAssistant() {
             <div className="bg-brand-600/10 border border-brand-500/30 p-5 rounded-2xl flex items-center justify-between shadow-glow-sm">
               <div>
                 <span className="text-xs text-brand-300 font-bold uppercase tracking-wider">Renta Líquida Gravable</span>
-                <h3 className="text-2xl font-black text-white mt-1.5">{format$(netIncome)}</h3>
+                <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(netIncome)}</h3>
                 <span className="text-[10px] text-brand-300/80 font-semibold block mt-1">
                   ~ {netIncomeInUvt.toFixed(1)} UVT ({format$(uvtValue)} c/u)
                 </span>
@@ -381,7 +381,7 @@ export default function DianAssistant() {
 
           {/* Renta Calculation Detail Card */}
           <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-6">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
               <FileText size={18} className="text-brand-400" />
               Proyección de Impuesto de Renta
             </h3>
@@ -390,11 +390,11 @@ export default function DianAssistant() {
               <div className="space-y-4">
                 <div className="flex justify-between border-b border-subtle/50 pb-2.5">
                   <span className="text-sm text-muted-400">Renta Líquida Gravable</span>
-                  <span className="text-sm font-bold text-white">{format$(netIncome)}</span>
+                  <span className="text-sm font-bold text-foreground">{format$(netIncome)}</span>
                 </div>
                 <div className="flex justify-between border-b border-subtle/50 pb-2.5">
                   <span className="text-sm text-muted-400">Tarifa Aplicada</span>
-                  <span className="text-sm font-bold text-white">
+                  <span className="text-sm font-bold text-foreground">
                     {taxType === 'juridica' ? '35% Fijo' : 'Progresivo UVT'}
                   </span>
                 </div>
@@ -449,7 +449,7 @@ export default function DianAssistant() {
                   <ArrowUpRight size={16} />
                 </span>
               </div>
-              <h3 className="text-2xl font-black text-white">{format$(totalIvaCollected)}</h3>
+              <h3 className="text-2xl font-black text-foreground">{format$(totalIvaCollected)}</h3>
               <p className="text-xs text-muted-400">
                 Calculado a partir del desglose de IVA de las facturas de venta realizadas.
               </p>
@@ -463,7 +463,7 @@ export default function DianAssistant() {
                   <ArrowDownRight size={16} />
                 </span>
               </div>
-              <h3 className="text-2xl font-black text-white">{format$(totalIvaDeductible)}</h3>
+              <h3 className="text-2xl font-black text-foreground">{format$(totalIvaDeductible)}</h3>
               <p className="text-xs text-muted-400">
                 Estimado a partir del {estimatedIvaRate}% sobre compras de inventario, publicidad y arriendos.
               </p>
@@ -472,11 +472,11 @@ export default function DianAssistant() {
 
           {/* IVA Balance Card */}
           <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4">
-            <h3 className="text-lg font-bold text-white">Resultado de Impuesto a las Ventas (IVA)</h3>
+            <h3 className="text-lg font-bold text-foreground">Resultado de Impuesto a las Ventas (IVA)</h3>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-surface-700/50 border border-subtle/50">
               <div>
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">Balance Neto Proyectado</span>
-                <h2 className="text-3xl font-black text-white mt-1">
+                <h2 className="text-3xl font-black text-foreground mt-1">
                   {format$(Math.abs(netIvaBalance))}
                 </h2>
                 <span className="text-[10px] text-muted-400 mt-1 block">
@@ -509,7 +509,7 @@ export default function DianAssistant() {
             <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 flex flex-col justify-between">
               <div className="space-y-2">
                 <Badge variant="primary" className="text-[10px] uppercase font-bold">Ventas / Ingresos</Badge>
-                <h4 className="text-base font-bold text-white">Formato 1007: Ingresos Propios</h4>
+                <h4 className="text-base font-bold text-foreground">Formato 1007: Ingresos Propios</h4>
                 <p className="text-xs text-muted-400 leading-relaxed">
                   Consolida los ingresos recibidos por facturación de ventas agrupados por NIT/Documento del cliente. Mapea la información de contacto y montos brutos de facturación.
                 </p>
@@ -529,7 +529,7 @@ export default function DianAssistant() {
             <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 flex flex-col justify-between">
               <div className="space-y-2">
                 <Badge variant="warning" className="text-[10px] uppercase font-bold">Compras / Egresos</Badge>
-                <h4 className="text-base font-bold text-white">Formato 1001: Pagos a Terceros</h4>
+                <h4 className="text-base font-bold text-foreground">Formato 1001: Pagos a Terceros</h4>
                 <p className="text-xs text-muted-400 leading-relaxed">
                   Lista todos tus costos, egresos y pagos de nómina mapeando automáticamente las categorías a sus conceptos tributarios DIAN correspondientes (5001, 5016, 5002, 5007).
                 </p>

@@ -89,7 +89,7 @@ export default function CountrySelectorModal() {
               <Globe size={12} />
               <span>Configuración Global</span>
             </div>
-            <h3 className="text-2xl font-bold text-white">Selecciona tu país</h3>
+            <h3 className="text-2xl font-bold text-foreground">Selecciona tu país</h3>
           </div>
 
           <div className="flex-1 overflow-y-auto no-scrollbar grid grid-cols-1 sm:grid-cols-2 gap-3 pb-6">
@@ -106,7 +106,7 @@ export default function CountrySelectorModal() {
               >
                 <span className="text-2xl">{c.flag}</span>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-white truncate">{c.name}</p>
+                  <p className="text-sm font-bold text-foreground truncate">{c.name}</p>
                   <p className="text-[10px] text-muted-400 uppercase tracking-wider">{c.currency}</p>
                 </div>
                 {selected === c.id && (

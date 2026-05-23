@@ -63,11 +63,11 @@ export default function Modal({ open, onClose, title, children, size = 'md', hid
             {/* Header */}
             {(title || !hideClose) && (
               <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-subtle">
-                {title && <h2 className="text-base font-semibold text-white">{title}</h2>}
+                {title && <h2 className="text-base font-semibold text-foreground">{title}</h2>}
                 {!hideClose && (
                   <button
                     onClick={onClose}
-                    className="ml-auto p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-500 transition-colors"
+                    className="ml-auto p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-500 transition-colors"
                   >
                     <X size={16} />
                   </button>

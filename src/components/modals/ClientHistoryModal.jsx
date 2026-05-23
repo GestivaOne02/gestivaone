@@ -105,7 +105,7 @@ function InvoiceItemCard({ inv, format$, client }) {
   }
 
   return (
-    <div className="bg-surface-800 border border-white/5 rounded-xl p-4 hover:border-white/20 transition-all duration-300">
+    <div className="bg-surface-800 border border-subtle rounded-xl p-4 hover:border-surface-400 transition-all duration-300">
       <div className="flex items-start justify-between mb-2">
         <div>
           <h4 className="text-sm font-bold text-foreground mb-1">Factura #{inv.id.slice(0, 8)}</h4>
@@ -121,7 +121,7 @@ function InvoiceItemCard({ inv, format$, client }) {
 
       {/* Debt details if unpaid */}
       {inv.payment_status !== 'paid' && (
-        <div className="mt-2.5 p-2.5 rounded-lg bg-surface-700/20 border border-white/5 flex flex-col gap-1.5 text-xs">
+        <div className="mt-2.5 p-2.5 rounded-lg bg-surface-700/20 border border-subtle flex flex-col gap-1.5 text-xs">
           <div className="flex justify-between text-muted-400">
             <span>Total Factura:</span>
             <span className="font-semibold text-foreground">{format$(inv.total)}</span>
@@ -130,7 +130,7 @@ function InvoiceItemCard({ inv, format$, client }) {
             <span>Abonado:</span>
             <span className="font-semibold text-success-400">{format$(paidAmount)}</span>
           </div>
-          <div className="flex justify-between border-t border-white/5 pt-1.5 font-bold">
+          <div className="flex justify-between border-t border-subtle pt-1.5 font-bold">
             <span className="text-muted-200">Saldo Pendiente:</span>
             <span className="text-danger-400">{format$(remaining)}</span>
           </div>
@@ -149,7 +149,7 @@ function InvoiceItemCard({ inv, format$, client }) {
             <span>Ver historial de abonos ({payments.length})</span>
           </button>
           {showHistory && (
-            <div className="mt-1.5 pl-3 border-l-2 border-white/10 space-y-1.5 py-1">
+            <div className="mt-1.5 pl-3 border-l-2 border-subtle space-y-1.5 py-1">
               {payments.map((p, idx) => (
                 <div key={idx} className="flex justify-between text-[11px] text-muted-400">
                   <div className="flex flex-col">
@@ -165,7 +165,7 @@ function InvoiceItemCard({ inv, format$, client }) {
       )}
 
       {/* Action panel */}
-      <div className="flex items-center justify-between pt-3 border-t border-white/5 mt-3">
+      <div className="flex items-center justify-between pt-3 border-t border-subtle mt-3">
         <div className="flex items-center gap-1.5 text-muted-400">
           <Package size={14} />
           <span className="text-xs">{inv.items?.length || 0} artículos</span>
@@ -229,7 +229,7 @@ function InvoiceItemCard({ inv, format$, client }) {
             <button
               type="button"
               onClick={() => setShowAbonoForm(false)}
-              className="text-xs font-semibold text-muted-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-surface-600 transition-colors"
+              className="text-xs font-semibold text-muted-400 hover:text-foreground px-3 py-1.5 rounded-lg hover:bg-surface-600 transition-colors"
             >
               Cancelar
             </button>
@@ -282,11 +282,11 @@ export default function ClientHistoryModal({ open }) {
       <div className="space-y-4">
         {/* Summary Header */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-surface-700/30 border border-white/5 rounded-xl p-3">
+          <div className="bg-surface-700/30 border border-subtle rounded-xl p-3">
             <p className="text-[10px] text-muted-400 font-bold uppercase tracking-widest mb-1">Total Pagado</p>
             <p className="text-lg font-bold text-success-400">{format$(totalSpent)}</p>
           </div>
-          <div className="bg-surface-700/30 border border-white/5 rounded-xl p-3">
+          <div className="bg-surface-700/30 border border-subtle rounded-xl p-3">
             <p className="text-[10px] text-muted-400 font-bold uppercase tracking-widest mb-1">Deuda Pendiente</p>
             <p className="text-lg font-bold text-danger-400">{format$(totalDebt)}</p>
           </div>

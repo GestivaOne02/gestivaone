@@ -168,7 +168,7 @@ export default function Notifications() {
                   "relative flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-300 whitespace-nowrap border shrink-0",
                   activeCategory === cat
                     ? "bg-brand-600 border-brand-500 text-white shadow-glow-sm"
-                    : "bg-surface-800 border-subtle text-muted-400 hover:text-white hover:bg-surface-700"
+                    : "bg-surface-800 border-subtle text-muted-400 hover:text-foreground hover:bg-surface-700"
                 )}
               >
                 <span>{cat}</span>

@@ -107,8 +107,8 @@ export default function AddProductModal({ open }) {
                 className={clsx(
                   'flex-1 py-2 text-xs font-semibold rounded-lg border transition-all',
                   unit === u
-                    ? 'border-brand-500 bg-brand-600/20 text-brand-300'
-                    : 'border-subtle bg-surface-700 text-muted-400 hover:text-white'
+                    ? 'border-brand-500 bg-brand-600/20 text-brand-600 dark:text-brand-300'
+                    : 'border-subtle bg-surface-700 text-muted-400 hover:text-foreground'
                 )}
               >
                 {u}

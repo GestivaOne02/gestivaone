@@ -36,7 +36,7 @@ export default function CookieBanner() {
             </div>
             
             <div className="flex-1 space-y-1 text-center md:text-left">
-              <h3 className="text-sm font-bold text-white flex items-center justify-center md:justify-start gap-2">
+              <h3 className="text-sm font-bold text-foreground flex items-center justify-center md:justify-start gap-2">
                 Usamos cookies para mejorar tu experiencia
                 <ShieldCheck size={14} className="text-success-400" />
               </h3>
@@ -66,7 +66,7 @@ export default function CookieBanner() {
 
             <button 
               onClick={() => setShow(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-muted-500 hover:text-white hover:bg-white/5 transition-colors"
+              className="absolute top-4 right-4 p-1 rounded-lg text-muted-500 hover:text-foreground hover:bg-white/5 transition-colors"
             >
               <X size={14} />
             </button>

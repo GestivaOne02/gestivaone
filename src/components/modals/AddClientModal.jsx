@@ -73,7 +73,7 @@ export default function AddClientModal({ open }) {
       <div className={clsx('p-2 rounded-lg', clientType === value ? 'bg-brand-500/20 text-brand-400' : 'bg-surface-500 text-muted-400')}>
         <Icon size={18} />
       </div>
-      <span className={clsx('text-sm font-semibold', clientType === value ? 'text-white' : 'text-muted-400')}>{label}</span>
+      <span className={clsx('text-sm font-semibold', clientType === value ? 'text-brand-600 dark:text-white' : 'text-muted-400')}>{label}</span>
       <span className="text-[11px] text-muted-400 leading-tight">{desc}</span>
     </motion.button>
   )

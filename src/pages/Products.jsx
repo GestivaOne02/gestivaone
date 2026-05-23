@@ -47,7 +47,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           <p className="text-[11px] text-muted-400 mt-0.5">{product.category}</p>
         </div>
         <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
-          <button onClick={() => onEdit(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600">
+          <button onClick={() => onEdit(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600">
             <Edit2 size={12} />
           </button>
           <button onClick={() => onDelete(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30">
@@ -268,7 +268,7 @@ export default function Products() {
               onClick={() => setActiveCat(null)}
               className={clsx(
                 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border',
-                !activeCat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-white'
+                !activeCat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground'
               )}
             >
               Todos
@@ -279,7 +279,7 @@ export default function Products() {
                 onClick={() => setActiveCat(activeCat === cat ? null : cat)}
                 className={clsx(
                   'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border',
-                  activeCat === cat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-white'
+                  activeCat === cat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground'
                 )}
               >
                 {cat}

@@ -368,7 +368,7 @@ function SmtpTestBtn() {
   }
   return (
     <button onClick={run} disabled={testing}
-      className="flex items-center gap-2 text-xs bg-surface-600 hover:bg-surface-500 border border-subtle text-muted-400 hover:text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50">
+      className="flex items-center gap-2 text-xs bg-surface-600 hover:bg-surface-500 border border-subtle text-muted-400 hover:text-foreground px-4 py-2 rounded-xl transition-colors disabled:opacity-50">
       {testing ? <Loader2 size={12} className="animate-spin" /> : <Mail size={12} />}
       {testing ? 'Probando conexión...' : 'Probar conexión SMTP'}
     </button>

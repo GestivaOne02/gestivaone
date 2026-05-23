@@ -28,7 +28,7 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="text-center space-y-1 mb-4">
-        <h2 className="text-xl font-bold text-white">Datos de pago</h2>
+        <h2 className="text-xl font-bold text-foreground">Datos de pago</h2>
         <p className="text-sm text-muted-400">Tu información está cifrada y protegida</p>
       </div>
 
@@ -36,7 +36,7 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
       {planData && (
         <div className="bg-brand-600/10 border border-brand-500/30 rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p className="text-sm font-bold text-white">Plan {planData.name}</p>
+            <p className="text-sm font-bold text-foreground">Plan {planData.name}</p>
             {planData.promoPrice
               ? <p className="text-xs text-brand-300">{planData.promoPriceDisplay}/mes los primeros {planData.promoMonths} meses</p>
               : <p className="text-xs text-muted-400">{planData.priceDisplay}/mes</p>

@@ -225,14 +225,14 @@ export default function Employees() {
                         <button
                           onClick={() => copyToClipboard(inv.code, 'código')}
                           title="Copiar código"
-                          className="p-2 rounded-xl bg-surface-700/50 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-white transition-all"
+                          className="p-2 rounded-xl bg-surface-700/50 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-foreground transition-all"
                         >
                           <Copy size={13} />
                         </button>
                         <button
                           onClick={() => copyToClipboard(registerLink, 'enlace')}
                           title="Copiar enlace directo"
-                          className="p-2 rounded-xl bg-surface-700/50 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-white transition-all"
+                          className="p-2 rounded-xl bg-surface-700/50 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-foreground transition-all"
                         >
                           <LinkIcon size={13} />
                         </button>
@@ -334,7 +334,7 @@ export default function Employees() {
                     <div className="relative shrink-0">
                       <button 
                         onClick={() => setMenuId(menuId === emp.id ? null : emp.id)}
-                        className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-700/50 transition-colors"
+                        className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-700/50 transition-colors"
                       >
                         <MoreVertical size={14} />
                       </button>

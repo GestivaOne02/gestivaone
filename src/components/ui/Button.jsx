@@ -4,11 +4,11 @@ import clsx from 'clsx'
 
 const variants = {
   primary: 'bg-brand-600 hover:bg-brand-500 text-white shadow-glow-sm hover:shadow-glow border border-brand-500/25',
-  secondary: 'bg-surface-700 hover:bg-surface-600 text-white border border-subtle/80 hover:border-surface-400',
-  ghost: 'bg-transparent hover:bg-surface-700 text-muted-500 hover:text-white',
+  secondary: 'bg-surface-700 hover:bg-surface-600 text-foreground border border-subtle hover:border-surface-400',
+  ghost: 'bg-transparent hover:bg-surface-700 text-muted-500 hover:text-foreground',
   danger: 'bg-danger-900/60 hover:bg-danger-500 text-danger-400 hover:text-white border border-danger-500/30',
   success: 'bg-success-900/60 hover:bg-success-500 text-success-400 hover:text-white border border-success-500/30',
-  outline: 'bg-transparent border border-brand-600 text-brand-400 hover:bg-brand-600 hover:text-white',
+  outline: 'bg-transparent border border-brand-600 text-brand-600 dark:text-brand-400 hover:bg-brand-600 hover:text-white',
 }
 
 const sizes = {
