@@ -294,6 +294,68 @@ input[type="number"] {
   img.loaded {
     opacity: 1;
   }
+
+  /* ─── Premium Redesign Utilities ─── */
+  .avatar-gradient-border {
+    background: linear-gradient(135deg, #818cf8 0%, #fbbf24 50%, #f43f5e 100%);
+    padding: 2.5px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .glow-top-brand::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: radial-gradient(circle at top, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+    border-radius: inherit;
+  }
+
+  .glow-top-success::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: radial-gradient(circle at top, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+    border-radius: inherit;
+  }
+
+  .glow-top-warning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: radial-gradient(circle at top, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+    border-radius: inherit;
+  }
+
+  .glow-top-danger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: radial-gradient(circle at top, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+    border-radius: inherit;
+  }
 }
 
 /* Force dark mode values inside the sidebar premium container regardless of system theme */

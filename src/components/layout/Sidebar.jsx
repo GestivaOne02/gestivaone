@@ -243,10 +243,14 @@ export default function Sidebar({ isMobile }) {
               <div className="p-4 border-t border-subtle bg-surface-900/40">
                 <div className="flex items-center gap-3">
                   {user?.companyLogo ? (
-                    <img src={user.companyLogo} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                    <div className="avatar-gradient-border shrink-0">
+                      <img src={user.companyLogo} alt="" className="w-7 h-7 rounded-full object-cover border border-surface-800 shrink-0" />
+                    </div>
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
-                      {user?.name?.charAt(0).toUpperCase() || 'G'}
+                    <div className="avatar-gradient-border shrink-0">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xs font-bold text-white border border-surface-800 shrink-0">
+                        {user?.name?.charAt(0).toUpperCase() || 'G'}
+                      </div>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
@@ -305,10 +309,14 @@ export default function Sidebar({ isMobile }) {
       <div className="p-3 border-t border-subtle">
         <div className="flex items-center gap-3 px-1 py-1">
           {user?.companyLogo ? (
-            <img src={user.companyLogo} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+            <div className="avatar-gradient-border shrink-0">
+              <img src={user.companyLogo} alt="" className="w-7 h-7 rounded-full object-cover border border-surface-800 shrink-0" />
+            </div>
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
-              {user?.name?.charAt(0).toUpperCase() || 'G'}
+            <div className="avatar-gradient-border shrink-0">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-xs font-bold text-white border border-surface-800 shrink-0">
+                {user?.name?.charAt(0).toUpperCase() || 'G'}
+              </div>
             </div>
           )}
           <AnimatePresence>

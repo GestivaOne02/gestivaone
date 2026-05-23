@@ -35,7 +35,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}
-      className="bg-surface-800 border border-subtle rounded-2xl p-4 flex flex-col gap-3 group relative overflow-hidden"
+      className="bg-surface-800 border border-subtle rounded-3xl p-4 flex flex-col gap-3 group relative overflow-hidden"
     >
       {/* Hover glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-600/0 to-brand-600/0 group-hover:from-brand-600/5 group-hover:to-transparent transition-all rounded-2xl pointer-events-none" />
@@ -92,7 +92,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           onClick={product.stock !== undefined && product.stock <= 0 ? undefined : handleAdd}
           disabled={product.stock !== undefined && product.stock <= 0}
           className={clsx(
-            'flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl text-xs font-semibold transition-all',
+            'flex-1 flex items-center justify-center gap-1 py-1.5 rounded-full text-xs font-semibold transition-all',
             product.stock !== undefined && product.stock <= 0
               ? 'bg-surface-700 text-muted-500 cursor-not-allowed border border-subtle'
               : added
@@ -127,7 +127,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           >
             <button
               onClick={() => onEdit(product)}
-              className="w-full mt-1 border border-warning-500/30 bg-warning-500/10 hover:bg-warning-500/20 text-warning-400 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+              className="w-full mt-1 border border-warning-500/30 bg-warning-500/10 hover:bg-warning-500/20 text-warning-400 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
             >
               <Package size={13} />
               ¿Añadir Stock?
@@ -197,9 +197,10 @@ export default function Products() {
             <Button
               variant="secondary"
               size="sm"
+              pill
               icon={<DollarSign size={14} />}
               onClick={() => setShowFree((v) => !v)}
-              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0"
             >
               <span className="hidden sm:inline">Valor Libre</span>
               <span className="inline sm:hidden">Libre</span>
@@ -207,9 +208,10 @@ export default function Products() {
             <Button
               variant="primary"
               size="sm"
+              pill
               icon={<Plus size={14} />}
               onClick={() => openModal('addProduct')}
-              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0"
             >
               <span className="hidden sm:inline">Añadir Producto</span>
               <span className="inline sm:hidden">Nuevo</span>

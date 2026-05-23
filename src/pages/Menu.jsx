@@ -58,7 +58,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
       whileHover={{ y: -2, scale: 1.005 }}
       onClick={onSelect}
       className={clsx(
-        'relative flex flex-col sm:flex-row sm:items-center gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 group',
+        'relative flex flex-col sm:flex-row sm:items-center gap-3.5 p-4 rounded-3xl border-2 cursor-pointer transition-all duration-300 group',
         selected
           ? 'border-brand-500 bg-brand-600/10 shadow-glow-sm'
           : 'border-subtle bg-surface-800 hover:border-brand-500/30 hover:bg-surface-800/80'
@@ -202,9 +202,10 @@ export default function Menu() {
             <Button
               variant="primary"
               size="sm"
+              pill
               icon={<UserPlus size={15} />}
               onClick={() => openModal('addClient')}
-              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0"
             >
               <span className="hidden sm:inline">Añadir Cliente</span>
               <span className="inline sm:hidden">Nuevo</span>
@@ -212,13 +213,14 @@ export default function Menu() {
             <Button
               variant="secondary"
               size="sm"
+              pill
               icon={<ShoppingBag size={15} />}
               onClick={() => {
                 selectClient(null)
                 toast.success('Cliente Express activado', { id: 'client-sel' })
                 navigate('/products')
               }}
-              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-xl shrink-0"
+              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0"
             >
               <span className="hidden sm:inline">Cliente Express</span>
               <span className="inline sm:hidden">Express</span>

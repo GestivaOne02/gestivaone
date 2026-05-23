@@ -51,7 +51,7 @@ export default function Modal({ open, onClose, title, children, size = 'md', hid
             onClick={(e) => e.stopPropagation()}
             className={`
               relative w-full bg-surface-700 border border-subtle shadow-modal overflow-hidden
-              rounded-t-3xl sm:rounded-2xl
+              rounded-t-[32px] sm:rounded-3xl
               ${widths[size]}
             `}
           >
