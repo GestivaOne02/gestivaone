@@ -52,6 +52,7 @@ export default function OrderConfirmModal({ open }) {
   const customCharges = useCartStore((s) => s.customCharges)
 
   const client = useClientStore((s) => s.getSelected())
+  const user = useAuthStore((s) => s.user)
 
   const createInvoice = useInvoiceStore((s) => s.createInvoice)
   const closeModal = useUIStore((s) => s.closeModal)

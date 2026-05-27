@@ -198,6 +198,8 @@ export const useInvoiceStore = create((set, get) => ({
     const inv = get().invoices.find(i => i.id === invoiceId)
     if (!inv) return { success: false, error: 'Factura no encontrada' }
 
+    const wasPaid = inv.payment_status === 'paid'
+
     // Insert payment record into cloud database table `invoice_payments`
     const newPayment = {
       company_id: user.companyId,
