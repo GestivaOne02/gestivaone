@@ -247,7 +247,7 @@ export default function PersonalFinance() {
                 <Input 
                   label="Monto a ingresar ($) *" 
                   value={addAmount} 
-                  onChange={setAddAmount} 
+                  onChange={e => setAddAmount(e.target.value)} 
                   placeholder="Ej: 100000" 
                   type="number" 
                   required 
@@ -279,7 +279,7 @@ export default function PersonalFinance() {
                 <Input 
                   label="Monto del gasto ($) *" 
                   value={expAmount} 
-                  onChange={setExpAmount} 
+                  onChange={e => setExpAmount(e.target.value)} 
                   placeholder="Ej: 20000" 
                   type="number" 
                   required 
@@ -300,7 +300,7 @@ export default function PersonalFinance() {
                 <Input 
                   label="Descripción / Concepto *" 
                   value={expDesc} 
-                  onChange={setExpDesc} 
+                  onChange={e => setExpDesc(e.target.value)} 
                   placeholder="Ej: Almuerzo ejecutivo" 
                   required 
                 />

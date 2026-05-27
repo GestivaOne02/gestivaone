@@ -53,7 +53,7 @@ export default function Sidebar({ isMobile }) {
   const BrandHeader = ({ showText }) => (
     <div className={clsx('flex items-center gap-3.5 px-4 h-20 border-b border-subtle shrink-0', !showText && 'justify-center px-0')}>
       {user?.companyLogo
-        ? <img src={user.companyLogo} alt="Logo" className="w-[46px] h-[46px] rounded-full object-cover shrink-0" />
+        ? <img src={user.companyLogo} alt="Logo" style={{ width: '46px', height: '46px', objectFit: 'cover' }} className="rounded-full shrink-0" />
         : (
           <Zap size={26} className="text-brand-400 shrink-0" />
         )
@@ -138,7 +138,7 @@ export default function Sidebar({ isMobile }) {
               <div className="flex items-center justify-between px-4 h-20 border-b border-subtle shrink-0">
                 <div className="flex items-center gap-3.5">
                   {user?.companyLogo
-                    ? <img src={user.companyLogo} alt="" className="w-[46px] h-[46px] rounded-full object-cover shrink-0" />
+                    ? <img src={user.companyLogo} alt="" style={{ width: '46px', height: '46px', objectFit: 'cover' }} className="rounded-full shrink-0" />
                     : <Zap size={26} className="text-brand-400 shrink-0" />
                   }
                   <div className="flex flex-col leading-tight overflow-hidden whitespace-nowrap">
@@ -230,7 +230,7 @@ export default function Sidebar({ isMobile }) {
               <div className="p-4 border-t border-subtle bg-surface-900/40">
                 <div className="flex items-center gap-3">
                   {user?.companyLogo ? (
-                    <img src={user.companyLogo} alt="" className="w-10 h-10 rounded-full object-cover border border-surface-700 shrink-0 shadow-sm" />
+                    <img src={user.companyLogo} alt="" style={{ width: '40px', height: '40px', objectFit: 'cover' }} className="rounded-full border border-surface-700 shrink-0 shadow-sm" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm">
                       {user?.name?.charAt(0).toUpperCase() || 'G'}
@@ -292,7 +292,7 @@ export default function Sidebar({ isMobile }) {
       <div className={clsx('p-3 border-t border-subtle', collapsed && 'px-1')}>
         <div className={clsx('flex items-center gap-3 px-1 py-1', collapsed && 'justify-center px-0')}>
           {user?.companyLogo ? (
-            <img src={user.companyLogo} alt="" className="w-10 h-10 rounded-full object-cover border border-surface-700 shrink-0 shadow-sm" />
+            <img src={user.companyLogo} alt="" style={{ width: '40px', height: '40px', objectFit: 'cover' }} className="rounded-full border border-surface-700 shrink-0 shadow-sm" />
           ) : (
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm">
               {user?.name?.charAt(0).toUpperCase() || 'G'}

@@ -87,11 +87,11 @@ export default function InvoicePanel({ isMobile }) {
     return (
       <div className="border-b border-subtle pb-3 mb-3">
         <div className="flex items-center justify-between text-xs text-muted-400 mb-2">
-          <span className="font-bold text-[10px] uppercase tracking-wider text-brand-400">Impuestos y Cargos</span>
+          <span className="font-bold text-[10px] uppercase tracking-wider text-white">Impuestos y Cargos</span>
           <button 
             type="button"
             onClick={() => setShowAddCharge(!showAddCharge)} 
-            className="text-brand-400 hover:text-brand-300 font-bold text-[10px] uppercase transition-colors"
+            className="text-white hover:text-white/80 font-bold text-[10px] uppercase transition-colors"
           >
             {showAddCharge ? 'Cancelar' : '+ Agregar Cargo'}
           </button>

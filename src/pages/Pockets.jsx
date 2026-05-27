@@ -232,12 +232,12 @@ export default function Pockets() {
               </div>
 
               <form onSubmit={handleCreate} className="space-y-4">
-                <Input label="Nombre del Bolsillo *" value={name} onChange={setName} placeholder="Ej: Pago de Impuestos" required />
+                <Input label="Nombre del Bolsillo *" value={name} onChange={e => setName(e.target.value)} placeholder="Ej: Pago de Impuestos" required />
                 <div className="grid grid-cols-2 gap-3">
-                  <Input label="Meta/Tope Limite (Opcional)" value={target} onChange={setTarget} placeholder="Ej: 1000000" type="number" />
-                  <Input label="Saldo Inicial" value={balance} onChange={setBalance} placeholder="0" type="number" />
+                  <Input label="Meta/Tope Limite (Opcional)" value={target} onChange={e => setTarget(e.target.value)} placeholder="Ej: 1000000" type="number" />
+                  <Input label="Saldo Inicial" value={balance} onChange={e => setBalance(e.target.value)} placeholder="0" type="number" />
                 </div>
-                <Input label="Desviar porcentaje de cobros (%)" value={percentage} onChange={setPercentage} placeholder="Ej: 10" type="number" min="0" max="100" />
+                <Input label="Desviar porcentaje de cobros (%)" value={percentage} onChange={e => setPercentage(e.target.value)} placeholder="Ej: 10" type="number" min="0" max="100" />
                 
                 {/* Pocket type selector */}
                 <div className="flex flex-col gap-1.5">
@@ -293,7 +293,7 @@ export default function Pockets() {
                 <Input 
                   label="Monto de la transacción ($) *" 
                   value={fundAmount} 
-                  onChange={setFundAmount} 
+                  onChange={e => setFundAmount(e.target.value)} 
                   placeholder="Ej: 50000" 
                   type="number" 
                   required 
