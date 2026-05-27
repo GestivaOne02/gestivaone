@@ -240,7 +240,7 @@ input[type="number"] {
 
   /* ─── Premium Transitions ─── */
   .animate-in {
-    animation: slideUp 0.4s var(--ease-out-expo) forwards;
+    animation: slideUp 0.25s var(--ease-out-expo) forwards;
   }
 
   @keyframes slideUp {
@@ -380,4 +380,53 @@ input[type="number"] {
   --border-subtle: rgba(255, 255, 255, 0.06) !important;
   --glass-bg: rgba(19, 19, 30, 0.85) !important;
   --glass-border: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ═══════════════════════════════════════════════
+   GLOBAL MINIMALIST FLAT REDESIGN OVERRIDES
+   Reduces visual noise, removes card borders/shadows,
+   and unifies transition timings on interactive items.
+   ═══════════════════════════════════════════════ */
+
+/* 1. Global Card Border & Shadow Removal */
+div.bg-surface-800,
+div[class*="bg-surface-800/"],
+div.bg-surface-750,
+div.bg-surface-700\/40,
+div.bg-brand-600\/10,
+div.liquid-glass,
+section.bg-surface-800,
+section.bg-surface-800\/50,
+form.bg-surface-800 {
+  border-width: 0px !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 2. Flat Layout - Disable all glow and modal/card shadows globally */
+.shadow-glow,
+.shadow-glow-sm,
+.shadow-card,
+.shadow-card-hover,
+.shadow-modal,
+.shadow-sm,
+.shadow-md,
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl,
+.shadow {
+  box-shadow: none !important;
+}
+
+/* 3. Unified Transition Timings for Interactive Elements */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, transform, filter, backdrop-filter !important;
+  transition-duration: 200ms !important;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important; /* ease-out-expo */
 }

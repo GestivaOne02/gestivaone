@@ -216,7 +216,7 @@ export default function InvoicePanel({ isMobile }) {
         onClick={togglePanel}
         animate={{ right: panelOpen ? 284 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-        className="fixed top-1/2 -translate-y-1/2 z-20 bg-surface-700 border border-subtle rounded-l-xl px-1.5 py-4 text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors"
+        className="fixed top-1/2 -translate-y-1/2 z-20 bg-surface-700 border border-subtle rounded-l-xl px-1.5 py-9 text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors"
       >
         <motion.div animate={{ rotate: panelOpen ? 0 : 180 }}>
           <ChevronRight size={14} />
