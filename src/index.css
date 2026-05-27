@@ -388,13 +388,13 @@ input[type="number"] {
    and unifies transition timings on interactive items.
    ═══════════════════════════════════════════════ */
 
-/* 1. Global Card Border & Shadow Removal */
-div.bg-surface-800,
-div[class*="bg-surface-800/"],
-div.bg-surface-750,
-div.bg-surface-700\/40,
-div.bg-brand-600\/10,
-div.liquid-glass,
+/* 1. Global Card Border & Shadow Removal (except KPI cards) */
+div.bg-surface-800:not(.kpi-card),
+div[class*="bg-surface-800/"]:not(.kpi-card),
+div.bg-surface-750:not(.kpi-card),
+div.bg-surface-700\/40:not(.kpi-card),
+div.bg-brand-600\/10:not(.kpi-card),
+div.liquid-glass:not(.kpi-card),
 section.bg-surface-800,
 section.bg-surface-800\/50,
 form.bg-surface-800 {

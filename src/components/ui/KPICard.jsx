@@ -2,10 +2,10 @@ import { motion } from 'framer-motion'
 import clsx from 'clsx'
 
 const cardGlows = {
-  brand:   'glow-top-brand border-brand-500/15 hover:border-brand-500/30',
-  success: 'glow-top-success border-success-500/15 hover:border-success-500/30',
-  warning: 'glow-top-warning border-warning-500/15 hover:border-warning-500/30',
-  danger:  'glow-top-danger border-danger-500/15 hover:border-danger-500/30',
+  brand:   'glow-top-brand border-brand-500/25 hover:border-brand-500/45',
+  success: 'glow-top-success border-success-500/25 hover:border-success-500/45',
+  warning: 'glow-top-warning border-warning-500/25 hover:border-warning-500/45',
+  danger:  'glow-top-danger border-danger-500/25 hover:border-danger-500/45',
 }
 
 const iconStyles = {
@@ -30,7 +30,7 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
     <motion.div
       whileHover={collapsed ? undefined : { y: -3, scale: 1.01 }}
       className={clsx(
-        'relative overflow-hidden bg-surface-800/80 backdrop-blur-md border rounded-3xl p-3 flex flex-col justify-center select-none transition-all duration-500 ease-out-expo',
+        'kpi-card relative overflow-hidden bg-surface-800/80 backdrop-blur-md border rounded-3xl p-3 flex flex-col justify-center select-none transition-all duration-500 ease-out-expo',
         cardGlows[color],
         collapsed && 'items-center justify-center border-subtle bg-surface-700/40'
       )}
