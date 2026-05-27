@@ -26,13 +26,15 @@ export default function Pockets() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showFundModal, setShowFundModal] = useState(null) // { pocketId, action: 'add' | 'withdraw' }
   const [fundAmount, setFundAmount] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
 
   // Form state
   const [name, setName] = useState('')
   const [target, setTarget] = useState('')
   const [type, setType] = useState('caja')
-  const [percentage, setPercentage] = useState('0')
-  const [balance, setBalance] = useState('0')
+  const [percentage, setPercentage] = useState('')
+  const [balance, setBalance] = useState('')
 
   useEffect(() => {
     fetchPockets()
@@ -42,22 +44,27 @@ export default function Pockets() {
     e.preventDefault()
     if (!name.trim()) return toast.error('Ingresa un nombre para el bolsillo')
     
-    const success = await addPocket({
-      name: name.trim(),
-      target: Number(target) || 0,
-      type,
-      percentage: Number(percentage) || 0,
-      balance: Number(balance) || 0
-    })
+    setLoading(true)
+    try {
+      const success = await addPocket({
+        name: name.trim(),
+        target: Number(target) || 0,
+        type,
+        percentage: Number(percentage) || 0,
+        balance: Number(balance) || 0
+      })
 
-    if (success) {
-      toast.success('Bolsillo creado exitosamente')
-      setName('')
-      setTarget('')
-      setType('caja')
-      setPercentage('0')
-      setBalance('0')
-      setShowAddModal(false)
+      if (success) {
+        toast.success('Bolsillo creado exitosamente')
+        setName('')
+        setTarget('')
+        setType('caja')
+        setPercentage('')
+        setBalance('')
+        setShowAddModal(false)
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -66,18 +73,23 @@ export default function Pockets() {
     const amt = Number(fundAmount)
     if (isNaN(amt) || amt <= 0) return toast.error('Ingresa un monto válido')
 
-    let success = false
-    if (showFundModal.action === 'add') {
-      success = await addFunds(showFundModal.pocketId, amt)
-      if (success) toast.success('Fondos agregados')
-    } else {
-      success = await withdrawFunds(showFundModal.pocketId, amt)
-      if (success) toast.success('Fondos retirados')
-    }
+    setLoading(true)
+    try {
+      let success = false
+      if (showFundModal.action === 'add') {
+        success = await addFunds(showFundModal.pocketId, amt)
+        if (success) toast.success('Fondos agregados')
+      } else {
+        success = await withdrawFunds(showFundModal.pocketId, amt)
+        if (success) toast.success('Fondos retirados')
+      }
 
-    if (success) {
-      setFundAmount('')
-      setShowFundModal(null)
+      if (success) {
+        setFundAmount('')
+        setShowFundModal(null)
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -205,9 +217,7 @@ export default function Pockets() {
                     Retirar
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm('¿Eliminar este bolsillo? Se perderá el saldo acumulado.')) deletePocket(p.id)
-                    }}
+                    onClick={() => setDeleteConfirmId(p.id)}
                     className="p-1.5 rounded-xl bg-danger-900/10 hover:bg-danger-900/30 text-danger-400 transition-all shrink-0"
                     title="Eliminar bolsillo"
                   >
@@ -268,7 +278,7 @@ export default function Pockets() {
 
                 <div className="flex gap-3 pt-2">
                   <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setShowAddModal(false)}>Cancelar</Button>
-                  <Button type="submit" variant="primary" size="md" className="flex-1">Crear Bolsillo</Button>
+                  <Button type="submit" variant="primary" size="md" className="flex-1" loading={loading}>Crear Bolsillo</Button>
                 </div>
               </form>
             </motion.div>
@@ -302,11 +312,45 @@ export default function Pockets() {
 
                 <div className="flex gap-3 pt-1">
                   <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setShowFundModal(null)}>Cancelar</Button>
-                  <Button type="submit" variant="primary" size="md" className="flex-1">
+                  <Button type="submit" variant="primary" size="md" className="flex-1" loading={loading}>
                     {showFundModal.action === 'add' ? 'Confirmar Depósito' : 'Confirmar Retiro'}
                   </Button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* CUSTOM DELETE CONFIRMATION MODAL */}
+      <AnimatePresence>
+        {deleteConfirmId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setDeleteConfirmId(null)} className="fixed inset-0 bg-black/60 backdrop-blur-xs" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative bg-surface-800 border border-subtle w-full max-w-sm p-6 rounded-3xl shadow-modal z-10 space-y-4">
+              <div>
+                <h2 className="text-base font-bold text-foreground">¿Eliminar Bolsillo?</h2>
+                <p className="text-xs text-muted-400 mt-1.5 leading-relaxed">
+                  Se perderá el saldo acumulado de este bolsillo. Esta acción no se puede deshacer.
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-1">
+                <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setDeleteConfirmId(null)}>Cancelar</Button>
+                <Button 
+                  type="button" 
+                  variant="primary" 
+                  size="md" 
+                  className="flex-1 bg-danger-600 hover:bg-danger-700 text-white border-none shadow-glow-sm" 
+                  onClick={async () => {
+                    await deletePocket(deleteConfirmId);
+                    setDeleteConfirmId(null);
+                    toast.success('Bolsillo eliminado');
+                  }}
+                >
+                  Eliminar
+                </Button>
+              </div>
             </motion.div>
           </div>
         )}

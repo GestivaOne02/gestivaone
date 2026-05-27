@@ -27,6 +27,7 @@ export default function PersonalFinance() {
   const [expAmount, setExpAmount] = useState('')
   const [expCategory, setExpCategory] = useState('Alimentación')
   const [expDesc, setExpDesc] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // Unique settings key for user's personal finance data
   const storageKey = user ? `personal_finance_${user.id}` : 'personal_finance_local'
@@ -72,11 +73,16 @@ export default function PersonalFinance() {
     const amt = Number(addAmount)
     if (isNaN(amt) || amt <= 0) return toast.error('Ingresa un monto válido')
 
-    const newBalance = balance + amt
-    await saveData(newBalance, expenses)
-    toast.success('Dinero ingresado a tu bolsillo personal')
-    setAddAmount('')
-    setShowAddModal(false)
+    setLoading(true)
+    try {
+      const newBalance = balance + amt
+      await saveData(newBalance, expenses)
+      toast.success('Dinero ingresado a tu bolsillo personal')
+      setAddAmount('')
+      setShowAddModal(false)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleAddExpense = async (e) => {
@@ -85,23 +91,28 @@ export default function PersonalFinance() {
     if (isNaN(amt) || amt <= 0) return toast.error('Ingresa un monto válido')
     if (balance < amt) return toast.error('No tienes fondos suficientes en tu bolsillo personal')
 
-    const newExpense = {
-      id: `pexp-${Date.now()}`,
-      amount: amt,
-      category: expCategory,
-      description: expDesc.trim() || 'Gasto Personal',
-      created_at: new Date().toISOString()
+    setLoading(true)
+    try {
+      const newExpense = {
+        id: `pexp-${Date.now()}`,
+        amount: amt,
+        category: expCategory,
+        description: expDesc.trim() || 'Gasto Personal',
+        created_at: new Date().toISOString()
+      }
+
+      const newBalance = balance - amt
+      const newExpenses = [newExpense, ...expenses]
+
+      await saveData(newBalance, newExpenses)
+      toast.success('Egreso personal registrado')
+      setExpAmount('')
+      setExpDesc('')
+      setExpCategory('Alimentación')
+      setShowExpenseModal(false)
+    } finally {
+      setLoading(false)
     }
-
-    const newBalance = balance - amt
-    const newExpenses = [newExpense, ...expenses]
-
-    await saveData(newBalance, newExpenses)
-    toast.success('Egreso personal registrado')
-    setExpAmount('')
-    setExpDesc('')
-    setExpCategory('Alimentación')
-    setShowExpenseModal(false)
   }
 
   const handleDeleteExpense = async (id) => {
@@ -256,7 +267,7 @@ export default function PersonalFinance() {
 
                 <div className="flex gap-3 pt-1">
                   <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setShowAddModal(false)}>Cancelar</Button>
-                  <Button type="submit" variant="primary" size="md" className="flex-1">Confirmar Ingreso</Button>
+                  <Button type="submit" variant="primary" size="md" className="flex-1" loading={loading}>Confirmar Ingreso</Button>
                 </div>
               </form>
             </motion.div>
@@ -307,7 +318,7 @@ export default function PersonalFinance() {
 
                 <div className="flex gap-3 pt-2">
                   <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setShowExpenseModal(false)}>Cancelar</Button>
-                  <Button type="submit" variant="primary" size="md" className="flex-1">Registrar Egreso</Button>
+                  <Button type="submit" variant="primary" size="md" className="flex-1" loading={loading}>Registrar Egreso</Button>
                 </div>
               </form>
             </motion.div>

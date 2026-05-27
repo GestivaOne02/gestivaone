@@ -39,6 +39,7 @@ export default function OrderConfirmModal({ open }) {
   const [paymentType, setPaymentType] = useState('immediate')
   const [scheduledDate, setScheduledDate] = useState('')
   const [confirmed, setConfirmed] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const items = useCartStore((s) => s.items)
   const subtotal = useCartStore(selectSubtotal)
@@ -63,54 +64,66 @@ export default function OrderConfirmModal({ open }) {
       toast.error('Selecciona una fecha de pago')
       return
     }
-    const invoice = await createInvoice({
-      client,
-      items,
-      subtotal,
-      total,
-      paymentType,
-      scheduledDate: scheduledDate || null,
-      taxAmount,
-      taxRate: includeTax ? taxRate : 0,
-      note: JSON.stringify({
-        notes: '',
-        payments: [],
-        custom_charges: customCharges.filter(c => c.applied).map(({ name, type, value }) => ({ name, type, value }))
-      })
-    })
-
-    if (!invoice) return toast.error('Error al generar factura')
-
-    // Trigger integrations and automatic printing
-    const { smtp, whatsapp, printer } = useSettingsStore.getState()
+    if (loading) return
+    setLoading(true)
     
-    if (smtp?.enabled) {
-      const emailTarget = client?.email || 'correo-cliente@express.com'
-      toast.success(`📧 Enviando factura a ${emailTarget} vía SMTP...`, { duration: 3000 })
-    }
-    
-    if (whatsapp?.enabled) {
-      const phoneTarget = client?.phone || 'teléfono cliente'
-      toast.success(`💬 Enviando recibo a ${phoneTarget} por WhatsApp...`, { duration: 3000 })
-    }
-
-    if (printer?.autoPrint) {
-      printInvoice(invoice, client, {
-        ...printer,
-        companyName: user?.companyName || 'GestivaOne',
-        companyLogo: user?.companyLogo || null
+    try {
+      const invoice = await createInvoice({
+        client,
+        items,
+        subtotal,
+        total,
+        paymentType,
+        scheduledDate: scheduledDate || null,
+        taxAmount,
+        taxRate: includeTax ? taxRate : 0,
+        note: JSON.stringify({
+          notes: '',
+          payments: [],
+          custom_charges: customCharges.filter(c => c.applied).map(({ name, type, value }) => ({ name, type, value }))
+        })
       })
-    }
 
-    setConfirmed(true)
-    setTimeout(() => {
-      clearCart()
-      setConfirmed(false)
-      setPaymentType('immediate')
-      setScheduledDate('')
-      closeModal()
-      toast.success(`Factura ${invoice.id?.slice(-8).toUpperCase()} generada`)
-    }, 2000)
+      if (!invoice) {
+        setLoading(false)
+        return toast.error('Error al generar factura')
+      }
+
+      // Trigger integrations and automatic printing
+      const { smtp, whatsapp, printer } = useSettingsStore.getState()
+      
+      if (smtp?.enabled) {
+        const emailTarget = client?.email || 'correo-cliente@express.com'
+        toast.success(`📧 Enviando factura a ${emailTarget} vía SMTP...`, { duration: 3000 })
+      }
+      
+      if (whatsapp?.enabled) {
+        const phoneTarget = client?.phone || 'teléfono cliente'
+        toast.success(`💬 Enviando recibo a ${phoneTarget} por WhatsApp...`, { duration: 3000 })
+      }
+
+      if (printer?.autoPrint) {
+        printInvoice(invoice, client, {
+          ...printer,
+          companyName: user?.companyName || 'GestivaOne',
+          companyLogo: user?.companyLogo || null
+        })
+      }
+
+      setConfirmed(true)
+      setTimeout(() => {
+        clearCart()
+        setConfirmed(false)
+        setPaymentType('immediate')
+        setScheduledDate('')
+        closeModal()
+        toast.success(`Factura ${invoice.id?.slice(-8).toUpperCase()} generada`)
+        setLoading(false)
+      }, 2000)
+    } catch (e) {
+      console.error(e)
+      setLoading(false)
+    }
   }
 
   const handleClose = () => {
@@ -225,7 +238,7 @@ export default function OrderConfirmModal({ open }) {
 
             <div className="flex gap-3 pt-1">
               <Button variant="ghost" size="md" className="flex-1" onClick={handleClose}>Cancelar</Button>
-              <Button variant="primary" size="md" className="flex-1" onClick={handleConfirm}>
+              <Button variant="primary" size="md" className="flex-1" onClick={handleConfirm} loading={loading}>
                 Confirmar Pedido
               </Button>
             </div>
