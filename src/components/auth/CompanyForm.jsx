@@ -19,14 +19,23 @@ const schema = z.object({
   path: ["repeatPassword"],
 })
 
-export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
+export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, socialData }) {
   const [logo, setLogo]         = useState(defaultValues?.companyLogo || null)
   const [showPassword, setShowPassword] = useState(false)
   const fileRef                 = useRef()
 
+  const initialValues = { terms: false, ...defaultValues }
+  if (socialData) {
+    if (socialData.provider === 'Phone') {
+      initialValues.phone = socialData.value
+    } else {
+      initialValues.email = socialData.value
+    }
+  }
+
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { terms: false, ...defaultValues },
+    defaultValues: initialValues,
   })
 
   const handleLogo = (e) => {
@@ -91,10 +100,34 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan }) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Input label="Correo electrónico *" icon={<Mail size={14} />} placeholder="correo@empresa.com"
-          error={errors.email?.message} {...register('email')} />
-        <Input label="Teléfono *" icon={<Phone size={14} />} placeholder="Ej: +57 300..."
-          error={errors.phone?.message} {...register('phone')} />
+        <Input 
+          label="Correo electrónico *" 
+          icon={<Mail size={14} />} 
+          placeholder="correo@empresa.com"
+          error={errors.email?.message} 
+          {...register('email')}
+          readOnly={socialData && (socialData.provider === 'Google' || socialData.provider === 'Apple')}
+          className={clsx(
+            socialData && (socialData.provider === 'Google' || socialData.provider === 'Apple') && "opacity-75 bg-surface-800 pointer-events-none border-success-500/50"
+          )}
+          iconRight={socialData && (socialData.provider === 'Google' || socialData.provider === 'Apple') && (
+            <span className="text-[10px] bg-success-500/20 text-success-400 font-bold px-1.5 py-0.5 rounded border border-success-500/30">✓ {socialData.provider}</span>
+          )}
+        />
+        <Input 
+          label="Teléfono *" 
+          icon={<Phone size={14} />} 
+          placeholder="Ej: +57 300..."
+          error={errors.phone?.message} 
+          {...register('phone')}
+          readOnly={socialData && socialData.provider === 'Phone'}
+          className={clsx(
+            socialData && socialData.provider === 'Phone' && "opacity-75 bg-surface-800 pointer-events-none border-success-500/50"
+          )}
+          iconRight={socialData && socialData.provider === 'Phone' && (
+            <span className="text-[10px] bg-success-500/20 text-success-400 font-bold px-1.5 py-0.5 rounded border border-success-500/30">✓ Móvil</span>
+          )}
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

@@ -60,6 +60,18 @@ export const useNotificationStore = create((set, get) => ({
       set((state) => ({
         notifications: [data, ...state.notifications]
       }))
+      
+      // Native desktop notification trigger
+      try {
+        const { useSettingsStore } = await import('./useSettingsStore')
+        const pushEnabled = useSettingsStore.getState().notifications?.pushEnabled
+        if (pushEnabled && 'Notification' in window && Notification.permission === 'granted') {
+          new Notification(title, { body: message })
+        }
+      } catch (err) {
+        console.error('Failed to trigger desktop notification:', err)
+      }
+
       return data
     } else {
       console.error('❌ Error adding notification:', error)

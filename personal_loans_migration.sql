@@ -147,3 +147,7 @@ CREATE POLICY "Permitir eliminación de clientes a administradores"
 UPDATE public.profiles
 SET plan = 'empresarial'
 WHERE LOWER(email) = 'dayanneguiselle@gmail.com';
+
+-- 6. COLUMNA PARA REGISTRO DE SESIÓN ÚNICA ACTIVA
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS active_session_id TEXT;
+

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useCurrencyStore } from './useCurrencyStore'
+import toast from 'react-hot-toast'
 
 export const PLANS = {
   standard: {
@@ -397,6 +398,35 @@ export const useAuthStore = create(
             .limit(1)
           
           let profile = profileList?.[0]
+
+          if (profile) {
+            // Single Active Session check for Standard Plan
+            if (profile.plan === 'standard') {
+              const localSessionToken = localStorage.getItem('gestiva-active-session-token')
+              const dbSessionId = profile.active_session_id
+
+              if (dbSessionId && localSessionToken && dbSessionId !== localSessionToken) {
+                console.warn('⚠️ Multiple active sessions detected on Standard plan. Logging out...')
+                await supabase.auth.signOut()
+                localStorage.removeItem('gestiva-active-session-token')
+                set({ isAuthenticated: false, user: null })
+                toast.error('Sesión cerrada: Se ha iniciado sesión en otro dispositivo.')
+                return
+              }
+
+              if (!localSessionToken || !dbSessionId) {
+                const newSessionId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36)
+                localStorage.setItem('gestiva-active-session-token', newSessionId)
+                localStorage.removeItem('gestiva-explicit-logout')
+                await supabase
+                  .from('profiles')
+                  .update({ active_session_id: newSessionId })
+                  .eq('id', userId)
+                profile.active_session_id = newSessionId
+              }
+            }
+          }
+
           const { data: { user: authUser } } = await supabase.auth.getUser()
 
           // Auto-upgrade for premium administrators in database
@@ -469,7 +499,8 @@ export const useAuthStore = create(
             country: company?.country || null,
             settings: company?.settings,
             branchId: profile.branch_id || null,
-            permissions: profile.permissions || []
+            permissions: profile.permissions || [],
+            avatarUrl: profile.avatar_url || null
           }
 
           set({ isAuthenticated: true, user })
@@ -501,6 +532,8 @@ export const useAuthStore = create(
       },
 
       logout: async () => {
+        localStorage.setItem('gestiva-explicit-logout', 'true')
+        localStorage.removeItem('gestiva-active-session-token')
         await supabase.auth.signOut()
         set({ isAuthenticated: false, user: null })
       },
@@ -541,6 +574,66 @@ export const useAuthStore = create(
         }
 
         await get().syncProfile(user.id)
+      },
+
+      loginWithSocialEmail: async (email) => {
+        set({ loading: true })
+        const { data: profileList, error } = await supabase
+          .from('profiles')
+          .select('id, plan, active_session_id')
+          .eq('email', email.trim().toLowerCase())
+          .limit(1)
+
+        if (error || !profileList || profileList.length === 0) {
+          set({ loading: false })
+          return { success: false, error: 'No existe cuenta vinculada con este correo.' }
+        }
+
+        const profile = profileList[0]
+
+        if (profile.plan === 'standard') {
+          const newSessionId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36)
+          localStorage.setItem('gestiva-active-session-token', newSessionId)
+          localStorage.removeItem('gestiva-explicit-logout')
+          await supabase
+            .from('profiles')
+            .update({ active_session_id: newSessionId })
+            .eq('id', profile.id)
+        }
+
+        await get().syncProfile(profile.id)
+        set({ loading: false })
+        return { success: true, role: get().user?.role }
+      },
+
+      loginWithSocialPhone: async (phone) => {
+        set({ loading: true })
+        const { data: profileList, error } = await supabase
+          .from('profiles')
+          .select('id, plan, active_session_id')
+          .eq('phone', phone.trim())
+          .limit(1)
+
+        if (error || !profileList || profileList.length === 0) {
+          set({ loading: false })
+          return { success: false, error: 'No existe cuenta vinculada con este teléfono.' }
+        }
+
+        const profile = profileList[0]
+
+        if (profile.plan === 'standard') {
+          const newSessionId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36)
+          localStorage.setItem('gestiva-active-session-token', newSessionId)
+          localStorage.removeItem('gestiva-explicit-logout')
+          await supabase
+            .from('profiles')
+            .update({ active_session_id: newSessionId })
+            .eq('id', profile.id)
+        }
+
+        await get().syncProfile(profile.id)
+        set({ loading: false })
+        return { success: true, role: get().user?.role }
       },
     }),
     {

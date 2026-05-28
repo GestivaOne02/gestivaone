@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Zap, Mail, Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Check } from 'lucide-react'
+import { Zap, Mail, Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Check, Camera } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
+import { supabase } from '@/lib/supabase'
 import PlanSelector from '@/components/auth/PlanSelector'
 import CompanyForm  from '@/components/auth/CompanyForm'
 import PaymentForm  from '@/components/auth/PaymentForm'
@@ -44,15 +45,7 @@ function StepIndicator({ step }) {
 }
 
 // ── Worker login/register tab ──────────────────────────────────
-const WORKER_AVATARS = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
-  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80'
-]
-
-function WorkerLogin() {
+function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
   const navigate = useNavigate()
   const login = useAuthStore((s) => s.login)
   const linkWorkerAndRegister = useAuthStore((s) => s.linkWorkerAndRegister)
@@ -63,7 +56,11 @@ function WorkerLogin() {
   const [name, setName]     = useState('')
   const [phone, setPhone]   = useState('')
   const [linkCode, setLinkCode] = useState('')
-  const [avatar, setAvatar] = useState(WORKER_AVATARS[0])
+
+  // Avatar state
+  const [colorAvatar, setColorAvatar] = useState('#8B5CF6') // Purple default
+  const [fileAvatar, setFileAvatar] = useState(null)
+  const fileInputRef = useRef(null)
   
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -76,6 +73,28 @@ function WorkerLogin() {
       setMode('register')
     }
   }, [])
+
+  // Sync social details if they come from parent
+  useEffect(() => {
+    if (socialData) {
+      setMode('register')
+      if (socialData.provider === 'Phone') {
+        setPhone(socialData.value)
+      } else {
+        setEmail(socialData.value)
+      }
+    }
+  }, [socialData])
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setFileAvatar(event.target.result)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -90,79 +109,87 @@ function WorkerLogin() {
   const handleRegister = async (e) => {
     e.preventDefault()
     setLoading(true)
+    
+    const finalAvatar = fileAvatar || ('color:' + colorAvatar)
+
     const res = await linkWorkerAndRegister({
       email: email.trim().toLowerCase(),
       password: pass,
       name: name.trim(),
       phone: phone.trim(),
       linkCode: linkCode.trim().toUpperCase(),
-      avatar
+      avatar: finalAvatar
     })
     setLoading(false)
     if (!res.success) return toast.error(res.error)
     
     toast.success('¡Vinculación y registro exitoso! Bienvenido a bordo.')
+    if (onClearSocialData) onClearSocialData()
     navigate('/')
   }
 
   if (mode === 'login') {
     return (
-      <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
-        <p className="text-center text-xs text-muted-500 mb-2 sm:mb-4">Ingresa con tus credenciales vinculadas a la empresa.</p>
-        
-        <div>
-          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-          <input 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder="tu@empresa.com" 
-            type="email" 
-            required
-            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
-          />
-        </div>
-        
-        <div className="relative">
-          <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
-          <input 
-            value={pass} 
-            onChange={(e) => setPass(e.target.value)} 
-            placeholder="••••••" 
-            type={showPw ? 'text' : 'password'} 
-            required
-            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
-          />
+      <div className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+          <p className="text-center text-xs text-muted-500 mb-2 sm:mb-4">Ingresa con tus credenciales vinculadas a la empresa.</p>
+          
+          <div>
+            <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+            <input 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              placeholder="tu@empresa.com" 
+              type="email" 
+              required
+              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+            />
+          </div>
+          
+          <div className="relative">
+            <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
+            <input 
+              value={pass} 
+              onChange={(e) => setPass(e.target.value)} 
+              placeholder="••••••" 
+              type={showPw ? 'text' : 'password'} 
+              required
+              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+            />
+            <button 
+              type="button" 
+              onMouseDown={() => setShowPw(true)}
+              onMouseUp={() => setShowPw(false)}
+              onMouseLeave={() => setShowPw(false)}
+              onTouchStart={() => setShowPw(true)}
+              onTouchEnd={() => setShowPw(false)}
+              className="absolute right-3 bottom-3 text-muted-400 hover:text-foreground"
+            >
+              {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+            </button>
+          </div>
+          
           <button 
-            type="button" 
-            onMouseDown={() => setShowPw(true)}
-            onMouseUp={() => setShowPw(false)}
-            onMouseLeave={() => setShowPw(false)}
-            onTouchStart={() => setShowPw(true)}
-            onTouchEnd={() => setShowPw(false)}
-            className="absolute right-3 bottom-3 text-muted-400 hover:text-foreground"
+            type="submit" 
+            disabled={loading}
+            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
           >
-            {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+            {loading ? 'Ingresando...' : 'Entrar como trabajador'}
           </button>
-        </div>
-        
-        <button 
-          type="submit" 
-          disabled={loading}
-          className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
-        >
-          {loading ? 'Ingresando...' : 'Entrar como trabajador'}
-        </button>
 
-        <div className="text-center pt-2">
-          <button 
-            type="button"
-            onClick={() => setMode('register')}
-            className="text-xs font-bold text-brand-600 hover:text-brand-700 transition-colors"
-          >
-            ¿Aún no te has vinculado? Regístrate aquí
-          </button>
-        </div>
-      </form>
+          <div className="text-center pt-1">
+            <button 
+              type="button"
+              onClick={() => setMode('register')}
+              className="text-xs font-bold text-brand-600 hover:text-brand-700 transition-colors"
+            >
+              ¿Aún no te has vinculado? Regístrate aquí
+            </button>
+          </div>
+        </form>
+
+        <SocialAccessOptions onProviderClick={(provider) => onSocialClick(provider, 'worker_login')} label="ingresar" />
+      </div>
     )
   }
 
@@ -170,23 +197,73 @@ function WorkerLogin() {
     <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
       <p className="text-center text-xs text-muted-500 mb-1.5">Coloca tu información y el código de vinculación de tu empresa.</p>
 
-      {/* Avatar circular selector */}
-      <div className="space-y-1.5 sm:space-y-2">
-        <label className="text-xs font-bold text-muted-600 block text-center font-medium">Selecciona tu foto</label>
-        <div className="flex justify-center gap-2">
-          {WORKER_AVATARS.map((url) => (
-            <button
-              key={url}
-              type="button"
-              onClick={() => setAvatar(url)}
-              className={clsx(
-                "w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden transition-all duration-300 border-2",
-                avatar === url ? "border-brand-600 scale-110 shadow-glow-sm" : "border-transparent opacity-60 hover:opacity-100"
-              )}
+      {/* Avatar custom selector */}
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-muted-600 block text-center font-medium">Foto de perfil</label>
+        <div className="flex flex-col items-center gap-3">
+          <div className="relative">
+            <div 
+              style={{ backgroundColor: fileAvatar ? undefined : colorAvatar }}
+              className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center border-2 border-brand-500/30 shadow-glow-sm transition-all duration-300"
             >
-              <img src={url} alt="Avatar" className="w-full h-full object-cover" />
+              {fileAvatar ? (
+                <img src={fileAvatar} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-xl font-black text-white">
+                  {name?.trim() ? name.trim().charAt(0).toUpperCase() : 'W'}
+                </span>
+              )}
+            </div>
+            <button 
+              type="button" 
+              onClick={() => fileInputRef.current?.click()} 
+              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center shadow-lg hover:bg-brand-500 transition-colors border border-surface-800"
+            >
+              <Camera size={11} className="text-white" />
             </button>
-          ))}
+            <input 
+              ref={fileInputRef} 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              onChange={handleFileUpload} 
+            />
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <button 
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs font-bold text-brand-400 hover:text-brand-300 transition-colors"
+            >
+              Importar tu foto
+            </button>
+            
+            <div className="flex justify-center gap-2 mt-1">
+              {[
+                { hex: '#8B5CF6', name: 'Morado' },
+                { hex: '#3B82F6', name: 'Azul' },
+                { hex: '#10B981', name: 'Verde' },
+                { hex: '#F59E0B', name: 'Naranja' },
+                { hex: '#EF4444', name: 'Rojo' }
+              ].map((c) => (
+                <button
+                  key={c.hex}
+                  type="button"
+                  onClick={() => {
+                    setFileAvatar(null)
+                    setColorAvatar(c.hex)
+                  }}
+                  style={{ backgroundColor: c.hex }}
+                  className={clsx(
+                    "w-6 h-6 rounded-full transition-all duration-200 border-2 cursor-pointer",
+                    (!fileAvatar && colorAvatar === c.hex) ? "border-white scale-110 shadow-glow-sm" : "border-transparent opacity-60 hover:opacity-100"
+                  )}
+                  title={c.name}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -202,29 +279,47 @@ function WorkerLogin() {
         />
       </div>
 
-      <div>
-        <label className="text-xs font-bold text-muted-600 mb-1 block">Número de Teléfono</label>
-        <input 
-          value={phone} 
-          onChange={(e) => setPhone(e.target.value)} 
-          placeholder="+57 300 000 0000" 
-          type="tel" 
-          required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
-        />
-      </div>
+      {socialData?.provider === 'Phone' ? (
+        <div>
+          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+          <input 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="tu@correo.com" 
+            type="email" 
+            required
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+          />
+        </div>
+      ) : (
+        <div>
+          <label className="text-xs font-bold text-muted-600 mb-1 block">Número de Teléfono</label>
+          <input 
+            value={phone} 
+            onChange={(e) => setPhone(e.target.value)} 
+            placeholder="+57 300 000 0000" 
+            type="tel" 
+            required
+            disabled={!!socialData}
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
+          />
+        </div>
+      )}
 
-      <div>
-        <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-        <input 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          placeholder="tu@correo.com" 
-          type="email" 
-          required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
-        />
-      </div>
+      {socialData?.provider !== 'Phone' && (
+        <div>
+          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+          <input 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="tu@correo.com" 
+            type="email" 
+            required
+            disabled={!!socialData}
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
+          />
+        </div>
+      )}
 
       <div className="relative">
         <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
@@ -234,7 +329,7 @@ function WorkerLogin() {
           placeholder="••••••" 
           type={showPw ? 'text' : 'password'} 
           required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
         />
         <button 
           type="button" 
@@ -261,59 +356,187 @@ function WorkerLogin() {
         />
       </div>
 
-      <button 
-        type="submit" 
-        disabled={loading}
-        className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
-      >
-        {loading ? 'Procesando...' : 'Registrar y Vincular'}
-      </button>
+      <div className="flex gap-2">
+        {socialData && (
+          <button 
+            type="button" 
+            onClick={onClearSocialData}
+            className="flex-1 py-3 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
+          >
+            Atrás
+          </button>
+        )}
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
+        >
+          {loading ? 'Procesando...' : 'Registrar y Vincular'}
+        </button>
+      </div>
 
       <div className="text-center pt-1">
         <button 
           type="button"
-          onClick={() => setMode('login')}
+          onClick={() => {
+            if (onClearSocialData) onClearSocialData()
+            setMode('login')
+          }}
           className="text-xs font-bold text-muted-500 hover:text-foreground transition-colors"
         >
           ¿Ya tienes cuenta vinculada? Inicia sesión aquí
         </button>
       </div>
+      
+      {!socialData && (
+        <SocialAccessOptions onProviderClick={(provider) => onSocialClick(provider, 'worker_register')} label="registrarte" />
+      )}
     </form>
   )
 }
 
+function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-3 py-1">
+        <div className="flex-1 h-px bg-surface-700/80" />
+        <span className="text-[10px] font-black text-muted-500 uppercase tracking-widest">o {label} con</span>
+        <div className="flex-1 h-px bg-surface-700/80" />
+      </div>
+      <div className="grid grid-cols-3 gap-2.5">
+        <button
+          type="button"
+          onClick={() => onProviderClick('Google')}
+          className="flex items-center justify-center gap-2 py-2 px-3 bg-surface-700 hover:bg-surface-650 border border-subtle rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm select-none"
+        >
+          Google
+        </button>
+        <button
+          type="button"
+          onClick={() => onProviderClick('Apple')}
+          className="flex items-center justify-center gap-2 py-2 px-3 bg-surface-700 hover:bg-surface-650 border border-subtle rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm select-none"
+        >
+          Apple
+        </button>
+        <button
+          type="button"
+          onClick={() => onProviderClick('Phone')}
+          className="flex items-center justify-center gap-2 py-2 px-3 bg-surface-700 hover:bg-surface-650 border border-subtle rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm select-none"
+        >
+          Teléfono
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ── Login tab ─────────────────────────────────────────────────
-function LoginForm() {
+function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
   const navigate   = useNavigate()
   const login      = useAuthStore((s) => s.login)
+  const loginWithSocialEmail = useAuthStore((s) => s.loginWithSocialEmail)
+  const loginWithSocialPhone = useAuthStore((s) => s.loginWithSocialPhone)
   const loading    = useAuthStore((s) => s.loading)
   const [email, setEmail]   = useState('')
   const [pass, setPass]     = useState('')
   const [showPw, setShowPw] = useState(false)
   const [rememberMe, setRememberMe] = useState(() => {
-    const saved = localStorage.getItem('gestiva-remembered-email')
-    return !!saved
+    const saved = localStorage.getItem('gestiva-remember-me')
+    return saved === 'true'
   })
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('gestiva-remembered-email')
+    const savedPass = localStorage.getItem('gestiva-remembered-password')
+    const savedRemember = localStorage.getItem('gestiva-remember-me') === 'true'
+    const explicitLogout = localStorage.getItem('gestiva-explicit-logout') === 'true'
+
     if (savedEmail) {
       setEmail(savedEmail)
     }
-  }, [])
+    
+    let decodedPass = ''
+    if (savedPass) {
+      try {
+        decodedPass = atob(savedPass)
+        setPass(decodedPass)
+      } catch (e) {
+        console.error('Error decoding saved password:', e)
+      }
+    }
+
+    if (savedRemember && savedEmail && decodedPass && !explicitLogout) {
+      const autoLogin = async () => {
+        const result = await login(savedEmail.trim().toLowerCase(), decodedPass)
+        if (result.success) {
+          toast.success('Sesión restaurada automáticamente')
+          localStorage.removeItem('gestiva-explicit-logout')
+          navigate('/', { replace: true })
+        }
+      }
+      autoLogin()
+    }
+  }, [login, navigate])
+
+  // Handle social autofill and password dots visual animation
+  useEffect(() => {
+    if (socialAutofill) {
+      const targetVal = socialAutofill.email || socialAutofill.phone || ''
+      setEmail(targetVal)
+      
+      let i = 0
+      const mockPass = '••••••••••••'
+      setPass('')
+      
+      const interval = setInterval(() => {
+        if (i < mockPass.length) {
+          setPass(prev => prev + '•')
+          i++
+        } else {
+          clearInterval(interval)
+          // Automatically trigger login after animation finishes
+          setTimeout(() => {
+            submit()
+          }, 400)
+        }
+      }, 70)
+      
+      return () => clearInterval(interval)
+    }
+  }, [socialAutofill])
 
   const submit = async (e) => {
-    e.preventDefault()
-    const result = await login(email.trim().toLowerCase(), pass)
-    if (!result.success) return toast.error(result.error)
+    if (e) e.preventDefault()
     
-    if (rememberMe) {
-      localStorage.setItem('gestiva-remembered-email', email.trim().toLowerCase())
+    let result
+    if (socialAutofill) {
+      if (socialAutofill.provider === 'Phone') {
+        result = await loginWithSocialPhone(email)
+      } else {
+        result = await loginWithSocialEmail(email)
+      }
     } else {
+      result = await login(email.trim().toLowerCase(), pass)
+    }
+    
+    if (!result.success) {
+      if (onClearAutofill) onClearAutofill()
+      return toast.error(result.error)
+    }
+    
+    if (rememberMe && !socialAutofill) {
+      localStorage.setItem('gestiva-remembered-email', email.trim().toLowerCase())
+      localStorage.setItem('gestiva-remembered-password', btoa(pass))
+      localStorage.setItem('gestiva-remember-me', 'true')
+      localStorage.removeItem('gestiva-explicit-logout')
+    } else if (!socialAutofill) {
       localStorage.removeItem('gestiva-remembered-email')
+      localStorage.removeItem('gestiva-remembered-password')
+      localStorage.setItem('gestiva-remember-me', 'false')
     }
 
     toast.success('¡Bienvenido!')
+    if (onClearAutofill) onClearAutofill()
     
     // Force a small delay to ensure state is saved, then jump to dashboard
     setTimeout(() => {
@@ -328,60 +551,95 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 sm:space-y-4">
-      <div>
-        <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@empresa.com" type="email" required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
-      </div>
-      <div className="relative">
-        <label className="text-xs font-bold text-muted-600 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
-        <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Introduce la contraseña" type={showPw ? 'text' : 'password'} required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" />
-        <button 
-          type="button" 
-          onMouseDown={() => setShowPw(true)}
-          onMouseUp={() => setShowPw(false)}
-          onMouseLeave={() => setShowPw(false)}
-          onTouchStart={() => setShowPw(true)}
-          onTouchEnd={() => setShowPw(false)}
-          className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground"
-        >
-          {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
-        </button>
-      </div>
-      
-      {/* Remember me checkbox */}
-      <div className="flex items-center justify-between pb-1 select-none">
-        <label className="flex items-center gap-2.5 cursor-pointer group">
+    <div className="space-y-4">
+      <form onSubmit={submit} className="space-y-3 sm:space-y-4">
+        <div>
+          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
           <input 
-            type="checkbox" 
-            checked={rememberMe} 
-            onChange={(e) => setRememberMe(e.target.checked)} 
-            className="sr-only" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="tu@empresa.com" 
+            type="email" 
+            required
+            readOnly={!!socialAutofill}
+            className={clsx(
+              "w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30",
+              socialAutofill && "opacity-75 cursor-not-allowed bg-surface-800"
+            )}
           />
-          <div className={clsx(
-            'w-[18px] h-[18px] rounded border flex items-center justify-center transition-all',
-            rememberMe 
-              ? 'bg-amber-500 border-amber-500 text-white' 
-              : 'border-subtle bg-surface-900 group-hover:border-surface-400'
-          )}>
-            {rememberMe && <Check size={12} strokeWidth={3} className="text-white animate-scale-up" />}
+        </div>
+        <div className="relative">
+          <label className="text-xs font-bold text-muted-600 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
+          <input 
+            value={pass} 
+            onChange={(e) => setPass(e.target.value)} 
+            placeholder="Introduce la contraseña" 
+            type={showPw ? 'text' : 'password'} 
+            required
+            readOnly={!!socialAutofill}
+            className={clsx(
+              "w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10",
+              socialAutofill && "opacity-75 cursor-not-allowed bg-surface-800 font-mono tracking-widest"
+            )}
+          />
+          {!socialAutofill && (
+            <button 
+              type="button" 
+              onMouseDown={() => setShowPw(true)}
+              onMouseUp={() => setShowPw(false)}
+              onMouseLeave={() => setShowPw(false)}
+              onTouchStart={() => setShowPw(true)}
+              onTouchEnd={() => setShowPw(false)}
+              className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground"
+            >
+              {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+            </button>
+          )}
+        </div>
+        
+        {/* Remember me checkbox */}
+        {!socialAutofill && (
+          <div className="flex items-center justify-between pb-1 select-none">
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <input 
+                type="checkbox" 
+                checked={rememberMe} 
+                onChange={(e) => setRememberMe(e.target.checked)} 
+                className="sr-only" 
+              />
+              <div className={clsx(
+                'w-[18px] h-[18px] rounded border flex items-center justify-center transition-all',
+                rememberMe 
+                  ? 'bg-amber-500 border-amber-500 text-white' 
+                  : 'border-subtle bg-surface-900 group-hover:border-surface-400'
+              )}>
+                {rememberMe && <Check size={12} strokeWidth={3} className="text-white animate-scale-up" />}
+              </div>
+              <span className="text-xs font-bold text-muted-500 group-hover:text-foreground transition-colors">Acuérdate de mí</span>
+            </label>
           </div>
-          <span className="text-xs font-bold text-muted-500 group-hover:text-foreground transition-colors">Acuérdate de mí</span>
-        </label>
-      </div>
+        )}
 
-      <button type="submit" disabled={loading}
-        className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm">
-        {loading ? 'Ingresando...' : 'Iniciar sesión'}
-      </button>
-    </form>
+        <button 
+          type="submit" 
+          disabled={loading || !!socialAutofill}
+          className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm"
+        >
+          {socialAutofill 
+            ? `Autenticando con ${socialAutofill.provider}...` 
+            : loading 
+              ? 'Ingresando...' 
+              : 'Iniciar sesión'
+          }
+        </button>
+      </form>
+      {!socialAutofill && <SocialAccessOptions onProviderClick={onSocialClick} label="ingresar" />}
+    </div>
   )
 }
 
 // ── Register multi-step ───────────────────────────────────────
-function RegisterFlow({ step, setStep }) {
+function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialData }) {
   const navigate  = useNavigate()
   const register  = useAuthStore((s) => s.register)
   const [plan, setPlan]   = useState(() => {
@@ -422,6 +680,15 @@ function RegisterFlow({ step, setStep }) {
     setStep('listo')
   }
 
+  const handleBack = () => {
+    if (socialData && step === 'datos') {
+      if (onClearSocialData) onClearSocialData()
+      setStep('plan')
+    } else {
+      setStep(STEPS[STEPS.indexOf(step) - 1])
+    }
+  }
+
   return (
     <div>
       {step !== 'listo' && <StepIndicator step={step} />}
@@ -434,8 +701,13 @@ function RegisterFlow({ step, setStep }) {
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.2 }}
         >
-          {step === 'plan'  && <PlanSelector selected={plan} onSelect={setPlan} />}
-          {step === 'datos' && <CompanyForm  onSubmit={goNext} defaultValues={formData} plan={plan} />}
+          {step === 'plan'  && (
+            <div className="space-y-4">
+              <PlanSelector selected={plan} onSelect={setPlan} />
+              <SocialAccessOptions onProviderClick={onSocialClick} label="registrarte" />
+            </div>
+          )}
+          {step === 'datos' && <CompanyForm  onSubmit={goNext} defaultValues={formData} plan={plan} socialData={socialData} />}
           {step === 'pago'  && <PaymentForm  plan={plan} onSubmit={handlePayment} loading={loading} />}
           {step === 'listo' && (
             <div className="text-center space-y-4 py-6">
@@ -454,7 +726,7 @@ function RegisterFlow({ step, setStep }) {
 
       {/* Back button */}
       {step !== 'plan' && step !== 'listo' && (
-        <button onClick={() => setStep(STEPS[STEPS.indexOf(step) - 1])} className="mt-4 flex items-center gap-1.5 text-xs text-muted-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+        <button onClick={handleBack} className="mt-4 flex items-center gap-1.5 text-xs text-muted-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
           <ArrowLeft size={13} /> Volver
         </button>
       )}
@@ -476,9 +748,213 @@ const TABS = [
   { id: 'worker',   label: 'Soy Trabajador' },
 ]
 
+function SocialAuthModal({ isOpen, onClose, provider, action, onConfirm }) {
+  const [inputValue, setInputValue] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [loadingStatus, setLoadingStatus] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+
+  if (!isOpen) return null
+
+  const isPhone = provider === 'Phone'
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!inputValue.trim()) return
+
+    setLoading(true)
+    setErrorMsg('')
+
+    const statuses = [
+      `Conectando con servidores de ${provider}...`,
+      `Abriendo ventana segura de verificación...`,
+      `Validando token de seguridad...`,
+      `Comprobando registros en base de datos...`
+    ]
+
+    let idx = 0
+    setLoadingStatus(statuses[0])
+    const interval = setInterval(() => {
+      idx = (idx + 1) % statuses.length
+      setLoadingStatus(statuses[idx])
+    }, 450)
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      const column = isPhone ? 'phone' : 'email'
+      const checkValue = inputValue.trim().toLowerCase()
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email, phone')
+        .eq(column, checkValue)
+        .limit(1)
+
+      clearInterval(interval)
+
+      if (error) {
+        setLoading(false)
+        setErrorMsg('Error de conexión con el servidor. Inténtalo de nuevo.')
+        return
+      }
+
+      const userExists = data && data.length > 0
+
+      if (action === 'login' || action === 'worker_login') {
+        if (!userExists) {
+          setLoading(false)
+          setErrorMsg(`No existe cuenta vinculada a este ${isPhone ? 'número de teléfono' : 'correo electrónico'}.`)
+          return
+        }
+      } else {
+        if (userExists) {
+          setLoading(false)
+          setErrorMsg('Esta cuenta ya existe. Por favor, inicia sesión.')
+          return
+        }
+      }
+
+      setLoading(false)
+      onConfirm(inputValue.trim())
+    } catch (err) {
+      clearInterval(interval)
+      setLoading(false)
+      setErrorMsg('Ocurrió un error inesperado.')
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="bg-surface-800 border border-subtle w-full max-w-md rounded-3xl p-6 relative overflow-hidden shadow-2xl"
+      >
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/10 rounded-full blur-[60px] pointer-events-none" />
+        
+        <div className="flex items-center justify-between border-b border-subtle pb-4 mb-4">
+          <div className="flex items-center gap-2">
+            <div className={clsx(
+              "w-2.5 h-2.5 rounded-full animate-pulse",
+              provider === 'Google' ? 'bg-red-500' : provider === 'Apple' ? 'bg-neutral-200' : 'bg-brand-500'
+            )} />
+            <h3 className="font-extrabold text-sm text-foreground uppercase tracking-wider">
+              Acceso Seguro con {provider}
+            </h3>
+          </div>
+          {!loading && (
+            <button 
+              onClick={onClose}
+              className="text-xs font-bold text-muted-500 hover:text-foreground transition-colors"
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
+            <div className="w-12 h-12 rounded-full border-4 border-brand-500/20 border-t-brand-500 animate-spin" />
+            <p className="text-sm font-semibold text-white tracking-wide animate-pulse">{loadingStatus}</p>
+            <p className="text-[10px] text-muted-500">Esto tomará solo unos segundos...</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <p className="text-xs text-muted-400">
+              {isPhone 
+                ? 'Introduce tu número telefónico verificado por tu operador móvil para autorizar el acceso.'
+                : `Verifica tu cuenta vinculando el correo electrónico asociado a tu perfil de ${provider}.`
+              }
+            </p>
+
+            <div>
+              <label className="text-[10px] font-black text-muted-500 uppercase tracking-widest mb-1.5 block">
+                {isPhone ? 'Número de Teléfono' : 'Correo electrónico'}
+              </label>
+              <input
+                required
+                type={isPhone ? 'tel' : 'email'}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={isPhone ? '+57 300 000 0000' : `tu_usuario@${provider.toLowerCase()}.com`}
+                className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              />
+            </div>
+
+            {errorMsg && (
+              <div className="p-3 rounded-xl bg-danger-500/10 border border-danger-500/25 text-xs text-danger-400 font-medium">
+                {errorMsg}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-glow-sm transition-all duration-200"
+            >
+              Continuar con {provider}
+            </button>
+          </form>
+        )}
+      </motion.div>
+    </div>
+  )
+}
+
 export default function Auth() {
   const [tab, setTab] = useState('login')
   const [regStep, setRegStep] = useState('plan')
+
+  const [socialModal, setSocialModal] = useState({
+    isOpen: false,
+    provider: null, // 'Google' | 'Apple' | 'Phone'
+    action: null,   // 'login' | 'register' | 'worker_login' | 'worker_register'
+  })
+  
+  const [workerSocialData, setWorkerSocialData] = useState(null)
+  const [registerSocialData, setRegisterSocialData] = useState(null)
+  const [socialAutofill, setSocialAutofill] = useState(null)
+
+  const handleSocialClick = (provider, action) => {
+    setSocialModal({
+      isOpen: true,
+      provider,
+      action
+    })
+  }
+
+  const handleClearWorkerSocialData = () => {
+    setWorkerSocialData(null)
+  }
+
+  const handleClearRegisterSocialData = () => {
+    setRegisterSocialData(null)
+    setRegStep('plan')
+  }
+
+  const handleSocialConfirm = (value) => {
+    const { provider, action } = socialModal
+    setSocialModal({ isOpen: false, provider: null, action: null })
+
+    if (action === 'login' || action === 'worker_login') {
+      if (action === 'worker_login') {
+        setTab('login')
+      }
+      setSocialAutofill({
+        provider,
+        email: provider === 'Phone' ? null : value,
+        phone: provider === 'Phone' ? value : null
+      })
+    } else if (action === 'register') {
+      setRegisterSocialData({ provider, value })
+      setTab('register')
+      setRegStep('datos')
+    } else if (action === 'worker_register') {
+      setWorkerSocialData({ provider, value })
+      setTab('worker')
+    }
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -592,9 +1068,29 @@ export default function Auth() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18 }}
               >
-                {tab === 'login'    && <LoginForm />}
-                {tab === 'register' && <RegisterFlow step={regStep} setStep={setRegStep} />}
-                {tab === 'worker'   && <WorkerLogin />}
+                {tab === 'login'    && (
+                  <LoginForm 
+                    onSocialClick={(provider) => handleSocialClick(provider, 'login')}
+                    socialAutofill={socialAutofill}
+                    onClearAutofill={() => setSocialAutofill(null)}
+                  />
+                )}
+                {tab === 'register' && (
+                  <RegisterFlow 
+                    step={regStep} 
+                    setStep={setRegStep} 
+                    onSocialClick={(provider) => handleSocialClick(provider, 'register')}
+                    socialData={registerSocialData}
+                    onClearSocialData={handleClearRegisterSocialData}
+                  />
+                )}
+                {tab === 'worker'   && (
+                  <WorkerLogin 
+                    onSocialClick={(provider, action) => handleSocialClick(provider, action)}
+                    socialData={workerSocialData}
+                    onClearSocialData={handleClearWorkerSocialData}
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
             <div className="mt-3.5 pt-3 sm:mt-4 sm:pt-3.5 border-t border-subtle flex items-center justify-center gap-2">
@@ -606,6 +1102,18 @@ export default function Auth() {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {socialModal.isOpen && (
+          <SocialAuthModal
+            isOpen={socialModal.isOpen}
+            provider={socialModal.provider}
+            action={socialModal.action}
+            onClose={() => setSocialModal({ isOpen: false, provider: null, action: null })}
+            onConfirm={handleSocialConfirm}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

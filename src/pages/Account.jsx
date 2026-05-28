@@ -7,6 +7,7 @@ import {
 import { useAuthStore, PLANS, ROLES } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
@@ -161,13 +162,29 @@ function SecuritySection({ user, updateProfile, variants }) {
   const [saving, setSaving]   = useState(false)
 
   const changePassword = async () => {
-    if (current !== user?.password) return toast.error('Contraseña actual incorrecta')
     if (next.length < 6)            return toast.error('Mínimo 6 caracteres')
     if (next !== confirm)           return toast.error('Las contraseñas no coinciden')
     setSaving(true)
-    await new Promise(r => setTimeout(r, 700))
-    updateProfile({ password: next })
+    
+    // Reauthenticate in Supabase
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: user?.email,
+      password: current
+    })
+
+    if (authError) {
+      setSaving(false)
+      return toast.error('Contraseña actual incorrecta')
+    }
+
+    // Update password in Supabase
+    const { error: updateError } = await supabase.auth.updateUser({ password: next })
     setSaving(false)
+
+    if (updateError) {
+      return toast.error('Error al actualizar la contraseña: ' + updateError.message)
+    }
+
     setCurrent(''); setNext(''); setConfirm('')
     toast.success('Contraseña actualizada')
   }
@@ -271,7 +288,21 @@ function NotificationsSection({ variants }) {
               <p className="text-sm font-medium text-foreground">{label}</p>
               <p className="text-[11px] text-muted-400">{desc}</p>
             </div>
-            <Toggle checked={!!notifications[key]} onChange={(v) => { setNotification(key, v); toast(v ? `${label} activado` : `${label} desactivado`, { icon: v ? '🔔' : '🔕', duration: 1500 }) }} />
+            <Toggle checked={!!notifications[key]} onChange={async (v) => {
+              if (key === 'pushEnabled' && v) {
+                if (!('Notification' in window)) {
+                  toast.error('Este navegador no soporta notificaciones de escritorio')
+                  return
+                }
+                const perm = await Notification.requestPermission()
+                if (perm !== 'granted') {
+                  toast.error('Permiso de notificaciones denegado')
+                  return
+                }
+              }
+              setNotification(key, v)
+              toast(v ? `${label} activado` : `${label} desactivado`, { icon: v ? '🔔' : '🔕', duration: 1500 })
+            }} />
           </div>
         ))}
       </div>
@@ -310,10 +341,23 @@ export default function Account() {
       {/* Profile card */}
       <motion.div variants={itemVariants}
         className="bg-surface-800 border border-subtle rounded-3xl p-6 flex items-center gap-5">
-        <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shrink-0">
-          {user?.companyLogo
-            ? <img src={user.companyLogo} alt="" className="w-full h-full object-cover" />
-            : <span className="text-2xl font-bold text-white">{initial}</span>}
+        <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center shrink-0 border border-surface-700 shadow-sm">
+          {user?.avatarUrl && user.avatarUrl.startsWith('color:') ? (
+            <div 
+              style={{ backgroundColor: user.avatarUrl.replace('color:', '') }}
+              className="w-full h-full flex items-center justify-center text-2xl font-bold text-white"
+            >
+              {initial}
+            </div>
+          ) : user?.avatarUrl ? (
+            <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+          ) : user?.companyLogo ? (
+            <img src={user.companyLogo} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-2xl font-bold text-white">
+              {initial}
+            </div>
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-lg font-bold text-brand-600 dark:text-white truncate">{user?.name || 'Usuario'}</p>

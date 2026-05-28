@@ -20,6 +20,49 @@ export default function Sidebar({ isMobile }) {
   const role        = user?.role || 'despachador'
   const permissions = ROLES[role]?.permissions || {}
 
+  const renderAvatar = (size = 40) => {
+    const initial = user?.name?.charAt(0).toUpperCase() || 'G'
+    if (user?.avatarUrl && user.avatarUrl.startsWith('color:')) {
+      const color = user.avatarUrl.replace('color:', '')
+      return (
+        <div 
+          style={{ width: `${size}px`, height: `${size}px`, backgroundColor: color }}
+          className="rounded-full flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm"
+        >
+          {initial}
+        </div>
+      )
+    }
+    if (user?.avatarUrl) {
+      return (
+        <img 
+          src={user.avatarUrl} 
+          alt="" 
+          style={{ width: `${size}px`, height: `${size}px`, objectFit: 'cover' }} 
+          className="rounded-full border border-surface-700 shrink-0 shadow-sm" 
+        />
+      )
+    }
+    if (user?.companyLogo) {
+      return (
+        <img 
+          src={user.companyLogo} 
+          alt="" 
+          style={{ width: `${size}px`, height: `${size}px`, objectFit: 'cover' }} 
+          className="rounded-full border border-surface-700 shrink-0 shadow-sm" 
+        />
+      )
+    }
+    return (
+      <div 
+        style={{ width: `${size}px`, height: `${size}px` }}
+        className="rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm"
+      >
+        {initial}
+      </div>
+    )
+  }
+
   const NAV_GROUPS = [
     {
       title: 'Operaciones',
@@ -229,13 +272,7 @@ export default function Sidebar({ isMobile }) {
               {/* User Profile for Mobile Drawer */}
               <div className="p-4 border-t border-subtle bg-surface-900/40">
                 <div className="flex items-center gap-3">
-                  {user?.companyLogo ? (
-                    <img src={user.companyLogo} alt="" style={{ width: '40px', height: '40px', objectFit: 'cover' }} className="rounded-full border border-surface-700 shrink-0 shadow-sm" />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm">
-                      {user?.name?.charAt(0).toUpperCase() || 'G'}
-                    </div>
-                  )}
+                  {renderAvatar(40)}
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-white truncate leading-tight">{user?.name || 'Invitado'}</p>
                     <p className="text-[10px] text-brand-400 font-medium uppercase tracking-widest mt-0.5">
@@ -291,13 +328,7 @@ export default function Sidebar({ isMobile }) {
       {/* User Profile */}
       <div className={clsx('p-3 border-t border-subtle', collapsed && 'px-1')}>
         <div className={clsx('flex items-center gap-3 px-1 py-1', collapsed && 'justify-center px-0')}>
-          {user?.companyLogo ? (
-            <img src={user.companyLogo} alt="" style={{ width: '40px', height: '40px', objectFit: 'cover' }} className="rounded-full border border-surface-700 shrink-0 shadow-sm" />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm">
-              {user?.name?.charAt(0).toUpperCase() || 'G'}
-            </div>
-          )}
+          {renderAvatar(40)}
           <AnimatePresence>
             {!collapsed && (
               <motion.div 

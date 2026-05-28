@@ -161,7 +161,7 @@ export default function Employees() {
       {/* Dynamic Header */}
       <motion.div 
         variants={itemVariants}
-        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-row items-center justify-between gap-4"
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
           <h1 className="text-lg md:text-2xl font-bold text-brand-600 dark:text-white">Equipo de Trabajo</h1>
@@ -314,9 +314,15 @@ export default function Employees() {
                   className="liquid-glass border rounded-3xl p-5 space-y-4 relative transition-colors duration-300 hover:border-brand-500/20"
                 >
                   <div className="flex items-start gap-3">
-                    {/* User profile image: circular frame, no borders, no shadows */}
-                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
-                      {emp.avatar_url || emp.logo_url ? (
+                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 flex items-center justify-center">
+                      {emp.avatar_url && emp.avatar_url.startsWith('color:') ? (
+                        <div 
+                          style={{ backgroundColor: emp.avatar_url.replace('color:', '') }}
+                          className="w-full h-full flex items-center justify-center text-white font-black text-sm"
+                        >
+                          {(emp.full_name || emp.name || 'W')?.charAt(0).toUpperCase()}
+                        </div>
+                      ) : emp.avatar_url || emp.logo_url ? (
                         <img src={emp.avatar_url || emp.logo_url} alt="Worker" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-brand-600/30 to-brand-800/30 flex items-center justify-center text-brand-300 font-black text-sm">

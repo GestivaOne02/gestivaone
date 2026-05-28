@@ -60,7 +60,12 @@ export default function App() {
       'gestiva-notifications',
       'gestiva-settings-v2.3',
       'gestiva-ui',
-      'gestiva-cookies-accepted'
+      'gestiva-cookies-accepted',
+      'gestiva-remembered-email',
+      'gestiva-remembered-password',
+      'gestiva-remember-me',
+      'gestiva-active-session-token',
+      'gestiva-explicit-logout'
     ]
 
     // If version changed, perform a full purge of all non-essential data
@@ -179,6 +184,30 @@ export default function App() {
   useEffect(() => { initAuth() }, [])
   useEffect(() => { if (isStale()) fetchRates() }, [])
   useEffect(() => { checkOverdue() }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return
+
+    const handleFocus = () => {
+      const authState = useAuthStore.getState()
+      if (authState.isAuthenticated && authState.user?.id) {
+        authState.syncProfile(authState.user.id)
+      }
+    }
+    window.addEventListener('focus', handleFocus)
+
+    const interval = setInterval(() => {
+      const authState = useAuthStore.getState()
+      if (authState.isAuthenticated && authState.user?.id) {
+        authState.syncProfile(authState.user.id)
+      }
+    }, 15000)
+
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+      clearInterval(interval)
+    }
+  }, [isAuthenticated, user?.id])
 
   if (!initialized) {
     return (
