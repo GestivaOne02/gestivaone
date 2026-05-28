@@ -434,7 +434,7 @@ input,
 select,
 textarea,
 [role="button"] {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, transform, filter, backdrop-filter !important;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, filter, backdrop-filter !important;
   transition-duration: 200ms !important;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important; /* ease-out-expo */
 }

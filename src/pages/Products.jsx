@@ -20,13 +20,15 @@ const UNIT_COLORS = {
 }
 
 function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
-  const [qty, setQty] = useState(1)
+  const [qty, setQty] = useState('')
   const [added, setAdded] = useState(false)
 
   const handleAdd = () => {
-    onAdd(product, qty)
+    const finalQty = qty === '' ? 1 : Number(qty)
+    onAdd(product, finalQty)
     setAdded(true)
     setTimeout(() => setAdded(false), 800)
+    setQty('')
   }
 
   return (
@@ -84,7 +86,15 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           type="number"
           min={1}
           value={qty}
-          onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
+          placeholder="1"
+          onChange={(e) => {
+            const val = e.target.value
+            if (val === '') {
+              setQty('')
+            } else {
+              setQty(Math.max(1, Number(val)))
+            }
+          }}
           disabled={product.stock !== undefined && product.stock <= 0}
           className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
