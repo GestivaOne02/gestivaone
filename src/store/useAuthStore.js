@@ -93,6 +93,10 @@ export const PLANS = {
 }
 
 // Removed hardcoded SUPER_ADMINS for security. Use Supabase roles instead.
+export const PREMIUM_EMAILS = [
+  'randymendozasalas42@gmail.com',
+  'dayanneguiselle@gmail.com'
+]
 
 export const ROLES = {
   administrador: {
@@ -202,7 +206,7 @@ export const useAuthStore = create(
         }
 
         // 3. Create Profile
-        const isFreePremium = data.email?.toLowerCase() === 'randymendozasalas42@gmail.com'
+        const isFreePremium = PREMIUM_EMAILS.includes(data.email?.toLowerCase())
         const { error: profError } = await supabase
           .from('profiles')
           .insert([{
@@ -395,8 +399,8 @@ export const useAuthStore = create(
           let profile = profileList?.[0]
           const { data: { user: authUser } } = await supabase.auth.getUser()
 
-          // Auto-upgrade for administrator Randy Mendoza in database
-          const isFreePremium = authUser?.email?.toLowerCase() === 'randymendozasalas42@gmail.com'
+          // Auto-upgrade for premium administrators in database
+          const isFreePremium = PREMIUM_EMAILS.includes(authUser?.email?.toLowerCase())
           if (isFreePremium && profile && profile.plan !== 'empresarial') {
             const { data: updatedList } = await supabase
               .from('profiles')
