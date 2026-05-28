@@ -119,7 +119,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
           label="Editar Cliente"
           value="Modificar"
           onClick={onEdit}
-          isPurple={false}
+          isPurple={true}
         />
         <motion.button
           layout
