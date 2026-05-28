@@ -572,6 +572,7 @@ export default function Facturero() {
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-1.5 font-bold shadow-glow"
+            title="Guardar todos los cambios realizados en la configuración de la empresa y plantillas"
           >
             {saving ? (
               <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
@@ -600,6 +601,7 @@ export default function Facturero() {
                 <button
                   type="button"
                   onClick={() => { setPdfTemplate('corporate'); setPreviewType('pdf-corporate') }}
+                  title="Seleccionar plantilla PDF clásica y corporativa para las facturas"
                   className={clsx(
                     'flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all',
                     pdfTemplate === 'corporate'
@@ -619,6 +621,7 @@ export default function Facturero() {
                 <button
                   type="button"
                   onClick={() => { setPdfTemplate('minimalist'); setPreviewType('pdf-minimalist') }}
+                  title="Seleccionar plantilla PDF moderna y minimalista para las facturas"
                   className={clsx(
                     'flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all',
                     pdfTemplate === 'minimalist'
@@ -644,6 +647,7 @@ export default function Facturero() {
                 <button
                   type="button"
                   onClick={() => { setThermalTemplate('classic'); setPreviewType('ticket-classic') }}
+                  title="Seleccionar formato clásico courier para tickets impresos"
                   className={clsx(
                     'flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all',
                     thermalTemplate === 'classic'
@@ -663,6 +667,7 @@ export default function Facturero() {
                 <button
                   type="button"
                   onClick={() => { setThermalTemplate('modern'); setPreviewType('ticket-modern') }}
+                  title="Seleccionar formato moderno sans-serif para tickets impresos"
                   className={clsx(
                     'flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all',
                     thermalTemplate === 'modern'
@@ -681,8 +686,6 @@ export default function Facturero() {
               </div>
             </div>
           </div>
-
-          {/* Visual Elements Toggle Options */}
           <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Settings size={18} className="text-brand-400" />
@@ -690,87 +693,104 @@ export default function Facturero() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <label className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors">
+              <label 
+                title="Imprimir ticket de forma automática al guardar una nueva factura"
+                className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
+              >
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground block">Impresión Automática</span>
-                  <span className="text-[10px] text-muted-400 block">Lanza el ticket automáticamente al realizar pedido</span>
+                  <span className="text-sm font-bold text-foreground block">Impresión Automática</span>
+                  <span className="text-xs text-muted-400 block">Lanza el ticket automáticamente al realizar pedido</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={autoPrint}
                   onChange={(e) => setAutoPrint(e.target.checked)}
-                  className="rounded bg-surface-650 border-subtle text-brand-500 focus:ring-brand-500/20 w-4.5 h-4.5"
+                  className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors">
+              <label 
+                title="Incluir el logo de tu empresa en el encabezado de facturas y tickets"
+                className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
+              >
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground block">Mostrar Logo Comercial</span>
-                  <span className="text-[10px] text-muted-400 block">Dibuja tu logotipo cargado en los documentos</span>
+                  <span className="text-sm font-bold text-foreground block">Mostrar Logo Comercial</span>
+                  <span className="text-xs text-muted-400 block">Dibuja tu logotipo cargado en los documentos</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={showLogo}
                   onChange={(e) => setShowLogo(e.target.checked)}
-                  className="rounded bg-surface-650 border-subtle text-brand-500 focus:ring-brand-500/20 w-4.5 h-4.5"
+                  className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors">
+              <label 
+                title="Mostrar el nombre comercial en lugar del texto genérico"
+                className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
+              >
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground block">Nombre de Empresa</span>
-                  <span className="text-[10px] text-muted-400 block">Muestra tu nombre comercial como encabezado</span>
+                  <span className="text-sm font-bold text-foreground block">Nombre de Empresa</span>
+                  <span className="text-xs text-muted-400 block">Muestra tu nombre comercial como encabezado</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={showCompanyName}
                   onChange={(e) => setShowCompanyName(e.target.checked)}
-                  className="rounded bg-surface-650 border-subtle text-brand-500 focus:ring-brand-500/20 w-4.5 h-4.5"
+                  className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors">
+              <label 
+                title="Detallar cada producto, cantidad y precio en las facturas y tickets"
+                className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
+              >
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground block">Desglose de Productos</span>
-                  <span className="text-[10px] text-muted-400 block">Lista los artículos vendidos y sus totales</span>
+                  <span className="text-sm font-bold text-foreground block">Desglose de Productos</span>
+                  <span className="text-xs text-muted-400 block">Lista los artículos vendidos y sus totales</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={showProducts}
                   onChange={(e) => setShowProducts(e.target.checked)}
-                  className="rounded bg-surface-650 border-subtle text-brand-500 focus:ring-brand-500/20 w-4.5 h-4.5"
+                  className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors">
+              <label 
+                title="Incluir la información de contacto del cliente en el recibo"
+                className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
+              >
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground block">Contacto del Cliente</span>
-                  <span className="text-[10px] text-muted-400 block">Muestra nombre y celular del cliente</span>
+                  <span className="text-sm font-bold text-foreground block">Contacto del Cliente</span>
+                  <span className="text-xs text-muted-400 block">Muestra nombre y celular del cliente</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={showContact}
                   onChange={(e) => setShowContact(e.target.checked)}
-                  className="rounded bg-surface-650 border-subtle text-brand-500 focus:ring-brand-500/20 w-4.5 h-4.5"
+                  className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors">
+              <label 
+                title="Calcular y desglosar el IVA (19%) del total a pagar"
+                className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
+              >
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground block">Aplicar Impuestos (IVA 19%)</span>
-                  <span className="text-[10px] text-muted-400 block">Añade desglose de IVA a los subtotales</span>
+                  <span className="text-sm font-bold text-foreground block">Aplicar Impuestos (IVA 19%)</span>
+                  <span className="text-xs text-muted-400 block">Añade desglose de IVA a los subtotales</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={showTax}
                   onChange={(e) => setShowTax(e.target.checked)}
-                  className="rounded bg-surface-650 border-subtle text-brand-500 focus:ring-brand-500/20 w-4.5 h-4.5"
+                  className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
                 />
               </label>
             </div>
           </div>
 
-          {/* Company branding text fields */}
           <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Building2 size={18} className="text-brand-400" />
@@ -801,7 +821,7 @@ export default function Facturero() {
 
               {/* Logo Url selection */}
               <div className="space-y-1">
-                <label className="text-[11px] font-bold text-muted-400 block">Logotipo Corporativo</label>
+                <label className="text-xs font-bold text-muted-400 block uppercase tracking-wide">Logotipo Corporativo</label>
                 <div className="flex gap-2">
                   <div className="bg-surface-750 border border-subtle rounded-xl flex-1 px-3 py-2 text-xs text-muted-300 truncate flex items-center gap-2">
                     {logoUrl ? (
@@ -822,6 +842,7 @@ export default function Facturero() {
                     size="sm"
                     className="font-bold border border-subtle"
                     onClick={handleUploadLogo}
+                    title="Cambiar la URL de la imagen de tu logotipo"
                   >
                     Editar URL
                   </Button>
@@ -858,6 +879,7 @@ export default function Facturero() {
                     key={key}
                     type="button"
                     onClick={() => setThemeColor(key)}
+                    title={`Aplicar el tema de color ${col.name} a tus facturas y PDFs`}
                     className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all duration-300 ${
                       themeColor === key
                         ? 'bg-surface-700 border-brand-500 ring-2 ring-brand-500/20'
@@ -912,6 +934,7 @@ export default function Facturero() {
                 size="sm"
                 onClick={handleTestPDF}
                 className="flex items-center justify-center gap-1.5 border border-subtle font-bold text-xs"
+                title="Descargar un archivo PDF de demostración con la configuración actual"
               >
                 <Download size={14} />
                 <span>Descargar PDF</span>
@@ -922,6 +945,7 @@ export default function Facturero() {
                 size="sm"
                 onClick={handleTestPrint}
                 className="flex items-center justify-center gap-1.5 border border-subtle font-bold text-xs text-brand-300"
+                title="Enviar un ticket de demostración a la impresora para probar el formato"
               >
                 <Printer size={14} />
                 <span>Imprimir Ticket</span>

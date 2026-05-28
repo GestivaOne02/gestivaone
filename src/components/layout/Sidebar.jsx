@@ -93,7 +93,7 @@ export default function Sidebar({ isMobile }) {
               : allowed ? 'text-muted-400 hover:text-white hover:bg-surface-600'
               : 'text-muted-400'
           )}
-          title={collapsed ? label : undefined}
+          title={label}
         >
           {isActive && allowed && (
             <motion.div 

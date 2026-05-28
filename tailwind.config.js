@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Elms Sans', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['CustomAmpersand', 'Elms Sans', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         brand: {

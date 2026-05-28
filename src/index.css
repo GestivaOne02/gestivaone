@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'CustomAmpersand';
+  src: local('Inter'), local('Segoe UI'), local('Arial'), local('sans-serif');
+  unicode-range: U+0026;
+}
+
 /* ═══════════════════════════════════════════════
    DESIGN TOKENS — CSS Custom Properties
    Dark mode  → .dark on <html> (default)
@@ -83,7 +89,7 @@ html {
 }
 
 body {
-  font-family: "Elms Sans", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-family: "CustomAmpersand", "Elms Sans", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--surface-900);
@@ -429,4 +435,9 @@ textarea,
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, transform, filter, backdrop-filter !important;
   transition-duration: 200ms !important;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important; /* ease-out-expo */
+}
+
+/* 4. Global Help Cursor for Elements with Title Tooltips in the Main App Layout */
+.app-layout [title] {
+  cursor: help !important;
 }

@@ -22,13 +22,14 @@ const textColors = {
   danger:  'text-danger-400',
 }
 
-export default function KPICard({ title, value, subtitle, icon, trend, color = 'brand', loading = false, collapsed = false }) {
+export default function KPICard({ title, value, subtitle, icon, trend, color = 'brand', loading = false, collapsed = false, tooltip }) {
   
   const isTrendPositive = trend >= 0
 
   return (
     <motion.div
       whileHover={collapsed ? undefined : { y: -3, scale: 1.01 }}
+      title={tooltip}
       className={clsx(
         'kpi-card relative overflow-hidden bg-surface-800/80 backdrop-blur-md border rounded-3xl p-3 flex flex-col justify-center select-none transition-all duration-500 ease-out-expo',
         cardGlows[color],

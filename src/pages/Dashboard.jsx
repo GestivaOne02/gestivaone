@@ -2,7 +2,7 @@ import { useMemo, useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
-import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package, Calendar, Coins, Download, Plus, Trash2, Zap, FolderPlus } from 'lucide-react'
+import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package, Calendar, Coins, Download, Plus, Trash2, Zap, FolderPlus, Wallet } from 'lucide-react'
 import {
   AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, LineChart, Line, Legend
@@ -804,12 +804,14 @@ export default function Dashboard() {
         <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={exportToPDF}
+            title="Genera y descarga un reporte financiero detallado en PDF"
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-glow-sm"
           >
             <Download size={14} /> Exportar PDF
           </button>
           <button
             onClick={exportToExcel}
+            title="Genera y descarga una hoja de cálculo con todos tus movimientos en Excel"
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors"
           >
             <Download size={14} /> Exportar Excel
@@ -826,42 +828,48 @@ export default function Dashboard() {
             value: format$(totalRevenue),
             icon: <DollarSign size={18} />,
             color: "brand",
-            subtitle: `${paid.length} facturas pagadas`
+            subtitle: `${paid.length} facturas pagadas`,
+            tooltip: "Total de ingresos provenientes de facturas completamente pagadas"
           },
           {
             title: "Pendiente por Cobrar",
             value: format$(pendingRevenue),
             icon: <Clock size={18} />,
             color: "warning",
-            subtitle: `${pending.length + overdue.length} facturas`
+            subtitle: `${pending.length + overdue.length} facturas`,
+            tooltip: "Suma de saldos por cobrar de facturas pendientes o vencidas"
           },
           {
             title: "Gastos (Egresos)",
             value: format$(totalExpenses),
             icon: <Coins size={18} />,
             color: "danger",
-            subtitle: `${expenses.length} egresos registrados`
+            subtitle: `${expenses.length} egresos registrados`,
+            tooltip: "Total de egresos y gastos registrados de la empresa"
           },
           {
             title: "Utilidad Neta Real",
             value: format$(totalRevenue - totalExpenses),
-            icon: <DollarSign size={18} />,
+            icon: <Wallet size={18} />,
             color: "success",
-            subtitle: "Total Ingresos - Gastos"
+            subtitle: "Total Ingresos - Gastos",
+            tooltip: "Utilidad calculada restando los gastos de los ingresos recaudados"
           },
           {
             title: "Clientes Frecuentes",
             value: clients.filter((c) => c.type === 'frequent').length,
             icon: <Users size={18} />,
             color: "brand",
-            subtitle: `${clients.length} clientes totales`
+            subtitle: `${clients.length} clientes totales`,
+            tooltip: "Número de clientes registrados como recurrentes"
           },
           {
             title: "Facturas Express",
             value: expressCount,
-            icon: <Zap size={18} />,
+            icon: <FileText size={18} />,
             color: "brand",
-            subtitle: `Facturado: ${format$(expressRevenue)}`
+            subtitle: `Facturado: ${format$(expressRevenue)}`,
+            tooltip: "Estadísticas de ventas directas realizadas sin registrar cliente"
           }
         ].map((kpi, idx) => (
           <motion.div 
@@ -883,42 +891,48 @@ export default function Dashboard() {
             value: format$(totalRevenue),
             icon: <DollarSign size={18} />,
             color: "brand",
-            subtitle: `${paid.length} facturas pagadas`
+            subtitle: `${paid.length} facturas pagadas`,
+            tooltip: "Total de ingresos provenientes de facturas completamente pagadas"
           },
           {
             title: "Pendiente por Cobrar",
             value: format$(pendingRevenue),
             icon: <Clock size={18} />,
             color: "warning",
-            subtitle: `${pending.length + overdue.length} facturas`
+            subtitle: `${pending.length + overdue.length} facturas`,
+            tooltip: "Suma de saldos por cobrar de facturas pendientes o vencidas"
           },
           {
             title: "Gastos (Egresos)",
             value: format$(totalExpenses),
             icon: <Coins size={18} />,
             color: "danger",
-            subtitle: `${expenses.length} egresos registrados`
+            subtitle: `${expenses.length} egresos registrados`,
+            tooltip: "Total de egresos y gastos registrados de la empresa"
           },
           {
             title: "Utilidad Neta Real",
             value: format$(totalRevenue - totalExpenses),
-            icon: <DollarSign size={18} />,
+            icon: <Wallet size={18} />,
             color: "success",
-            subtitle: "Total Ingresos - Gastos"
+            subtitle: "Total Ingresos - Gastos",
+            tooltip: "Utilidad calculada restando los gastos de los ingresos recaudados"
           },
           {
             title: "Clientes Frecuentes",
             value: clients.filter((c) => c.type === 'frequent').length,
             icon: <Users size={18} />,
             color: "brand",
-            subtitle: `${clients.length} clientes totales`
+            subtitle: `${clients.length} clientes totales`,
+            tooltip: "Número de clientes registrados como recurrentes"
           },
           {
             title: "Facturas Express",
             value: expressCount,
-            icon: <Zap size={18} />,
+            icon: <FileText size={18} />,
             color: "brand",
-            subtitle: `Facturado: ${format$(expressRevenue)}`
+            subtitle: `Facturado: ${format$(expressRevenue)}`,
+            tooltip: "Estadísticas de ventas directas realizadas sin registrar cliente"
           }
         ].map((kpi, i) => (
           <motion.div

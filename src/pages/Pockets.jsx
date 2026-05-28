@@ -107,6 +107,7 @@ export default function Pockets() {
           pill
           icon={<Plus size={14} />}
           onClick={() => setShowAddModal(true)}
+          title="Crear un nuevo bolsillo con meta de ahorro o desvío automático de ventas"
         >
           Crear Bolsillo
         </Button>
@@ -121,7 +122,7 @@ export default function Pockets() {
               <p className="text-sm font-bold text-foreground">No tienes bolsillos activos</p>
               <p className="text-xs text-muted-500 mt-1 max-w-sm">Crea bolsillos para separar fondos específicos, apartar dinero para impuestos o deducir tus egresos operacionales de forma controlada.</p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setShowAddModal(true)} className="mt-2">Crear mi primer bolsillo</Button>
+            <Button variant="outline" size="sm" onClick={() => setShowAddModal(true)} className="mt-2" title="Crear un nuevo bolsillo para comenzar a ahorrar">Crear mi primer bolsillo</Button>
           </div>
         ) : (
           pockets.map((p) => {
@@ -204,6 +205,7 @@ export default function Pockets() {
                 <div className="flex items-center gap-2 border-t border-subtle/50 pt-3 mt-4">
                   <button
                     onClick={() => setShowFundModal({ pocketId: p.id, action: 'add' })}
+                    title="Añadir dinero manualmente a este bolsillo"
                     className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl bg-brand-600/10 hover:bg-brand-600/20 text-brand-400 text-xs font-bold transition-all"
                   >
                     <ArrowUpRight size={12} />
@@ -211,6 +213,7 @@ export default function Pockets() {
                   </button>
                   <button
                     onClick={() => setShowFundModal({ pocketId: p.id, action: 'withdraw' })}
+                    title="Retirar saldo de este bolsillo para moverlo al balance general"
                     className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl bg-surface-700 hover:bg-surface-650 text-muted-300 text-xs font-bold transition-all"
                   >
                     <ArrowDownRight size={12} />
@@ -219,7 +222,7 @@ export default function Pockets() {
                   <button
                     onClick={() => setDeleteConfirmId(p.id)}
                     className="p-1.5 rounded-xl bg-danger-900/10 hover:bg-danger-900/30 text-danger-400 transition-all shrink-0"
-                    title="Eliminar bolsillo"
+                    title="Eliminar este bolsillo permanentemente y retirar su saldo"
                   >
                     <Trash2 size={12} />
                   </button>

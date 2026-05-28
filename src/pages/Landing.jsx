@@ -474,7 +474,7 @@ export default function Landing() {
             
             {/* Contact Information */}
             <div className="lg:col-span-5 space-y-6">
-              <span className="text-brand-400 text-xs font-bold uppercase tracking-widest font-mono">Contacto</span>
+              <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">Contacto</span>
               <h2 className="text-3xl font-extrabold text-foreground">¿Tienes dudas? Escríbenos hoy mismo</h2>
               <p className="text-xs md:text-sm text-muted-400 leading-relaxed">
                 Nuestro equipo de soporte está disponible de lunes a sábado para ayudarte a migrar tus datos o resolver cualquier inconveniente técnico.

@@ -296,6 +296,7 @@ export default function PersonalFinance() {
                 pill
                 icon={<ArrowUpRight size={14} />}
                 onClick={() => setShowAddModal(true)}
+                title="Añadir fondos de forma manual a tu bolsillo personal"
               >
                 Ingresar Dinero
               </Button>
@@ -305,6 +306,7 @@ export default function PersonalFinance() {
                 pill
                 icon={<Plus size={14} />}
                 onClick={() => setShowExpenseModal(true)}
+                title="Registrar un gasto personal restándolo del bolsillo"
               >
                 Registrar Egreso
               </Button>
@@ -316,6 +318,7 @@ export default function PersonalFinance() {
               pill
               icon={<Plus size={14} />}
               onClick={() => setShowLoanModal(true)}
+              title="Registrar una nueva deuda o un préstamo por cobrar"
             >
               Registrar Préstamo
             </Button>
@@ -343,6 +346,7 @@ export default function PersonalFinance() {
             <div className="flex gap-2 mt-6 relative z-10">
               <button
                 onClick={() => setShowAddModal(true)}
+                title="Añadir saldo disponible al bolsillo personal"
                 className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ArrowUpRight size={13} />
@@ -350,6 +354,7 @@ export default function PersonalFinance() {
               </button>
               <button
                 onClick={() => setShowExpenseModal(true)}
+                title="Gastar dinero restándolo de tus fondos"
                 className="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-glow-sm cursor-pointer"
               >
                 <ArrowDownRight size={13} />
@@ -393,6 +398,7 @@ export default function PersonalFinance() {
               <button
                 type="button"
                 onClick={() => setActiveTab('expenses')}
+                title="Ver el historial de egresos y gastos personales registrados"
                 className={clsx(
                   "pb-3 -mb-[13px] text-xs font-bold uppercase tracking-wider transition-all relative border-b-2 cursor-pointer",
                   activeTab === 'expenses' ? "text-brand-400 border-brand-500" : "text-muted-400 border-transparent hover:text-foreground"
@@ -403,6 +409,7 @@ export default function PersonalFinance() {
               <button
                 type="button"
                 onClick={() => setActiveTab('loans')}
+                title="Ver la lista de préstamos otorgados y deudas pendientes"
                 className={clsx(
                   "pb-3 -mb-[13px] text-xs font-bold uppercase tracking-wider transition-all relative border-b-2 cursor-pointer",
                   activeTab === 'loans' ? "text-brand-400 border-brand-500" : "text-muted-400 border-transparent hover:text-foreground"
@@ -454,7 +461,7 @@ export default function PersonalFinance() {
                       <button
                         onClick={() => handleDeleteExpense(e.id)}
                         className="p-1 rounded text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
-                        title="Eliminar egreso"
+                        title="Eliminar este registro de gasto de forma permanente"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -582,7 +589,7 @@ export default function PersonalFinance() {
                           <button
                             onClick={() => handleDeleteLoan(l.id)}
                             className="p-1.5 rounded border border-transparent text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors cursor-pointer"
-                            title="Eliminar registro"
+                            title="Eliminar este préstamo/deuda permanentemente"
                           >
                             <Trash2 size={11} />
                           </button>

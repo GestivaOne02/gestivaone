@@ -64,7 +64,7 @@ export default function AppLayout() {
   }, [user?.id])
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface-900">
+    <div className="flex h-screen overflow-hidden bg-surface-900 app-layout">
 
       {/* ─── Sidebar: hidden on mobile, shown on lg+ ─── */}
       <Sidebar isMobile={isMobile} />
