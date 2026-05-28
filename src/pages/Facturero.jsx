@@ -76,6 +76,57 @@ export default function Facturero() {
   // Settings store
   const { printer, setPrinter } = useSettingsStore()
   
+  // Printer detection state
+  const [hasPrinter, setHasPrinter] = useState(false)
+  const [checkingPrinter, setCheckingPrinter] = useState(true)
+
+  useEffect(() => {
+    const checkDevices = async () => {
+      if (typeof window.print !== 'function') {
+        setHasPrinter(false)
+        setCheckingPrinter(false)
+        return
+      }
+
+      if (printer.autoPrint || autoPrint) {
+        setHasPrinter(true)
+        setCheckingPrinter(false)
+        return
+      }
+
+      if (navigator.usb) {
+        try {
+          const devices = await navigator.usb.getDevices()
+          if (devices.length > 0) {
+            setHasPrinter(true)
+          }
+        } catch (e) {
+          console.warn('Error checking USB devices in Facturero:', e)
+        }
+      }
+      setCheckingPrinter(false)
+    }
+
+    checkDevices()
+  }, [printer.autoPrint, autoPrint])
+
+  const requestUsbPrinter = async () => {
+    if (!navigator.usb) {
+      toast.error('Este navegador no soporta detección de dispositivos USB.')
+      return
+    }
+    try {
+      const device = await navigator.usb.requestDevice({ filters: [] })
+      if (device) {
+        setHasPrinter(true)
+        setAutoPrint(true)
+        toast.success(`Impresora detectada: ${device.productName || 'Dispositivo USB'}`)
+      }
+    } catch (e) {
+      toast.error('No se vinculó ningún dispositivo')
+    }
+  }
+  
   // Local states for custom edit (we sync with settings on Save)
   const [pdfTemplate, setPdfTemplate] = useState(printer.pdfTemplate || 'corporate')
   const [thermalTemplate, setThermalTemplate] = useState(printer.template || 'classic')
@@ -693,21 +744,38 @@ export default function Facturero() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <label 
-                title="Imprimir ticket de forma automática al guardar una nueva factura"
-                className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
-              >
-                <div className="space-y-0.5">
-                  <span className="text-sm font-bold text-foreground block">Impresión Automática</span>
-                  <span className="text-xs text-muted-400 block">Lanza el ticket automáticamente al realizar pedido</span>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={autoPrint}
-                  onChange={(e) => setAutoPrint(e.target.checked)}
-                  className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
-                />
-              </label>
+              {hasPrinter ? (
+                <label 
+                  title="Imprimir ticket de forma automática al guardar una nueva factura"
+                  className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
+                >
+                  <div className="space-y-0.5">
+                    <span className="text-sm font-bold text-foreground block">Impresión Automática</span>
+                    <span className="text-xs text-muted-400 block">Lanza el ticket automáticamente al realizar pedido</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={autoPrint}
+                    onChange={(e) => setAutoPrint(e.target.checked)}
+                    className="rounded border-subtle text-brand-600 focus:ring-brand-500/20 bg-surface-800 w-4.5 h-4.5"
+                  />
+                </label>
+              ) : (
+                <button
+                  type="button"
+                  onClick={requestUsbPrinter}
+                  className="flex items-center justify-between p-3 rounded-xl bg-surface-750/50 border border-dashed border-brand-500/20 hover:border-brand-500/40 text-left cursor-pointer transition-colors w-full"
+                  title="Detectar y vincular impresora USB para habilitar impresión automática"
+                >
+                  <div className="space-y-0.5">
+                    <span className="text-sm font-bold text-brand-400 block flex items-center gap-1.5">
+                      <Printer size={14} />
+                      Vincular Impresora USB
+                    </span>
+                    <span className="text-[11px] text-muted-400 block">Habilita la impresión automática de tickets</span>
+                  </div>
+                </button>
+              )}
 
               <label 
                 title="Incluir el logo de tu empresa en el encabezado de facturas y tickets"
@@ -940,16 +1008,29 @@ export default function Facturero() {
                 <span>Descargar PDF</span>
               </Button>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleTestPrint}
-                className="flex items-center justify-center gap-1.5 border border-subtle font-bold text-xs text-brand-300"
-                title="Enviar un ticket de demostración a la impresora para probar el formato"
-              >
-                <Printer size={14} />
-                <span>Imprimir Ticket</span>
-              </Button>
+              {hasPrinter ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleTestPrint}
+                  className="flex items-center justify-center gap-1.5 border border-subtle font-bold text-xs text-brand-300"
+                  title="Enviar un ticket de demostración a la impresora para probar el formato"
+                >
+                  <Printer size={14} />
+                  <span>Imprimir Ticket</span>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={requestUsbPrinter}
+                  className="flex items-center justify-center gap-1.5 border border-dashed border-brand-500/20 font-bold text-xs text-brand-400 hover:bg-brand-500/10"
+                  title="Detectar y vincular impresora USB"
+                >
+                  <Printer size={14} className="animate-pulse" />
+                  <span>Vincular Impresora</span>
+                </Button>
+              )}
             </div>
 
             <div className="p-3 rounded-xl bg-surface-750 border border-subtle flex items-start gap-2.5 shrink-0">

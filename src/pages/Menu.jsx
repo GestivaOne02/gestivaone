@@ -92,10 +92,15 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
             )}
           </div>
           {lastInvoice && (
-            <p className="text-[13px] text-muted-400 flex items-center gap-1 mt-1.5">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60"></span>
-              Última factura realizada: {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
-            </p>
+            <div className="mt-1.5 flex flex-col gap-0.5">
+              <p className="text-[13px] text-muted-400 flex items-center gap-1">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60 font-semibold"></span>
+                Última factura realizada:
+              </p>
+              <p className="text-sm font-bold text-foreground pl-2.5">
+                {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
+              </p>
+            </div>
           )}
         </motion.div>
       </motion.div>

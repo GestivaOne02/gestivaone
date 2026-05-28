@@ -573,6 +573,8 @@ function PrinterBlock() {
   const setPrinter = useSettingsStore(s => s.setPrinter)
   const user = useAuthStore(s => s.user)
   const [open, setOpen] = useState(false)
+  const [hasPrinter, setHasPrinter] = useState(false)
+  const [checking, setChecking] = useState(true)
 
   const companyName = user?.companyName || 'Mi Empresa'
   const companyLogo = user?.companyLogo || null
@@ -593,6 +595,53 @@ function PrinterBlock() {
   const taxVal = subtotal * 0.19
   const total = subtotal + (printer.showTax ? taxVal : 0)
 
+  useEffect(() => {
+    const checkDevices = async () => {
+      if (typeof window.print !== 'function') {
+        setHasPrinter(false)
+        setChecking(false)
+        return
+      }
+
+      if (printer.autoPrint) {
+        setHasPrinter(true)
+        setChecking(false)
+        return
+      }
+
+      if (navigator.usb) {
+        try {
+          const devices = await navigator.usb.getDevices()
+          if (devices.length > 0) {
+            setHasPrinter(true)
+          }
+        } catch (e) {
+          console.warn('Error reading USB devices:', e)
+        }
+      }
+      setChecking(false)
+    }
+
+    checkDevices()
+  }, [printer.autoPrint])
+
+  const requestUsbPrinter = async () => {
+    if (!navigator.usb) {
+      toast.error('Este navegador no soporta detección de dispositivos USB.')
+      return
+    }
+    try {
+      const device = await navigator.usb.requestDevice({ filters: [] })
+      if (device) {
+        setHasPrinter(true)
+        setPrinter({ autoPrint: true })
+        toast.success(`Impresora detectada: ${device.productName || 'Dispositivo USB'}`)
+      }
+    } catch (e) {
+      toast.error('No se detectó ningún dispositivo')
+    }
+  }
+
   return (
     <motion.section 
       initial={{ opacity: 0, y: 15 }} 
@@ -606,7 +655,9 @@ function PrinterBlock() {
           <p className="text-sm font-semibold text-foreground">Impresión de Facturas</p>
           <p className="text-xs text-muted-400">Elige la plantilla y contenido de los recibos impresos</p>
         </div>
-        <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `Impresión automática activada` : `Impresión automática desactivada`, { duration: 1500 }) }} />
+        {hasPrinter && (
+          <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `Impresión automática activada` : `Impresión automática desactivada`, { duration: 1500 }) }} />
+        )}
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
 
@@ -619,7 +670,27 @@ function PrinterBlock() {
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
-            <div className="px-5 pb-5 border-t border-subtle pt-4 grid grid-cols-1 md:grid-cols-2 gap-6 font-sans">
+            <div className="px-5 pb-5 border-t border-subtle pt-4 font-sans">
+              {!hasPrinter && !checking ? (
+                <div className="flex flex-col items-center justify-center text-center p-6 bg-surface-750 border border-dashed border-subtle rounded-2xl gap-3">
+                  <Printer size={32} className="text-muted-500 animate-pulse" />
+                  <div>
+                    <h4 className="text-sm font-bold text-foreground">No se detectó impresora configurada</h4>
+                    <p className="text-xs text-muted-400 mt-1 max-w-sm mx-auto">
+                      Para configurar el formato del ticket e imprimir de forma automática, vincula tu impresora térmica USB con el software.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={requestUsbPrinter}
+                    className="mt-1 flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow cursor-pointer"
+                  >
+                    <Printer size={13} />
+                    <span>Detectar Impresora USB</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {/* Controls Column */}
               <div className="space-y-4">
@@ -792,8 +863,9 @@ function PrinterBlock() {
                   </div>
                 </div>
               </div>
-
             </div>
+            )}
+          </div>
           </motion.div>
         )}
       </AnimatePresence>
