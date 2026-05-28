@@ -144,14 +144,6 @@ CREATE POLICY "Permitir eliminación de clientes a administradores"
 
 
 -- 5. ACTUALIZAR PLAN A PREMIUM PARA dayanneguiselle@gmail.com
-UPDATE public.companies
-SET plan = 'empresarial'
-WHERE id IN (
-    SELECT company_id
-    FROM public.profiles
-    WHERE LOWER(email) = 'dayanneguiselle@gmail.com'
-);
-
 UPDATE public.profiles
 SET plan = 'empresarial'
 WHERE LOWER(email) = 'dayanneguiselle@gmail.com';
