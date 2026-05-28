@@ -30,19 +30,19 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
           : "bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground border-subtle",
         hovered ? "w-[170px] px-3.5" : "w-10 px-2.5 justify-center"
       )}
-      transition={{ type: "spring", stiffness: 380, damping: 26 }}
+      transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.45 }}
     >
       <Icon size={15} className="shrink-0" />
       <AnimatePresence>
         {hovered && (
           <motion.div
-            initial={{ opacity: 0, x: -5 }}
+            initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -5 }}
-            transition={{ duration: 0.15 }}
-            className="flex flex-col items-start leading-none text-left shrink-0"
+            exit={{ opacity: 0, x: -8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="flex flex-col items-start leading-none text-left shrink-0 whitespace-nowrap"
           >
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-85">{label}</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">{label}</span>
             {value && <span className="text-xs font-black mt-0.5">{value}</span>}
           </motion.div>
         )}
