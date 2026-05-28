@@ -1597,7 +1597,8 @@ export default function Dashboard() {
                     ) : (
                       pockets.map((p, idx) => {
                         const pct = totalPocketsBalance > 0 ? Math.round((p.balance / totalPocketsBalance) * 100) : 0
-                        const dotColor = colors[idx % colors.length].replace('bg-', 'text-')
+                        const textColors = ['text-brand-500', 'text-success-500', 'text-warning-500', 'text-danger-500', 'text-cyan-500', 'text-purple-500']
+                        const dotColor = textColors[idx % textColors.length]
                         
                         return (
                           <div key={p.id} className="flex flex-col gap-1">

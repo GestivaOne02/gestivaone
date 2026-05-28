@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Coins, ArrowUpRight, ArrowDownRight, Trash2, Wallet, FileText, CalendarDays } from 'lucide-react'
+import { Plus, Coins, ArrowUpRight, ArrowDownRight, Trash2, Wallet, FileText, CalendarDays, Check, Calendar } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
+import { supabase } from '@/lib/supabase'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
@@ -18,25 +19,63 @@ export default function PersonalFinance() {
   const [balance, setBalance] = useState(0)
   const [expenses, setExpenses] = useState([])
   
+  // Tabs state
+  const [activeTab, setActiveTab] = useState('expenses') // 'expenses' | 'loans'
+
+  // Loans state
+  const [loans, setLoans] = useState([])
+  
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false)
   const [showExpenseModal, setShowExpenseModal] = useState(false)
+  const [showLoanModal, setShowLoanModal] = useState(false)
   
-  // Form fields
+  // Form fields (no defaults, only placeholders as requested)
   const [addAmount, setAddAmount] = useState('')
   const [expAmount, setExpAmount] = useState('')
   const [expCategory, setExpCategory] = useState('Alimentación')
   const [expDesc, setExpDesc] = useState('')
+  
+  // Loan Form fields (no defaults, only placeholders as requested)
+  const [loanContact, setLoanContact] = useState('')
+  const [loanAmount, setLoanAmount] = useState('')
+  const [loanType, setLoanType] = useState('lent') // 'lent' | 'borrowed'
+  const [loanDesc, setLoanDesc] = useState('')
+  const [loanDueDate, setLoanDueDate] = useState('')
+
   const [loading, setLoading] = useState(false)
 
   // Unique settings key for user's personal finance data
   const storageKey = user ? `personal_finance_${user.id}` : 'personal_finance_local'
+
+  const fetchLoans = async () => {
+    if (user) {
+      try {
+        const { data, error } = await supabase
+          .from('personal_loans')
+          .select('*')
+          .order('created_at', { ascending: false })
+        if (error) throw error
+        setLoans(data || [])
+      } catch (e) {
+        console.error('Error fetching loans:', e)
+      }
+    } else {
+      const localLoans = localStorage.getItem('personal_loans_local')
+      if (localLoans) {
+        try {
+          setLoans(JSON.parse(localLoans))
+        } catch (e) {}
+      }
+    }
+  }
 
   useEffect(() => {
     if (user) {
       const data = user.settings?.[storageKey] || { balance: 0, expenses: [] }
       setBalance(data.balance || 0)
       setExpenses(data.expenses || [])
+      fetchLoans()
     } else {
       const local = localStorage.getItem(storageKey)
       if (local) {
@@ -44,6 +83,12 @@ export default function PersonalFinance() {
           const parsed = JSON.parse(local)
           setBalance(parsed.balance || 0)
           setExpenses(parsed.expenses || [])
+        } catch (e) {}
+      }
+      const localLoans = localStorage.getItem('personal_loans_local')
+      if (localLoans) {
+        try {
+          setLoans(JSON.parse(localLoans))
         } catch (e) {}
       }
     }
@@ -126,118 +171,427 @@ export default function PersonalFinance() {
     toast.success('Transacción eliminada. Dinero devuelto al bolsillo.')
   }
 
+  const handleAddLoan = async (e) => {
+    e.preventDefault()
+    const amt = Number(loanAmount)
+    if (!loanContact.trim()) return toast.error('Ingresa el nombre del contacto')
+    if (isNaN(amt) || amt <= 0) return toast.error('Ingresa un monto válido')
+
+    setLoading(true)
+    try {
+      const newLoanData = {
+        contact_name: loanContact.trim(),
+        amount: amt,
+        type: loanType,
+        description: loanDesc.trim() || null,
+        due_date: loanDueDate || null,
+        status: 'pending'
+      }
+
+      if (user) {
+        const { data, error } = await supabase
+          .from('personal_loans')
+          .insert([{ ...newLoanData, user_id: user.id }])
+          .select()
+        if (error) throw error
+        if (data && data[0]) {
+          setLoans(prev => [data[0], ...prev])
+        }
+      } else {
+        const localLoan = {
+          id: `loan-${Date.now()}`,
+          ...newLoanData,
+          created_at: new Date().toISOString()
+        }
+        const updated = [localLoan, ...loans]
+        setLoans(updated)
+        localStorage.setItem('personal_loans_local', JSON.stringify(updated))
+      }
+
+      toast.success('Préstamo registrado')
+      setLoanContact('')
+      setLoanAmount('')
+      setLoanType('lent')
+      setLoanDesc('')
+      setLoanDueDate('')
+      setShowLoanModal(false)
+    } catch (err) {
+      console.error('Error adding loan:', err)
+      toast.error('Error al guardar el préstamo. Revisa si ejecutaste la migración SQL.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleToggleLoanStatus = async (id, currentStatus) => {
+    const nextStatus = currentStatus === 'pending' ? 'paid' : 'pending'
+    try {
+      if (user) {
+        const { error } = await supabase
+          .from('personal_loans')
+          .update({ status: nextStatus })
+          .eq('id', id)
+        if (error) throw error
+        setLoans(prev => prev.map(l => l.id === id ? { ...l, status: nextStatus } : l))
+      } else {
+        const updated = loans.map(l => l.id === id ? { ...l, status: nextStatus } : l)
+        setLoans(updated)
+        localStorage.setItem('personal_loans_local', JSON.stringify(updated))
+      }
+      toast.success(`Préstamo marcado como ${nextStatus === 'paid' ? 'pagado' : 'pendiente'}`)
+    } catch (err) {
+      console.error('Error toggling status:', err)
+      toast.error('Error al actualizar el préstamo')
+    }
+  }
+
+  const handleDeleteLoan = async (id) => {
+    try {
+      if (user) {
+        const { error } = await supabase
+          .from('personal_loans')
+          .delete()
+          .eq('id', id)
+        if (error) throw error
+        setLoans(prev => prev.filter(l => l.id !== id))
+      } else {
+        const updated = loans.filter(l => l.id !== id)
+        setLoans(updated)
+        localStorage.setItem('personal_loans_local', JSON.stringify(updated))
+      }
+      toast.success('Préstamo eliminado')
+    } catch (err) {
+      console.error('Error deleting loan:', err)
+      toast.error('Error al eliminar el préstamo')
+    }
+  }
+
+  const loansSummary = useMemo(() => {
+    return loans.reduce((acc, l) => {
+      if (l.status === 'pending') {
+        if (l.type === 'lent') {
+          acc.toCollect += Number(l.amount || 0)
+        } else {
+          acc.toPay += Number(l.amount || 0)
+        }
+      }
+      return acc
+    }, { toCollect: 0, toPay: 0 })
+  }, [loans])
+
   return (
     <div className="page-container flex flex-col gap-6">
       {/* Header */}
       <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Mi Gestión Personal</h1>
-          <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Control privado de tus ingresos y egresos personales</p>
+          <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Control privado de tus ingresos, egresos y préstamos</p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            size="sm"
-            pill
-            icon={<ArrowUpRight size={14} />}
-            onClick={() => setShowAddModal(true)}
-          >
-            Ingresar Dinero
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            pill
-            icon={<Plus size={14} />}
-            onClick={() => setShowExpenseModal(true)}
-          >
-            Registrar Egreso
-          </Button>
+          {activeTab === 'expenses' ? (
+            <>
+              <Button
+                variant="secondary"
+                size="sm"
+                pill
+                icon={<ArrowUpRight size={14} />}
+                onClick={() => setShowAddModal(true)}
+              >
+                Ingresar Dinero
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                pill
+                icon={<Plus size={14} />}
+                onClick={() => setShowExpenseModal(true)}
+              >
+                Registrar Egreso
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="primary"
+              size="sm"
+              pill
+              icon={<Plus size={14} />}
+              onClick={() => setShowLoanModal(true)}
+            >
+              Registrar Préstamo
+            </Button>
+          )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Wallet Display */}
-        <div className="lg:col-span-1 bg-gradient-to-br from-[#1b0d3d] to-[#0c051b] border border-brand-500/25 rounded-3xl p-6 flex flex-col justify-between min-h-[200px] shadow-[0_4px_24px_rgba(139,92,246,0.15)] relative overflow-hidden">
-          {/* Subtle Background Glow */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-[60px]" />
-          
-          <div className="relative z-10">
-            <div className="flex items-center gap-2">
-              <Wallet size={16} className="text-brand-400 animate-pulse" />
-              <span className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">Bolsillo Personal</span>
+        {/* Wallet & Summary Column */}
+        <div className="lg:col-span-1 flex flex-col gap-4">
+          {/* Wallet Display */}
+          <div className="bg-gradient-to-br from-[#1b0d3d] to-[#0c051b] border border-brand-500/25 rounded-3xl p-6 flex flex-col justify-between min-h-[200px] shadow-[0_4px_24px_rgba(139,92,246,0.15)] relative overflow-hidden">
+            {/* Subtle Background Glow */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-[60px]" />
+            
+            <div className="relative z-10">
+              <div className="flex items-center gap-2">
+                <Wallet size={16} className="text-brand-400 animate-pulse" />
+                <span className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">Bolsillo Personal</span>
+              </div>
+              <h2 className="text-[11px] text-muted-400 uppercase tracking-wider font-bold mt-4">Fondos Disponibles</h2>
+              <p className="text-3xl font-black text-white mt-1.5 drop-shadow-[0_0_12px_rgba(139,92,246,0.2)]">{format(balance)}</p>
             </div>
-            <h2 className="text-[11px] text-muted-400 uppercase tracking-wider font-bold mt-4">Fondos Disponibles</h2>
-            <p className="text-3xl font-black text-white mt-1.5 drop-shadow-[0_0_12px_rgba(139,92,246,0.2)]">{format(balance)}</p>
+
+            <div className="flex gap-2 mt-6 relative z-10">
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <ArrowUpRight size={13} />
+                Agregar Saldo
+              </button>
+              <button
+                onClick={() => setShowExpenseModal(true)}
+                className="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-glow-sm cursor-pointer"
+              >
+                <ArrowDownRight size={13} />
+                Gastar
+              </button>
+            </div>
           </div>
 
-          <div className="flex gap-2 mt-6 relative z-10">
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5"
-            >
-              <ArrowUpRight size={13} />
-              Agregar Saldo
-            </button>
-            <button
-              onClick={() => setShowExpenseModal(true)}
-              className="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-glow-sm"
-            >
-              <ArrowDownRight size={13} />
-              Gastar
-            </button>
+          {/* Loans Summary */}
+          <div className="bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4">
+            <div className="flex items-center gap-2 pb-2.5 border-b border-subtle">
+              <Coins size={16} className="text-brand-400" />
+              <span className="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">Resumen de Préstamos</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-surface-700/20 border border-subtle rounded-2xl p-3.5 flex flex-col justify-between">
+                <div>
+                  <span className="text-[9px] font-bold text-success-400 uppercase tracking-widest">Por Cobrar</span>
+                  <p className="text-[10px] text-muted-400 mt-0.5">Dinero Prestado</p>
+                </div>
+                <p className="text-sm font-extrabold text-success-400 mt-2">{format(loansSummary.toCollect)}</p>
+              </div>
+
+              <div className="bg-surface-700/20 border border-subtle rounded-2xl p-3.5 flex flex-col justify-between">
+                <div>
+                  <span className="text-[9px] font-bold text-danger-400 uppercase tracking-widest">Por Pagar</span>
+                  <p className="text-[10px] text-muted-400 mt-0.5">Dinero Recibido</p>
+                </div>
+                <p className="text-sm font-extrabold text-danger-400 mt-2">{format(loansSummary.toPay)}</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Expenses List */}
-        <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[480px]">
+        {/* Expenses/Loans List */}
+        <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px]">
+          {/* Tabs Selector Header */}
           <div className="flex items-center justify-between pb-3 border-b border-subtle mb-4 shrink-0">
-            <div className="flex items-center gap-2">
-              <FileText size={18} className="text-brand-400" />
-              <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Mis Egresos Recientes</h3>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setActiveTab('expenses')}
+                className={clsx(
+                  "pb-3 -mb-[13px] text-xs font-bold uppercase tracking-wider transition-all relative border-b-2 cursor-pointer",
+                  activeTab === 'expenses' ? "text-brand-400 border-brand-500" : "text-muted-400 border-transparent hover:text-foreground"
+                )}
+              >
+                Mis Egresos
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('loans')}
+                className={clsx(
+                  "pb-3 -mb-[13px] text-xs font-bold uppercase tracking-wider transition-all relative border-b-2 cursor-pointer",
+                  activeTab === 'loans' ? "text-brand-400 border-brand-500" : "text-muted-400 border-transparent hover:text-foreground"
+                )}
+              >
+                Préstamos y Deudas
+              </button>
             </div>
-            <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
-              {expenses.length} Transacciones
-            </span>
+            {activeTab === 'expenses' ? (
+              <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest">
+                {expenses.length} Transacciones
+              </span>
+            ) : (
+              <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest">
+                {loans.length} Registros
+              </span>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto no-scrollbar space-y-2.5">
-            {expenses.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center text-muted-400 py-12">
-                <Coins size={36} className="text-muted-500 mb-2" />
-                <p className="text-xs">No has registrado gastos personales aún.</p>
-                <p className="text-[10px] text-muted-500 mt-1">Usa el botón superior para registrar tu primer gasto privado.</p>
-              </div>
-            ) : (
-              expenses.map((e) => (
-                <div key={e.id} className="flex items-center justify-between p-3.5 rounded-xl bg-surface-700/20 border border-subtle hover:border-surface-400 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-danger-500/10 border border-danger-500/20 flex items-center justify-center text-danger-400 font-bold text-xs shrink-0">
-                      $
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-foreground truncate">{e.description}</p>
-                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                        <span className="text-[9px] bg-surface-600 text-muted-300 px-1.5 py-0.2 rounded font-medium">{e.category}</span>
-                        <span className="text-[9px] text-muted-500 flex items-center gap-1">
-                          <CalendarDays size={10} />
-                          {new Date(e.created_at).toLocaleDateString('es-CO')}
-                        </span>
+            {activeTab === 'expenses' ? (
+              /* EXPENSES LIST */
+              expenses.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center text-muted-400 py-12">
+                  <Coins size={36} className="text-muted-500 mb-2" />
+                  <p className="text-xs">No has registrado gastos personales aún.</p>
+                  <p className="text-[10px] text-muted-500 mt-1">Usa el botón superior para registrar tu primer gasto privado.</p>
+                </div>
+              ) : (
+                expenses.map((e) => (
+                  <div key={e.id} className="flex items-center justify-between p-3.5 rounded-xl bg-surface-700/20 border border-subtle hover:border-surface-400 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-danger-500/10 border border-danger-500/20 flex items-center justify-center text-danger-400 font-bold text-xs shrink-0">
+                        $
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-foreground truncate">{e.description}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                          <span className="text-[9px] bg-surface-600 text-muted-300 px-1.5 py-0.2 rounded font-medium">{e.category}</span>
+                          <span className="text-[9px] text-muted-500 flex items-center gap-1">
+                            <CalendarDays size={10} />
+                            {new Date(e.created_at).toLocaleDateString('es-CO')}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-extrabold text-danger-400">-{format(e.amount)}</span>
+                      <button
+                        onClick={() => handleDeleteExpense(e.id)}
+                        className="p-1 rounded text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
+                        title="Eliminar egreso"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-extrabold text-danger-400">-{format(e.amount)}</span>
-                    <button
-                      onClick={() => handleDeleteExpense(e.id)}
-                      className="p-1 rounded text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
-                      title="Eliminar egreso"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
+                ))
+              )
+            ) : (
+              /* LOANS LIST */
+              loans.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center text-muted-400 py-12">
+                  <Coins size={36} className="text-muted-500 mb-2" />
+                  <p className="text-xs">No has registrado préstamos aún.</p>
+                  <p className="text-[10px] text-muted-500 mt-1">Usa el botón superior para registrar tu primera cuenta por cobrar o por pagar.</p>
                 </div>
-              ))
+              ) : (
+                loans.map((l) => {
+                  const isLent = l.type === 'lent'
+                  const isPaid = l.status === 'paid'
+                  const isOverdue = l.due_date && new Date(l.due_date) < new Date() && !isPaid
+
+                  return (
+                    <div 
+                      key={l.id} 
+                      className={clsx(
+                        "flex items-center justify-between p-3.5 rounded-xl border transition-all duration-300",
+                        isPaid 
+                          ? "bg-surface-700/5 border-subtle/30 opacity-75" 
+                          : "bg-surface-700/20 border-subtle hover:border-surface-400"
+                      )}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        {/* Type Icon indicator */}
+                        <div 
+                          className={clsx(
+                            "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 border",
+                            isPaid
+                              ? "bg-surface-700/30 border-subtle text-muted-400"
+                              : isLent 
+                              ? "bg-success-500/10 border-success-500/20 text-success-400" 
+                              : "bg-danger-500/10 border-danger-500/20 text-danger-400"
+                          )}
+                        >
+                          {isLent ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <p className={clsx("text-xs font-bold truncate max-w-[150px]", isPaid ? "text-muted-400 line-through" : "text-foreground")}>
+                              {l.contact_name}
+                            </p>
+                            <span 
+                              className={clsx(
+                                "text-[8.5px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider",
+                                isPaid 
+                                  ? "bg-surface-700 text-muted-400" 
+                                  : isLent 
+                                  ? "bg-success-500/10 text-success-400" 
+                                  : "bg-danger-500/10 text-danger-400"
+                              )}
+                            >
+                              {isLent ? 'Por Cobrar' : 'Por Pagar'}
+                            </span>
+                          </div>
+                          
+                          {l.description && (
+                            <p className="text-[10.5px] text-muted-400 truncate mt-0.5 max-w-[250px]">{l.description}</p>
+                          )}
+
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-[9px] text-muted-500 flex items-center gap-1">
+                              <CalendarDays size={10} />
+                              {new Date(l.created_at || Date.now()).toLocaleDateString('es-CO')}
+                            </span>
+
+                            {l.due_date && (
+                              <span 
+                                className={clsx(
+                                  "text-[9px] flex items-center gap-1 font-semibold",
+                                  isPaid 
+                                    ? "text-muted-500" 
+                                    : isOverdue 
+                                    ? "text-danger-400 animate-pulse font-bold" 
+                                    : "text-muted-400"
+                                )}
+                              >
+                                <Calendar size={10} />
+                                Vence: {new Date(l.due_date).toLocaleDateString('es-CO')} {isOverdue && '(Vencido)'}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <span 
+                          className={clsx(
+                            "text-xs font-extrabold",
+                            isPaid
+                              ? "text-muted-500 line-through"
+                              : isLent 
+                              ? "text-success-400" 
+                              : "text-danger-400"
+                          )}
+                        >
+                          {isLent ? '+' : '-'}{format(l.amount)}
+                        </span>
+
+                        <div className="flex items-center gap-1">
+                          {/* Toggle Paid Action */}
+                          <button
+                            onClick={() => handleToggleLoanStatus(l.id, l.status)}
+                            className={clsx(
+                              "p-1.5 rounded transition-colors border cursor-pointer",
+                              isPaid 
+                                ? "bg-success-500/15 border-success-500/30 text-success-400 hover:bg-success-500/25" 
+                                : "bg-surface-700 border-subtle text-muted-400 hover:text-success-400 hover:border-success-500/30"
+                            )}
+                            title={isPaid ? "Marcar como pendiente" : "Marcar como pagado"}
+                          >
+                            <Check size={11} />
+                          </button>
+
+                          {/* Delete Action */}
+                          <button
+                            onClick={() => handleDeleteLoan(l.id)}
+                            className="p-1.5 rounded border border-transparent text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors cursor-pointer"
+                            title="Eliminar registro"
+                          >
+                            <Trash2 size={11} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })
+              )
             )}
           </div>
         </div>
@@ -319,6 +673,75 @@ export default function PersonalFinance() {
                 <div className="flex gap-3 pt-2">
                   <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setShowExpenseModal(false)}>Cancelar</Button>
                   <Button type="submit" variant="primary" size="md" className="flex-1" loading={loading}>Registrar Egreso</Button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* REGISTER LOAN MODAL */}
+      <AnimatePresence>
+        {showLoanModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowLoanModal(false)} className="fixed inset-0 bg-black/60 backdrop-blur-xs" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative bg-surface-800 border border-subtle w-full max-w-sm p-6 rounded-3xl shadow-modal z-10 space-y-4">
+              <div>
+                <h2 className="text-base font-bold text-foreground">Registrar Préstamo o Deuda</h2>
+                <p className="text-xs text-muted-400 mt-0.5">Registra dinero prestado u obtenido</p>
+              </div>
+
+              <form onSubmit={handleAddLoan} className="space-y-4">
+                <Input 
+                  label="Nombre del Contacto *" 
+                  value={loanContact} 
+                  onChange={e => setLoanContact(e.target.value)} 
+                  placeholder="Ej: Juan Pérez" 
+                  required 
+                  autoFocus
+                />
+
+                <Input 
+                  label="Monto del préstamo ($) *" 
+                  value={loanAmount} 
+                  onChange={e => setLoanAmount(e.target.value)} 
+                  placeholder="Ej: 150000" 
+                  type="number" 
+                  required 
+                />
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Tipo de Operación *</label>
+                  <select
+                    value={loanType}
+                    onChange={e => setLoanType(e.target.value)}
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+                  >
+                    <option value="lent">Dinero que presté (Por Cobrar)</option>
+                    <option value="borrowed">Dinero que recibí prestado (Por Pagar)</option>
+                  </select>
+                </div>
+
+                <Input 
+                  label="Detalle / Concepto" 
+                  value={loanDesc} 
+                  onChange={e => setLoanDesc(e.target.value)} 
+                  placeholder="Ej: Préstamo para repuestos" 
+                />
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Fecha de Vencimiento (Opcional)</label>
+                  <input
+                    type="date"
+                    value={loanDueDate}
+                    onChange={e => setLoanDueDate(e.target.value)}
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setShowLoanModal(false)}>Cancelar</Button>
+                  <Button type="submit" variant="primary" size="md" className="flex-1" loading={loading}>Registrar</Button>
                 </div>
               </form>
             </motion.div>
