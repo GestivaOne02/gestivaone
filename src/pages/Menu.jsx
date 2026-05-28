@@ -14,6 +14,8 @@ import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
+const smoothTransition = { type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }
+
 function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }) {
   const [hovered, setHovered] = useState(false)
 
@@ -30,7 +32,7 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
           : "bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground border-subtle",
         hovered ? "w-[170px] px-3.5" : "w-10 px-2.5 justify-center"
       )}
-      transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.45 }}
+      transition={smoothTransition}
     >
       <Icon size={15} className="shrink-0" />
       <AnimatePresence>
@@ -42,7 +44,7 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="flex flex-col items-start leading-none text-left shrink-0 whitespace-nowrap"
           >
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">{label}</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider opacity-80">{label}</span>
             {value && <span className="text-xs font-black mt-0.5">{value}</span>}
           </motion.div>
         )}
@@ -54,29 +56,31 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
 function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, totalBilled, status }) {
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       whileHover={{ y: -2, scale: 1.005 }}
       onClick={onSelect}
       className={clsx(
-        'relative flex flex-col sm:flex-row sm:items-center gap-3.5 p-4 rounded-3xl border-2 cursor-pointer transition-all duration-300 group',
+        'relative flex flex-col sm:flex-row sm:items-center gap-3.5 p-4 rounded-3xl border-2 cursor-pointer transition-colors duration-300 group',
         selected
           ? 'border-brand-500 bg-brand-600/10 shadow-glow-sm'
           : 'border-subtle bg-surface-800 hover:border-brand-500/30 hover:bg-surface-800/80'
       )}
+      transition={smoothTransition}
     >
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+      <motion.div layout className="flex items-center gap-3 flex-1 min-w-0" transition={smoothTransition}>
         {/* Avatar */}
-        <div className={clsx(
-          'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 transition-all duration-300',
+        <motion.div layout className={clsx(
+          'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 transition-colors duration-300',
           selected ? 'bg-brand-600/40 text-brand-600 dark:text-brand-200' : 'bg-surface-600 text-foreground group-hover:bg-brand-600/20 group-hover:text-brand-600 dark:group-hover:text-brand-300'
-        )}>
+        )} transition={smoothTransition}>
           {client.name[0].toUpperCase()}
-        </div>
+        </motion.div>
 
         {/* Info */}
-        <div className="flex-1 min-w-0 pr-2">
+        <motion.div layout className="flex-1 min-w-0 pr-2" transition={smoothTransition}>
           <div className="flex items-center gap-2">
             <p className="text-sm font-semibold text-foreground truncate">{client.name}</p>
             {selected && <Check size={12} className="text-brand-400 shrink-0" />}
@@ -84,20 +88,20 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <Badge status={status} />
             {pendingAmount > 0 && (
-              <span className="text-xs text-danger-400 font-semibold">{format$(pendingAmount)} pendiente</span>
+              <span className="text-sm text-danger-400 font-semibold">{format$(pendingAmount)} pendiente</span>
             )}
           </div>
           {lastInvoice && (
-            <p className="text-xs text-muted-400 flex items-center gap-1 mt-1.5">
+            <p className="text-[13px] text-muted-400 flex items-center gap-1 mt-1.5">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60"></span>
               Última factura realizada: {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
             </p>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Responsive Visual Indicators & Interactive Expandable Buttons */}
-      <div className="flex items-center justify-end gap-2 shrink-0 border-t sm:border-t-0 sm:border-l border-brand-500/20 pt-3 sm:pt-0 sm:pl-3 h-auto sm:h-10">
+      <motion.div layout className="flex items-center justify-end gap-2 shrink-0 border-t sm:border-t-0 sm:border-l border-brand-500/20 pt-3 sm:pt-0 sm:pl-3 h-auto sm:h-10" transition={smoothTransition}>
         <ExpandableButton
           icon={History}
           label="Total Facturado"
@@ -112,14 +116,16 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
           onClick={onEdit}
           isPurple={false}
         />
-        <button
+        <motion.button
+          layout
           onClick={(e) => { e.stopPropagation(); onDelete() }}
-          className="h-10 w-10 rounded-full flex items-center justify-center border border-danger-500/10 bg-danger-500/5 hover:bg-danger-500/20 text-danger-400 transition-all duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
+          className="h-10 w-10 rounded-full flex items-center justify-center border border-danger-500/10 bg-danger-500/5 hover:bg-danger-500/20 text-danger-400 transition-colors duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
           title="Eliminar cliente"
+          transition={smoothTransition}
         >
           <Trash2 size={14} />
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
     </motion.div>
   )
 }

@@ -10,6 +10,8 @@ import clsx from 'clsx'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 
+const smoothTransition = { type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }
+
 const POCKET_TYPES = [
   { id: 'caja', label: 'Caja Fuerte', icon: BoxIcon, desc: 'Ideal para efectivo o reserva general' },
   { id: 'tarjeta', label: 'Tarjeta Prepago', icon: CreditCard, desc: 'Gastos digitales o suscripciones' },
@@ -226,13 +228,14 @@ export default function Pockets() {
                 key={p.id}
                 layout
                 className={clsx(
-                  "relative rounded-3xl p-5 overflow-hidden flex flex-col justify-between min-h-[190px] border transition-all duration-300",
+                  "relative rounded-3xl p-5 overflow-hidden flex flex-col justify-between min-h-[190px] border transition-colors duration-300",
                   p.type === 'tarjeta' 
                     ? "bg-gradient-to-br from-[#1e1145] to-[#120a28] border-brand-500/20 shadow-[0_4px_20px_rgba(124,58,237,0.15)]"
                     : p.type === 'caja'
                     ? "bg-surface-800 border-subtle hover:border-brand-500/30"
                     : "bg-surface-850 border-dashed border-subtle"
                 )}
+                transition={smoothTransition}
               >
                 {/* Visual Accent for Pockets */}
                 {p.type === 'tarjeta' && (

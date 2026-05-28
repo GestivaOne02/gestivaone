@@ -42,7 +42,7 @@ function StatusBadge({ status }) {
   const Icon = cfg.icon
 
   return (
-    <div className={clsx('flex items-center gap-1.5 px-2 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider', cfg.color)}>
+    <div className={clsx('flex items-center gap-1.5 px-2 py-1 rounded-md border text-xs font-bold uppercase tracking-wider', cfg.color)}>
       <Icon size={12} />
       {cfg.label}
     </div>
@@ -115,7 +115,7 @@ function InvoiceItemCard({ inv, format$, client }) {
         </div>
         <div className="flex flex-col items-end gap-1.5">
           <StatusBadge status={inv.payment_status} />
-          {noteText && <span className="text-[10px] text-muted-400 max-w-[150px] truncate" title={noteText}>Nota: {noteText}</span>}
+          {noteText && <span className="text-xs text-muted-400 max-w-[180px] truncate" title={noteText}>Nota: {noteText}</span>}
         </div>
       </div>
 
@@ -151,7 +151,7 @@ function InvoiceItemCard({ inv, format$, client }) {
           {showHistory && (
             <div className="mt-1.5 pl-3 border-l-2 border-subtle space-y-1.5 py-1">
               {payments.map((p, idx) => (
-                <div key={idx} className="flex justify-between text-[11px] text-muted-400">
+                <div key={idx} className="flex justify-between text-xs text-muted-400">
                   <div className="flex flex-col">
                     <span className="font-semibold text-muted-300">{p.reference || 'Abono'}</span>
                     <span>{format(new Date(p.date), "dd/MM/yyyy - HH:mm")}</span>
@@ -175,7 +175,7 @@ function InvoiceItemCard({ inv, format$, client }) {
             type="button"
             onClick={handleWhatsAppShare}
             title={inv.payment_status === 'paid' ? "Compartir Factura por WhatsApp" : "Enviar Recordatorio por WhatsApp"}
-            className="p-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center justify-center gap-1 text-[11px] font-bold"
+            className="p-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center justify-center gap-1 text-xs font-bold"
           >
             <MessageSquare size={12} />
             <span>{inv.payment_status === 'paid' ? 'Compartir' : 'Recordar'}</span>
@@ -202,7 +202,7 @@ function InvoiceItemCard({ inv, format$, client }) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label className="text-[10px] text-muted-400 uppercase font-bold tracking-wider block mb-1">Monto del abono</label>
+              <label className="text-xs text-muted-400 uppercase font-bold tracking-wider block mb-1">Monto del abono</label>
               <input
                 type="number"
                 required
@@ -215,7 +215,7 @@ function InvoiceItemCard({ inv, format$, client }) {
               />
             </div>
             <div>
-              <label className="text-[10px] text-muted-400 uppercase font-bold tracking-wider block mb-1">Referencia (Ej: Nequi, PSE)</label>
+              <label className="text-xs text-muted-400 uppercase font-bold tracking-wider block mb-1">Referencia (Ej: Nequi, PSE)</label>
               <input
                 type="text"
                 value={ref}
@@ -283,11 +283,11 @@ export default function ClientHistoryModal({ open }) {
         {/* Summary Header */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-surface-700/30 border border-subtle rounded-xl p-3">
-            <p className="text-[10px] text-muted-400 font-bold uppercase tracking-widest mb-1">Total Pagado</p>
+            <p className="text-xs text-muted-400 font-bold uppercase tracking-widest mb-1">Total Pagado</p>
             <p className="text-lg font-bold text-success-400">{format$(totalSpent)}</p>
           </div>
           <div className="bg-surface-700/30 border border-subtle rounded-xl p-3">
-            <p className="text-[10px] text-muted-400 font-bold uppercase tracking-widest mb-1">Deuda Pendiente</p>
+            <p className="text-xs text-muted-400 font-bold uppercase tracking-widest mb-1">Deuda Pendiente</p>
             <p className="text-lg font-bold text-danger-400">{format$(totalDebt)}</p>
           </div>
         </div>
