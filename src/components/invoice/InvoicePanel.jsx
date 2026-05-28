@@ -91,7 +91,7 @@ export default function InvoicePanel({ isMobile }) {
           <button 
             type="button"
             onClick={() => setShowAddCharge(!showAddCharge)} 
-            className="text-white hover:text-white/80 font-bold text-[10px] uppercase transition-colors"
+            className="text-brand-500 dark:text-brand-400 hover:text-brand-600 dark:hover:text-brand-300 font-bold text-[10px] uppercase transition-colors"
           >
             {showAddCharge ? 'Cancelar' : '+ Agregar Cargo'}
           </button>

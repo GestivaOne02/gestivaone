@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, FolderPlus, Coins, ArrowUpRight, ArrowDownRight, Trash2, Edit, CreditCard, Box as BoxIcon, Receipt } from 'lucide-react'
 import { usePocketStore } from '@/store/usePocketStore'
@@ -7,6 +7,8 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import { useInvoiceStore } from '@/store/useInvoiceStore'
+import { useExpenseStore } from '@/store/useExpenseStore'
 
 const POCKET_TYPES = [
   { id: 'caja', label: 'Caja Fuerte', icon: BoxIcon, desc: 'Ideal para efectivo o reserva general' },
@@ -24,11 +26,27 @@ export default function Pockets() {
   const withdrawFunds = usePocketStore((s) => s.withdrawFunds)
   const format = useCurrencyStore((s) => s.format)
 
+  const invoices = useInvoiceStore((s) => s.invoices)
+  const fetchInvoices = useInvoiceStore((s) => s.fetchInvoices)
+  const expenses = useExpenseStore((s) => s.expenses)
+  const fetchExpenses = useExpenseStore((s) => s.fetchExpenses)
+  const addExpense = useExpenseStore((s) => s.addExpense)
+
   const [showAddModal, setShowAddModal] = useState(false)
   const [showFundModal, setShowFundModal] = useState(null) // { pocketId, action: 'add' | 'withdraw' }
   const [fundAmount, setFundAmount] = useState('')
+  const [fundSource, setFundSource] = useState('manual') // 'manual' | 'utility' | pocketId
   const [loading, setLoading] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
+
+  const utilidadNetaReal = useMemo(() => {
+    const totalRev = invoices
+      .filter((i) => i.payment_status === 'paid')
+      .reduce((sum, i) => sum + (Number(i.total) || 0), 0)
+    const totalExp = expenses
+      .reduce((sum, e) => sum + (Number(e.amount) || 0), 0)
+    return totalRev - totalExp
+  }, [invoices, expenses])
 
   // Form state
   const [name, setName] = useState('')
@@ -76,6 +94,8 @@ export default function Pockets() {
 
   useEffect(() => {
     fetchPockets()
+    fetchInvoices()
+    fetchExpenses()
   }, [])
 
   const handleCreate = async (e) => {
@@ -115,8 +135,38 @@ export default function Pockets() {
     try {
       let success = false
       if (showFundModal.action === 'add') {
+        if (fundSource === 'utility') {
+          if (utilidadNetaReal < amt) {
+            toast.error('Fondos insuficientes en la Utilidad Neta del negocio')
+            setLoading(false)
+            return
+          }
+          const expResult = await addExpense({
+            amount: amt,
+            category: 'Retiros',
+            description: `Retiro de utilidad para depositar en bolsillo: ${pockets.find(p => p.id === showFundModal.pocketId)?.name || ''}`
+          })
+          if (!expResult.success) {
+            toast.error(expResult.error || 'Error al retirar fondos de la utilidad neta')
+            setLoading(false)
+            return
+          }
+        } else if (fundSource !== 'manual') {
+          const srcPocket = pockets.find(p => p.id === fundSource)
+          if (!srcPocket || srcPocket.balance < amt) {
+            toast.error('Fondos insuficientes en el bolsillo de origen')
+            setLoading(false)
+            return
+          }
+          const wResult = await withdrawFunds(fundSource, amt)
+          if (!wResult) {
+            setLoading(false)
+            return
+          }
+        }
+
         success = await addFunds(showFundModal.pocketId, amt)
-        if (success) toast.success('Fondos agregados')
+        if (success) toast.success('Fondos depositados')
       } else {
         success = await withdrawFunds(showFundModal.pocketId, amt)
         if (success) toast.success('Fondos retirados')
@@ -124,8 +174,12 @@ export default function Pockets() {
 
       if (success) {
         setFundAmount('')
+        setFundSource('manual')
         setShowFundModal(null)
       }
+    } catch (err) {
+      console.error(err)
+      toast.error('Ocurrió un error al procesar la transacción')
     } finally {
       setLoading(false)
     }
@@ -357,6 +411,23 @@ export default function Pockets() {
                   required 
                   autoFocus
                 />
+
+                {showFundModal.action === 'add' && (
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Procedencia de los Fondos *</label>
+                    <select
+                      value={fundSource}
+                      onChange={e => setFundSource(e.target.value)}
+                      className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+                    >
+                      <option value="manual">Ingreso Manual (Sin origen/Efectivo)</option>
+                      <option value="utility">Utilidad Neta (Negocio) - Disp: {format(utilidadNetaReal)}</option>
+                      {pockets.filter(p => p.id !== showFundModal.pocketId).map(p => (
+                        <option key={p.id} value={p.id}>Bolsillo: {p.name} - Disp: {format(p.balance)}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div className="flex gap-3 pt-1">
                   <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setShowFundModal(null)}>Cancelar</Button>

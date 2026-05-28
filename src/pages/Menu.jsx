@@ -18,17 +18,19 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
   const [hovered, setHovered] = useState(false)
 
   return (
-    <button
+    <motion.button
+      layout
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={(e) => { e.stopPropagation(); onClick() }}
       className={clsx(
-        "h-10 rounded-full flex items-center justify-start gap-2 border transition-all duration-300 ease-out-expo cursor-pointer select-none shrink-0 shadow-sm overflow-hidden",
+        "h-10 rounded-full flex items-center justify-start gap-2 border cursor-pointer select-none shrink-0 shadow-sm overflow-hidden",
         isPurple
           ? "bg-brand-600 hover:bg-brand-500 text-white border-brand-500/40 hover:shadow-glow-sm"
           : "bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground border-subtle",
         hovered ? "w-[170px] px-3.5" : "w-10 px-2.5 justify-center"
       )}
+      transition={{ type: "spring", stiffness: 380, damping: 26 }}
     >
       <Icon size={15} className="shrink-0" />
       <AnimatePresence>
@@ -40,12 +42,12 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
             transition={{ duration: 0.15 }}
             className="flex flex-col items-start leading-none text-left shrink-0"
           >
-            <span className="text-[9px] font-bold uppercase tracking-wider opacity-85">{label}</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider opacity-85">{label}</span>
             {value && <span className="text-xs font-black mt-0.5">{value}</span>}
           </motion.div>
         )}
       </AnimatePresence>
-    </button>
+    </motion.button>
   )
 }
 
@@ -82,11 +84,11 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <Badge status={status} />
             {pendingAmount > 0 && (
-              <span className="text-[11px] text-danger-400 font-medium">{format$(pendingAmount)} pendiente</span>
+              <span className="text-xs text-danger-400 font-semibold">{format$(pendingAmount)} pendiente</span>
             )}
           </div>
           {lastInvoice && (
-            <p className="text-[10px] text-muted-400 flex items-center gap-1 mt-1.5">
+            <p className="text-xs text-muted-400 flex items-center gap-1 mt-1.5">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60"></span>
               Última factura realizada: {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
             </p>

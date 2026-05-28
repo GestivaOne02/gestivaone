@@ -462,48 +462,63 @@ export default function PersonalFinance() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Wallet & Summary Column */}
         <div className="lg:col-span-1 flex flex-col gap-4">
-          {/* Wallet Display */}
-          <div className="bg-gradient-to-br from-[#1b0d3d] to-[#0c051b] border border-brand-500/25 rounded-3xl p-6 flex flex-col justify-between min-h-[200px] shadow-[0_4px_24px_rgba(139,92,246,0.15)] relative overflow-hidden">
-            {/* Subtle Background Glow */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-[60px]" />
-            
-            <div className="relative z-10">
-              <div className="flex items-center gap-2">
-                <Wallet size={16} className="text-brand-400 animate-pulse" />
-                <span className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">Bolsillo Personal</span>
+          {/* Wallet Sleeve Stack Container */}
+          <div className="relative pt-12 select-none shrink-0 group">
+            {/* Peeking Credit Card */}
+            <div className="absolute -top-2 left-6 right-6 h-32 rounded-2xl bg-gradient-to-br from-white/12 to-white/3 border border-white/10 backdrop-blur-md p-4 text-white shadow-lg flex flex-col justify-between transition-all duration-300 group-hover:-top-5">
+              <div className="flex justify-between items-start">
+                <span className="text-xs font-bold tracking-wide uppercase opacity-90 truncate max-w-[120px]">{user?.full_name || 'Usuario'}</span>
+                <span className="text-xs font-black italic tracking-widest text-white/90">VISA</span>
               </div>
-              <h2 className="text-[11px] text-muted-400 uppercase tracking-wider font-bold mt-4">Fondos Disponibles</h2>
-              <p className="text-3xl font-black text-white mt-1.5 drop-shadow-[0_0_12px_rgba(139,92,246,0.2)]">{format(balance)}</p>
+              <div className="text-center my-1">
+                <span className="text-xs tracking-[0.2em] text-white/70 font-mono font-medium">•••• •••• •••• 5678</span>
+              </div>
+              <div className="flex justify-between items-end text-[10px] text-white/50 font-medium">
+                <span>GESTIVA ONE</span>
+                <span>Vence: 12/29</span>
+              </div>
             </div>
 
-            <div className="flex gap-3 mt-6 relative z-10">
-              <button
-                type="button"
-                onClick={() => setShowAddModal(true)}
-                title="Añadir saldo disponible al bolsillo personal"
-                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <ArrowUpRight size={13} />
-                Agregar Saldo
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowWithdrawModal(true)}
-                title="Retirar saldo del bolsillo personal hacia negocio/bolsillos"
-                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <ArrowDownRight size={13} />
-                Retirar Saldo
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowExpenseModal(true)}
-                title="Gastar dinero restándolo de tus fondos"
-                className="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-glow-sm cursor-pointer"
-              >
-                <Coins size={13} />
-                Gastar
-              </button>
+            {/* Front Pocket Sleeve */}
+            <div className="relative z-10 bg-gradient-to-br from-[#4f46e5] to-[#20154c] border-t border-white/20 rounded-3xl p-5 shadow-[0_12px_36px_rgba(79,70,229,0.3)] flex flex-col justify-between min-h-[160px] overflow-hidden">
+              {/* Pocket Stitch Line Effect */}
+              <div className="absolute inset-x-0 top-0 h-px border-t border-dashed border-white/25" />
+              
+              <div>
+                <span className="text-xs font-bold text-white/70 uppercase tracking-widest">Fondos Disponibles</span>
+                <p className="text-2xl font-black text-white mt-1 drop-shadow-sm truncate">{format(balance)}</p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between mt-6 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(true)}
+                  title="Añadir saldo desde utilidad del negocio o bolsillos"
+                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm animate-fade-in"
+                >
+                  <Plus size={13} />
+                  Ingresar
+                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowWithdrawModal(true)}
+                    title="Retirar saldo del bolsillo hacia utilidad o bolsillos de ahorro"
+                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 border border-white/10 text-white flex items-center justify-center transition-all cursor-pointer"
+                  >
+                    <ArrowDownRight size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowExpenseModal(true)}
+                    title="Registrar egreso personal descontándolo del bolsillo"
+                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 border border-white/10 text-white flex items-center justify-center transition-all cursor-pointer"
+                  >
+                    <Coins size={14} />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -517,16 +532,16 @@ export default function PersonalFinance() {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-surface-700/20 border border-subtle rounded-2xl p-3.5 flex flex-col justify-between">
                 <div>
-                  <span className="text-[9px] font-bold text-success-400 uppercase tracking-widest">Por Cobrar</span>
-                  <p className="text-[10px] text-muted-400 mt-0.5">Dinero Prestado</p>
+                  <span className="text-xs font-bold text-success-400 uppercase tracking-widest">Por Cobrar</span>
+                  <p className="text-xs text-muted-400 mt-0.5">Dinero Prestado</p>
                 </div>
                 <p className="text-sm font-extrabold text-success-400 mt-2">{format(loansSummary.toCollect)}</p>
               </div>
 
               <div className="bg-surface-700/20 border border-subtle rounded-2xl p-3.5 flex flex-col justify-between">
                 <div>
-                  <span className="text-[9px] font-bold text-danger-400 uppercase tracking-widest">Por Pagar</span>
-                  <p className="text-[10px] text-muted-400 mt-0.5">Dinero Recibido</p>
+                  <span className="text-xs font-bold text-danger-400 uppercase tracking-widest">Por Pagar</span>
+                  <p className="text-xs text-muted-400 mt-0.5">Dinero Recibido</p>
                 </div>
                 <p className="text-sm font-extrabold text-danger-400 mt-2">{format(loansSummary.toPay)}</p>
               </div>
@@ -563,11 +578,11 @@ export default function PersonalFinance() {
               </button>
             </div>
             {activeTab === 'expenses' ? (
-              <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest">
+              <span className="text-xs bg-brand-500/10 text-brand-400 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest">
                 {expenses.length} Transacciones
               </span>
             ) : (
-              <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest">
+              <span className="text-xs bg-brand-500/10 text-brand-400 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest">
                 {loans.length} Registros
               </span>
             )}
@@ -592,9 +607,9 @@ export default function PersonalFinance() {
                       <div className="min-w-0">
                         <p className="text-xs font-bold text-foreground truncate">{e.description}</p>
                         <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                          <span className="text-[9px] bg-surface-600 text-muted-300 px-1.5 py-0.2 rounded font-medium">{e.category}</span>
-                          <span className="text-[9px] text-muted-500 flex items-center gap-1">
-                            <CalendarDays size={10} />
+                          <span className="text-xs bg-surface-600 text-muted-300 px-1.5 py-0.5 rounded font-medium">{e.category}</span>
+                          <span className="text-xs text-muted-400 flex items-center gap-1">
+                            <CalendarDays size={12} />
                             {new Date(e.created_at).toLocaleDateString('es-CO')}
                           </span>
                         </div>
@@ -659,7 +674,7 @@ export default function PersonalFinance() {
                             </p>
                             <span 
                               className={clsx(
-                                "text-[8.5px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider",
+                                "text-xs px-1.5 py-0.5 rounded font-bold uppercase tracking-wider",
                                 isPaid 
                                   ? "bg-surface-700 text-muted-400" 
                                   : isLent 
@@ -672,19 +687,19 @@ export default function PersonalFinance() {
                           </div>
                           
                           {l.description && (
-                            <p className="text-[10.5px] text-muted-400 truncate mt-0.5 max-w-[250px]">{l.description}</p>
+                            <p className="text-xs text-muted-400 truncate mt-0.5 max-w-[250px]">{l.description}</p>
                           )}
 
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
-                            <span className="text-[9px] text-muted-500 flex items-center gap-1">
-                              <CalendarDays size={10} />
+                            <span className="text-xs text-muted-400 flex items-center gap-1">
+                              <CalendarDays size={12} />
                               {new Date(l.created_at || Date.now()).toLocaleDateString('es-CO')}
                             </span>
 
                             {l.due_date && (
                               <span 
                                 className={clsx(
-                                  "text-[9px] flex items-center gap-1 font-semibold",
+                                  "text-xs flex items-center gap-1 font-semibold",
                                   isPaid 
                                     ? "text-muted-500" 
                                     : isOverdue 
@@ -692,7 +707,7 @@ export default function PersonalFinance() {
                                     : "text-muted-400"
                                 )}
                               >
-                                <Calendar size={10} />
+                                <Calendar size={12} />
                                 Vence: {new Date(l.due_date).toLocaleDateString('es-CO')} {isOverdue && '(Vencido)'}
                               </span>
                             )}
