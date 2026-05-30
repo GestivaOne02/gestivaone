@@ -76,7 +76,7 @@ export default function AddProductModal({ open }) {
     const finalData = {
       ...data,
       category: finalCategory,
-      stock: data.unit === 'ILIMITADO' ? null : Number(data.stock || 0),
+      stock: data.unit === 'ILIMITADO' ? 999999999 : Number(data.stock || 0),
     }
 
     if (editing) {

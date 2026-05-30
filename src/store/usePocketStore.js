@@ -70,6 +70,33 @@ export const usePocketStore = create((set, get) => ({
     await get().savePocketsToDB(updated)
   },
 
+  settleAndDeletePocket: async (id) => {
+    const current = get().pockets
+    const pocket = current.find(p => p.id === id)
+    if (!pocket) return false
+
+    const balance = Number(pocket.balance || 0)
+    if (balance !== 0) {
+      const { useExpenseStore } = await import('./useExpenseStore')
+      const result = await useExpenseStore.getState().addExpense({
+        amount: balance > 0 ? -balance : Math.abs(balance),
+        category: balance > 0 ? 'Reintegros' : 'Bolsillos',
+        description: balance > 0
+          ? `Reintegro a utilidad neta por eliminacion de bolsillo: ${pocket.name}`
+          : `Egreso pendiente por saldo negativo al eliminar bolsillo: ${pocket.name}`,
+      })
+
+      if (!result?.success) {
+        toast.error(result?.error || 'No se pudo liquidar el saldo del bolsillo')
+        return false
+      }
+    }
+
+    const updated = current.filter(p => p.id !== id)
+    await get().savePocketsToDB(updated)
+    return true
+  },
+
   addFunds: async (id, amount) => {
     const amt = Number(amount)
     if (isNaN(amt) || amt <= 0) return false

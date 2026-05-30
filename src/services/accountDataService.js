@@ -169,13 +169,19 @@ export const clearAccountData = async () => {
     await deleteCompanyRows(table)
   }
 
-  await updateProfile({
-    settings: {
-      ...(user.settings || {}),
-      pockets: [],
-      custom_categories: [],
-    },
-  })
+  const cleanedSettings = { ...(user.settings || {}) }
+  delete cleanedSettings.pockets
+  delete cleanedSettings.custom_categories
+  delete cleanedSettings.pinned_charges
+  delete cleanedSettings[`personal_finance_${user.id}`]
+
+  try {
+    localStorage.removeItem(`personal_finance_${user.id}`)
+    localStorage.removeItem('personal_finance_local')
+    localStorage.removeItem('personal_loans_local')
+  } catch {}
+
+  await updateProfile({ settings: cleanedSettings })
 
   await refreshAccountStores()
 }

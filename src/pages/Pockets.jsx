@@ -25,7 +25,7 @@ export default function Pockets() {
   const fetchPockets = usePocketStore((s) => s.fetchPockets)
   const addPocket = usePocketStore((s) => s.addPocket)
   const updatePocket = usePocketStore((s) => s.updatePocket)
-  const deletePocket = usePocketStore((s) => s.deletePocket)
+  const settleAndDeletePocket = usePocketStore((s) => s.settleAndDeletePocket)
   const addFunds = usePocketStore((s) => s.addFunds)
   const withdrawFunds = usePocketStore((s) => s.withdrawFunds)
   const format = useCurrencyStore((s) => s.format)
@@ -457,7 +457,7 @@ export default function Pockets() {
               <div>
                 <h2 className="text-base font-bold text-foreground">¿Eliminar Bolsillo?</h2>
                 <p className="text-xs text-muted-400 mt-1.5 leading-relaxed">
-                  Se perderá el saldo acumulado de este bolsillo. Esta acción no se puede deshacer.
+                  El saldo positivo volvera a la utilidad neta. Si el bolsillo tiene saldo negativo, se registrara como egreso pendiente. Esta accion no se puede deshacer.
                 </p>
               </div>
 
@@ -469,10 +469,13 @@ export default function Pockets() {
                   size="md" 
                   className="flex-1 bg-danger-600 hover:bg-danger-700 text-white border-none shadow-glow-sm" 
                   onClick={async () => {
-                    await deletePocket(deleteConfirmId);
+                  const success = await settleAndDeletePocket(deleteConfirmId);
+                  if (success) {
                     setDeleteConfirmId(null);
-                    toast.success('Bolsillo eliminado');
-                  }}
+                    await fetchExpenses(true);
+                    toast.success('Bolsillo liquidado y eliminado');
+                  }
+                }}
                 >
                   Eliminar
                 </Button>
