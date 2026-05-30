@@ -18,11 +18,55 @@ const COMPANY_TABLES = [
 ]
 
 const JSON_FIELDS = new Set(['items', 'settings', 'permissions'])
+const EXCEL_CELL_LIMIT = 32000
+const CHUNK_MARKER = '__GESTIVA_CHUNK__'
 
 const stringifyCell = (value) => {
   if (value === null || value === undefined) return ''
   if (Array.isArray(value) || typeof value === 'object') return JSON.stringify(value)
   return value
+}
+
+const splitLongCells = (row) => {
+  const output = {}
+
+  Object.entries(row).forEach(([key, rawValue]) => {
+    const value = stringifyCell(rawValue)
+    if (typeof value !== 'string' || value.length <= EXCEL_CELL_LIMIT) {
+      output[key] = value
+      return
+    }
+
+    const chunks = []
+    for (let i = 0; i < value.length; i += EXCEL_CELL_LIMIT) {
+      chunks.push(value.slice(i, i + EXCEL_CELL_LIMIT))
+    }
+
+    output[key] = `${CHUNK_MARKER}${chunks.length}`
+    chunks.forEach((chunk, index) => {
+      output[`${key}__chunk_${index + 1}`] = chunk
+    })
+  })
+
+  return output
+}
+
+const joinLongCells = (row) => {
+  const output = {}
+
+  Object.entries(row).forEach(([key, value]) => {
+    if (key.includes('__chunk_')) return
+
+    if (typeof value === 'string' && value.startsWith(CHUNK_MARKER)) {
+      const count = Number(value.replace(CHUNK_MARKER, ''))
+      output[key] = Array.from({ length: count }, (_, index) => row[`${key}__chunk_${index + 1}`] || '').join('')
+      return
+    }
+
+    output[key] = value
+  })
+
+  return output
 }
 
 const parseCell = (key, value) => {
@@ -38,13 +82,13 @@ const parseCell = (key, value) => {
 }
 
 const normalizeRowsForSheet = (rows) =>
-  rows.map((row) => Object.fromEntries(Object.entries(row).map(([key, value]) => [key, stringifyCell(value)])))
+  rows.map(splitLongCells)
 
 const readSheet = (workbook, name) => {
   const sheet = workbook.Sheets[name]
   if (!sheet) return []
   return XLSX.utils.sheet_to_json(sheet, { defval: '' }).map((row) =>
-    Object.fromEntries(Object.entries(row).map(([key, value]) => [key, parseCell(key, value)]))
+    Object.fromEntries(Object.entries(joinLongCells(row)).map(([key, value]) => [key, parseCell(key, value)]))
   )
 }
 

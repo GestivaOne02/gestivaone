@@ -17,12 +17,13 @@ const schema = z.object({
   name:     z.string().min(2, 'Mínimo 2 caracteres'),
   price:    z.coerce.number().positive('Precio inválido'),
   cost:     z.coerce.number().min(0, 'Costo inválido').optional().or(z.literal('')),
-  unit:     z.enum(['KG', 'LB', 'UND', 'L', 'M']),
+  unit:     z.enum(['KG', 'LB', 'UND', 'L', 'M', 'ILIMITADO']),
   category: z.string().optional(),
   stock:    z.coerce.number().min(0).optional(),
 })
 
-const UNITS = ['KG', 'LB', 'UND', 'L', 'M']
+const UNITS = ['KG', 'LB', 'UND', 'L', 'M', 'ILIMITADO']
+const UNIT_LABELS = { ILIMITADO: 'Ilimitado' }
 
 export default function AddProductModal({ open }) {
   const addProduct    = useProductStore((s) => s.addProduct)
@@ -44,6 +45,10 @@ export default function AddProductModal({ open }) {
 
   const unit = watch('unit')
   const selectedCategory = watch('category')
+
+  useEffect(() => {
+    if (unit === 'ILIMITADO') setValue('stock', 0)
+  }, [unit, setValue])
 
   useEffect(() => {
     if (open && editing) {
@@ -68,7 +73,11 @@ export default function AddProductModal({ open }) {
       finalCategory = trimmedCustom
     }
 
-    const finalData = { ...data, category: finalCategory }
+    const finalData = {
+      ...data,
+      category: finalCategory,
+      stock: data.unit === 'ILIMITADO' ? null : Number(data.stock || 0),
+    }
 
     if (editing) {
       await updateProduct(editing.id, finalData)
@@ -118,14 +127,18 @@ export default function AddProductModal({ open }) {
             icon={<Archive size={14} />}
             placeholder="0"
             type="number"
+            disabled={unit === 'ILIMITADO'}
             {...register('stock')}
           />
+          {unit === 'ILIMITADO' && (
+            <p className="text-[11px] text-muted-400 mt-1.5">Este producto no descuenta inventario al venderse.</p>
+          )}
         </div>
 
         {/* Unit selector */}
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-medium text-muted-500 uppercase tracking-wide">Unidad</span>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
             {UNITS.map((u) => (
               <button
                 key={u}
@@ -138,7 +151,7 @@ export default function AddProductModal({ open }) {
                     : 'border-subtle bg-surface-700 text-muted-400 hover:text-foreground'
                 )}
               >
-                {u}
+                {UNIT_LABELS[u] || u}
               </button>
             ))}
           </div>

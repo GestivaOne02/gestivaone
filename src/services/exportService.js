@@ -114,10 +114,10 @@ export async function exportProductsPDF(products, companyName = 'Mi Empresa') {
   const rows = products.map((p) => [
     p.name,
     p.category || '—',
-    p.unit || '—',
+    p.unit === 'ILIMITADO' ? 'Ilimitado' : (p.unit || '—'),
     new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(p.price || 0),
-    p.stock ?? '—',
-    p.stock <= (p.minStock || 5) ? '⚠ Bajo' : 'OK',
+    p.unit === 'ILIMITADO' ? 'Ilimitado' : (p.stock ?? '—'),
+    p.unit === 'ILIMITADO' ? 'OK' : (p.stock <= (p.minStock || 5) ? '⚠ Bajo' : 'OK'),
   ])
 
   autoTable(doc, {
@@ -186,8 +186,9 @@ export async function exportProductsExcel(products, companyName = 'Mi Empresa') 
     [],
     ['Producto', 'Categoría', 'Unidad', 'Precio (COP)', 'Stock', 'Estado'],
     ...products.map((p) => [
-      p.name, p.category || '', p.unit || '', p.price || 0,
-      p.stock ?? 0, p.stock <= (p.minStock || 5) ? 'Stock Bajo' : 'OK',
+      p.name, p.category || '', p.unit === 'ILIMITADO' ? 'Ilimitado' : (p.unit || ''), p.price || 0,
+      p.unit === 'ILIMITADO' ? 'Ilimitado' : (p.stock ?? 0),
+      p.unit === 'ILIMITADO' ? 'OK' : (p.stock <= (p.minStock || 5) ? 'Stock Bajo' : 'OK'),
     ]),
   ]
   const ws = XLSX.utils.aoa_to_sheet(data)
@@ -521,4 +522,3 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   // Save the PDF
   doc.save(`factura_${invoiceIdStr}.pdf`)
 }
-

@@ -10,6 +10,7 @@ import { useSettingsStore } from '@/store/useSettingsStore'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { clearAccountData, exportAccountBackup, importAccountBackup } from '@/services/accountDataService'
+import Modal from '@/components/ui/Modal'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
@@ -316,6 +317,9 @@ function NotificationsSection({ variants }) {
 function DataManagementSection({ user, variants }) {
   const fileRef = useRef(null)
   const [busy, setBusy] = useState(false)
+  const [pendingImportFile, setPendingImportFile] = useState(null)
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
+  const [deleteText, setDeleteText] = useState('')
   const isAdmin = user?.role === 'administrador'
 
   const run = async (action, successMessage) => {
@@ -334,53 +338,102 @@ function DataManagementSection({ user, variants }) {
     const file = event.target.files?.[0]
     event.target.value = ''
     if (!file) return
-    if (!window.confirm('Importar este backup reemplazara los datos actuales de gestion. Continua solo si ya tienes una copia segura.')) return
+    setPendingImportFile(file)
+  }
+
+  const confirmImport = async () => {
+    const file = pendingImportFile
+    setPendingImportFile(null)
+    if (!file) return
     await run(() => importAccountBackup(file), 'Backup importado')
   }
 
-  const handleClear = async () => {
-    if (!window.confirm('Esta accion borrara productos, clientes, facturas, abonos, egresos, notificaciones, bolsillos y prestamos personales. No elimina tu usuario ni tu empresa. Deseas continuar?')) return
-    if (window.prompt('Escribe ELIMINAR para confirmar') !== 'ELIMINAR') return toast.error('Confirmacion cancelada')
+  const confirmClear = async () => {
+    if (deleteText !== 'ELIMINAR') return toast.error('Escribe ELIMINAR para confirmar')
+    setConfirmDeleteOpen(false)
+    setDeleteText('')
     await run(clearAccountData, 'Datos de gestion eliminados')
   }
 
   return (
-    <Section icon={Database} title="Datos y respaldo" desc="Backup Excel, importacion y limpieza de informacion" variants={variants}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <button
-          type="button"
-          onClick={() => run(exportAccountBackup, 'Backup generado')}
-          disabled={busy}
-          className="flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 disabled:opacity-50 border border-subtle text-foreground text-sm font-semibold px-4 py-3 rounded-xl transition-colors"
-        >
-          <Download size={15} /> Generar Backup
-        </button>
+    <>
+      <Section icon={Database} title="Datos y respaldo" desc="Backup Excel, importacion y limpieza de informacion" variants={variants}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => run(exportAccountBackup, 'Backup generado')}
+            disabled={busy}
+            className="flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 disabled:opacity-50 border border-subtle text-foreground text-sm font-semibold px-4 py-3 rounded-xl transition-colors"
+          >
+            <Download size={15} /> Generar Backup
+          </button>
 
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          disabled={busy || !isAdmin}
-          className="flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-3 rounded-xl transition-colors"
-        >
-          <Upload size={15} /> Importar Backup
-        </button>
-        <input ref={fileRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImport} />
-      </div>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={busy || !isAdmin}
+            className="flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-3 rounded-xl transition-colors"
+          >
+            <Upload size={15} /> Importar Backup
+          </button>
+          <input ref={fileRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImport} />
+        </div>
 
-      <div className="border-t border-subtle pt-4">
-        <button
-          type="button"
-          onClick={handleClear}
-          disabled={busy || !isAdmin}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-danger-500/25 text-danger-400 hover:bg-danger-500/10 hover:border-danger-500/50 disabled:opacity-40 transition-all text-sm font-bold"
-        >
-          <Trash2 size={15} /> Eliminar todos los datos de gestion
-        </button>
-        {!isAdmin && (
-          <p className="text-[11px] text-muted-400 mt-2 text-center">Solo el administrador puede importar o eliminar datos.</p>
-        )}
-      </div>
-    </Section>
+        <div className="border-t border-subtle pt-4">
+          <button
+            type="button"
+            onClick={() => setConfirmDeleteOpen(true)}
+            disabled={busy || !isAdmin}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-danger-500/25 text-danger-400 hover:bg-danger-500/10 hover:border-danger-500/50 disabled:opacity-40 transition-all text-sm font-bold"
+          >
+            <Trash2 size={15} /> Eliminar todos los datos de gestion
+          </button>
+          {!isAdmin && (
+            <p className="text-[11px] text-muted-400 mt-2 text-center">Solo el administrador puede importar o eliminar datos.</p>
+          )}
+        </div>
+      </Section>
+
+      <Modal open={!!pendingImportFile} onClose={() => setPendingImportFile(null)} title="Importar backup" size="sm">
+        <div className="space-y-5">
+          <p className="text-sm text-muted-300 leading-relaxed">
+            Importar este backup reemplazara los datos actuales de gestion. Continua solo si ya tienes una copia segura.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-end gap-3">
+            <button type="button" onClick={() => setPendingImportFile(null)} className="px-5 py-2.5 rounded-xl border border-subtle text-sm font-semibold text-muted-300 hover:bg-surface-600 transition-colors">
+              Cancelar
+            </button>
+            <button type="button" onClick={confirmImport} disabled={busy} className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold transition-colors">
+              Importar
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)} title="Eliminar datos de gestion" size="sm">
+        <div className="space-y-5">
+          <p className="text-sm text-muted-300 leading-relaxed">
+            Esta accion borrara productos, clientes, facturas, abonos, egresos, notificaciones, bolsillos y prestamos personales. No elimina tu usuario ni tu empresa.
+          </p>
+          <div>
+            <label className="text-xs text-muted-400 mb-1 block">Escribe ELIMINAR para confirmar</label>
+            <input
+              value={deleteText}
+              onChange={(e) => setDeleteText(e.target.value)}
+              className="w-full bg-surface-800 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-danger-500/40"
+            />
+          </div>
+          <div className="flex flex-col sm:flex-row justify-end gap-3">
+            <button type="button" onClick={() => { setConfirmDeleteOpen(false); setDeleteText('') }} className="px-5 py-2.5 rounded-xl border border-subtle text-sm font-semibold text-muted-300 hover:bg-surface-600 transition-colors">
+              Cancelar
+            </button>
+            <button type="button" onClick={confirmClear} disabled={busy || deleteText !== 'ELIMINAR'} className="px-5 py-2.5 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-40 text-white text-sm font-bold transition-colors">
+              Eliminar datos
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </>
   )
 }
 

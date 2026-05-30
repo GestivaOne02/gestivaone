@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Printer, FileText, Check, Save, Download, Image, HelpCircle, AlertCircle, Sparkles, Building2, Phone, Mail, FileCheck, Settings, Palette } from 'lucide-react'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { useAuthStore } from '@/store/useAuthStore'

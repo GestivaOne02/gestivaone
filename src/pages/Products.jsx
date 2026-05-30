@@ -18,11 +18,16 @@ const UNIT_COLORS = {
   UND: 'text-brand-400 bg-brand-500/10',
   L: 'text-cyan-400 bg-cyan-500/10',
   M: 'text-orange-400 bg-orange-500/10',
+  ILIMITADO: 'text-success-400 bg-success-500/10',
 }
+
+const UNIT_LABELS = { ILIMITADO: 'Ilimitado' }
 
 function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
   const [qty, setQty] = useState('')
   const [added, setAdded] = useState(false)
+  const hasUnlimitedStock = product.unit === 'ILIMITADO'
+  const isOutOfStock = !hasUnlimitedStock && product.stock !== undefined && product.stock !== null && product.stock <= 0
 
   const handleAdd = () => {
     const finalQty = qty === '' ? 1 : Number(qty)
@@ -64,12 +69,19 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
       <div className="flex items-center justify-between">
         <span className="text-base sm:text-lg font-bold text-foreground">{format$(product.price)}</span>
         <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
-          {product.unit}
+          {UNIT_LABELS[product.unit] || product.unit}
         </span>
       </div>
 
       {/* Stock */}
-      {product.stock !== undefined && (
+      {hasUnlimitedStock ? (
+        <div className="flex items-center gap-1.5">
+          <div className="flex-1 h-1 bg-success-500/20 rounded-full overflow-hidden">
+            <div className="h-full rounded-full bg-success-500 w-full" />
+          </div>
+          <span className="text-[10px] text-success-400 font-semibold">Stock ilimitado</span>
+        </div>
+      ) : product.stock !== undefined && product.stock !== null && (
         <div className="flex items-center gap-1.5">
           <div className="flex-1 h-1 bg-surface-600 rounded-full overflow-hidden">
             <div
@@ -96,23 +108,23 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
               setQty(Math.max(1, Number(val)))
             }
           }}
-          disabled={product.stock !== undefined && product.stock <= 0}
+          disabled={isOutOfStock}
           className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <motion.button
-          whileTap={product.stock !== undefined && product.stock <= 0 ? {} : { scale: 0.95 }}
-          onClick={product.stock !== undefined && product.stock <= 0 ? undefined : handleAdd}
-          disabled={product.stock !== undefined && product.stock <= 0}
+          whileTap={isOutOfStock ? {} : { scale: 0.95 }}
+          onClick={isOutOfStock ? undefined : handleAdd}
+          disabled={isOutOfStock}
           className={clsx(
             'flex-1 flex items-center justify-center gap-1 py-1.5 rounded-full text-xs font-semibold transition-all',
-            product.stock !== undefined && product.stock <= 0
+            isOutOfStock
               ? 'bg-surface-700 text-muted-500 cursor-not-allowed border border-subtle'
               : added
                 ? 'bg-success-500 text-white'
                 : 'bg-brand-600 hover:bg-brand-500 text-white'
           )}
         >
-          {product.stock !== undefined && product.stock <= 0 ? (
+          {isOutOfStock ? (
             <span className="truncate">Agotado</span>
           ) : added ? (
             <>
@@ -130,7 +142,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
 
       {/* Out of stock action */}
       <AnimatePresence>
-        {product.stock !== undefined && product.stock <= 0 && (
+        {isOutOfStock && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
