@@ -575,6 +575,18 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     }, 100)
   }
 
+  const sendPasswordReset = async () => {
+    const cleanEmail = email.trim().toLowerCase()
+    if (!cleanEmail) return toast.error('Ingresa tu correo primero')
+
+    const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+      redirectTo: `${window.location.origin}/auth?mode=login`,
+    })
+
+    if (error) return toast.error(error.message)
+    toast.success('Te enviamos un enlace para cambiar tu contraseña')
+  }
+
   return (
     <div className="space-y-4">
       <form onSubmit={submit} className="space-y-3 sm:space-y-4">
@@ -642,6 +654,13 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
               </div>
               <span className="text-xs font-bold text-muted-500 group-hover:text-foreground transition-colors">Acuérdate de mí</span>
             </label>
+            <button
+              type="button"
+              onClick={sendPasswordReset}
+              className="text-xs font-bold text-brand-500 hover:text-brand-400 transition-colors"
+            >
+              Cambiar contraseña
+            </button>
           </div>
         )}
 
