@@ -177,7 +177,7 @@ export const useAuthStore = create(
 
       register: async (data) => {
         set({ loading: true })
-        
+
         // 1. Auth Signup
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: data.email,
@@ -194,8 +194,8 @@ export const useAuthStore = create(
         // 2. Create Company
         const { data: company, error: compError } = await supabase
           .from('companies')
-          .insert([{ 
-            name: data.companyName, 
+          .insert([{
+            name: data.companyName,
             logo_url: data.companyLogo
           }])
           .select()
@@ -374,10 +374,10 @@ export const useAuthStore = create(
 
       login: async (email, password) => {
         set({ loading: true })
-        
+
         // ── Normal Supabase Login ────────────────────────────────────
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-        
+
         if (error) {
           set({ loading: false })
           return { success: false, error: 'Correo o contraseña incorrectos' }
@@ -396,7 +396,7 @@ export const useAuthStore = create(
             .select('*')
             .eq('id', userId)
             .limit(1)
-          
+
           let profile = profileList?.[0]
 
           if (profile) {
@@ -444,7 +444,7 @@ export const useAuthStore = create(
 
           if (profError || !profile) {
             console.warn('Profile not found, attempting to auto-recover...')
-            
+
             // 1. Create a default company
             const { data: newComp } = await supabase
               .from('companies')
@@ -479,7 +479,7 @@ export const useAuthStore = create(
             .limit(1)
 
           const company = companyList?.[0]
-          
+
           // Auto-configure the app currency based on the company's registered currency
           if (company?.currency) {
             useCurrencyStore.getState().setSourceCurrency(company.currency)
@@ -634,6 +634,55 @@ export const useAuthStore = create(
         await get().syncProfile(profile.id)
         set({ loading: false })
         return { success: true, role: get().user?.role }
+      },
+
+      // ── Reset Workspace Data ────────────────────────────────────
+      // Permanently deletes ALL operational records for the user's company.
+      // Does NOT delete the company row, profiles, or authentication data.
+      resetWorkspaceData: async () => {
+        const { user } = get()
+        if (!user?.companyId) return { success: false, error: 'No se encontró la empresa del usuario.' }
+
+        const companyId = user.companyId
+
+        // Tables to purge, ordered to respect FK constraints (dependents first)
+        const tablesToPurge = [
+          // Financial child records
+          { table: 'invoice_payments',   col: 'company_id' },
+          { table: 'invoice_items',      col: 'company_id' },
+          // Core operational tables
+          { table: 'invoices',           col: 'company_id' },
+          { table: 'expenses',           col: 'company_id' },
+          { table: 'products',           col: 'company_id' },
+          { table: 'clients',            col: 'company_id' },
+          // Personal finance
+          { table: 'pocket_transactions', col: 'company_id' },
+          { table: 'pockets',            col: 'company_id' },
+          { table: 'personal_loans',     col: 'company_id' },
+          // Notifications
+          { table: 'notifications',      col: 'company_id' },
+        ]
+
+        const errors = []
+
+        for (const { table, col } of tablesToPurge) {
+          const { error } = await supabase
+            .from(table)
+            .delete()
+            .eq(col, companyId)
+
+          if (error) {
+            // Some tables might not exist yet or have different FK columns — log but continue
+            console.warn(`resetWorkspaceData: could not purge "${table}":`, error.message)
+            errors.push(table)
+          }
+        }
+
+        if (errors.length === tablesToPurge.length) {
+          return { success: false, error: 'No se pudo eliminar ninguna tabla. Verifica los permisos.' }
+        }
+
+        return { success: true, skipped: errors }
       },
     }),
     {

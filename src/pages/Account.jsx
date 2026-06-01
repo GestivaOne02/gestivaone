@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   User, Shield, Bell, Zap, LogOut, Building2, Phone, Mail,
   Camera, Check, Eye, EyeOff, ChevronDown, ChevronUp, Key, Copy,
-  Database, Download, Upload, Trash2
+  Database, Download, Upload, Trash2, AlertTriangle
 } from 'lucide-react'
 import { useAuthStore, PLANS, ROLES } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
@@ -437,6 +437,141 @@ function DataManagementSection({ user, variants }) {
   )
 }
 
+// ── Reset Workspace Section ──────────────────────────────────
+function ResetWorkspaceSection({ user, variants }) {
+  const resetWorkspaceData = useAuthStore((s) => s.resetWorkspaceData)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [confirmText, setConfirmText] = useState('')
+  const [busy, setBusy] = useState(false)
+  const isAdmin = user?.role === 'administrador'
+
+  const handleReset = async () => {
+    if (confirmText !== 'RESETEAR') return toast.error('Escribe RESETEAR para confirmar')
+    setBusy(true)
+    try {
+      const result = await resetWorkspaceData()
+      if (result?.success) {
+        toast.success('Espacio de trabajo limpiado exitosamente')
+        setModalOpen(false)
+        setConfirmText('')
+      } else {
+        toast.error(result?.error || 'Error al limpiar el espacio de trabajo')
+      }
+    } catch (err) {
+      toast.error(err.message || 'Ocurrió un error inesperado')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <>
+      <motion.div
+        variants={variants}
+        className="bg-surface-800 border-2 border-danger-500/20 rounded-3xl overflow-hidden"
+      >
+        <div className="p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-xl bg-danger-500/10 text-danger-400 shrink-0">
+              <AlertTriangle size={16} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-danger-400">Zona de peligro</p>
+              <p className="text-xs text-muted-400">Acciones irreversibles sobre tu espacio de trabajo</p>
+            </div>
+          </div>
+
+          <div className="bg-danger-500/5 border border-danger-500/20 rounded-2xl p-4 space-y-2">
+            <p className="text-sm font-bold text-danger-300">Limpiar espacio de trabajo</p>
+            <p className="text-xs text-muted-400 leading-relaxed">
+              Elimina <strong className="text-foreground">permanentemente</strong> toda la información de gestión: clientes, productos, facturas, pagos, egresos, bolsillos, préstamos y notificaciones.
+              Tu cuenta, empresa y trabajadores <span className="text-foreground font-medium">no se verán afectados</span>.
+            </p>
+            <button
+              type="button"
+              onClick={() => setModalOpen(true)}
+              disabled={busy || !isAdmin}
+              className="mt-2 flex items-center gap-2 bg-danger-600 hover:bg-danger-700 disabled:opacity-40 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-danger-900/30"
+            >
+              <Trash2 size={13} />
+              Limpiar todo el espacio de trabajo
+            </button>
+            {!isAdmin && (
+              <p className="text-[11px] text-muted-400">Solo el administrador puede realizar esta acción.</p>
+            )}
+          </div>
+        </div>
+      </motion.div>
+
+      <Modal open={modalOpen} onClose={() => { setModalOpen(false); setConfirmText('') }} title="⚠️ Limpiar espacio de trabajo" size="sm">
+        <div className="space-y-5">
+          <div className="bg-danger-500/10 border border-danger-500/25 rounded-xl p-4 space-y-2">
+            <p className="text-sm font-bold text-danger-300 flex items-center gap-2">
+              <AlertTriangle size={14} /> Esta acción es irreversible
+            </p>
+            <p className="text-xs text-muted-300 leading-relaxed">
+              Se eliminarán <strong>todos</strong> los registros de tu espacio de trabajo:
+            </p>
+            <ul className="text-xs text-muted-400 list-disc list-inside space-y-0.5">
+              <li>Clientes y contactos</li>
+              <li>Productos e inventario</li>
+              <li>Facturas y abonos</li>
+              <li>Egresos y gastos</li>
+              <li>Bolsillos y transacciones</li>
+              <li>Préstamos personales</li>
+              <li>Notificaciones</li>
+            </ul>
+            <p className="text-xs text-muted-400 pt-1">
+              Tu cuenta, empresa y empleados <strong className="text-foreground">permanecerán intactos</strong>.
+            </p>
+          </div>
+
+          <div>
+            <label className="text-xs text-muted-400 mb-1 block">
+              Escribe <span className="font-bold text-danger-300">RESETEAR</span> para confirmar
+            </label>
+            <input
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="RESETEAR"
+              className="w-full bg-surface-800 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-danger-500/40 placeholder:text-muted-500"
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => { setModalOpen(false); setConfirmText('') }}
+              className="px-5 py-2.5 rounded-xl border border-subtle text-sm font-semibold text-muted-300 hover:bg-surface-600 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={busy || confirmText !== 'RESETEAR'}
+              className="px-5 py-2.5 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-40 text-white text-sm font-bold transition-colors flex items-center gap-2"
+            >
+              {busy ? (
+                <>
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                    className="inline-block w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full"
+                  />
+                  Limpiando...
+                </>
+              ) : (
+                <><Trash2 size={13} /> Limpiar espacio de trabajo</>
+              )}
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </>
+  )
+}
+
 export default function Account() {
   const user         = useAuthStore((s) => s.user)
   const updateProfile = useAuthStore((s) => s.updateProfile)
@@ -503,6 +638,7 @@ export default function Account() {
       <SecuritySection     user={user} updateProfile={updateProfile} variants={itemVariants} />
       <NotificationsSection variants={itemVariants} />
       <DataManagementSection user={user} variants={itemVariants} />
+      <ResetWorkspaceSection user={user} variants={itemVariants} />
 
       <motion.button 
         variants={itemVariants}
