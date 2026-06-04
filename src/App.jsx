@@ -71,7 +71,7 @@ export default function App() {
     // If version changed, perform a full purge of all non-essential data
     if (hasVersionChanged) {
       console.log(`🧹 New version detected (${CURRENT_VERSION})! Purging old persisted caches...`)
-      
+
       // Clear active keys too to force a complete reset of store states to avoid mismatches
       const keysToForceClear = [
         'gestiva-auth-v2.2',
@@ -161,8 +161,8 @@ export default function App() {
       ? 'Inicio'
       : (pageTitles[location.pathname] || 'GestivaOne')
     const originalTitle = `GO | ${pageTitle}`
-    const attentionTitle = '¡Tienes una factura pendiente! 📄'
-    
+    const attentionTitle = '¡Tienes una gestión pendiente!'
+
     document.title = originalTitle
 
     const handleVisibility = () => {
@@ -215,12 +215,12 @@ export default function App() {
         <div className="relative flex flex-col items-center">
           {/* Glowing Aura Effect */}
           <div className="absolute w-[200px] h-[200px] bg-brand-500/10 rounded-full blur-[60px] animate-pulse" />
-          
+
           {/* Animated Logo Container */}
           <div className="relative z-10 flex items-center justify-center w-24 h-24 rounded-2xl bg-white/5 border border-white/10 shadow-[0_0_50px_rgba(139,92,246,0.15)] animate-bounce [animation-duration:3s]">
-            <svg 
-              className="w-12 h-12 text-brand-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]" 
-              viewBox="0 0 24 24" 
+            <svg
+              className="w-12 h-12 text-brand-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]"
+              viewBox="0 0 24 24"
               fill="currentColor"
             >
               <path d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -252,17 +252,17 @@ export default function App() {
     <>
       <Routes>
         {/* Landing/Home Route (Conditional layout wrapper) */}
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={isAuthenticated ? <AppLayout /> : <Landing />}
         >
           <Route index element={<Dashboard />} />
         </Route>
 
         {/* Public Route */}
-        <Route 
-          path="/auth" 
-          element={isAuthenticated ? <Navigate to="/" replace /> : <Auth />} 
+        <Route
+          path="/auth"
+          element={isAuthenticated ? <Navigate to="/" replace /> : <Auth />}
         />
         <Route path="/terms" element={<Terms />} />
 

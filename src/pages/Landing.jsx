@@ -43,7 +43,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-surface-900 text-foreground selection:bg-brand-500/30 selection:text-brand-300">
-      
+
       {/* ─── NAVBAR ─── */}
       <nav className="sticky top-0 z-50 bg-surface-900/80 backdrop-blur-md border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,23 +68,23 @@ export default function Landing() {
 
             {/* CTA / Auth Actions */}
             <div className="flex items-center gap-4">
-              <button 
-                onClick={toggleTheme} 
+              <button
+                onClick={toggleTheme}
                 className="p-2 rounded-xl bg-surface-800 border border-subtle hover:bg-surface-700/60 transition-colors text-muted-400 hover:text-foreground"
                 aria-label="Toggle Theme"
               >
                 {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
               </button>
 
-              <Link 
-                to="/auth?mode=login" 
+              <Link
+                to="/auth?mode=login"
                 className="hidden sm:inline-block text-sm font-semibold text-muted-400 hover:text-foreground transition-colors px-4 py-2"
               >
                 Ingresar
               </Link>
-              
-              <Link 
-                to="/auth?mode=register" 
+
+              <Link
+                to="/auth?mode=register"
                 className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold shadow-glow-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-1.5"
               >
                 Empieza Tu Gestión
@@ -102,7 +102,7 @@ export default function Landing() {
         <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] bg-success-500/5 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div 
+          <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -110,7 +110,7 @@ export default function Landing() {
           >
             {/* Hero text content */}
             <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-              <motion.div 
+              <motion.div
                 variants={itemVariants}
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider"
               >
@@ -118,33 +118,33 @@ export default function Landing() {
                 Gestión Inteligente y Automatizada
               </motion.div>
 
-              <motion.h1 
+              <motion.h1
                 variants={itemVariants}
                 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-foreground"
               >
                 Toma el Control de tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Negocio</span> en Tiempo Real
               </motion.h1>
 
-              <motion.p 
+              <motion.p
                 variants={itemVariants}
                 className="text-base sm:text-lg text-muted-400 max-w-xl mx-auto lg:mx-0 leading-relaxed"
               >
                 La plataforma moderna que necesitas para automatizar inventarios, facturación, cuentas de cobro, reportes financieros y más, diseñada para optimizar cada proceso en tu empresa.
               </motion.p>
 
-              <motion.div 
+              <motion.div
                 variants={itemVariants}
                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
               >
-                <Link 
-                  to="/auth?mode=register" 
+                <Link
+                  to="/auth?mode=register"
                   className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold shadow-glow hover:shadow-brand-500/30 transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
                 >
                   Empieza Tu Gestión Gratis
                   <ArrowRight size={16} />
                 </Link>
-                <a 
-                  href="#caracteristicas" 
+                <a
+                  href="#caracteristicas"
                   className="w-full sm:w-auto text-center px-6 py-4 rounded-xl bg-surface-800 border border-subtle hover:bg-surface-700 hover:text-white text-muted-400 text-sm font-semibold transition-colors"
                 >
                   Ver Características
@@ -153,7 +153,7 @@ export default function Landing() {
             </div>
 
             {/* Hero mockup/preview */}
-            <motion.div 
+            <motion.div
               variants={itemVariants}
               className="lg:col-span-6 relative"
             >
@@ -316,7 +316,7 @@ export default function Landing() {
               <p className="text-sm text-muted-400 leading-relaxed">
                 Nos dedicamos a construir herramientas estables en la nube que utilicen bases de datos rápidas, alertas preventivas y canales de comunicación modernos para que tengas una visualización integral del estado financiero de tu negocio estés donde estés.
               </p>
-              
+
               <div className="grid grid-cols-2 gap-6 pt-4 border-t border-subtle">
                 <div>
                   <h4 className="text-lg font-bold text-brand-400">99.9%</h4>
@@ -375,7 +375,7 @@ export default function Landing() {
                   <span className="text-xs text-muted-400 ml-1">/ siempre</span>
                 </div>
                 <p className="text-xs text-muted-400">Perfecto para pequeños comercios y profesionales independientes.</p>
-                
+
                 <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
                   <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> 1 trabajador</li>
                   <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Facturación básica</li>
@@ -385,8 +385,8 @@ export default function Landing() {
                 </ul>
               </div>
 
-              <Link 
-                to="/auth?mode=register&plan=standard" 
+              <Link
+                to="/auth?mode=register&plan=standard"
                 className="w-full text-center py-3 rounded-xl bg-surface-600 hover:bg-surface-500 border border-subtle text-foreground text-xs font-bold transition-all block"
               >
                 Comenzar Gratis
@@ -411,7 +411,7 @@ export default function Landing() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-400">Para negocios en crecimiento que requieren gestión de personal y reportes avanzados.</p>
-                
+
                 <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
                   <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Hasta 10 trabajadores</li>
                   <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Todo lo de Standard</li>
@@ -422,8 +422,8 @@ export default function Landing() {
                 </ul>
               </div>
 
-              <Link 
-                to="/auth?mode=register&plan=pro" 
+              <Link
+                to="/auth?mode=register&plan=pro"
                 className="w-full text-center py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-glow transition-all block"
               >
                 Obtener Plan Pro
@@ -445,7 +445,7 @@ export default function Landing() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-400">Para empresas consolidadas que buscan automatización avanzada y multi-dispositivo.</p>
-                
+
                 <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
                   <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Hasta 30 trabajadores</li>
                   <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Todo lo de Pro</li>
@@ -456,8 +456,8 @@ export default function Landing() {
                 </ul>
               </div>
 
-              <Link 
-                to="/auth?mode=register&plan=empresarial" 
+              <Link
+                to="/auth?mode=register&plan=empresarial"
                 className="w-full text-center py-3 rounded-xl bg-surface-600 hover:bg-surface-500 border border-subtle text-foreground text-xs font-bold transition-all block"
               >
                 Obtener Plan 360
@@ -471,7 +471,7 @@ export default function Landing() {
       <section id="contacto" className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
+
             {/* Contact Information */}
             <div className="lg:col-span-5 space-y-6">
               <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">Contacto</span>
@@ -492,14 +492,14 @@ export default function Landing() {
                   <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><Phone size={16} /></div>
                   <div>
                     <p className="text-[10px] text-muted-500 uppercase font-bold">Línea de Atención</p>
-                    <a href="tel:+573001234567" className="text-sm font-semibold text-foreground hover:text-brand-400 transition-colors">+57 (300) 123-4567</a>
+                    <a href="tel:+573043059862" className="text-sm font-semibold text-foreground hover:text-brand-400 transition-colors">+57 (304) 405-9862</a>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><MapPin size={16} /></div>
                   <div>
                     <p className="text-[10px] text-muted-500 uppercase font-bold">Oficina Principal</p>
-                    <p className="text-sm font-semibold text-foreground">Medellín, Colombia</p>
+                    <p className="text-sm font-semibold text-foreground">Barranquilla, Atlantico, Colombia</p>
                   </div>
                 </div>
               </div>
@@ -526,9 +526,9 @@ export default function Landing() {
                 <label className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Tu mensaje</label>
                 <textarea rows={4} placeholder="Escribe tu duda o consulta aquí..." className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 resize-none" />
               </div>
-              <button 
-                type="button" 
-                onClick={() => alert('¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.')} 
+              <button
+                type="button"
+                onClick={() => alert('¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.')}
                 className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-glow-sm transition-all"
               >
                 Enviar Mensaje
