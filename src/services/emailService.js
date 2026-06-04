@@ -10,42 +10,34 @@ import {
 } from './emailTemplates'
 import { useSettingsStore } from '../store/useSettingsStore'
 
-const RESEND_API_URL = 'https://api.resend.com/emails'
-const FROM_EMAIL = 'GestivaOne <onboarding@resend.dev>'
+import { supabase } from '../lib/supabase'
 
-async function callResendAPI({ to, subject, html, replyTo }) {
-  const apiKey = import.meta.env.VITE_RESEND_API_KEY
-  if (!apiKey) {
-    console.warn('⚠️ No Resend API key found in VITE_RESEND_API_KEY')
-    return { success: false, error: 'Falta la API Key de Resend' }
-  }
-
+async function callResendAPI({ to, subject, html, replyTo, from }) {
   try {
-    const response = await fetch(RESEND_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: FROM_EMAIL,
+    const { data, error } = await supabase.functions.invoke('resend-email', {
+      body: {
         to: Array.isArray(to) ? to : [to],
         subject,
         html,
+        from: from || 'GestivaOne <onboarding@resend.dev>',
         reply_to: replyTo || undefined
-      })
+      }
     })
 
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}))
-      console.error('❌ Resend API Error:', errData)
-      return { success: false, error: errData.message || `Error HTTP ${response.status}` }
+    if (error) {
+      console.error('❌ Supabase Edge Function Invoke Error:', error)
+      return { success: false, error: error.message || 'Error al invocar función serverless' }
     }
 
-    const data = await response.json()
+    // Handlers inside Edge Functions might return an error structure if Deno fetch failed
+    if (data && data.error) {
+      console.error('❌ Serverless email provider error:', data.error)
+      return { success: false, error: data.error.message || 'Error del proveedor de correo' }
+    }
+
     return { success: true, data }
   } catch (error) {
-    console.error('❌ Resend email send catch error:', error)
+    console.error('❌ Edge Function invoke catch error:', error)
     return { success: false, error: error.message || 'Error de red' }
   }
 }
