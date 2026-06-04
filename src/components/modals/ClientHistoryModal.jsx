@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FileText, Clock, AlertTriangle, CheckCircle, Package, Plus, Coins, Check, Loader2, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react'
+import { FileText, Clock, AlertTriangle, CheckCircle, Package, Plus, Coins, Check, Loader2, ChevronDown, ChevronUp, MessageSquare, Mail } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
@@ -78,6 +78,42 @@ function InvoiceItemCard({ inv, format$, client }) {
     
     const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
+  }
+
+  const handleEmailShare = async () => {
+    let emailTarget = client?.email || ''
+    if (!emailTarget || emailTarget.trim() === '') {
+      const input = prompt('Este cliente no tiene correo registrado. Ingresa el correo de destino:', '')
+      if (input === null) return
+      if (!input.includes('@')) {
+        toast.error('Correo no válido')
+        return
+      }
+      emailTarget = input.trim()
+    }
+
+    const toastId = toast.loading('Enviando factura por correo...')
+    
+    try {
+      const { sendInvoiceEmail } = await import('@/services/emailService')
+      const user = useAuthStore.getState().user
+      const company = {
+        companyName: user?.companyName || 'GestivaOne',
+        companyLogo: user?.companyLogo || null,
+        companyEmail: user?.email || '',
+        companyPhone: user?.phone || ''
+      }
+      
+      const res = await sendInvoiceEmail(inv, emailTarget, company)
+      if (res.success) {
+        toast.success('📧 Factura enviada por correo con éxito!', { id: toastId })
+      } else {
+        toast.error(`Error: ${res.error || 'No se pudo enviar'}`, { id: toastId })
+      }
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al iniciar el servicio de correo', { id: toastId })
+    }
   }
 
   const handleAbonoSubmit = async (e) => {
@@ -179,6 +215,15 @@ function InvoiceItemCard({ inv, format$, client }) {
           >
             <MessageSquare size={12} />
             <span>{inv.payment_status === 'paid' ? 'Compartir' : 'Recordar'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleEmailShare}
+            title="Enviar factura por correo electrónico"
+            className="p-1.5 rounded-lg text-brand-400 bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/20 transition-colors flex items-center justify-center gap-1 text-xs font-bold"
+          >
+            <Mail size={12} />
+            <span>Correo</span>
           </button>
           {inv.payment_status !== 'paid' && (
             <button

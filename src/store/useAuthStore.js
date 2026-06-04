@@ -226,6 +226,15 @@ export const useAuthStore = create(
         }
 
         await get().syncProfile(userId)
+        
+        // Trigger transactional welcome email asynchronously
+        import('../services/emailService').then(({ sendWelcomeEmail }) => {
+          sendWelcomeEmail(
+            { email: data.email, name: data.name },
+            { companyName: data.companyName, companyLogo: data.companyLogo }
+          ).catch(err => console.warn('Failed to send welcome email:', err))
+        }).catch(err => console.warn('Failed to load email service:', err))
+
         set({ loading: false })
         return { success: true }
       },
@@ -680,6 +689,18 @@ export const useAuthStore = create(
 
         if (errors.length === tablesToPurge.length) {
           return { success: false, error: 'No se pudo eliminar ninguna tabla. Verifica los permisos.' }
+        }
+
+        // Trigger reset workspace confirmation email asynchronously
+        if (user.email) {
+          import('../services/emailService').then(({ sendResetWorkspaceEmail }) => {
+            const company = {
+              companyName: user.companyName || 'GestivaOne',
+              companyLogo: user.companyLogo || null,
+              companyEmail: user.email || ''
+            }
+            sendResetWorkspaceEmail(user.email, company).catch(err => console.warn('Failed to send reset workspace email:', err))
+          }).catch(err => console.warn('Failed to load email service:', err))
         }
 
         return { success: true, skipped: errors }

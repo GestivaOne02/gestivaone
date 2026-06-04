@@ -189,6 +189,18 @@ export const useInvoiceStore = create((set, get) => ({
       }
     }
 
+    if (paymentType === 'scheduled' && client?.email) {
+      const company = {
+        companyName: user.companyName || 'GestivaOne',
+        companyLogo: user.companyLogo || null,
+        companyEmail: user.email || '',
+        companyPhone: user.phone || ''
+      }
+      import('../services/emailService').then(({ sendInvoiceEmail }) => {
+        sendInvoiceEmail(mappedSaved, client.email, company)
+      }).catch(err => console.warn('Failed to send invoice email:', err))
+    }
+
     return mappedSaved;
   },
 
@@ -221,6 +233,22 @@ export const useInvoiceStore = create((set, get) => ({
         } catch (e) {
           console.error('❌ Error triggering payment notification:', e)
         }
+
+        // Trigger payment confirmation email asynchronously
+        import('./useClientStore').then(({ useClientStore }) => {
+          const client = useClientStore.getState().clients.find(c => c.id === inv.client_id)
+          if (client?.email) {
+            const company = {
+              companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
+              companyLogo: useAuthStore.getState().user?.companyLogo || null,
+              companyEmail: useAuthStore.getState().user?.email || '',
+              companyPhone: useAuthStore.getState().user?.phone || ''
+            }
+            import('../services/emailService').then(({ sendPaymentConfirmEmail }) => {
+              sendPaymentConfirmEmail(inv, client.email, company)
+            }).catch(err => console.warn('Failed to send payment confirm email:', err))
+          }
+        }).catch(err => console.warn('Failed to import useClientStore:', err))
         
         let targetPocketId = 'general'
         if (inv.note) {
@@ -323,6 +351,22 @@ export const useInvoiceStore = create((set, get) => ({
       } catch (e) {
         console.error('❌ Error triggering payment notification:', e)
       }
+
+      // Trigger payment confirmation email asynchronously
+      import('./useClientStore').then(({ useClientStore }) => {
+        const client = useClientStore.getState().clients.find(c => c.id === inv.client_id)
+        if (client?.email) {
+          const company = {
+            companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
+            companyLogo: useAuthStore.getState().user?.companyLogo || null,
+            companyEmail: useAuthStore.getState().user?.email || '',
+            companyPhone: useAuthStore.getState().user?.phone || ''
+          }
+          import('../services/emailService').then(({ sendPaymentConfirmEmail }) => {
+            sendPaymentConfirmEmail({ ...inv, payment_status: 'paid', paid_at: paidAt }, client.email, company)
+          }).catch(err => console.warn('Failed to send payment confirm email:', err))
+        }
+      }).catch(err => console.warn('Failed to import useClientStore:', err))
     }
 
     // Distribute or send to specific pocket
@@ -416,6 +460,22 @@ export const useInvoiceStore = create((set, get) => ({
         } catch (e) {
           console.error('❌ Error triggering overdue notification:', e)
         }
+
+        // Trigger overdue email asynchronously
+        import('./useClientStore').then(({ useClientStore }) => {
+          const client = useClientStore.getState().clients.find(c => c.id === inv.client_id)
+          if (client?.email) {
+            const company = {
+              companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
+              companyLogo: useAuthStore.getState().user?.companyLogo || null,
+              companyEmail: useAuthStore.getState().user?.email || '',
+              companyPhone: useAuthStore.getState().user?.phone || ''
+            }
+            import('../services/emailService').then(({ sendOverdueEmail }) => {
+              sendOverdueEmail(inv, client.email, company)
+            }).catch(err => console.warn('Failed to send overdue email:', err))
+          }
+        }).catch(err => console.warn('Failed to import useClientStore:', err))
       }
     }
 

@@ -19,29 +19,35 @@ export const useSettingsStore = create(
         get().saveToDB()
       },
 
-      // ── SMTP config ────────────────────────────────────────
-      smtp: {
-        host:     '',
-        port:     '587',
-        user:     '',
-        password: '',
-        fromName: '',
-        enabled:  false,
+      // ── Resend Config ──────────────────────────────────────
+      resend: {
+        enabled: true,
+        onInvoice: true,
+        onPayment: true,
+        onOverdue: true,
+        onWelcome: true,
+        onWeeklyReport: false,
       },
-      setSmtp: (data) => {
-        set((s) => ({ smtp: { ...s.smtp, ...data } }))
+      setResend: (data) => {
+        set((s) => ({ resend: { ...s.resend, ...data } }))
         get().saveToDB()
       },
-      testSmtp: () => new Promise((res) => {
-        setTimeout(() => {
-          const { smtp } = get()
-          if (!smtp.host || !smtp.user || !smtp.password) {
-            res({ ok: false, msg: 'Faltan credenciales SMTP requeridas' })
-          } else {
-            res({ ok: true, msg: 'Conexión SMTP probada con éxito' })
+      testResend: async (toEmail) => {
+        try {
+          const { sendTestEmail } = await import('../services/emailService')
+          const auth = useAuthStore.getState()
+          const company = {
+            companyName: auth.user?.companyName || 'GestivaOne',
+            companyLogo: auth.user?.companyLogo || null,
+            companyEmail: auth.user?.email || ''
           }
-        }, 1200)
-      }),
+          const res = await sendTestEmail(toEmail, company)
+          return { ok: res.success, msg: res.success ? 'Correo de prueba enviado con éxito' : (res.error || 'Error al enviar') }
+        } catch (e) {
+          console.error(e)
+          return { ok: false, msg: 'Error al importar servicio de correos' }
+        }
+      },
 
       // ── WhatsApp Business ──────────────────────────────────
       whatsapp: {
@@ -106,7 +112,7 @@ export const useSettingsStore = create(
         if (!dbSettings) return
         set({
           notifications: dbSettings.notifications || get().notifications,
-          smtp:          dbSettings.smtp || get().smtp,
+          resend:        dbSettings.resend || get().resend,
           whatsapp:      dbSettings.whatsapp || get().whatsapp,
           api:           dbSettings.api || get().api,
           printer:       dbSettings.printer || get().printer,
@@ -120,7 +126,7 @@ export const useSettingsStore = create(
             const newSettings = {
               ...(auth.user.settings || {}),
               notifications: get().notifications,
-              smtp: get().smtp,
+              resend: get().resend,
               whatsapp: get().whatsapp,
               api: get().api,
               printer: get().printer,

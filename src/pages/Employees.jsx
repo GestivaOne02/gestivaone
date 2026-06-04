@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Users, Plus, ShieldCheck, Truck, Calculator, 
-  Trash2, MoreVertical, Check, X, Clock, Copy, Link as LinkIcon 
+  Trash2, MoreVertical, Check, X, Clock, Copy, Link as LinkIcon, Mail 
 } from 'lucide-react'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
@@ -149,6 +149,41 @@ export default function Employees() {
     toast.success(`¡${type} copiado al portapapeles!`)
   }
 
+  const handleEmailInvite = async (inv) => {
+    const email = prompt('Ingresa el correo electrónico del trabajador:', '')
+    if (email === null) return
+    if (!email.includes('@')) {
+      toast.error('Correo electrónico no válido')
+      return
+    }
+
+    const toastId = toast.loading('Enviando invitación por correo...')
+    try {
+      const { sendWorkerInviteEmail } = await import('@/services/emailService')
+      const company = {
+        companyName: user.companyName || 'GestivaOne',
+        companyLogo: user.companyLogo || null,
+        companyEmail: user.email || ''
+      }
+      
+      const res = await sendWorkerInviteEmail({
+        workerName: 'Colaborador',
+        workerEmail: email.trim(),
+        inviteCode: inv.code,
+        role: inv.role
+      }, company)
+
+      if (res.success) {
+        toast.success(`📧 Invitación enviada con éxito a ${email}!`, { id: toastId })
+      } else {
+        toast.error(`Error: ${res.error || 'No se pudo enviar'}`, { id: toastId })
+      }
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al iniciar el servicio de correo', { id: toastId })
+    }
+  }
+
   const invitations = user.settings?.invitations || []
 
   return (
@@ -235,6 +270,13 @@ export default function Employees() {
                           className="p-2 rounded-xl bg-surface-700/50 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-foreground transition-all"
                         >
                           <LinkIcon size={13} />
+                        </button>
+                        <button
+                          onClick={() => handleEmailInvite(inv)}
+                          title="Enviar por correo"
+                          className="p-2 rounded-xl bg-brand-500/10 hover:bg-brand-500/25 border border-brand-500/20 text-brand-400 hover:text-brand-300 transition-all"
+                        >
+                          <Mail size={13} />
                         </button>
                       </>
                     )}

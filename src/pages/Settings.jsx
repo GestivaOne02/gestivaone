@@ -295,26 +295,8 @@ export default function Settings() {
         </AnimatePresence>
       </motion.section>
 
-      {/* ─── SMTP ─── */}
-      <IntegrationBlock
-        icon={Mail}
-        title="Correo electrónico (SMTP)"
-        desc="Envía facturas automáticamente por correo"
-        enabledKey="smtp"
-      >
-        {({ cfg, set, enabled }) => (
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <CfgInput label="Host SMTP" value={cfg.host}     onChange={v => set({ host: v })}     placeholder="smtp.proveedor.com" />
-              <CfgInput label="Puerto"   value={cfg.port}     onChange={v => set({ port: v })}     placeholder="587" />
-              <CfgInput label="Usuario"  value={cfg.user}     onChange={v => set({ user: v })}     placeholder="correo@ejemplo.com" />
-              <CfgInput label="Contraseña" value={cfg.password} onChange={v => set({ password: v })} placeholder="Password de aplicación" type="password" />
-              <CfgInput label="Nombre remitente" value={cfg.fromName} onChange={v => set({ fromName: v })} placeholder="Nombre de tu negocio" />
-            </div>
-            <SmtpTestBtn />
-          </div>
-        )}
-      </IntegrationBlock>
+      {/* ─── Resend ─── */}
+      <ResendBlock />
 
       {/* ─── WhatsApp ─── */}
       <IntegrationBlock
@@ -347,31 +329,140 @@ export default function Settings() {
 }
 
 // ── Small helpers ───────────────────────────────────────────── 
-function CfgInput({ label, value, onChange, placeholder, type = 'text' }) {
+function CfgInput({ label, value, onChange, placeholder, type = 'text', disabled }) {
   return (
     <div>
       <label className="text-xs text-muted-400 mb-1 block">{label}</label>
-      <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
+      <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} disabled={disabled}
+        className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50" />
     </div>
   )
 }
 
-function SmtpTestBtn() {
-  const testSmtp = useSettingsStore(s => s.testSmtp)
-  const [testing, setTesting] = useState(false)
-  const run = async () => {
-    setTesting(true)
-    const r = await testSmtp()
-    setTesting(false)
-    r.ok ? toast.success(r.msg) : toast.error(r.msg)
-  }
+function ToggleRow({ label, desc, checked, onChange, disabled }) {
   return (
-    <button onClick={run} disabled={testing}
-      className="flex items-center gap-2 text-xs bg-surface-600 hover:bg-surface-500 border border-subtle text-muted-400 hover:text-foreground px-4 py-2 rounded-xl transition-colors disabled:opacity-50">
-      {testing ? <Loader2 size={12} className="animate-spin" /> : <Mail size={12} />}
-      {testing ? 'Probando conexión...' : 'Probar conexión SMTP'}
-    </button>
+    <div className={clsx("flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30 transition-all", disabled && "opacity-50 pointer-events-none")}>
+      <div>
+        <p className="text-xs font-bold text-foreground">{label}</p>
+        {desc && <p className="text-[10px] text-muted-400 mt-0.5 leading-normal">{desc}</p>}
+      </div>
+      <Toggle checked={checked} onChange={onChange} />
+    </div>
+  )
+}
+
+function ResendBlock() {
+  const resend = useSettingsStore(s => s.resend)
+  const setResend = useSettingsStore(s => s.setResend)
+  const testResend = useSettingsStore(s => s.testResend)
+  const [testEmail, setTestEmail] = useState('')
+  const [testing, setTesting] = useState(false)
+  const [open, setOpen] = useState(false)
+
+  const handleTest = async () => {
+    if (!testEmail) return toast.error('Ingresa un correo de destino')
+    setTesting(true)
+    const res = await testResend(testEmail)
+    setTesting(false)
+    if (res.ok) {
+      toast.success(res.msg)
+    } else {
+      toast.error(res.msg)
+    }
+  }
+
+  return (
+    <motion.section 
+      initial={{ opacity: 0, y: 15 }} 
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden animate-fade-in"
+    >
+      <button onClick={() => setOpen(o => !o)} type="button"
+        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Mail size={16} /></div>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground">Correo electrónico (Resend)</p>
+          <p className="text-xs text-muted-400">Envía facturas, comprobantes y notificaciones automáticas</p>
+        </div>
+        <Toggle checked={resend.enabled} onChange={v => { setResend({ enabled: v }); toast(v ? `Servicio de correo activado` : `Servicio de correo desactivado`, { duration: 1500 }) }} />
+        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }} 
+            animate={{ height: 'auto', opacity: 1 }} 
+            exit={{ height: 0, opacity: 0 }} 
+            className="overflow-hidden"
+            transition={{ duration: 0.2 }}
+          >
+            <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-4">
+              <div className="bg-surface-700/35 border border-subtle rounded-2xl p-4 space-y-3">
+                <p className="text-xs font-bold text-brand-400 uppercase tracking-wider">Eventos de Envío Automático</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <ToggleRow
+                    label="Facturas de Crédito"
+                    desc="Al generar una factura programada"
+                    checked={resend.onInvoice}
+                    onChange={v => setResend({ onInvoice: v })}
+                    disabled={!resend.enabled}
+                  />
+                  <ToggleRow
+                    label="Comprobantes de Pago"
+                    desc="Al marcar una factura como pagada"
+                    checked={resend.onPayment}
+                    onChange={v => setResend({ onPayment: v })}
+                    disabled={!resend.enabled}
+                  />
+                  <ToggleRow
+                    label="Avisos de Mora"
+                    desc="Al expirar la fecha de vencimiento"
+                    checked={resend.onOverdue}
+                    onChange={v => setResend({ onOverdue: v })}
+                    disabled={!resend.enabled}
+                  />
+                  <ToggleRow
+                    label="Bienvenida de Registro"
+                    desc="Al crear una nueva cuenta"
+                    checked={resend.onWelcome}
+                    onChange={v => setResend({ onWelcome: v })}
+                    disabled={!resend.enabled}
+                  />
+                  <ToggleRow
+                    label="Reporte Semanal"
+                    desc="Resumen operativo los domingos"
+                    checked={resend.onWeeklyReport}
+                    onChange={v => setResend({ onWeeklyReport: v })}
+                    disabled={!resend.enabled}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 items-end pt-1">
+                <div className="flex-1">
+                  <CfgInput 
+                    label="Enviar correo de prueba a" 
+                    value={testEmail} 
+                    onChange={setTestEmail} 
+                    placeholder="ejemplo@correo.com"
+                    disabled={!resend.enabled}
+                  />
+                </div>
+                <button 
+                  onClick={handleTest} 
+                  type="button"
+                  disabled={testing || !resend.enabled || !testEmail}
+                  className="flex items-center justify-center gap-2 text-xs bg-surface-600 hover:bg-surface-500 border border-subtle text-muted-400 hover:text-foreground px-4 h-10 rounded-xl transition-colors disabled:opacity-50 cursor-pointer w-full sm:w-auto"
+                >
+                  {testing ? <Loader2 size={12} className="animate-spin" /> : <Mail size={12} />}
+                  {testing ? 'Enviando...' : 'Probar Correo'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.section>
   )
 }
 
