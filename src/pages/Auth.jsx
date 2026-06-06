@@ -154,7 +154,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
               placeholder="••••••" 
               type={showPw ? 'text' : 'password'} 
               required
-              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
             />
             <button 
               type="button" 
@@ -301,7 +301,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             type="tel" 
             required
             disabled={!!socialData}
-            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50 disabled:cursor-not-allowed" 
           />
         </div>
       )}
@@ -316,7 +316,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             type="email" 
             required
             disabled={!!socialData}
-            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-50 disabled:cursor-not-allowed" 
           />
         </div>
       )}
@@ -329,7 +329,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
           placeholder="••••••" 
           type={showPw ? 'text' : 'password'} 
           required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
         />
         <button 
           type="button" 
@@ -352,7 +352,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
           placeholder="GO-XXXXXX" 
           type="text" 
           required
-          className="w-full bg-brand-50 border border-brand-500/30 rounded-xl px-4 py-2.5 text-sm text-brand-750 placeholder:text-brand-400/70 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-black text-center tracking-wider" 
+          className="w-full bg-brand-50 border border-brand-500/30 rounded-xl px-4 py-2.5 text-sm text-brand-750 placeholder:text-brand-400/70 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
         />
       </div>
 
@@ -407,7 +407,7 @@ function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
         <button
           type="button"
           onClick={() => onProviderClick('Google')}
-          className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-surface-700 hover:bg-surface-650 rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm select-none border-0"
+          className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-surface-700 hover:bg-surface-650 rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm"
         >
           <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
             <path
@@ -432,17 +432,17 @@ function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
         <button
           type="button"
           onClick={() => onProviderClick('Apple')}
-          className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-black hover:bg-neutral-900 rounded-xl text-xs text-white font-bold transition-all hover:scale-[1.02] shadow-sm select-none border-0"
+          className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-black hover:bg-neutral-900 rounded-xl text-xs text-white font-bold transition-all hover:scale-[1.02] shadow-sm"
         >
           <svg className="w-3.5 h-3.5 shrink-0 fill-current text-white" viewBox="0 0 24 24">
-            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-.96.04-2.13.64-2.82 1.45-.6.69-1.12 1.84-.98 2.94.1.08.2.12.3.12.87 0 1.95-.57 2.51-1.45z" />
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.35.87.86 0 2.22-1.08 3.74-.91.63.03 2.44.2 3.57 1.6-.03.02-2.18 1.28-2.15 3.81.03 3.02 2.6 4.09 2.61 4.14-.23.72-1.31 2.26-2.39 2.26-.63 0-1.19-.32-1.95-.32-.75 0-1.54.4-2.15.4z" />
           </svg>
           Apple
         </button>
         <button
           type="button"
           onClick={() => onProviderClick('Phone')}
-          className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-surface-700 hover:bg-surface-650 rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm select-none border-0"
+          className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-surface-700 hover:bg-surface-650 rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm"
         >
           <svg className="w-3.5 h-3.5 shrink-0 fill-none stroke-current stroke-[2.2] text-brand-400" viewBox="0 0 24 24">
             <rect x="6" y="2" width="12" height="20" rx="2.5" />
@@ -459,6 +459,8 @@ function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
 function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
   const navigate   = useNavigate()
   const login      = useAuthStore((s) => s.login)
+  const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle)
+  const signInWithApple = useAuthStore((s) => s.signInWithApple)
   const loginWithSocialEmail = useAuthStore((s) => s.loginWithSocialEmail)
   const loginWithSocialPhone = useAuthStore((s) => s.loginWithSocialPhone)
   const loading    = useAuthStore((s) => s.loading)
@@ -469,6 +471,9 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     const saved = localStorage.getItem('gestiva-remember-me')
     return saved === 'true'
   })
+  const [magicLinkMode, setMagicLinkMode] = useState(false)
+  const [magicEmail, setMagicEmail] = useState('')
+  const [magicSent, setMagicSent] = useState(false)
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('gestiva-remembered-email')
@@ -587,6 +592,86 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     toast.success('Te enviamos un enlace para cambiar tu contraseña')
   }
 
+  const handleMagicLink = async (e) => {
+    e.preventDefault()
+    const cleanEmail = magicEmail.trim().toLowerCase()
+    if (!cleanEmail) return toast.error('Ingresa tu correo electrónico')
+
+    const sendMagicLink = useAuthStore.getState().sendMagicLink
+    const result = await sendMagicLink(cleanEmail)
+    
+    if (!result.success) {
+      return toast.error(result.error)
+    }
+
+    toast.success('¡Revisa tu correo electrónico para acceder!')
+    setMagicSent(true)
+  }
+
+  if (magicLinkMode) {
+    return (
+      <div className="space-y-4">
+        {!magicSent ? (
+          <form onSubmit={handleMagicLink} className="space-y-3 sm:space-y-4">
+            <div className="bg-brand-500/10 border border-brand-500/25 rounded-xl p-3 text-xs text-brand-200">
+              Te enviaremos un enlace mágico a tu correo. Sin contraseña, sin complicaciones.
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+              <input 
+                value={magicEmail} 
+                onChange={(e) => setMagicEmail(e.target.value)} 
+                placeholder="tu@empresa.com" 
+                type="email" 
+                required
+                className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm"
+            >
+              {loading ? 'Enviando enlace...' : 'Enviar enlace mágico'}
+            </button>
+
+            <button 
+              type="button" 
+              onClick={() => setMagicLinkMode(false)}
+              className="w-full py-3 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
+            >
+              Volver a ingresar con contraseña
+            </button>
+          </form>
+        ) : (
+          <div className="text-center space-y-4 py-4">
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+              <CheckCircle2 size={48} className="text-success-400 mx-auto" />
+            </motion.div>
+            <div>
+              <h3 className="text-sm font-bold text-foreground">¡Enlace enviado!</h3>
+              <p className="text-xs text-muted-400 mt-1">Revisa tu correo <span className="font-semibold text-brand-300">{magicEmail}</span></p>
+            </div>
+            <p className="text-[10px] text-muted-500">El enlace expira en 24 horas</p>
+
+            <button 
+              type="button"
+              onClick={() => {
+                setMagicSent(false)
+                setMagicEmail('')
+              }}
+              className="w-full py-3 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
+            >
+              Intentar de nuevo
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       <form onSubmit={submit} className="space-y-3 sm:space-y-4">
@@ -677,7 +762,20 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
           }
         </button>
       </form>
-      {!socialAutofill && <SocialAccessOptions onProviderClick={onSocialClick} label="ingresar" />}
+
+      {!socialAutofill && (
+        <>
+          <button 
+            type="button"
+            onClick={() => setMagicLinkMode(true)}
+            className="w-full py-2.5 text-xs font-bold text-brand-400 hover:text-brand-300 transition-colors"
+          >
+            ¿Prefieres un enlace mágico?
+          </button>
+
+          <SocialAccessOptions onProviderClick={onSocialClick} label="ingresar" />
+        </>
+      )}
     </div>
   )
 }
@@ -787,180 +885,37 @@ const TABS = [
   { id: 'worker',   label: 'Soy Trabajador' },
 ]
 
-function SocialAuthModal({ isOpen, onClose, provider, action, onConfirm }) {
-  const [inputValue, setInputValue] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [loadingStatus, setLoadingStatus] = useState('')
-  const [errorMsg, setErrorMsg] = useState('')
-
-  if (!isOpen) return null
-
-  const isPhone = provider === 'Phone'
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!inputValue.trim()) return
-
-    setLoading(true)
-    setErrorMsg('')
-
-    const statuses = [
-      `Conectando con servidores de ${provider}...`,
-      `Abriendo ventana segura de verificación...`,
-      `Validando token de seguridad...`,
-      `Comprobando registros en base de datos...`
-    ]
-
-    let idx = 0
-    setLoadingStatus(statuses[0])
-    const interval = setInterval(() => {
-      idx = (idx + 1) % statuses.length
-      setLoadingStatus(statuses[idx])
-    }, 450)
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      const column = isPhone ? 'phone' : 'email'
-      const checkValue = inputValue.trim().toLowerCase()
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, email, phone')
-        .eq(column, checkValue)
-        .limit(1)
-
-      clearInterval(interval)
-
-      if (error) {
-        setLoading(false)
-        setErrorMsg('Error de conexión con el servidor. Inténtalo de nuevo.')
-        return
-      }
-
-      const userExists = data && data.length > 0
-
-      if (action === 'login' || action === 'worker_login') {
-        if (!userExists) {
-          setLoading(false)
-          setErrorMsg(`No existe cuenta vinculada a este ${isPhone ? 'número de teléfono' : 'correo electrónico'}.`)
-          return
-        }
-      } else {
-        if (userExists) {
-          setLoading(false)
-          setErrorMsg('Esta cuenta ya existe. Por favor, inicia sesión.')
-          return
-        }
-      }
-
-      setLoading(false)
-      onConfirm(inputValue.trim())
-    } catch (err) {
-      clearInterval(interval)
-      setLoading(false)
-      setErrorMsg('Ocurrió un error inesperado.')
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 15 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        className="bg-surface-800 border border-subtle w-full max-w-md rounded-3xl p-6 relative overflow-hidden shadow-2xl"
-      >
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/10 rounded-full blur-[60px] pointer-events-none" />
-        
-        <div className="flex items-center justify-between border-b border-subtle pb-4 mb-4">
-          <div className="flex items-center gap-2">
-            <div className={clsx(
-              "w-2.5 h-2.5 rounded-full animate-pulse",
-              provider === 'Google' ? 'bg-red-500' : provider === 'Apple' ? 'bg-neutral-200' : 'bg-brand-500'
-            )} />
-            <h3 className="font-extrabold text-sm text-foreground uppercase tracking-wider">
-              Acceso Seguro con {provider}
-            </h3>
-          </div>
-          {!loading && (
-            <button 
-              onClick={onClose}
-              className="text-xs font-bold text-muted-500 hover:text-foreground transition-colors"
-            >
-              Cancelar
-            </button>
-          )}
-        </div>
-
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full border-4 border-brand-500/20 border-t-brand-500 animate-spin" />
-            <p className="text-sm font-semibold text-white tracking-wide animate-pulse">{loadingStatus}</p>
-            <p className="text-[10px] text-muted-500">Esto tomará solo unos segundos...</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <p className="text-xs text-muted-400">
-              {isPhone 
-                ? 'Introduce tu número telefónico verificado por tu operador móvil para autorizar el acceso.'
-                : `Verifica tu cuenta vinculando el correo electrónico asociado a tu perfil de ${provider}.`
-              }
-            </p>
-
-            <div>
-              <label className="text-[10px] font-black text-muted-500 uppercase tracking-widest mb-1.5 block">
-                {isPhone ? 'Número de Teléfono' : 'Correo electrónico'}
-              </label>
-              <input
-                required
-                type={isPhone ? 'tel' : 'email'}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder={isPhone ? '+57 300 000 0000' : `tu_usuario@${provider.toLowerCase()}.com`}
-                className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-              />
-            </div>
-
-            {errorMsg && (
-              <div className="p-3 rounded-xl bg-danger-500/10 border border-danger-500/25 text-xs text-danger-400 font-medium">
-                {errorMsg}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-glow-sm transition-all duration-200"
-            >
-              Continuar con {provider}
-            </button>
-          </form>
-        )}
-      </motion.div>
-    </div>
-  )
-}
-
 export default function Auth() {
   const [tab, setTab] = useState('login')
   const [regStep, setRegStep] = useState('plan')
-
-  const [socialModal, setSocialModal] = useState({
-    isOpen: false,
-    provider: null, // 'Google' | 'Apple' | 'Phone'
-    action: null,   // 'login' | 'register' | 'worker_login' | 'worker_register'
-  })
+  const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle)
+  const signInWithApple = useAuthStore((s) => s.signInWithApple)
   
   const [workerSocialData, setWorkerSocialData] = useState(null)
   const [registerSocialData, setRegisterSocialData] = useState(null)
   const [socialAutofill, setSocialAutofill] = useState(null)
 
-  const handleSocialClick = (provider, action) => {
-    setSocialModal({
-      isOpen: true,
-      provider,
-      action
-    })
+  const handleSocialClick = async (provider, action) => {
+    if (action === 'login' || action === 'register') {
+      // Direct OAuth redirect (full-page)
+      if (provider === 'Google') {
+        await signInWithGoogle()
+      } else if (provider === 'Apple') {
+        await signInWithApple()
+      } else if (provider === 'Phone') {
+        // Phone is handled with the old modal logic if needed
+        toast.info('Inicia sesión con tu número de teléfono registrado')
+      }
+    } else if (action === 'worker_login' || action === 'worker_register') {
+      // Workers use the modal-based approach for now
+      if (provider === 'Google') {
+        toast.info('Acceso con Google para trabajadores próximamente')
+      } else if (provider === 'Apple') {
+        toast.info('Acceso con Apple para trabajadores próximamente')
+      } else if (provider === 'Phone') {
+        toast.info('Ingresa tu número de teléfono registrado')
+      }
+    }
   }
 
   const handleClearWorkerSocialData = () => {
@@ -970,29 +925,6 @@ export default function Auth() {
   const handleClearRegisterSocialData = () => {
     setRegisterSocialData(null)
     setRegStep('plan')
-  }
-
-  const handleSocialConfirm = (value) => {
-    const { provider, action } = socialModal
-    setSocialModal({ isOpen: false, provider: null, action: null })
-
-    if (action === 'login' || action === 'worker_login') {
-      if (action === 'worker_login') {
-        setTab('login')
-      }
-      setSocialAutofill({
-        provider,
-        email: provider === 'Phone' ? null : value,
-        phone: provider === 'Phone' ? value : null
-      })
-    } else if (action === 'register') {
-      setRegisterSocialData({ provider, value })
-      setTab('register')
-      setRegStep('datos')
-    } else if (action === 'worker_register') {
-      setWorkerSocialData({ provider, value })
-      setTab('worker')
-    }
   }
 
   useEffect(() => {
@@ -1006,8 +938,12 @@ export default function Auth() {
       setRegStep('plan')
     } else if (mode === 'login') {
       setTab('login')
+    } else if (mode === 'confirm_email') {
+      // Handle magic link confirmation
+      toast.success('¡Correo confirmado! Iniciando sesión...')
+      // The session should already be established by Supabase
     }
-  }, [window.location.search])
+  }, [])
 
   return (
     <div className="min-h-screen bg-surface-900 flex">
@@ -1141,18 +1077,6 @@ export default function Auth() {
           </div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {socialModal.isOpen && (
-          <SocialAuthModal
-            isOpen={socialModal.isOpen}
-            provider={socialModal.provider}
-            action={socialModal.action}
-            onClose={() => setSocialModal({ isOpen: false, provider: null, action: null })}
-            onConfirm={handleSocialConfirm}
-          />
-        )}
-      </AnimatePresence>
     </div>
   )
 }
