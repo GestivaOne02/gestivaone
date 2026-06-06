@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Zap, Mail, Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Check, Camera } from 'lucide-react'
+import { Zap, Mail, Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Check, Camera, Home } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { supabase } from '@/lib/supabase'
@@ -886,6 +886,7 @@ const TABS = [
 ]
 
 export default function Auth() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('login')
   const [regStep, setRegStep] = useState('plan')
   const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle)
@@ -999,6 +1000,17 @@ export default function Auth() {
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/8 rounded-full blur-[100px]" />
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-700/4 rounded-full blur-[120px]" />
         </div>
+
+        {/* Home button - volver al landing page */}
+        <motion.button
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={() => window.location.href = '/'}
+          className="absolute top-3 sm:top-6 left-3 sm:left-6 z-20 p-2 sm:p-3 rounded-xl bg-surface-800/50 hover:bg-surface-700 border border-subtle hover:border-brand-500/50 transition-all duration-300 group"
+          title="Volver al inicio"
+        >
+          <Home size={18} className="text-muted-400 group-hover:text-brand-400 transition-colors" />
+        </motion.button>
 
         <div className={clsx(
           "w-full relative z-10 transition-all duration-500",
