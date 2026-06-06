@@ -6,11 +6,11 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { supabase } from '@/lib/supabase'
 import PlanSelector from '@/components/auth/PlanSelector'
-import CompanyForm  from '@/components/auth/CompanyForm'
-import PaymentForm  from '@/components/auth/PaymentForm'
-import Input        from '@/components/ui/Input'
-import toast        from 'react-hot-toast'
-import clsx         from 'clsx'
+import CompanyForm from '@/components/auth/CompanyForm'
+import PaymentForm from '@/components/auth/PaymentForm'
+import Input from '@/components/ui/Input'
+import toast from 'react-hot-toast'
+import clsx from 'clsx'
 
 // ── Register steps ────────────────────────────────────────────
 const STEPS = ['plan', 'datos', 'pago', 'listo']
@@ -24,17 +24,17 @@ function StepIndicator({ step }) {
         <div key={l} className="flex items-center gap-1.5">
           <div className={clsx(
             'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300',
-            i < idx  ? 'bg-brand-500 text-white' :
-            i === idx ? 'bg-brand-600 text-white ring-4 ring-brand-400/20 shadow-glow-sm' :
-                        'bg-surface-700 text-muted-500 border border-subtle'
+            i < idx ? 'bg-brand-500 text-white' :
+              i === idx ? 'bg-brand-600 text-white ring-4 ring-brand-400/20 shadow-glow-sm' :
+                'bg-surface-700 text-muted-500 border border-subtle'
           )}>{i < idx ? '✓' : i + 1}</div>
           <span className={clsx('text-[10px] font-bold uppercase tracking-wider hidden sm:block', i === idx ? 'text-neutral-900 dark:text-white' : 'text-muted-500')}>{l}</span>
           {i < 3 && (
             <div className="w-4 sm:w-8 h-px bg-surface-700 overflow-hidden">
-              <motion.div 
+              <motion.div
                 initial={false}
                 animate={{ width: i < idx ? '100%' : '0%' }}
-                className="h-full bg-brand-500" 
+                className="h-full bg-brand-500"
               />
             </div>
           )}
@@ -49,19 +49,19 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
   const navigate = useNavigate()
   const login = useAuthStore((s) => s.login)
   const linkWorkerAndRegister = useAuthStore((s) => s.linkWorkerAndRegister)
-  
+
   const [mode, setMode] = useState('login') // 'login' or 'register'
-  const [email, setEmail]   = useState('')
-  const [pass, setPass]     = useState('')
-  const [name, setName]     = useState('')
-  const [phone, setPhone]   = useState('')
+  const [email, setEmail] = useState('')
+  const [pass, setPass] = useState('')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [linkCode, setLinkCode] = useState('')
 
   // Avatar state
   const [colorAvatar, setColorAvatar] = useState('#8B5CF6') // Purple default
   const [fileAvatar, setFileAvatar] = useState(null)
   const fileInputRef = useRef(null)
-  
+
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -109,7 +109,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
   const handleRegister = async (e) => {
     e.preventDefault()
     setLoading(true)
-    
+
     const finalAvatar = fileAvatar || ('color:' + colorAvatar)
 
     const res = await linkWorkerAndRegister({
@@ -122,7 +122,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
     })
     setLoading(false)
     if (!res.success) return toast.error(res.error)
-    
+
     toast.success('¡Vinculación y registro exitoso! Bienvenido a bordo.')
     if (onClearSocialData) onClearSocialData()
     navigate('/')
@@ -133,31 +133,31 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
       <div className="space-y-4">
         <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
           <p className="text-center text-xs text-muted-500 mb-2 sm:mb-4">Ingresa con tus credenciales vinculadas a la empresa.</p>
-          
+
           <div>
             <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-            <input 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              placeholder="tu@empresa.com" 
-              type="email" 
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="tu@empresa.com"
+              type="email"
               required
-              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             />
           </div>
-          
+
           <div className="relative">
             <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
-            <input 
-              value={pass} 
-              onChange={(e) => setPass(e.target.value)} 
-              placeholder="••••••" 
-              type={showPw ? 'text' : 'password'} 
+            <input
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              placeholder="••••••"
+              type={showPw ? 'text' : 'password'}
               required
-              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+              className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10"
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               onMouseDown={() => setShowPw(true)}
               onMouseUp={() => setShowPw(false)}
               onMouseLeave={() => setShowPw(false)}
@@ -168,9 +168,9 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
               {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={loading}
             className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
           >
@@ -178,7 +178,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
           </button>
 
           <div className="text-center pt-1">
-            <button 
+            <button
               type="button"
               onClick={() => setMode('register')}
               className="text-xs font-bold text-brand-600 hover:text-brand-700 transition-colors"
@@ -202,7 +202,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
         <label className="text-xs font-bold text-muted-600 block text-center font-medium">Foto de perfil</label>
         <div className="flex flex-col items-center gap-3">
           <div className="relative">
-            <div 
+            <div
               style={{ backgroundColor: fileAvatar ? undefined : colorAvatar }}
               className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center border-2 border-brand-500/30 shadow-glow-sm transition-all duration-300"
             >
@@ -214,31 +214,31 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
                 </span>
               )}
             </div>
-            <button 
-              type="button" 
-              onClick={() => fileInputRef.current?.click()} 
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
               className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center shadow-lg hover:bg-brand-500 transition-colors border border-surface-800"
             >
               <Camera size={11} className="text-white" />
             </button>
-            <input 
-              ref={fileInputRef} 
-              type="file" 
-              accept="image/*" 
-              className="hidden" 
-              onChange={handleFileUpload} 
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileUpload}
             />
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <button 
+            <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="text-xs font-bold text-brand-400 hover:text-brand-300 transition-colors"
             >
               Importar tu foto
             </button>
-            
+
             <div className="flex justify-center gap-2 mt-1">
               {[
                 { hex: '#8B5CF6', name: 'Morado' },
@@ -269,39 +269,39 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
 
       <div>
         <label className="text-xs font-bold text-muted-600 mb-1 block">Tu Nombre</label>
-        <input 
-          value={name} 
-          onChange={(e) => setName(e.target.value)} 
-          placeholder="Nombre completo" 
-          type="text" 
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Nombre completo"
+          type="text"
           required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         />
       </div>
 
       {socialData?.provider === 'Phone' ? (
         <div>
           <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-          <input 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder="tu@correo.com" 
-            type="email" 
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="tu@correo.com"
+            type="email"
             required
-            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
           />
         </div>
       ) : (
         <div>
           <label className="text-xs font-bold text-muted-600 mb-1 block">Número de Teléfono</label>
-          <input 
-            value={phone} 
-            onChange={(e) => setPhone(e.target.value)} 
-            placeholder="+57 300 000 0000" 
-            type="tel" 
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+57 300 000 0000"
+            type="tel"
             required
             disabled={!!socialData}
-            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed"
           />
         </div>
       )}
@@ -309,30 +309,30 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
       {socialData?.provider !== 'Phone' && (
         <div>
           <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-          <input 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder="tu@correo.com" 
-            type="email" 
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="tu@correo.com"
+            type="email"
             required
             disabled={!!socialData}
-            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
+            className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed"
           />
         </div>
       )}
 
       <div className="relative">
         <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
-        <input 
-          value={pass} 
-          onChange={(e) => setPass(e.target.value)} 
-          placeholder="••••••" 
-          type={showPw ? 'text' : 'password'} 
+        <input
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+          placeholder="••••••"
+          type={showPw ? 'text' : 'password'}
           required
-          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
+          className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10"
         />
-        <button 
-          type="button" 
+        <button
+          type="button"
           onMouseDown={() => setShowPw(true)}
           onMouseUp={() => setShowPw(false)}
           onMouseLeave={() => setShowPw(false)}
@@ -346,28 +346,28 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
 
       <div>
         <label className="text-xs font-bold text-brand-600 mb-1 block">Código de Vinculación</label>
-        <input 
-          value={linkCode} 
-          onChange={(e) => setLinkCode(e.target.value)} 
-          placeholder="GO-XXXXXX" 
-          type="text" 
+        <input
+          value={linkCode}
+          onChange={(e) => setLinkCode(e.target.value)}
+          placeholder="GO-XXXXXX"
+          type="text"
           required
-          className="w-full bg-brand-50 border border-brand-500/30 rounded-xl px-4 py-2.5 text-sm text-brand-750 placeholder:text-brand-400/70 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-black text-center tracking-wider" 
+          className="w-full bg-brand-50 border border-brand-500/30 rounded-xl px-4 py-2.5 text-sm text-brand-750 placeholder:text-brand-400/70 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-black text-center tracking-wider"
         />
       </div>
 
       <div className="flex gap-2">
         {socialData && (
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onClearSocialData}
             className="flex-1 py-3 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
           >
             Atrás
           </button>
         )}
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
           className="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-glow-sm transition-all duration-300"
         >
@@ -376,7 +376,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
       </div>
 
       <div className="text-center pt-1">
-        <button 
+        <button
           type="button"
           onClick={() => {
             if (onClearSocialData) onClearSocialData()
@@ -387,7 +387,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
           ¿Ya tienes cuenta vinculada? Inicia sesión aquí
         </button>
       </div>
-      
+
       {!socialData && (
         <SocialAccessOptions onProviderClick={(provider) => onSocialClick(provider, 'worker_register')} label="registrarte" />
       )}
@@ -457,13 +457,13 @@ function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
 
 // ── Login tab ─────────────────────────────────────────────────
 function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
-  const navigate   = useNavigate()
-  const login      = useAuthStore((s) => s.login)
+  const navigate = useNavigate()
+  const login = useAuthStore((s) => s.login)
   const loginWithSocialEmail = useAuthStore((s) => s.loginWithSocialEmail)
   const loginWithSocialPhone = useAuthStore((s) => s.loginWithSocialPhone)
-  const loading    = useAuthStore((s) => s.loading)
-  const [email, setEmail]   = useState('')
-  const [pass, setPass]     = useState('')
+  const loading = useAuthStore((s) => s.loading)
+  const [email, setEmail] = useState('')
+  const [pass, setPass] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [rememberMe, setRememberMe] = useState(() => {
     const saved = localStorage.getItem('gestiva-remember-me')
@@ -479,7 +479,7 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     if (savedEmail) {
       setEmail(savedEmail)
     }
-    
+
     let decodedPass = ''
     if (savedPass) {
       try {
@@ -508,11 +508,11 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     if (socialAutofill) {
       const targetVal = socialAutofill.email || socialAutofill.phone || ''
       setEmail(targetVal)
-      
+
       let i = 0
       const mockPass = '••••••••••••'
       setPass('')
-      
+
       const interval = setInterval(() => {
         if (i < mockPass.length) {
           setPass(prev => prev + '•')
@@ -525,14 +525,14 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
           }, 400)
         }
       }, 70)
-      
+
       return () => clearInterval(interval)
     }
   }, [socialAutofill])
 
   const submit = async (e) => {
     if (e) e.preventDefault()
-    
+
     let result
     if (socialAutofill) {
       if (socialAutofill.provider === 'Phone') {
@@ -543,12 +543,12 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     } else {
       result = await login(email.trim().toLowerCase(), pass)
     }
-    
+
     if (!result.success) {
       if (onClearAutofill) onClearAutofill()
       return toast.error(result.error)
     }
-    
+
     if (rememberMe && !socialAutofill) {
       localStorage.setItem('gestiva-remembered-email', email.trim().toLowerCase())
       localStorage.setItem('gestiva-remembered-password', btoa(pass))
@@ -562,7 +562,7 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
 
     toast.success('¡Bienvenido!')
     if (onClearAutofill) onClearAutofill()
-    
+
     // Force a small delay to ensure state is saved, then jump to dashboard
     setTimeout(() => {
       navigate('/', { replace: true })
@@ -592,11 +592,11 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
       <form onSubmit={submit} className="space-y-3 sm:space-y-4">
         <div>
           <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-          <input 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder="tu@empresa.com" 
-            type="email" 
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="tu@empresa.com"
+            type="email"
             required
             readOnly={!!socialAutofill}
             className={clsx(
@@ -607,11 +607,11 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
         </div>
         <div className="relative">
           <label className="text-xs font-bold text-muted-600 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
-          <input 
-            value={pass} 
-            onChange={(e) => setPass(e.target.value)} 
-            placeholder="Introduce la contraseña" 
-            type={showPw ? 'text' : 'password'} 
+          <input
+            value={pass}
+            onChange={(e) => setPass(e.target.value)}
+            placeholder="Introduce la contraseña"
+            type={showPw ? 'text' : 'password'}
             required
             readOnly={!!socialAutofill}
             className={clsx(
@@ -620,8 +620,8 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
             )}
           />
           {!socialAutofill && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               onMouseDown={() => setShowPw(true)}
               onMouseUp={() => setShowPw(false)}
               onMouseLeave={() => setShowPw(false)}
@@ -633,21 +633,21 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
             </button>
           )}
         </div>
-        
+
         {/* Remember me checkbox */}
         {!socialAutofill && (
           <div className="flex items-center justify-between pb-1 select-none">
             <label className="flex items-center gap-2.5 cursor-pointer group">
-              <input 
-                type="checkbox" 
-                checked={rememberMe} 
-                onChange={(e) => setRememberMe(e.target.checked)} 
-                className="sr-only" 
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="sr-only"
               />
               <div className={clsx(
                 'w-[18px] h-[18px] rounded border flex items-center justify-center transition-all',
-                rememberMe 
-                  ? 'bg-amber-500 border-amber-500 text-white' 
+                rememberMe
+                  ? 'bg-amber-500 border-amber-500 text-white'
                   : 'border-subtle bg-surface-900 group-hover:border-surface-400'
               )}>
                 {rememberMe && <Check size={12} strokeWidth={3} className="text-white animate-scale-up" />}
@@ -664,15 +664,15 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
           </div>
         )}
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading || !!socialAutofill}
           className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm"
         >
-          {socialAutofill 
-            ? `Autenticando con ${socialAutofill.provider}...` 
-            : loading 
-              ? 'Ingresando...' 
+          {socialAutofill
+            ? `Autenticando con ${socialAutofill.provider}...`
+            : loading
+              ? 'Ingresando...'
               : 'Iniciar sesión'
           }
         </button>
@@ -684,33 +684,33 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
 
 // ── Register multi-step ───────────────────────────────────────
 function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialData }) {
-  const navigate  = useNavigate()
-  const register  = useAuthStore((s) => s.register)
-  const [plan, setPlan]   = useState(() => {
+  const navigate = useNavigate()
+  const register = useAuthStore((s) => s.register)
+  const [plan, setPlan] = useState(() => {
     const params = new URLSearchParams(window.location.search)
     return params.get('plan') || 'pro'
   })
   const [formData, setFormData] = useState({})
-  const [loading, setLoading]   = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const goNext = (data = {}) => {
     const nextData = { ...formData, ...data }
     setFormData(nextData)
-    
+
     if (step === 'datos' && plan === 'standard') {
       // Skip payment for free plan
       handlePayment({}, nextData)
       return
     }
-    
+
     setStep(STEPS[STEPS.indexOf(step) + 1])
   }
 
   const handlePayment = async (paymentData, currentData = formData) => {
     setLoading(true)
-    const res = await register({ 
-      ...currentData, 
-      plan, 
+    const res = await register({
+      ...currentData,
+      plan,
       email: currentData.email?.trim().toLowerCase(),
       ...paymentData
     })
@@ -745,9 +745,9 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.2 }}
         >
-          {step === 'plan'  && <PlanSelector selected={plan} onSelect={setPlan} />}
-          {step === 'datos' && <CompanyForm  onSubmit={goNext} defaultValues={formData} plan={plan} socialData={socialData} />}
-          {step === 'pago'  && <PaymentForm  plan={plan} onSubmit={handlePayment} loading={loading} />}
+          {step === 'plan' && <PlanSelector selected={plan} onSelect={setPlan} />}
+          {step === 'datos' && <CompanyForm onSubmit={goNext} defaultValues={formData} plan={plan} socialData={socialData} />}
+          {step === 'pago' && <PaymentForm plan={plan} onSubmit={handlePayment} loading={loading} />}
           {step === 'listo' && (
             <div className="text-center space-y-4 py-6">
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
@@ -782,9 +782,9 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
 
 // ── Main Auth page ────────────────────────────────────────────
 const TABS = [
-  { id: 'login',    label: 'Ingresar'       },
-  { id: 'register', label: 'Registrarse'    },
-  { id: 'worker',   label: 'Soy Trabajador' },
+  { id: 'login', label: 'Ingresar' },
+  { id: 'register', label: 'Registrarse' },
+  { id: 'worker', label: 'Soy Trabajador' },
 ]
 
 function SocialAuthModal({ isOpen, onClose, provider, action, onConfirm }) {
@@ -865,14 +865,14 @@ function SocialAuthModal({ isOpen, onClose, provider, action, onConfirm }) {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
         className="bg-surface-800 border border-subtle w-full max-w-md rounded-3xl p-6 relative overflow-hidden shadow-2xl"
       >
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/10 rounded-full blur-[60px] pointer-events-none" />
-        
+
         <div className="flex items-center justify-between border-b border-subtle pb-4 mb-4">
           <div className="flex items-center gap-2">
             <div className={clsx(
@@ -884,7 +884,7 @@ function SocialAuthModal({ isOpen, onClose, provider, action, onConfirm }) {
             </h3>
           </div>
           {!loading && (
-            <button 
+            <button
               onClick={onClose}
               className="text-xs font-bold text-muted-500 hover:text-foreground transition-colors"
             >
@@ -902,7 +902,7 @@ function SocialAuthModal({ isOpen, onClose, provider, action, onConfirm }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <p className="text-xs text-muted-400">
-              {isPhone 
+              {isPhone
                 ? 'Introduce tu número telefónico verificado por tu operador móvil para autorizar el acceso.'
                 : `Verifica tu cuenta vinculando el correo electrónico asociado a tu perfil de ${provider}.`
               }
@@ -950,7 +950,7 @@ export default function Auth() {
     provider: null, // 'Google' | 'Apple' | 'Phone'
     action: null,   // 'login' | 'register' | 'worker_login' | 'worker_register'
   })
-  
+
   const [workerSocialData, setWorkerSocialData] = useState(null)
   const [registerSocialData, setRegisterSocialData] = useState(null)
   const [socialAutofill, setSocialAutofill] = useState(null)
@@ -1024,7 +1024,7 @@ export default function Auth() {
         </div>
 
         <div className="space-y-8">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -1035,8 +1035,8 @@ export default function Auth() {
           </motion.h1>
           <ul className="space-y-4">
             {['Facturación en tiempo real', 'Gestión de clientes e inventario', 'Dashboard con analíticas', 'Control de empleados por roles', 'Tasas de cambio automáticas'].map((f, i) => (
-              <motion.li 
-                key={f} 
+              <motion.li
+                key={f}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + (i * 0.1) }}
@@ -1086,7 +1086,7 @@ export default function Auth() {
                 )}
               >
                 {tab === t.id && (
-                  <motion.div 
+                  <motion.div
                     layoutId="activeTab"
                     className="absolute inset-0 bg-brand-600 rounded-xl shadow-glow-sm"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
@@ -1107,24 +1107,24 @@ export default function Auth() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18 }}
               >
-                {tab === 'login'    && (
-                  <LoginForm 
+                {tab === 'login' && (
+                  <LoginForm
                     onSocialClick={(provider) => handleSocialClick(provider, 'login')}
                     socialAutofill={socialAutofill}
                     onClearAutofill={() => setSocialAutofill(null)}
                   />
                 )}
                 {tab === 'register' && (
-                  <RegisterFlow 
-                    step={regStep} 
-                    setStep={setRegStep} 
+                  <RegisterFlow
+                    step={regStep}
+                    setStep={setRegStep}
                     onSocialClick={(provider) => handleSocialClick(provider, 'register')}
                     socialData={registerSocialData}
                     onClearSocialData={handleClearRegisterSocialData}
                   />
                 )}
-                {tab === 'worker'   && (
-                  <WorkerLogin 
+                {tab === 'worker' && (
+                  <WorkerLogin
                     onSocialClick={(provider, action) => handleSocialClick(provider, action)}
                     socialData={workerSocialData}
                     onClearSocialData={handleClearWorkerSocialData}

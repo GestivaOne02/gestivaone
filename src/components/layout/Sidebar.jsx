@@ -10,14 +10,14 @@ import { useNotificationStore } from '@/store/useNotificationStore'
 import clsx from 'clsx'
 
 export default function Sidebar({ isMobile }) {
-  const collapsed      = useUIStore((s) => s.sidebarCollapsed)
-  const toggleSidebar  = useUIStore((s) => s.toggleSidebar)
-  const mobileOpen     = useUIStore((s) => s.mobileSidebarOpen)
-  const closeMobile    = useUIStore((s) => s.closeMobileSidebar)
-  const user           = useAuthStore((s) => s.user)
-  const location       = useLocation()
+  const collapsed = useUIStore((s) => s.sidebarCollapsed)
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar)
+  const mobileOpen = useUIStore((s) => s.mobileSidebarOpen)
+  const closeMobile = useUIStore((s) => s.closeMobileSidebar)
+  const user = useAuthStore((s) => s.user)
+  const location = useLocation()
 
-  const role        = user?.role || 'despachador'
+  const role = user?.role || 'despachador'
   const permissions = ROLES[role]?.permissions || {}
 
   const renderAvatar = (size = 40) => {
@@ -25,7 +25,7 @@ export default function Sidebar({ isMobile }) {
     if (user?.avatarUrl && user.avatarUrl.startsWith('color:')) {
       const color = user.avatarUrl.replace('color:', '')
       return (
-        <div 
+        <div
           style={{ width: `${size}px`, height: `${size}px`, backgroundColor: color }}
           className="rounded-full flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm"
         >
@@ -35,26 +35,26 @@ export default function Sidebar({ isMobile }) {
     }
     if (user?.avatarUrl) {
       return (
-        <img 
-          src={user.avatarUrl} 
-          alt="" 
-          style={{ width: `${size}px`, height: `${size}px`, objectFit: 'cover' }} 
-          className="rounded-full border border-surface-700 shrink-0 shadow-sm" 
+        <img
+          src={user.avatarUrl}
+          alt=""
+          style={{ width: `${size}px`, height: `${size}px`, objectFit: 'cover' }}
+          className="rounded-full border border-surface-700 shrink-0 shadow-sm"
         />
       )
     }
     if (user?.companyLogo) {
       return (
-        <img 
-          src={user.companyLogo} 
-          alt="" 
-          style={{ width: `${size}px`, height: `${size}px`, objectFit: 'cover' }} 
-          className="rounded-full border border-surface-700 shrink-0 shadow-sm" 
+        <img
+          src={user.companyLogo}
+          alt=""
+          style={{ width: `${size}px`, height: `${size}px`, objectFit: 'cover' }}
+          className="rounded-full border border-surface-700 shrink-0 shadow-sm"
         />
       )
     }
     return (
-      <div 
+      <div
         style={{ width: `${size}px`, height: `${size}px` }}
         className="rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white border border-surface-700 shrink-0 shadow-sm"
       >
@@ -67,25 +67,25 @@ export default function Sidebar({ isMobile }) {
     {
       title: 'Operaciones',
       items: [
-        { to: '/menu',      icon: Receipt,         label: 'Menú (Ventas)', perm: 'menu'       },
-        { to: '/products',  icon: Package,         label: 'Productos',    perm: 'products'   },
+        { to: '/menu', icon: Receipt, label: 'Menú', perm: 'menu' },
+        { to: '/products', icon: Package, label: 'Productos', perm: 'products' },
       ]
     },
     {
       title: 'Gestión',
       items: [
-        { to: '/',          icon: LayoutDashboard, label: 'Dashboard',    perm: 'dashboard'  },
-        { to: '/employees', icon: Users,           label: 'Empleados',    perm: 'employees'  },
-        { to: '/pockets',   icon: FolderClosed,    label: 'Bolsillos',    perm: 'dashboard'  },
-        { to: '/personal-finance', icon: Wallet,   label: 'Mi Gestión',   perm: 'account'    },
+        { to: '/', icon: LayoutDashboard, label: 'Dashboard', perm: 'dashboard' },
+        { to: '/employees', icon: Users, label: 'Empleados', perm: 'employees' },
+        { to: '/pockets', icon: FolderClosed, label: 'Bolsillos', perm: 'dashboard' },
+        { to: '/personal-finance', icon: Wallet, label: 'Mi Gestión', perm: 'account' },
       ]
     },
     {
       title: 'Herramientas',
       items: [
-        { to: '/facturero', icon: Printer,         label: 'Facturero',    perm: 'dashboard'  },
-        { to: '/dian',      icon: Calculator,      label: 'Asistente DIAN', perm: 'dashboard' },
-        { to: '/notifications', icon: Bell,        label: 'Notificaciones', perm: 'dashboard' },
+        { to: '/facturero', icon: Printer, label: 'Facturero', perm: 'dashboard' },
+        { to: '/dian', icon: Calculator, label: 'Asistente DIAN', perm: 'dashboard' },
+        { to: '/notifications', icon: Bell, label: 'Notificaciones', perm: 'dashboard' },
       ]
     }
   ]
@@ -116,11 +116,11 @@ export default function Sidebar({ isMobile }) {
 
   // ── Nav link ──────────────────────────────────────────────
   const NavItem = ({ to, icon: Icon, label, perm, layoutId }) => {
-    const isActive   = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
-    const allowed    = permissions[perm] ?? true
+    const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
+    const allowed = permissions[perm] ?? true
 
     return (
-      <motion.div 
+      <motion.div
         layout
         initial={false}
         className="relative"
@@ -134,12 +134,12 @@ export default function Sidebar({ isMobile }) {
             !allowed && 'opacity-50 cursor-not-allowed',
             isActive && allowed ? 'text-brand-300'
               : allowed ? 'text-muted-400 hover:text-white hover:bg-surface-600'
-              : 'text-muted-400'
+                : 'text-muted-400'
           )}
           title={label}
         >
           {isActive && allowed && (
-            <motion.div 
+            <motion.div
               layoutId={layoutId}
               className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
@@ -150,7 +150,7 @@ export default function Sidebar({ isMobile }) {
           </div>
           <AnimatePresence mode="popLayout">
             {!collapsed && (
-              <motion.span 
+              <motion.span
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
@@ -203,7 +203,7 @@ export default function Sidebar({ isMobile }) {
                     </div>
                     {group.items.map(({ to, icon: Icon, label, perm }, i) => {
                       const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
-                      const allowed  = permissions[perm] ?? true
+                      const allowed = permissions[perm] ?? true
                       return (
                         <motion.div
                           key={to}
@@ -331,7 +331,7 @@ export default function Sidebar({ isMobile }) {
           {renderAvatar(40)}
           <AnimatePresence>
             {!collapsed && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
