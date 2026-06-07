@@ -1051,10 +1051,10 @@ export default function Auth() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25, delay: 0.1 }}
               onClick={() => window.location.href = '/'}
-              className="absolute bottom-6 sm:bottom-12 -left-8 sm:-left-12 w-8 sm:w-12 h-16 sm:h-20 bg-surface-800 border border-subtle border-r-0 rounded-l-xl sm:rounded-l-2xl flex items-center justify-center hover:bg-surface-700 transition-colors group z-[-1] shadow-[-6px_0_15px_-5px_rgba(0,0,0,0.3)]"
+              className="absolute bottom-6 sm:bottom-12 -left-8 sm:-left-12 w-8 sm:w-12 h-16 sm:h-20 bg-brand-600 rounded-l-xl sm:rounded-l-2xl flex items-center justify-center hover:bg-brand-700 transition-colors group z-[-1]"
               title="Volver al inicio"
             >
-              <ChevronLeft size={20} className="text-muted-500 group-hover:text-foreground transition-colors mr-1 sm:mr-0" />
+              <ChevronLeft size={20} className="text-white transition-colors mr-1 sm:mr-0" />
             </motion.button>
 
             <AnimatePresence mode="wait">

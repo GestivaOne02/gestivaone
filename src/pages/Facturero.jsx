@@ -58,7 +58,7 @@ const THEME_COLORS = {
   amber: {
     name: 'Ámbar Cálido',
     primary: '#d97706',
-    primaryLight: '#fde68a',
+    primaryLight: '#d97706',
     primaryDark: '#78350f',
   },
   slate: {
