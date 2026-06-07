@@ -23,13 +23,13 @@ const TAX_RATES = {
 import clsx from 'clsx'
 
 export default function InvoicePanel({ isMobile }) {
-  const items       = useCartStore((s) => s.items)
-  const removeItem  = useCartStore((s) => s.removeItem)
-  const updateQty   = useCartStore((s) => s.updateQty)
-  const clearCart   = useCartStore((s) => s.clearCart)
-  const subtotal    = useCartStore(selectSubtotal)
-  const includeTax  = useCartStore((s) => s.includeTax)
-  const toggleTax   = useCartStore((s) => s.toggleTax)
+  const items = useCartStore((s) => s.items)
+  const removeItem = useCartStore((s) => s.removeItem)
+  const updateQty = useCartStore((s) => s.updateQty)
+  const clearCart = useCartStore((s) => s.clearCart)
+  const subtotal = useCartStore(selectSubtotal)
+  const includeTax = useCartStore((s) => s.includeTax)
+  const toggleTax = useCartStore((s) => s.toggleTax)
 
   const customCharges = useCartStore((s) => s.customCharges)
   const addCustomCharge = useCartStore((s) => s.addCustomCharge)
@@ -55,14 +55,14 @@ export default function InvoicePanel({ isMobile }) {
     const val = Number(newChargeValue)
     if (!newChargeName.trim()) return toast.error('Ingresa un nombre')
     if (isNaN(val) || val === 0) return toast.error('Ingresa un valor válido')
-    
+
     await addCustomCharge({
       name: newChargeName.trim(),
       value: val,
       type: newChargeType,
       pinned: newChargePinned
     })
-    
+
     setNewChargeName('')
     setNewChargeValue('')
     setNewChargePinned(false)
@@ -76,9 +76,9 @@ export default function InvoicePanel({ isMobile }) {
   const selectedClient = useClientStore((s) => s.getSelected())
   const clearClientSel = useClientStore((s) => s.clearSelection)
 
-  const panelOpen  = useUIStore((s) => s.invoicePanelOpen)
+  const panelOpen = useUIStore((s) => s.invoicePanelOpen)
   const togglePanel = useUIStore((s) => s.toggleInvoicePanel)
-  const openModal  = useUIStore((s) => s.openModal)
+  const openModal = useUIStore((s) => s.openModal)
 
   const format = useCurrencyStore((s) => s.format)
   const canOrder = items.length > 0
@@ -87,26 +87,26 @@ export default function InvoicePanel({ isMobile }) {
     return (
       <div className="border-b border-subtle pb-3 mb-3">
         <div className="flex items-center justify-between text-xs text-muted-400 mb-2">
-          <span className="font-bold text-[10px] uppercase tracking-wider text-white">Impuestos y Cargos</span>
-          <button 
+          <span className="font-bold text-[10px] uppercase tracking-wider text-muted-400">Impuestos y Cargos</span>
+          <button
             type="button"
-            onClick={() => setShowAddCharge(!showAddCharge)} 
+            onClick={() => setShowAddCharge(!showAddCharge)}
             className="text-brand-500 dark:text-brand-400 hover:text-brand-600 dark:hover:text-brand-300 font-bold text-[10px] uppercase transition-colors"
           >
             {showAddCharge ? 'Cancelar' : '+ Agregar Cargo'}
           </button>
         </div>
-        
+
         {showAddCharge && (
           <div className="bg-surface-700/50 p-3 rounded-2xl border border-subtle mb-3 space-y-2.5">
-            <input 
+            <input
               value={newChargeName}
               onChange={(e) => setNewChargeName(e.target.value)}
               placeholder="Concepto (ej: Transporte)"
               className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
             />
             <div className="flex gap-2">
-              <input 
+              <input
                 type="number"
                 value={newChargeValue}
                 onChange={(e) => setNewChargeValue(e.target.value)}
@@ -124,15 +124,15 @@ export default function InvoicePanel({ isMobile }) {
             </div>
             <div className="flex items-center justify-between pt-1">
               <label className="flex items-center gap-1.5 text-[10px] text-muted-400 cursor-pointer select-none">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={newChargePinned}
                   onChange={(e) => setNewChargePinned(e.target.checked)}
                   className="rounded border-subtle bg-surface-600 text-brand-500 w-3.5 h-3.5 focus:ring-0"
                 />
                 Fijar permanentemente
               </label>
-              <button 
+              <button
                 type="button"
                 onClick={handleAddCharge}
                 className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] uppercase px-3 py-1.5 rounded-lg transition-colors"
@@ -147,8 +147,8 @@ export default function InvoicePanel({ isMobile }) {
           {customCharges.map((c) => (
             <div key={c.id} className="flex items-center justify-between text-xs text-foreground py-0.5">
               <div className="flex items-center gap-2">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={c.applied}
                   onChange={() => toggleCustomChargeApplied(c.id)}
                   className="rounded border-subtle bg-surface-700 text-brand-500 w-3.5 h-3.5 focus:ring-0"
@@ -159,18 +159,18 @@ export default function InvoicePanel({ isMobile }) {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   type="button"
                   onClick={() => toggleCustomChargePin(c.id)}
                   className={clsx(
-                    "text-[12px] transition-colors leading-none", 
+                    "text-[12px] transition-colors leading-none",
                     c.pinned ? "text-brand-400 hover:text-brand-300" : "text-muted-500 hover:text-muted-400"
                   )}
                   title={c.pinned ? "Desanclar de la plantilla" : "Fijar permanentemente"}
                 >
-                  ★
+                  ✓
                 </button>
-                <button 
+                <button
                   type="button"
                   onClick={() => removeCustomCharge(c.id)}
                   className="text-muted-500 hover:text-danger-400 transition-colors leading-none"
@@ -363,10 +363,10 @@ export default function InvoicePanel({ isMobile }) {
         onClick={togglePanel}
         animate={{ right: panelOpen ? 284 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-        className="fixed top-1/2 -translate-y-1/2 z-20 bg-surface-700 border border-subtle rounded-l-xl px-1.5 py-9 text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors"
+        className="fixed top-1/2 -translate-y-1/2 z-20 bg-brand-600 rounded-l-xl px-1.5 py-9 text-white hover:bg-brand-700 transition-colors shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.1)]"
       >
         <motion.div animate={{ rotate: panelOpen ? 0 : 180 }}>
-          <ChevronRight size={14} />
+          <ChevronRight size={14} className="text-white" />
         </motion.div>
         {items.length > 0 && (
           <span className="absolute -top-1.5 -left-1.5 w-4 h-4 bg-brand-600 rounded-full text-[9px] text-white flex items-center justify-center font-bold">
@@ -435,7 +435,7 @@ export default function InvoicePanel({ isMobile }) {
                   <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center shrink-0">
                     <ShoppingCart size={20} className="text-muted-400" />
                   </div>
-                  <p className="text-xs text-muted-400">El carrito está vacío.<br/>Añade productos desde el panel.</p>
+                  <p className="text-xs text-muted-400">El carrito está vacío.<br />Añade productos desde el panel.</p>
                 </motion.div>
               ) : (
                 items.map((item) => (
