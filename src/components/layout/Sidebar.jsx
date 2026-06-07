@@ -94,20 +94,18 @@ export default function Sidebar({ isMobile }) {
 
   // ── Logo / Brand header ───────────────────────────────────
   const BrandHeader = ({ showText }) => (
-    <div className={clsx('flex items-center gap-3.5 px-4 h-20 border-b border-subtle shrink-0', !showText && 'justify-center px-0')}>
-      {user?.companyLogo
-        ? <img src={user.companyLogo} alt="Logo" style={{ width: '46px', height: '46px', objectFit: 'cover' }} className="rounded-full shrink-0" />
-        : (
-          <Zap size={26} className="text-brand-400 shrink-0" />
-        )
-      }
-      {showText && (
+    <div className={clsx('flex items-center px-4 h-20 border-b border-subtle shrink-0', !showText && 'justify-center px-0')}>
+      {!showText ? (
+        <span className="text-xl font-black text-brand-400 uppercase">
+          {(user?.companyName || 'M').charAt(0)}
+        </span>
+      ) : (
         <div className="flex flex-col leading-tight overflow-hidden whitespace-nowrap">
           <span className="text-[16px] font-black text-foreground uppercase tracking-wide truncate max-w-[135px]" title={user?.companyName || 'Mi Empresa'}>
             {user?.companyName || 'Mi Empresa'}
           </span>
           <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">
-            Gestiva <span className="font-extrabold">One</span>
+            Gestiva One
           </span>
         </div>
       )}
@@ -179,17 +177,13 @@ export default function Sidebar({ isMobile }) {
               transition={{ type: 'spring', stiffness: 400, damping: 35 }}
               className="sidebar-premium-dark fixed left-0 top-0 bottom-0 z-50 w-64 bg-surface-800 border-r border-subtle flex flex-col shadow-modal">
               <div className="flex items-center justify-between px-4 h-20 border-b border-subtle shrink-0">
-                <div className="flex items-center gap-3.5">
-                  {user?.companyLogo
-                    ? <img src={user.companyLogo} alt="" style={{ width: '46px', height: '46px', objectFit: 'cover' }} className="rounded-full shrink-0" />
-                    : <Zap size={26} className="text-brand-400 shrink-0" />
-                  }
+                <div className="flex items-center">
                   <div className="flex flex-col leading-tight overflow-hidden whitespace-nowrap">
-                    <span className="text-[16px] font-black text-white uppercase tracking-wide truncate max-w-[135px]" title={user?.companyName || 'Mi Empresa'}>
+                    <span className="text-[16px] font-black text-white uppercase tracking-wide truncate max-w-[180px]" title={user?.companyName || 'Mi Empresa'}>
                       {user?.companyName || 'Mi Empresa'}
                     </span>
                     <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">
-                      Gestiva <span className="font-extrabold">One</span>
+                      Gestiva One
                     </span>
                   </div>
                 </div>
