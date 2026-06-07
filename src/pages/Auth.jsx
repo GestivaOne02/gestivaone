@@ -404,51 +404,43 @@ function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
         <div className="flex-1 h-px bg-surface-700/80" />
       </div>
       <div className="grid grid-cols-3 gap-2.5">
+        {/* Google OAuth */}
         <button
           type="button"
           onClick={() => onProviderClick('Google')}
           className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-surface-700 hover:bg-surface-650 rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm"
         >
           <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
-            <path
-              fill="#4285F4"
-              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69a5.74 5.74 0 0 1-2.5 3.77v3.13h4.03c2.36-2.17 3.52-5.38 3.52-8.75z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-4.03-3.13c-1.12.75-2.55 1.19-3.93 1.19-3.03 0-5.6-2.05-6.52-4.82H1.31v3.2A11.99 11.99 0 0 0 12 24z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.48 14.33A7.16 7.16 0 0 1 5 12c0-.82.15-1.62.42-2.38V6.42H1.31A11.99 11.99 0 0 0 0 12c0 2.24.62 4.33 1.69 6.13l3.79-3.8z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.22 0 12 0A11.99 11.99 0 0 0 1.31 6.42l3.79 3.8c.92-2.77 3.49-4.82 6.9-4.82z"
-            />
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69a5.74 5.74 0 0 1-2.5 3.77v3.13h4.03c2.36-2.17 3.52-5.38 3.52-8.75z" />
+            <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-4.03-3.13c-1.12.75-2.55 1.19-3.93 1.19-3.03 0-5.6-2.05-6.52-4.82H1.31v3.2A11.99 11.99 0 0 0 12 24z" />
+            <path fill="#FBBC05" d="M5.48 14.33A7.16 7.16 0 0 1 5 12c0-.82.15-1.62.42-2.38V6.42H1.31A11.99 11.99 0 0 0 0 12c0 2.24.62 4.33 1.69 6.13l3.79-3.8z" />
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.22 0 12 0A11.99 11.99 0 0 0 1.31 6.42l3.79 3.8c.92-2.77 3.49-4.82 6.9-4.82z" />
           </svg>
           Google
         </button>
+
+        {/* Apple OAuth */}
         <button
           type="button"
           onClick={() => onProviderClick('Apple')}
           className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-black hover:bg-neutral-900 rounded-xl text-xs text-white font-bold transition-all hover:scale-[1.02] shadow-sm"
         >
-          <svg className="w-3.5 h-3.5 shrink-0 fill-current text-white" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 shrink-0 fill-white" viewBox="0 0 24 24">
             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.35.87.86 0 2.22-1.08 3.74-.91.63.03 2.44.2 3.57 1.6-.03.02-2.18 1.28-2.15 3.81.03 3.02 2.6 4.09 2.61 4.14-.23.72-1.31 2.26-2.39 2.26-.63 0-1.19-.32-1.95-.32-.75 0-1.54.4-2.15.4z" />
           </svg>
           Apple
         </button>
+
+        {/* Magic Link */}
         <button
           type="button"
-          onClick={() => onProviderClick('Phone')}
+          onClick={() => onProviderClick('MagicLink')}
           className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-surface-700 hover:bg-surface-650 rounded-xl text-xs text-foreground font-bold transition-all hover:scale-[1.02] shadow-sm"
         >
-          <svg className="w-3.5 h-3.5 shrink-0 fill-none stroke-current stroke-[2.2] text-brand-400" viewBox="0 0 24 24">
-            <rect x="6" y="2" width="12" height="20" rx="2.5" />
-            <circle cx="12" cy="18" r="1" fill="currentColor" />
+          <svg className="w-3.5 h-3.5 shrink-0 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
           </svg>
-          Teléfono
+          Enlace
         </button>
       </div>
     </div>
@@ -763,14 +755,6 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
 
       {!socialAutofill && (
         <>
-          <button 
-            type="button"
-            onClick={() => setMagicLinkMode(true)}
-            className="w-full py-2.5 text-xs font-bold text-brand-400 hover:text-brand-300 transition-colors"
-          >
-            ¿Prefieres un enlace mágico?
-          </button>
-
           <SocialAccessOptions onProviderClick={onSocialClick} label="ingresar" />
         </>
       )}
@@ -1052,27 +1036,39 @@ export default function Auth() {
   const [registerSocialData, setRegisterSocialData] = useState(null)
   const [socialAutofill, setSocialAutofill] = useState(null)
 
+  const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle)
+  const signInWithApple = useAuthStore((s) => s.signInWithApple)
+  const sendMagicLink = useAuthStore((s) => s.sendMagicLink)
+  const [magicModal, setMagicModal] = useState(false)
+  const [magicModalEmail, setMagicModalEmail] = useState('')
+  const [magicModalSent, setMagicModalSent] = useState(false)
+  const [magicModalLoading, setMagicModalLoading] = useState(false)
+
   const handleSocialClick = async (provider, action) => {
-    if (action === 'login' || action === 'register') {
-      // Direct OAuth redirect (full-page)
-      if (provider === 'Google') {
-        await signInWithGoogle()
-      } else if (provider === 'Apple') {
-        await signInWithApple()
-      } else if (provider === 'Phone') {
-        // Phone is handled with the old modal logic if needed
-        toast.info('Inicia sesión con tu número de teléfono registrado')
-      }
-    } else if (action === 'worker_login' || action === 'worker_register') {
-      // Workers use the modal-based approach for now
-      if (provider === 'Google') {
-        toast.info('Acceso con Google para trabajadores próximamente')
-      } else if (provider === 'Apple') {
-        toast.info('Acceso con Apple para trabajadores próximamente')
-      } else if (provider === 'Phone') {
-        toast.info('Ingresa tu número de teléfono registrado')
-      }
+    if (provider === 'Google') {
+      const res = await signInWithGoogle()
+      if (res && !res.success) toast.error(res.error || 'Error al conectar con Google')
+      // On success Supabase redirects the browser automatically
+    } else if (provider === 'Apple') {
+      const res = await signInWithApple()
+      if (res && !res.success) toast.error(res.error || 'Error al conectar con Apple')
+    } else if (provider === 'MagicLink') {
+      setMagicModal(true)
+      setMagicModalSent(false)
+      setMagicModalEmail('')
     }
+  }
+
+  const handleMagicModalSubmit = async (e) => {
+    e.preventDefault()
+    const email = magicModalEmail.trim().toLowerCase()
+    if (!email) return toast.error('Ingresa tu correo electrónico')
+    setMagicModalLoading(true)
+    const res = await sendMagicLink(email)
+    setMagicModalLoading(false)
+    if (!res.success) return toast.error(res.error || 'Error al enviar el enlace')
+    toast.success('¡Revisa tu correo!')
+    setMagicModalSent(true)
   }
 
   const handleClearWorkerSocialData = () => {
@@ -1253,6 +1249,90 @@ export default function Auth() {
           </div>
         </div>
       </div>
+
+      {/* Magic Link Modal */}
+      <AnimatePresence>
+        {magicModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={(e) => e.target === e.currentTarget && setMagicModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-surface-800 border border-subtle w-full max-w-sm rounded-3xl p-6 relative overflow-hidden shadow-2xl"
+            >
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/10 rounded-full blur-[60px] pointer-events-none" />
+
+              <div className="flex items-center justify-between border-b border-subtle pb-4 mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse" />
+                  <h3 className="font-extrabold text-sm text-foreground uppercase tracking-wider">
+                    Enlace Mágico
+                  </h3>
+                </div>
+                {!magicModalLoading && (
+                  <button
+                    onClick={() => setMagicModal(false)}
+                    className="text-xs font-bold text-muted-500 hover:text-foreground transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+
+              {magicModalSent ? (
+                <div className="text-center space-y-4 py-4">
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+                    <CheckCircle2 size={48} className="text-success-400 mx-auto" />
+                  </motion.div>
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground">¡Enlace enviado!</h3>
+                    <p className="text-xs text-muted-400 mt-1">Revisa <span className="font-semibold text-brand-300">{magicModalEmail}</span></p>
+                  </div>
+                  <p className="text-[10px] text-muted-500">El enlace expira en 24 horas</p>
+                  <button
+                    onClick={() => { setMagicModalSent(false); setMagicModalEmail('') }}
+                    className="w-full py-2.5 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
+                  >
+                    Intentar de nuevo
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleMagicModalSubmit} className="space-y-4">
+                  <div className="bg-brand-500/10 border border-brand-500/25 rounded-xl p-3 text-xs text-brand-200">
+                    Te enviaremos un enlace de acceso directo. Sin contraseña.
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black text-muted-500 uppercase tracking-widest mb-1.5 block">
+                      Correo electrónico
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      value={magicModalEmail}
+                      onChange={(e) => setMagicModalEmail(e.target.value)}
+                      placeholder="tu@empresa.com"
+                      className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={magicModalLoading}
+                    className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-bold shadow-glow-sm transition-all"
+                  >
+                    {magicModalLoading ? 'Enviando...' : 'Enviar enlace mágico'}
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
