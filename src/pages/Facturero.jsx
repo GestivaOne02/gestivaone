@@ -18,7 +18,7 @@ const MOCK_INVOICE = {
   client_name: 'Randy Mendoza',
   client_document_id: '1020304050',
   client_phone: '312 456 7890',
-  client_email: 'randy.mendoza@example.com',
+  client_email: 'example@example.com',
   client_address: 'Calle 45 #12-89, Bogotá',
   subtotal: 305390,
   taxRate: 0.19,
@@ -58,7 +58,7 @@ const THEME_COLORS = {
   amber: {
     name: 'Ámbar Cálido',
     primary: '#d97706',
-    primaryLight: '#d97706',
+    primaryLight: '#fde68a',
     primaryDark: '#78350f',
   },
   slate: {
@@ -73,10 +73,10 @@ export default function Facturero() {
   const user = useAuthStore((s) => s.user)
   const updateProfile = useAuthStore((s) => s.updateProfile)
   const format = useCurrencyStore((s) => s.format)
-  
+
   // Settings store
   const { printer, setPrinter } = useSettingsStore()
-  
+
   // Printer detection state
   const [hasPrinter, setHasPrinter] = useState(false)
   const [checkingPrinter, setCheckingPrinter] = useState(true)
@@ -92,7 +92,7 @@ export default function Facturero() {
   const [showContact, setShowContact] = useState(printer.showContact !== false)
   const [showTax, setShowTax] = useState(printer.showTax === true)
   const [footerText, setFooterText] = useState(printer.footerText || '¡Gracias por su compra!')
-  
+
   // Metadata for the company
   const [companyName, setCompanyName] = useState(user?.companyName || 'GestivaOne')
   const [companyPhone, setCompanyPhone] = useState(user?.companyPhone || '')
@@ -677,7 +677,7 @@ export default function Facturero() {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground">One Corporate (Clásica)</h4>
-                    <p className="text-[10px] text-muted-400 mt-0.5">Encabezado formal con color corporativo, doble bloque estructurado y diseño robusto.</p>
+                    <p className="text-xs text-muted-300 mt-0.5">Encabezado formal con color corporativo, doble bloque estructurado y diseño robusto.</p>
                   </div>
                 </button>
 
@@ -697,7 +697,7 @@ export default function Facturero() {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground">One Minimalist (Moderna)</h4>
-                    <p className="text-[10px] text-muted-400 mt-0.5">Diseño minimalista con alto espacio en blanco, líneas limpias y diseño contemporáneo.</p>
+                    <p className="text-xs text-muted-300 mt-0.5">Diseño minimalista con alto espacio en blanco, líneas limpias y diseño contemporáneo.</p>
                   </div>
                 </button>
               </div>
@@ -723,7 +723,7 @@ export default function Facturero() {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground">Ticket Clásico</h4>
-                    <p className="text-[10px] text-muted-400 mt-0.5">Estilo tradicional monoespaciado en Courier, divisores de guiones y formato compacto.</p>
+                    <p className="text-xs text-muted-300 mt-0.5">Estilo tradicional monoespaciado en Courier, divisores de guiones y formato compacto.</p>
                   </div>
                 </button>
 
@@ -743,7 +743,7 @@ export default function Facturero() {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground">Ticket Moderno</h4>
-                    <p className="text-[10px] text-muted-400 mt-0.5">Tipografía sans-serif limpia, tarjeta superior para datos de empresa y bordes sutiles.</p>
+                    <p className="text-xs text-muted-300 mt-0.5">Tipografía sans-serif limpia, tarjeta superior para datos de empresa y bordes sutiles.</p>
                   </div>
                 </button>
               </div>
@@ -757,13 +757,13 @@ export default function Facturero() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {hasPrinter ? (
-                <label 
+                <label
                   title="Imprimir ticket de forma automática al guardar una nueva factura"
                   className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
                 >
                   <div className="space-y-0.5">
-                    <span className="text-sm font-bold text-foreground block">Impresión Automática</span>
-                    <span className="text-xs text-muted-400 block">Lanza el ticket automáticamente al realizar pedido</span>
+                    <span className="text-base font-bold text-foreground block">Impresión Automática</span>
+                    <span className="text-sm text-muted-300 block">Lanza el ticket automáticamente al realizar pedido</span>
                   </div>
                   <input
                     type="checkbox"
@@ -789,13 +789,13 @@ export default function Facturero() {
                 </button>
               )}
 
-              <label 
+              <label
                 title="Incluir el logo de tu empresa en el encabezado de facturas y tickets"
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-sm font-bold text-foreground block">Mostrar Logo Comercial</span>
-                  <span className="text-xs text-muted-400 block">Dibuja tu logotipo cargado en los documentos</span>
+                  <span className="text-base font-bold text-foreground block">Mostrar Logo Comercial</span>
+                  <span className="text-sm text-muted-300 block">Dibuja tu logotipo cargado en los documentos</span>
                 </div>
                 <input
                   type="checkbox"
@@ -805,13 +805,13 @@ export default function Facturero() {
                 />
               </label>
 
-              <label 
+              <label
                 title="Mostrar el nombre comercial en lugar del texto genérico"
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-sm font-bold text-foreground block">Nombre de Empresa</span>
-                  <span className="text-xs text-muted-400 block">Muestra tu nombre comercial como encabezado</span>
+                  <span className="text-base font-bold text-foreground block">Nombre de Empresa</span>
+                  <span className="text-sm text-muted-300 block">Muestra tu nombre comercial como encabezado</span>
                 </div>
                 <input
                   type="checkbox"
@@ -821,13 +821,13 @@ export default function Facturero() {
                 />
               </label>
 
-              <label 
+              <label
                 title="Detallar cada producto, cantidad y precio en las facturas y tickets"
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-sm font-bold text-foreground block">Desglose de Productos</span>
-                  <span className="text-xs text-muted-400 block">Lista los artículos vendidos y sus totales</span>
+                  <span className="text-base font-bold text-foreground block">Desglose de Productos</span>
+                  <span className="text-sm text-muted-300 block">Lista los artículos vendidos y sus totales</span>
                 </div>
                 <input
                   type="checkbox"
@@ -837,13 +837,13 @@ export default function Facturero() {
                 />
               </label>
 
-              <label 
+              <label
                 title="Incluir la información de contacto del cliente en el recibo"
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-sm font-bold text-foreground block">Contacto del Cliente</span>
-                  <span className="text-xs text-muted-400 block">Muestra nombre y celular del cliente</span>
+                  <span className="text-base font-bold text-foreground block">Contacto del Cliente</span>
+                  <span className="text-sm text-muted-300 block">Muestra nombre y celular del cliente</span>
                 </div>
                 <input
                   type="checkbox"
@@ -853,13 +853,13 @@ export default function Facturero() {
                 />
               </label>
 
-              <label 
+              <label
                 title="Calcular y desglosar el IVA (19%) del total a pagar"
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-sm font-bold text-foreground block">Aplicar Impuestos (IVA 19%)</span>
-                  <span className="text-xs text-muted-400 block">Añade desglose de IVA a los subtotales</span>
+                  <span className="text-base font-bold text-foreground block">Aplicar Impuestos (IVA 19%)</span>
+                  <span className="text-sm text-muted-300 block">Añade desglose de IVA a los subtotales</span>
                 </div>
                 <input
                   type="checkbox"
@@ -947,12 +947,12 @@ export default function Facturero() {
               <Palette size={18} className="text-brand-400" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">4. Paleta de Color y Tema</h2>
             </div>
-            
+
             <div className="space-y-2">
               <p className="text-xs text-muted-400">
                 Selecciona una paleta de color para tus plantillas y PDFs corporativos. El color se aplicará automáticamente a los encabezados, tablas y totales.
               </p>
-              
+
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
                 {Object.entries(THEME_COLORS).map(([key, col]) => (
                   <button
@@ -960,14 +960,13 @@ export default function Facturero() {
                     type="button"
                     onClick={() => setThemeColor(key)}
                     title={`Aplicar el tema de color ${col.name} a tus facturas y PDFs`}
-                    className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all duration-300 ${
-                      themeColor === key
+                    className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all duration-300 ${themeColor === key
                         ? 'bg-surface-700 border-brand-500 ring-2 ring-brand-500/20'
                         : 'bg-surface-850 border-subtle hover:border-muted-500'
-                    }`}
+                      }`}
                   >
-                    <span 
-                      className="w-4 h-4 rounded-full shrink-0 border border-white/10" 
+                    <span
+                      className="w-4 h-4 rounded-full shrink-0 border border-white/10"
                       style={{ backgroundColor: col.primary }}
                     />
                     <div className="min-w-0">
@@ -988,7 +987,7 @@ export default function Facturero() {
                 <FileCheck size={16} className="text-brand-400" />
                 Vista Previa Interactiva
               </span>
-              
+
               {/* Preview Mode Selector */}
               <select
                 value={previewType}
@@ -1047,7 +1046,7 @@ export default function Facturero() {
 
             <div className="p-3 rounded-xl bg-surface-750 border border-subtle flex items-start gap-2.5 shrink-0">
               <AlertCircle size={16} className="text-brand-400 shrink-0 mt-0.5" />
-              <p className="text-[10px] text-muted-400 leading-normal">
+              <p className="text-xs text-muted-300 leading-normal">
                 Esta es una simulación visual en tiempo real. Los cambios en el logotipo, datos de la empresa e IVA se reflejarán inmediatamente en las facturas y tickets reales al presionar el botón <strong>Guardar Configuración</strong>.
               </p>
             </div>

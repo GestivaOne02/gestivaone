@@ -13,7 +13,7 @@ import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
 
 export default function DianAssistant() {
-  const [selectedYear, setSelectedYear] = useState('2025')
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
   const [taxType, setTaxType] = useState('juridica') // 'juridica' | 'natural'
   const [estimatedIvaRate, setEstimatedIvaRate] = useState(19) // Percentage of expenses with IVA
   const [activeTab, setActiveTab] = useState('renta') // 'renta' | 'iva' | 'exogena'
@@ -320,8 +320,8 @@ export default function DianAssistant() {
       </div>
 
       {/* Warning Banner */}
-      <div className="flex gap-3.5 p-4 rounded-2xl bg-warning-500/10 border border-warning-500/25 text-warning-400">
-        <AlertTriangle className="shrink-0 mt-0.5" size={18} />
+      <div className="flex gap-3.5 p-4 rounded-2xl bg-brand-500/10 border border-brand-500/25 text-brand-400">
+        <Info className="shrink-0 mt-0.5" size={18} />
         <div>
           <h3 className="text-sm font-bold">Módulo Experimental Informativo</h3>
           <p className="text-xs opacity-90 mt-1 leading-relaxed">

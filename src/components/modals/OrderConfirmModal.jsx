@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle, Clock, CalendarDays, Zap, PartyPopper } from 'lucide-react'
+import { CheckCircle, Clock, CalendarDays, Zap, PartyPopper, Mail } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -41,6 +41,14 @@ export default function OrderConfirmModal({ open }) {
   const [scheduledDate, setScheduledDate] = useState('')
   const [confirmed, setConfirmed] = useState(false)
   const [loading, setLoading] = useState(false)
+  
+  const client = useClientStore((s) => s.getSelected())
+  const [sendEmail, setSendEmail] = useState(false)
+  const [emailTarget, setEmailTarget] = useState(client?.email || '')
+  
+  useEffect(() => {
+    setEmailTarget(client?.email || '')
+  }, [client])
 
   const items = useCartStore((s) => s.items)
   const subtotal = useCartStore(selectSubtotal)
@@ -53,7 +61,6 @@ export default function OrderConfirmModal({ open }) {
   const total = useCartStore((s) => s.total)
   const customCharges = useCartStore((s) => s.customCharges)
 
-  const client = useClientStore((s) => s.getSelected())
   const user = useAuthStore((s) => s.user)
 
   const createInvoice = useInvoiceStore((s) => s.createInvoice)
@@ -105,9 +112,11 @@ export default function OrderConfirmModal({ open }) {
       // Trigger integrations and automatic printing
       const { smtp, whatsapp, printer } = useSettingsStore.getState()
       
-      if (smtp?.enabled) {
-        const emailTarget = client?.email || 'correo-cliente@express.com'
-        toast.success(`📧 Enviando factura a ${emailTarget} vía SMTP...`, { duration: 3000 })
+      if (sendEmail && emailTarget) {
+        toast.success(`📧 Factura en PDF enviada a ${emailTarget} con mensaje de agradecimiento.`, { duration: 4000 })
+      } else if (smtp?.enabled) {
+        const emailTgt = emailTarget || client?.email || 'correo-cliente@express.com'
+        toast.success(`📧 Enviando factura a ${emailTgt} vía SMTP...`, { duration: 3000 })
       }
       
       if (whatsapp?.enabled) {
@@ -265,6 +274,47 @@ export default function OrderConfirmModal({ open }) {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Email receipt toggle */}
+            <div className="space-y-2 pt-2 border-t border-subtle">
+              <label className="flex items-start gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={sendEmail}
+                  onChange={(e) => setSendEmail(e.target.checked)}
+                  className="rounded border-subtle bg-surface-600 text-brand-500 focus:ring-brand-500/20 w-4.5 h-4.5 mt-0.5"
+                />
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold text-foreground group-hover:text-brand-300 transition-colors">
+                    Enviar factura por correo electrónico
+                  </span>
+                  <span className="text-xs text-muted-400">Envía el PDF de la factura con un mensaje de agradecimiento</span>
+                </div>
+              </label>
+              <AnimatePresence>
+                {sendEmail && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="pt-1 overflow-hidden"
+                  >
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Mail size={16} className="text-muted-400" />
+                      </div>
+                      <input
+                        type="email"
+                        placeholder="correo@cliente.com"
+                        value={emailTarget}
+                        onChange={(e) => setEmailTarget(e.target.value)}
+                        className="w-full bg-surface-700 border border-subtle rounded-xl pl-9 pr-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <div className="flex gap-3 pt-1">
               <Button variant="ghost" size="md" className="flex-1" onClick={handleClose}>Cancelar</Button>
