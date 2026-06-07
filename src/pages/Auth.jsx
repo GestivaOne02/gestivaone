@@ -187,8 +187,6 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             </button>
           </div>
         </form>
-
-        <SocialAccessOptions onProviderClick={(provider) => onSocialClick(provider, 'worker_login')} label="ingresar" />
       </div>
     )
   }
@@ -388,14 +386,11 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
         </button>
       </div>
 
-      {!socialData && (
-        <SocialAccessOptions onProviderClick={(provider) => onSocialClick(provider, 'worker_register')} label="registrarte" />
-      )}
     </form>
   )
 }
 
-function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
+function SocialAccessOptions_REMOVED({ onProviderClick, label = "ingresar" }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 py-1">
@@ -448,7 +443,7 @@ function SocialAccessOptions({ onProviderClick, label = "ingresar" }) {
 }
 
 // ── Login tab ─────────────────────────────────────────────────
-function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
+function LoginForm({ socialAutofill, onClearAutofill }) {
   const navigate   = useNavigate()
   const login      = useAuthStore((s) => s.login)
   const loginWithSocialEmail = useAuthStore((s) => s.loginWithSocialEmail)
@@ -461,9 +456,6 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     const saved = localStorage.getItem('gestiva-remember-me')
     return saved === 'true'
   })
-  const [magicLinkMode, setMagicLinkMode] = useState(false)
-  const [magicEmail, setMagicEmail] = useState('')
-  const [magicSent, setMagicSent] = useState(false)
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('gestiva-remembered-email')
@@ -582,86 +574,6 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
     toast.success('Te enviamos un enlace para cambiar tu contraseña')
   }
 
-  const handleMagicLink = async (e) => {
-    e.preventDefault()
-    const cleanEmail = magicEmail.trim().toLowerCase()
-    if (!cleanEmail) return toast.error('Ingresa tu correo electrónico')
-
-    const sendMagicLink = useAuthStore.getState().sendMagicLink
-    const result = await sendMagicLink(cleanEmail)
-    
-    if (!result.success) {
-      return toast.error(result.error)
-    }
-
-    toast.success('¡Revisa tu correo electrónico para acceder!')
-    setMagicSent(true)
-  }
-
-  if (magicLinkMode) {
-    return (
-      <div className="space-y-4">
-        {!magicSent ? (
-          <form onSubmit={handleMagicLink} className="space-y-3 sm:space-y-4">
-            <div className="bg-brand-500/10 border border-brand-500/25 rounded-xl p-3 text-xs text-brand-200">
-              Te enviaremos un enlace mágico a tu correo. Sin contraseña, sin complicaciones.
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-              <input 
-                value={magicEmail} 
-                onChange={(e) => setMagicEmail(e.target.value)} 
-                placeholder="tu@empresa.com" 
-                type="email" 
-                required
-                className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" 
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm"
-            >
-              {loading ? 'Enviando enlace...' : 'Enviar enlace mágico'}
-            </button>
-
-            <button 
-              type="button" 
-              onClick={() => setMagicLinkMode(false)}
-              className="w-full py-3 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
-            >
-              Volver a ingresar con contraseña
-            </button>
-          </form>
-        ) : (
-          <div className="text-center space-y-4 py-4">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-              <CheckCircle2 size={48} className="text-success-400 mx-auto" />
-            </motion.div>
-            <div>
-              <h3 className="text-sm font-bold text-foreground">¡Enlace enviado!</h3>
-              <p className="text-xs text-muted-400 mt-1">Revisa tu correo <span className="font-semibold text-brand-300">{magicEmail}</span></p>
-            </div>
-            <p className="text-[10px] text-muted-500">El enlace expira en 24 horas</p>
-
-            <button 
-              type="button"
-              onClick={() => {
-                setMagicSent(false)
-                setMagicEmail('')
-              }}
-              className="w-full py-3 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
-            >
-              Intentar de nuevo
-            </button>
-          </div>
-        )}
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-4">
       <form onSubmit={submit} className="space-y-3 sm:space-y-4">
@@ -741,23 +653,12 @@ function LoginForm({ onSocialClick, socialAutofill, onClearAutofill }) {
 
         <button
           type="submit"
-          disabled={loading || !!socialAutofill}
+          disabled={loading}
           className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm"
         >
-          {socialAutofill
-            ? `Autenticando con ${socialAutofill.provider}...`
-            : loading
-              ? 'Ingresando...'
-              : 'Iniciar sesión'
-          }
+          {loading ? 'Ingresando...' : 'Iniciar sesión'}
         </button>
       </form>
-
-      {!socialAutofill && (
-        <>
-          <SocialAccessOptions onProviderClick={onSocialClick} label="ingresar" />
-        </>
-      )}
     </div>
   )
 }
@@ -1026,50 +927,6 @@ export default function Auth() {
   const [tab, setTab] = useState('login')
   const [regStep, setRegStep] = useState('plan')
 
-  const [socialModal, setSocialModal] = useState({
-    isOpen: false,
-    provider: null, // 'Google' | 'Apple' | 'Phone'
-    action: null,   // 'login' | 'register' | 'worker_login' | 'worker_register'
-  })
-  
-  const [workerSocialData, setWorkerSocialData] = useState(null)
-  const [registerSocialData, setRegisterSocialData] = useState(null)
-  const [socialAutofill, setSocialAutofill] = useState(null)
-
-  const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle)
-  const signInWithApple = useAuthStore((s) => s.signInWithApple)
-  const sendMagicLink = useAuthStore((s) => s.sendMagicLink)
-  const [magicModal, setMagicModal] = useState(false)
-  const [magicModalEmail, setMagicModalEmail] = useState('')
-  const [magicModalSent, setMagicModalSent] = useState(false)
-  const [magicModalLoading, setMagicModalLoading] = useState(false)
-
-  const handleSocialClick = async (provider, action) => {
-    if (provider === 'Google') {
-      const res = await signInWithGoogle()
-      if (res && !res.success) toast.error(res.error || 'Error al conectar con Google')
-      // On success Supabase redirects the browser automatically
-    } else if (provider === 'Apple') {
-      const res = await signInWithApple()
-      if (res && !res.success) toast.error(res.error || 'Error al conectar con Apple')
-    } else if (provider === 'MagicLink') {
-      setMagicModal(true)
-      setMagicModalSent(false)
-      setMagicModalEmail('')
-    }
-  }
-
-  const handleMagicModalSubmit = async (e) => {
-    e.preventDefault()
-    const email = magicModalEmail.trim().toLowerCase()
-    if (!email) return toast.error('Ingresa tu correo electrónico')
-    setMagicModalLoading(true)
-    const res = await sendMagicLink(email)
-    setMagicModalLoading(false)
-    if (!res.success) return toast.error(res.error || 'Error al enviar el enlace')
-    toast.success('¡Revisa tu correo!')
-    setMagicModalSent(true)
-  }
 
   const handleClearWorkerSocialData = () => {
     setWorkerSocialData(null)
@@ -1210,25 +1067,23 @@ export default function Auth() {
               >
                 {tab === 'login' && (
                   <LoginForm
-                    onSocialClick={(provider) => handleSocialClick(provider, 'login')}
-                    socialAutofill={socialAutofill}
-                    onClearAutofill={() => setSocialAutofill(null)}
+                    socialAutofill={null}
+                    onClearAutofill={() => {}}
                   />
                 )}
                 {tab === 'register' && (
                   <RegisterFlow
                     step={regStep}
                     setStep={setRegStep}
-                    onSocialClick={(provider) => handleSocialClick(provider, 'register')}
-                    socialData={registerSocialData}
-                    onClearSocialData={handleClearRegisterSocialData}
+                    socialData={null}
+                    onClearSocialData={() => {}}
                   />
                 )}
                 {tab === 'worker' && (
                   <WorkerLogin
-                    onSocialClick={(provider, action) => handleSocialClick(provider, action)}
-                    socialData={workerSocialData}
-                    onClearSocialData={handleClearWorkerSocialData}
+                    onSocialClick={() => {}}
+                    socialData={null}
+                    onClearSocialData={() => {}}
                   />
                 )}
               </motion.div>
@@ -1250,89 +1105,6 @@ export default function Auth() {
         </div>
       </div>
 
-      {/* Magic Link Modal */}
-      <AnimatePresence>
-        {magicModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
-            onClick={(e) => e.target === e.currentTarget && setMagicModal(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-surface-800 border border-subtle w-full max-w-sm rounded-3xl p-6 relative overflow-hidden shadow-2xl"
-            >
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/10 rounded-full blur-[60px] pointer-events-none" />
-
-              <div className="flex items-center justify-between border-b border-subtle pb-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse" />
-                  <h3 className="font-extrabold text-sm text-foreground uppercase tracking-wider">
-                    Enlace Mágico
-                  </h3>
-                </div>
-                {!magicModalLoading && (
-                  <button
-                    onClick={() => setMagicModal(false)}
-                    className="text-xs font-bold text-muted-500 hover:text-foreground transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                )}
-              </div>
-
-              {magicModalSent ? (
-                <div className="text-center space-y-4 py-4">
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-                    <CheckCircle2 size={48} className="text-success-400 mx-auto" />
-                  </motion.div>
-                  <div>
-                    <h3 className="text-sm font-bold text-foreground">¡Enlace enviado!</h3>
-                    <p className="text-xs text-muted-400 mt-1">Revisa <span className="font-semibold text-brand-300">{magicModalEmail}</span></p>
-                  </div>
-                  <p className="text-[10px] text-muted-500">El enlace expira en 24 horas</p>
-                  <button
-                    onClick={() => { setMagicModalSent(false); setMagicModalEmail('') }}
-                    className="w-full py-2.5 rounded-xl border border-subtle hover:bg-surface-700 text-muted-400 text-sm font-semibold transition-colors"
-                  >
-                    Intentar de nuevo
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleMagicModalSubmit} className="space-y-4">
-                  <div className="bg-brand-500/10 border border-brand-500/25 rounded-xl p-3 text-xs text-brand-200">
-                    Te enviaremos un enlace de acceso directo. Sin contraseña.
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-black text-muted-500 uppercase tracking-widest mb-1.5 block">
-                      Correo electrónico
-                    </label>
-                    <input
-                      required
-                      type="email"
-                      value={magicModalEmail}
-                      onChange={(e) => setMagicModalEmail(e.target.value)}
-                      placeholder="tu@empresa.com"
-                      className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={magicModalLoading}
-                    className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-bold shadow-glow-sm transition-all"
-                  >
-                    {magicModalLoading ? 'Enviando...' : 'Enviar enlace mágico'}
-                  </button>
-                </form>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }
