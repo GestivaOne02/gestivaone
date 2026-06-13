@@ -106,7 +106,7 @@ export default function Settings() {
       </motion.div>
 
       {/* ─── Currency Section ─── */}
-      <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5">
+      <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
           icon={Globe}
           title="Divisa & Tasas de Cambio"
@@ -203,7 +203,7 @@ export default function Settings() {
       </motion.section>
 
       {/* ─── Theme Section ─── */}
-      <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5">
+      <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
           icon={Moon}
           title="Apariencia"
@@ -375,7 +375,7 @@ function ResendBlock() {
     <motion.section 
       initial={{ opacity: 0, y: 15 }} 
       animate={{ opacity: 1, y: 0 }}
-      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden animate-fade-in"
+      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden animate-fade-in shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)} type="button"
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
@@ -484,7 +484,7 @@ function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
     <motion.section 
       initial={{ opacity: 0, y: 15 }} 
       animate={{ opacity: 1, y: 0 }}
-      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden"
+      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
@@ -535,7 +535,7 @@ function ApiBlock() {
 
   if (!plan.hasAPI) {
     return (
-      <section className="bg-surface-800/50 border border-subtle border-dashed rounded-3xl p-5 flex items-center justify-between opacity-70 group grayscale hover:grayscale-0 transition-all">
+      <section className="bg-surface-800/50 border border-subtle border-dashed rounded-3xl p-5 flex items-center justify-between opacity-70 group grayscale hover:grayscale-0 transition-all shadow-glow-sm">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-surface-700 text-muted-500"><Server size={16} /></div>
           <div>
@@ -552,7 +552,7 @@ function ApiBlock() {
     <motion.section 
       initial={{ opacity: 0, y: 15 }} 
       animate={{ opacity: 1, y: 0 }}
-      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden"
+      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
@@ -621,7 +621,7 @@ function ExportBlock() {
 
   if (!plan.hasReports) {
     return (
-      <section className="bg-surface-800/50 border border-subtle border-dashed rounded-3xl p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-80">
+      <section className="bg-surface-800/50 border border-subtle border-dashed rounded-3xl p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-80 shadow-glow-sm">
         <div className="p-3 rounded-2xl bg-brand-600/10 text-brand-400 border border-brand-500/20">
           <Lock size={20} />
         </div>
@@ -637,7 +637,7 @@ function ExportBlock() {
   }
 
   return (
-    <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-4">
+    <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-4 shadow-glow-sm">
       <SectionTitle icon={Download} title="Exportar a PDF / Excel" desc="Descarga reportes de facturas, clientes e inventario" />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {exports.map(({ key, label, icon: Icon, fn }) => (
@@ -737,7 +737,7 @@ function PrinterBlock() {
     <motion.section 
       initial={{ opacity: 0, y: 15 }} 
       animate={{ opacity: 1, y: 0 }}
-      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden"
+      className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
@@ -763,7 +763,7 @@ function PrinterBlock() {
           >
             <div className="px-5 pb-5 border-t border-subtle pt-4 font-sans">
               {!hasPrinter && !checking ? (
-                <div className="flex flex-col items-center justify-center text-center p-6 bg-surface-750 border border-dashed border-subtle rounded-2xl gap-3">
+                <div className="flex flex-col items-center justify-center text-center p-6 bg-surface-750 border border-dashed border-subtle rounded-2xl gap-3 shadow-glow-sm">
                   <Printer size={32} className="text-muted-500 animate-pulse" />
                   <div>
                     <h4 className="text-sm font-bold text-foreground">No se detectó impresora configurada</h4>

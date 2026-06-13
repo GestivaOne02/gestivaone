@@ -793,7 +793,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Financial Export Panel */}
-      <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-glow-sm">
         <div className="flex items-center gap-3">
           <TrendingUp size={20} className="text-brand-400 shrink-0" />
           <div>
@@ -961,7 +961,7 @@ export default function Dashboard() {
       {/* Charts: stacked mobile → side by side lg+ (Available for ALL plans, making 6 widgets total for Standard) */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
         {/* Revenue vs Pending chart */}
-        <div className="bg-surface-800 border border-subtle rounded-2xl p-5">
+        <div className="bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-brand-400" />
@@ -1010,7 +1010,7 @@ export default function Dashboard() {
         </div>
 
         {/* Invoices breakdown */}
-        <div className="bg-surface-800 border border-subtle rounded-2xl p-5">
+        <div className="bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
           <div className="flex items-center gap-2 mb-4">
             <FileText size={16} className="text-brand-400" />
             <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Facturas por estado</span>
@@ -1047,7 +1047,7 @@ export default function Dashboard() {
       </motion.div>
 
       {!plan.hasAdvancedDashboard ? (
-        <motion.div variants={itemVariants} className="bg-surface-800 border-2 border-dashed border-subtle rounded-3xl p-10 flex flex-col items-center justify-center text-center space-y-4">
+        <motion.div variants={itemVariants} className="bg-surface-800 border-2 border-dashed border-subtle rounded-3xl p-10 flex flex-col items-center justify-center text-center space-y-4 shadow-glow-sm">
           <div className="w-16 h-16 rounded-2xl bg-brand-600/10 text-brand-400 border border-brand-500/20 flex items-center justify-center shadow-glow-sm">
             <TrendingUp size={30} />
           </div>
@@ -1064,7 +1064,7 @@ export default function Dashboard() {
       ) : (
         <>
           {/* Advanced Multi-Timeline Analytics Dashboard */}
-          <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-6">
+          <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-6 shadow-glow-sm">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-subtle pb-5">
               <div>
                 <h3 className="text-base font-bold text-brand-600 dark:text-brand-400 flex items-center gap-2">
@@ -1236,7 +1236,7 @@ export default function Dashboard() {
           {/* Advanced row: stacked → 2 cols on md → 4 cols on xl */}
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4 mt-6">
             {/* Top clients */}
-            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5">
+            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <Users size={16} className="text-brand-400" />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Top Clientes</span>
@@ -1263,7 +1263,7 @@ export default function Dashboard() {
             </div>
 
             {/* Top products */}
-            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5">
+            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp size={16} className="text-brand-400" />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Productos más vendidos</span>
@@ -1287,7 +1287,7 @@ export default function Dashboard() {
             </div>
 
             {/* Overdue list */}
-            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5">
+            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <AlertTriangle size={16} className="text-danger-400" />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Clientes con deuda</span>
@@ -1312,7 +1312,7 @@ export default function Dashboard() {
               )}
             </div>
             {/* Categorías (PieChart) */}
-            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 flex flex-col">
+            <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 flex flex-col shadow-glow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <Package size={16} className="text-brand-400" />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Ventas por Categoría</span>
@@ -1435,7 +1435,7 @@ export default function Dashboard() {
       {/* Operating Expenses Section */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         {/* Form: Register Expense */}
-        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4">
+        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4 shadow-glow-sm">
           <div className="flex items-center gap-2 pb-3 border-b border-subtle">
             <Coins size={18} className="text-brand-400" />
             <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Registrar Egreso / Gasto</h3>
@@ -1564,7 +1564,7 @@ export default function Dashboard() {
         </div>
 
         {/* Pockets Capital Widget */}
-        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px] justify-between">
+        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px] justify-between shadow-glow-sm">
           <div className="flex flex-col flex-1">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle mb-4 shrink-0">
               <FolderPlus size={18} className="text-brand-400" />
@@ -1647,7 +1647,7 @@ export default function Dashboard() {
         </div>
 
         {/* List: Recent Expenses */}
-        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px]">
+        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px] shadow-glow-sm">
           <div className="flex items-center justify-between pb-3 border-b border-subtle mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-brand-400" />

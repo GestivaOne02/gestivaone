@@ -523,7 +523,7 @@ export default function PersonalFinance() {
           </div>
 
           {/* Loans Summary */}
-          <div className="bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4">
+          <div className="bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4 shadow-glow-sm">
             <div className="flex items-center gap-2 pb-2.5 border-b border-subtle">
               <Coins size={16} className="text-brand-400" />
               <span className="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">Resumen de Préstamos</span>
@@ -550,7 +550,7 @@ export default function PersonalFinance() {
         </div>
 
         {/* Expenses/Loans List */}
-        <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px]">
+        <div className="lg:col-span-2 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px] shadow-glow-sm">
           {/* Tabs Selector Header */}
           <div className="flex items-center justify-between pb-3 border-b border-subtle mb-4 shrink-0">
             <div className="flex gap-4">

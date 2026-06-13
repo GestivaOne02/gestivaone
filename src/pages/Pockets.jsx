@@ -214,7 +214,7 @@ export default function Pockets() {
       {/* Pockets Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {pockets.length === 0 ? (
-          <div className="col-span-full bg-surface-800/40 border border-subtle border-dashed rounded-3xl p-12 text-center text-muted-400 flex flex-col items-center justify-center gap-3">
+          <div className="col-span-full bg-surface-800/40 border border-subtle border-dashed rounded-3xl p-12 text-center text-muted-400 flex flex-col items-center justify-center gap-3 shadow-glow-sm">
             <FolderPlus size={36} className="text-muted-500" />
             <div>
               <p className="text-sm font-bold text-foreground">No tienes bolsillos activos</p>

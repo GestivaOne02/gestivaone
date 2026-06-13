@@ -331,7 +331,7 @@ export default function DianAssistant() {
       </div>
 
       {/* Configuration Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface-800/50 p-4 rounded-2xl border border-subtle/50">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface-800/50 p-4 rounded-2xl border border-subtle/50 shadow-glow-sm">
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase tracking-wider text-muted-400">Tipo de Contribuyente (Renta)</label>
           <div className="grid grid-cols-2 gap-2">
@@ -414,7 +414,7 @@ export default function DianAssistant() {
         <div className="space-y-6">
           {/* Dashboard Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between">
+            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between shadow-glow-sm">
               <div>
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">Ingresos Brutos ({selectedYear})</span>
                 <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalSales)}</h3>
@@ -425,7 +425,7 @@ export default function DianAssistant() {
               </div>
             </div>
 
-            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between">
+            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between shadow-glow-sm">
               <div>
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">Costos y Deducciones</span>
                 <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalCost)}</h3>
@@ -453,7 +453,7 @@ export default function DianAssistant() {
           {/* Renta Calculation Detail Card */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn">
             {/* Column 1: Adjustments Inputs */}
-            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-5">
+            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-5 shadow-glow-sm">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                 <Calculator size={18} className="text-brand-400" />
                 Ajustes Tributarios del Año
@@ -543,7 +543,7 @@ export default function DianAssistant() {
             </div>
 
             {/* Column 2: Tax Calculation Ledger */}
-            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-6">
+            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-6 shadow-glow-sm">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                 <FileText size={18} className="text-brand-400" />
                 Depuración de Renta e Impuesto Neto
@@ -610,7 +610,7 @@ export default function DianAssistant() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Sales IVA */}
-            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl space-y-4">
+            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl space-y-4 shadow-glow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">IVA Generado (Cobrado en Ventas)</span>
                 <span className="w-8 h-8 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center">
@@ -669,7 +669,7 @@ export default function DianAssistant() {
             </div>
 
             {/* Expenses IVA */}
-            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl space-y-4">
+            <div className="bg-surface-800 border border-subtle p-5 rounded-2xl space-y-4 shadow-glow-sm">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">IVA Descontable (Pagado en Compras)</span>
                 <span className="w-8 h-8 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center">
@@ -740,7 +740,7 @@ export default function DianAssistant() {
           </div>
 
           {/* IVA Balance Card */}
-          <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4">
+          <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 shadow-glow-sm">
             <h3 className="text-lg font-bold text-foreground">Resultado de Impuesto a las Ventas (IVA)</h3>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-surface-700/50 border border-subtle/50">
               <div>
@@ -774,7 +774,7 @@ export default function DianAssistant() {
           </div>
 
           {/* Data Audit Card */}
-          <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4">
+          <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 shadow-glow-sm">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
               <Landmark size={18} className="text-brand-400" />
               Auditoría y Calidad de los Datos (Exógena)
@@ -816,7 +816,7 @@ export default function DianAssistant() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Formato 1007 */}
-            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 flex flex-col justify-between">
+            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-glow-sm">
               <div className="space-y-2">
                 <Badge variant="primary" className="text-[10px] uppercase font-bold">Ventas / Ingresos</Badge>
                 <h4 className="text-base font-bold text-foreground">Formato 1007: Ingresos Propios</h4>
@@ -836,7 +836,7 @@ export default function DianAssistant() {
             </div>
 
             {/* Formato 1001 */}
-            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 flex flex-col justify-between">
+            <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 flex flex-col justify-between shadow-glow-sm">
               <div className="space-y-2">
                 <Badge variant="warning" className="text-[10px] uppercase font-bold">Compras / Egresos</Badge>
                 <h4 className="text-base font-bold text-foreground">Formato 1001: Pagos a Terceros</h4>
