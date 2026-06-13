@@ -81,6 +81,8 @@ export const useCartStore = create((set, get) => {
               qty,
               unit: product.unit ?? 'UND',
               isCustom: product.isCustom ?? false,
+              attachment_url: product.attachment_url ?? null,
+              attachment_name: product.attachment_name ?? null,
             },
           ],
         }

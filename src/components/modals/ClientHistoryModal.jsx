@@ -72,6 +72,18 @@ function InvoiceItemCard({ inv, format$, client }) {
     } else {
       text = `Hola *${clientName}*, te saluda *${companyName}*. \n\nTe compartimos el estado de cuenta de tu *Factura #${inv.id.slice(0, 8)}*:\n• Total Factura: *${format$(inv.total)}*\n• Total Abonado: *${format$(paidAmount)}*\n• *Saldo Pendiente: ${format$(remaining)}*\n\nPuedes realizar tus abonos o el pago del saldo a través de nuestros canales habituales. ¡Muchas gracias! 🙏`
     }
+
+    // Attachments logic
+    try {
+      const itemsList = typeof inv.items === 'string' ? JSON.parse(inv.items) : (inv.items || [])
+      const attachments = itemsList.filter(item => item.attachment_url && item.attachment_url.trim() !== '')
+      if (attachments.length > 0) {
+        text += `\n\n📄 *Archivos Adjuntos:*`
+        attachments.forEach(att => {
+          text += `\n• ${att.attachment_name || 'Documento'}: ${att.attachment_url}`
+        })
+      }
+    } catch (e) {}
     
     const cleanPhone = clientPhone.replace(/[^0-9]/g, '')
     const formattedPhone = cleanPhone.length === 10 ? `57${cleanPhone}` : cleanPhone

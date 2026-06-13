@@ -118,6 +118,8 @@ export function invoiceTemplate(invoice, company = {}) {
     </tr>
   `).join('')
 
+  const attachments = itemsList.filter(item => item.attachment_url && item.attachment_url.trim() !== '')
+
   const isCredit = invoice.payment_type !== 'immediate'
   const statusColor = invoice.payment_status === 'paid' ? '#10b981' : '#f59e0b'
   const statusLabel = invoice.payment_status === 'paid' ? 'PAGADA' : 'PENDIENTE DE PAGO'
@@ -188,6 +190,27 @@ export function invoiceTemplate(invoice, company = {}) {
       ` : ''}
 
       ${divider()}
+
+      <!-- Attachments list -->
+      ${attachments.length > 0 ? `
+      <tr>
+        <td style="padding:0 32px 20px;">
+          <p style="margin:0 0 12px;font-size:12px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;">Archivos Adjuntos</p>
+          <table width="100%" cellpadding="0" cellspacing="0">
+            ${attachments.map(att => `
+              <tr>
+                <td style="padding:8px 0;">
+                  <a href="${att.attachment_url}" target="_blank" style="display:inline-block;padding:8px 16px;background-color:#252540;border:1px solid #2d2d4a;border-radius:8px;color:#a78bfa;text-decoration:none;font-size:13px;font-weight:600;">
+                    📄 ${att.attachment_name || 'Ver documento adjunto'}
+                  </a>
+                </td>
+              </tr>
+            `).join('')}
+          </table>
+        </td>
+      </tr>
+      ${divider()}
+      ` : ''}
 
       <tr>
         <td style="padding:0 32px 32px;text-align:center;">

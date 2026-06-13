@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Package, Tag, DollarSign, Archive } from 'lucide-react'
+import { Package, Tag, DollarSign, Archive, Link2, FileUp } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -20,6 +20,8 @@ const schema = z.object({
   unit:     z.enum(['KG', 'LB', 'UND', 'L', 'M', 'ILIMITADO']),
   category: z.string().optional(),
   stock:    z.coerce.number().min(0).optional(),
+  attachment_url: z.string().optional(),
+  attachment_name: z.string().optional(),
 })
 
 const UNITS = ['KG', 'LB', 'UND', 'L', 'M', 'ILIMITADO']
@@ -40,7 +42,7 @@ export default function AddProductModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0 },
+    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0, attachment_url: '', attachment_name: '' },
   })
 
   const unit = watch('unit')
@@ -52,11 +54,11 @@ export default function AddProductModal({ open }) {
 
   useEffect(() => {
     if (open && editing) {
-      reset({ ...editing, stock: editing.stock ?? 0, cost: editing.cost ?? 0 })
+      reset({ ...editing, stock: editing.stock ?? 0, cost: editing.cost ?? 0, attachment_url: editing.attachment_url ?? '', attachment_name: editing.attachment_name ?? '' })
       setCustomCategoryName('')
     }
     else if (open) {
-      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0 })
+      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '' })
       setCustomCategoryName('')
     }
   }, [open, editing])
@@ -177,6 +179,42 @@ export default function AddProductModal({ open }) {
             required
           />
         )}
+
+        {/* Attachments Section */}
+        <div className="pt-2 border-t border-subtle">
+          <p className="text-xs font-semibold text-muted-300 mb-2">Archivo Adjunto (Opcional)</p>
+          <div className="flex gap-2 mb-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              icon={<FileUp size={14} />}
+              className="w-full opacity-50 cursor-not-allowed"
+              title="Próximamente: Subir archivo directamente"
+              onClick={(e) => {
+                e.preventDefault()
+                toast('La subida de archivos estará disponible próximamente. Por favor usa un enlace por ahora.', { icon: 'ℹ️' })
+              }}
+            >
+              Subir Archivo (Próximamente)
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              label="Nombre del Adjunto"
+              icon={<Tag size={14} />}
+              placeholder="Ej: Registro INVIMA"
+              {...register('attachment_name')}
+            />
+            <Input
+              label="Enlace del Adjunto"
+              icon={<Link2 size={14} />}
+              placeholder="Ej: https://drive.google.com/..."
+              {...register('attachment_url')}
+            />
+          </div>
+          <p className="text-[10px] text-muted-400 mt-1">Este adjunto se incluirá cuando envíes facturas con este producto por correo o WhatsApp.</p>
+        </div>
 
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="ghost" size="md" className="flex-1" onClick={closeModal}>Cancelar</Button>
