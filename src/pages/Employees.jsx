@@ -19,22 +19,29 @@ const ROLE_META = {
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
+  visible: { 
     opacity: 1,
-    transition: { staggerChildren: 0.05 }
+    transition: { 
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    } 
   }
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 15 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 260, damping: 25 }
+  hidden: { opacity: 0, y: 16, scale: 0.98 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { 
+      type: 'spring', 
+      stiffness: 260, 
+      damping: 25 
+    } 
   }
 }
 
-// ── Invitation Code Timer helper ───────────────────────────────────────────
 function InviteTimer({ expiresAt }) {
   const [timeLeft, setTimeLeft] = useState('')
 
@@ -191,7 +198,7 @@ export default function Employees() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="page-container space-y-8"
+      className="page-container space-y-6"
     >
       {/* Dynamic Header */}
       <motion.div
@@ -199,12 +206,12 @@ export default function Employees() {
         className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-lg md:text-2xl font-bold text-brand-600 dark:text-white">Equipo de Trabajo</h1>
-          <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">{employees.length + 1} colaboradores activos</p>
+          <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Equipo de Trabajo</h1>
+          <p className="hidden sm:block text-sm text-muted-400 mt-0.5">{employees.length + 1} colaboradores activos</p>
         </div>
         <button
           onClick={() => setInviteModalOpen(true)}
-          className="flex items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl transition-all duration-300 hover:scale-105 shrink-0"
+          className="flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-300 hover:scale-[1.02] shrink-0"
         >
           <Plus size={14} className="md:size-[16px]" />
           <span className="hidden sm:inline">Vincular Trabajador</span>

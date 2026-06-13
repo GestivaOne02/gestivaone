@@ -12,6 +12,15 @@ import { useClientStore } from '@/store/useClientStore'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
+}
+const itemVariants = {
+  hidden: { opacity: 0, y: 16, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 260, damping: 25 } }
+}
+
 const UNIT_COLORS = {
   KG: 'text-blue-400 bg-blue-500/10',
   LB: 'text-purple-400 bg-purple-500/10',
@@ -213,7 +222,7 @@ export default function Products() {
   }
 
   return (
-    <div className="page-container flex flex-col gap-5 h-full">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container flex flex-col gap-5 h-full">
       {/* Sticky Header & Control Panel */}
       <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col gap-4">
         {/* Title and Actions */}
@@ -376,6 +385,6 @@ export default function Products() {
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   )
 }

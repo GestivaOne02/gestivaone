@@ -12,6 +12,15 @@ import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
+}
+const itemVariants = {
+  hidden: { opacity: 0, y: 16, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 260, damping: 25 } }
+}
+
 export default function DianAssistant() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
   const [taxType, setTaxType] = useState('juridica') // 'juridica' | 'natural'
@@ -295,15 +304,15 @@ export default function DianAssistant() {
   }
 
   return (
-    <div className="page-container space-y-6 pb-12">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container space-y-6 pb-12">
       {/* ── Fixed Sticky Page Header ─────────────────── */}
       <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-foreground uppercase tracking-wider flex items-center gap-2">
+          <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">
             <Calculator className="text-brand-400" />
             Asistente DIAN
           </h1>
-          <p className="hidden sm:block text-xs text-muted-400">
+          <p className="hidden sm:block text-sm text-muted-400 mt-0.5">
             Módulo tributario interactivo para estimar impuesto de renta, liquidación de IVA e información exógena.
           </p>
         </div>
@@ -857,6 +866,6 @@ export default function DianAssistant() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

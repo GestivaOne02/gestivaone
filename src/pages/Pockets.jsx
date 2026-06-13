@@ -11,6 +11,15 @@ import clsx from 'clsx'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
+}
+const itemVariants = {
+  hidden: { opacity: 0, y: 16, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 260, damping: 25 } }
+}
+
 const smoothTransition = { type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }
 
 const POCKET_TYPES = [
@@ -192,7 +201,7 @@ export default function Pockets() {
   }
 
   return (
-    <div className="page-container flex flex-col gap-6">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container flex flex-col gap-6">
       {/* Header */}
       <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -537,6 +546,6 @@ export default function Pockets() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }

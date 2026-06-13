@@ -13,18 +13,26 @@ import toast from 'react-hot-toast'
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
+  visible: { 
     opacity: 1,
-    transition: { staggerChildren: 0.08 }
+    transition: { 
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    } 
   }
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 15 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 260, damping: 25 }
+  hidden: { opacity: 0, y: 16, scale: 0.98 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { 
+      type: 'spring', 
+      stiffness: 260, 
+      damping: 25 
+    } 
   }
 }
 
@@ -109,20 +117,20 @@ export default function Notifications() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="page-container flex flex-col gap-6 h-full"
+      className="page-container space-y-6"
     >
       {/* Sticky Header & Categories Wrapper */}
       <motion.div 
         variants={itemVariants}
-        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col gap-4"
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         {/* Row 1: Title and Actions */}
         <div className="flex flex-row items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg md:text-2xl font-bold text-brand-600 dark:text-white">Notificaciones</h1>
+              <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Notificaciones</h1>
             </div>
-            <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Alertas importantes y anuncios</p>
+            <p className="hidden sm:block text-sm text-muted-400 mt-0.5">Alertas importantes y anuncios</p>
           </div>
 
           <div className="flex gap-2 shrink-0">
