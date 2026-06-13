@@ -409,9 +409,13 @@ form.bg-surface-800 {
   border-width: 0px !important;
   border-style: none !important;
   border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 /* 2. Flat Layout - Disable modal shadows globally if needed (kept empty to allow shadows) */
+.shadow-glow-sm {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
 
 /* 3. Unified Transition Timings for Interactive Elements */
 button,
