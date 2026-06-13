@@ -651,7 +651,7 @@ export default function Facturero() {
         {/* Left config form panel (8 cols on lg) */}
         <div className="lg:col-span-7 space-y-6 lg:h-full lg:overflow-y-auto no-scrollbar lg:pr-2 pb-6">
           {/* Template Choices Card */}
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5 shadow-glow-sm">
+          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Sparkles size={18} className="text-brand-400" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">1. Selección de Plantillas</h2>
@@ -676,7 +676,7 @@ export default function Facturero() {
                     <Building2 size={16} />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-foreground shadow-glow-sm">One Corporate (Clásica)</h4>
+                    <h4 className="text-xs font-bold text-foreground">One Corporate (Clásica)</h4>
                     <p className="text-xs text-muted-300 mt-0.5">Encabezado formal con color corporativo, doble bloque estructurado y diseño robusto.</p>
                   </div>
                 </button>
@@ -696,7 +696,7 @@ export default function Facturero() {
                     <FileText size={16} />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-foreground shadow-glow-sm">One Minimalist (Moderna)</h4>
+                    <h4 className="text-xs font-bold text-foreground">One Minimalist (Moderna)</h4>
                     <p className="text-xs text-muted-300 mt-0.5">Diseño minimalista con alto espacio en blanco, líneas limpias y diseño contemporáneo.</p>
                   </div>
                 </button>
@@ -722,7 +722,7 @@ export default function Facturero() {
                     <Printer size={16} />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-foreground shadow-glow-sm">Ticket Clásico</h4>
+                    <h4 className="text-xs font-bold text-foreground">Ticket Clásico</h4>
                     <p className="text-xs text-muted-300 mt-0.5">Estilo tradicional monoespaciado en Courier, divisores de guiones y formato compacto.</p>
                   </div>
                 </button>
@@ -742,14 +742,14 @@ export default function Facturero() {
                     <Sparkles size={16} />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-foreground shadow-glow-sm">Ticket Moderno</h4>
+                    <h4 className="text-xs font-bold text-foreground">Ticket Moderno</h4>
                     <p className="text-xs text-muted-300 mt-0.5">Tipografía sans-serif limpia, tarjeta superior para datos de empresa y bordes sutiles.</p>
                   </div>
                 </button>
               </div>
             </div>
           </div>
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5 shadow-glow-sm">
+          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Settings size={18} className="text-brand-400" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">2. Configuración Visual e Impresión</h2>
@@ -871,7 +871,7 @@ export default function Facturero() {
             </div>
           </div>
 
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4 shadow-glow-sm">
+          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Building2 size={18} className="text-brand-400" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">3. Datos de la Empresa y Logotipo</h2>
@@ -903,7 +903,7 @@ export default function Facturero() {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-muted-400 block uppercase tracking-wide">Logotipo Corporativo</label>
                 <div className="flex gap-2">
-                  <div className="bg-surface-750 border border-subtle rounded-xl flex-1 px-3 py-2 text-xs text-muted-300 truncate flex items-center gap-2 shadow-glow-sm">
+                  <div className="bg-surface-750 border border-subtle rounded-xl flex-1 px-3 py-2 text-xs text-muted-300 truncate flex items-center gap-2">
                     {logoUrl ? (
                       <>
                         <img src={logoUrl} alt="Logo" className="w-5 h-5 rounded-full object-cover" />
@@ -942,7 +942,7 @@ export default function Facturero() {
           </div>
 
           {/* 4. Color Theme Selector */}
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4 shadow-glow-sm">
+          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Palette size={18} className="text-brand-400" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">4. Paleta de Color y Tema</h2>
@@ -981,7 +981,7 @@ export default function Facturero() {
 
         {/* Right side live preview pane (5 cols on lg) */}
         <div className="lg:col-span-5 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 space-y-4 lg:h-full lg:flex lg:flex-col lg:overflow-hidden shadow-glow-sm">
+          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 space-y-4 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-subtle shrink-0">
               <span className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
                 <FileCheck size={16} className="text-brand-400" />

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Users, Plus, ShieldCheck, Truck, Calculator, 
-  Trash2, MoreVertical, Check, X, Clock, Copy, Link as LinkIcon, Mail 
+import {
+  Users, Plus, ShieldCheck, Truck, Calculator,
+  Trash2, MoreVertical, Check, X, Clock, Copy, Link as LinkIcon, Mail
 } from 'lucide-react'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
@@ -12,24 +12,24 @@ import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 
 const ROLE_META = {
-  administrador: { icon: ShieldCheck, color: 'text-brand-500',   bg: 'bg-brand-500/10 border-brand-500/25'  },
-  despachador:   { icon: Truck,       color: 'text-warning-500', bg: 'bg-warning-500/10 border-warning-500/25' },
-  contable:      { icon: Calculator,  color: 'text-success-500', bg: 'bg-success-500/10 border-success-500/25' },
+  administrador: { icon: ShieldCheck, color: 'text-brand-500', bg: 'bg-brand-500/10 border-brand-500/25' },
+  despachador: { icon: Truck, color: 'text-warning-500', bg: 'bg-warning-500/10 border-warning-500/25' },
+  contable: { icon: Calculator, color: 'text-success-500', bg: 'bg-success-500/10 border-success-500/25' },
 }
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { 
+  visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.05 } 
+    transition: { staggerChildren: 0.05 }
   }
 }
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
+  visible: {
+    opacity: 1,
+    y: 0,
     transition: { type: 'spring', stiffness: 260, damping: 25 }
   }
 }
@@ -48,7 +48,7 @@ function InviteTimer({ expiresAt }) {
       const days = Math.floor(diff / (1000 * 60 * 60 * 24))
       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
       const minutes = Math.floor((diff / (1000 * 60)) % 60)
-      
+
       if (days > 0) {
         setTimeLeft(`${days}d ${hours}h`)
       } else if (hours > 0) {
@@ -68,8 +68,8 @@ function InviteTimer({ expiresAt }) {
   return (
     <span className={clsx(
       "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border",
-      isExpired 
-        ? "bg-danger-500/10 border-danger-500/20 text-danger-500" 
+      isExpired
+        ? "bg-danger-500/10 border-danger-500/20 text-danger-500"
         : "bg-surface-700/50 border-subtle text-muted-400"
     )}>
       <Clock size={10} />
@@ -101,7 +101,7 @@ export default function Employees() {
     try {
       const code = 'GO-' + Math.random().toString(36).substring(2, 8).toUpperCase()
       const expiresAt = new Date(Date.now() + inviteDuration * 60 * 60 * 1000).toISOString()
-      
+
       const currentInvitations = user.settings?.invitations || []
       const newInvite = {
         code,
@@ -131,7 +131,7 @@ export default function Employees() {
     try {
       const currentInvitations = user.settings?.invitations || []
       const updatedInvitations = currentInvitations.filter(inv => inv.code !== codeToRevoke)
-      
+
       const updatedSettings = {
         ...user.settings,
         invitations: updatedInvitations
@@ -165,7 +165,7 @@ export default function Employees() {
         companyLogo: user.companyLogo || null,
         companyEmail: user.email || ''
       }
-      
+
       const res = await sendWorkerInviteEmail({
         workerName: 'Colaborador',
         workerEmail: email.trim(),
@@ -174,7 +174,7 @@ export default function Employees() {
       }, company)
 
       if (res.success) {
-        toast.success(`📧 Invitación enviada con éxito a ${email}!`, { id: toastId })
+        toast.success(`¡Invitación enviada con éxito a ${email}!`, { id: toastId })
       } else {
         toast.error(`Error: ${res.error || 'No se pudo enviar'}`, { id: toastId })
       }
@@ -187,14 +187,14 @@ export default function Employees() {
   const invitations = user.settings?.invitations || []
 
   return (
-    <motion.div 
+    <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
       className="page-container space-y-8"
     >
       {/* Dynamic Header */}
-      <motion.div 
+      <motion.div
         variants={itemVariants}
         className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
@@ -202,9 +202,9 @@ export default function Employees() {
           <h1 className="text-lg md:text-2xl font-bold text-brand-600 dark:text-white">Equipo de Trabajo</h1>
           <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">{employees.length + 1} colaboradores activos</p>
         </div>
-        <button 
+        <button
           onClick={() => setInviteModalOpen(true)}
-          className="flex items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl transition-all duration-300 shadow-glow-sm hover:scale-105 shrink-0"
+          className="flex items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl transition-all duration-300 hover:scale-105 shrink-0"
         >
           <Plus size={14} className="md:size-[16px]" />
           <span className="hidden sm:inline">Vincular Trabajador</span>
@@ -236,11 +236,11 @@ export default function Employees() {
                       <span className="text-sm font-black tracking-wider text-brand-500 dark:text-brand-400">{inv.code}</span>
                       <span className={clsx(
                         "text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
-                        inv.used 
-                          ? "bg-success-500/10 border-success-500/20 text-success-500" 
-                          : isExpired 
-                          ? "bg-danger-500/10 border-danger-500/20 text-danger-500" 
-                          : "bg-brand-500/10 border-brand-500/20 text-brand-500"
+                        inv.used
+                          ? "bg-success-500/10 border-success-500/20 text-success-500"
+                          : isExpired
+                            ? "bg-danger-500/10 border-danger-500/20 text-danger-500"
+                            : "bg-brand-500/10 border-brand-500/20 text-brand-500"
                       )}>
                         {inv.used ? 'Usado' : isExpired ? 'Vencido' : 'Activo'}
                       </span>
@@ -304,10 +304,10 @@ export default function Employees() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {/* Owner/Admin (always present, not fetched in list) */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             whileHover={{ y: -4 }}
-            className="liquid-glass border rounded-3xl p-5 space-y-4 relative transition-colors duration-300 border-brand-500/30 shadow-glow-sm"
+            className="liquid-glass border rounded-3xl p-5 space-y-4 relative transition-colors duration-300 border-brand-500/30"
           >
             <div className="flex items-center gap-3">
               {/* Profile Avatar: circular frame, no borders, no shadows */}
@@ -345,12 +345,12 @@ export default function Employees() {
               const meta = ROLE_META[emp.role] || ROLE_META.despachador
               const Icon = meta.icon
               return (
-                <motion.div 
-                  key={emp.id} 
+                <motion.div
+                  key={emp.id}
                   variants={itemVariants}
-                  layout 
-                  initial="hidden" 
-                  animate="visible" 
+                  layout
+                  initial="hidden"
+                  animate="visible"
                   exit={{ opacity: 0, scale: 0.9 }}
                   whileHover={{ y: -4 }}
                   className="liquid-glass border rounded-3xl p-5 space-y-4 relative transition-colors duration-300 hover:border-brand-500/20"
@@ -358,7 +358,7 @@ export default function Employees() {
                   <div className="flex items-start gap-3">
                     <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 flex items-center justify-center">
                       {emp.avatar_url && emp.avatar_url.startsWith('color:') ? (
-                        <div 
+                        <div
                           style={{ backgroundColor: emp.avatar_url.replace('color:', '') }}
                           className="w-full h-full flex items-center justify-center text-white font-black text-sm"
                         >
@@ -372,15 +372,15 @@ export default function Employees() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-foreground truncate">{emp.full_name || emp.name || 'Trabajador'}</p>
                       <p className="text-[11px] text-muted-400 truncate">{emp.email || 'Sin correo'}</p>
                     </div>
-                    
+
                     {/* Action Menu */}
                     <div className="relative shrink-0">
-                      <button 
+                      <button
                         onClick={() => setMenuId(menuId === emp.id ? null : emp.id)}
                         className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-700/50 transition-colors"
                       >
@@ -393,8 +393,8 @@ export default function Employees() {
                             {Object.keys(ROLES).map((r) => {
                               if (r === 'administrador') return null
                               return (
-                                <button 
-                                  key={r} 
+                                <button
+                                  key={r}
                                   onClick={() => { updateRole(emp.id, r); setMenuId(null) }}
                                   className="w-full flex items-center gap-2 px-3 py-2.5 text-xs hover:bg-surface-700 text-left transition-colors font-semibold"
                                 >
@@ -406,7 +406,7 @@ export default function Employees() {
                               )
                             })}
                             <div className="my-1 border-t border-subtle" />
-                            <button 
+                            <button
                               onClick={() => { removeEmployee(emp.id); setMenuId(null) }}
                               className="w-full px-3 py-2.5 text-xs text-left hover:bg-surface-700 transition-colors text-danger-500 font-bold"
                             >
@@ -440,10 +440,10 @@ export default function Employees() {
       {/* Invite Modal */}
       <AnimatePresence>
         {inviteModalOpen && (
-          <Modal 
-            open={inviteModalOpen} 
-            onClose={() => setInviteModalOpen(false)} 
-            title="Vincular Trabajador" 
+          <Modal
+            open={inviteModalOpen}
+            onClose={() => setInviteModalOpen(false)}
+            title="Vincular Trabajador"
             size="md"
           >
             <div className="p-5 space-y-6">
@@ -455,14 +455,14 @@ export default function Employees() {
                       if (k === 'administrador') return null
                       const Icon = ROLE_META[k].icon
                       return (
-                        <button 
-                          key={k} 
+                        <button
+                          key={k}
                           type="button"
                           onClick={() => setInviteRole(k)}
                           className={clsx(
                             'py-3.5 px-3 rounded-2xl border-2 text-center transition-all duration-300 flex flex-col items-center justify-center gap-1.5',
-                            inviteRole === k 
-                              ? `border-brand-500 bg-brand-600/10 shadow-glow-sm scale-[1.02]` 
+                            inviteRole === k
+                              ? `border-brand-500 bg-brand-600/10 scale-[1.02]`
                               : 'border-subtle bg-surface-900/50 hover:border-surface-300'
                           )}
                         >
@@ -476,8 +476,8 @@ export default function Employees() {
 
                 <div>
                   <label className="text-xs font-bold text-muted-600 mb-2 block">2. Duración de la Invitación</label>
-                  <select 
-                    value={inviteDuration} 
+                  <select
+                    value={inviteDuration}
                     onChange={e => setInviteDuration(Number(e.target.value))}
                     className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                   >
@@ -490,17 +490,17 @@ export default function Employees() {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <Button 
+                <Button
                   variant="secondary"
                   onClick={() => setInviteModalOpen(false)}
                   className="flex-1 rounded-xl"
                 >
                   Cancelar
                 </Button>
-                <Button 
-                  onClick={handleGenerateInvite} 
+                <Button
+                  onClick={handleGenerateInvite}
                   disabled={generating}
-                  className="flex-1 rounded-xl shadow-glow-sm"
+                  className="flex-1 rounded-xl"
                 >
                   {generating ? 'Generando...' : 'Generar Código'}
                 </Button>
