@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Package, Search, Plus, Archive, Trash2, Edit2, AlertCircle, Copy, Link2, FileText, DollarSign, Tag, ShoppingCart, Pencil } from 'lucide-react'
+import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import SearchBar from '@/components/ui/SearchBar'
 import { useProductStore, CATEGORIES, getProductDiscount } from '@/store/useProductStore'
@@ -15,10 +15,6 @@ import clsx from 'clsx'
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
-}
-const itemVariants = {
-  hidden: { opacity: 0, y: 16, scale: 0.98 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 260, damping: 25 } }
 }
 
 const UNIT_COLORS = {
@@ -95,24 +91,29 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
       )}
 
       {/* Price & unit */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-1">
         <div className="flex flex-col">
           {discountInfo ? (
             <>
               <span className="text-xs text-muted-400 line-through">{format$(product.price)}</span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-base sm:text-lg font-bold text-brand-400">{format$(discountInfo.finalPrice)}</span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-500/15 text-brand-400">
                   {discountInfo.type === 'percentage' ? `-${discountInfo.value}%` : `-${format$(discountInfo.value)}`}
                 </span>
               </div>
+              {product.discount_ends_at && (
+                <span className="text-[9px] text-muted-500 mt-0.5">
+                  Promo hasta {new Date(product.discount_ends_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+              )}
             </>
           ) : (
             <span className="text-base sm:text-lg font-bold text-foreground">{format$(product.price)}</span>
           )}
         </div>
         {product.unit !== 'ILIMITADO' && (
-          <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
+          <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg shrink-0', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
             {UNIT_LABELS[product.unit] || product.unit}
           </span>
         )}
@@ -147,11 +148,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
           placeholder="1"
           onChange={(e) => {
             const val = e.target.value
-            if (val === '') {
-              setQty('')
-            } else {
-              setQty(Math.max(1, Number(val)))
-            }
+            if (val === '') { setQty('') } else { setQty(Math.max(1, Number(val))) }
           }}
           disabled={isOutOfStock}
           className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -172,15 +169,9 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
           {isOutOfStock ? (
             <span className="truncate">Agotado</span>
           ) : added ? (
-            <>
-              <span>✓</span>
-              <span className="hidden sm:inline"> Añadido</span>
-            </>
+            <><span>✓</span><span className="hidden sm:inline"> Añadido</span></>
           ) : (
-            <>
-              <ShoppingCart size={13} className="shrink-0" />
-              <span className="hidden sm:inline">Añadir</span>
-            </>
+            <><ShoppingCart size={13} className="shrink-0" /><span className="hidden sm:inline">Añadir</span></>
           )}
         </motion.button>
       </div>
@@ -209,19 +200,20 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
 }
 
 export default function Products() {
-  const [search, setSearch]     = useState('')
+  const [search, setSearch]       = useState('')
   const [activeCat, setActiveCat] = useState(null)
   const [freePrice, setFreePrice] = useState('')
   const [freeName, setFreeName]   = useState('')
   const [showFree, setShowFree]   = useState(false)
 
-  const products    = useProductStore((s) => s.products)
+  const products      = useProductStore((s) => s.products)
   const deleteProduct = useProductStore((s) => s.deleteProduct)
-  const openModal   = useUIStore((s) => s.openModal)
-  const addItem     = useCartStore((s) => s.addItem)
+  const openModal     = useUIStore((s) => s.openModal)
+  const openDuplicate = useUIStore((s) => s.openDuplicate)
+  const addItem       = useCartStore((s) => s.addItem)
   const addCustomItem = useCartStore((s) => s.addCustomItem)
-  const format$     = useCurrencyStore((s) => s.format)
-  const baseCurrency = useCurrencyStore((s) => s.baseCurrency)
+  const format$       = useCurrencyStore((s) => s.format)
+  const baseCurrency  = useCurrencyStore((s) => s.baseCurrency)
   const selectedClient = useClientStore((s) => s.getSelected())
 
   const userSettings = useAuthStore((s) => s.user?.settings)
@@ -275,37 +267,19 @@ export default function Products() {
                   Cliente: <strong className="text-foreground dark:text-white">{selectedClient.name}</strong>
                 </span>
                 {selectedClient.type === 'express' ? (
-                  <span className="text-[9px] px-1.5 py-0.5 bg-brand-500/20 border border-brand-500/30 rounded font-bold uppercase tracking-wider text-brand-400">
-                    Express
-                  </span>
+                  <span className="text-[9px] px-1.5 py-0.5 bg-brand-500/20 border border-brand-500/30 rounded font-bold uppercase tracking-wider text-brand-400">Express</span>
                 ) : (
-                  <span className="text-[9px] px-1.5 py-0.5 bg-success-500/15 border border-success-500/30 rounded font-bold uppercase tracking-wider text-success-400">
-                    Frecuente
-                  </span>
+                  <span className="text-[9px] px-1.5 py-0.5 bg-success-500/15 border border-success-500/30 rounded font-bold uppercase tracking-wider text-success-400">Frecuente</span>
                 )}
               </div>
             )}
           </div>
           <div className="flex gap-2 shrink-0">
-            <Button
-              variant="secondary"
-              size="sm"
-              pill
-              icon={<DollarSign size={14} />}
-              onClick={() => setShowFree((v) => !v)}
-              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0"
-            >
+            <Button variant="secondary" size="sm" pill icon={<DollarSign size={14} />} onClick={() => setShowFree((v) => !v)} className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0">
               <span className="hidden sm:inline">Valor Libre</span>
               <span className="inline sm:hidden">Libre</span>
             </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              pill
-              icon={<Plus size={14} />}
-              onClick={() => openModal('addProduct')}
-              className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0"
-            >
+            <Button variant="primary" size="sm" pill icon={<Plus size={14} />} onClick={() => openModal('addProduct')} className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0">
               <span className="hidden sm:inline">Añadir Producto</span>
               <span className="inline sm:hidden">Nuevo</span>
             </Button>
@@ -315,36 +289,17 @@ export default function Products() {
         {/* Free price panel */}
         <AnimatePresence>
           {showFree && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden"
-            >
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
               <div className="bg-surface-700/80 border border-brand-500/20 rounded-2xl p-3 md:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
                 <div className="flex-1 min-w-[140px]">
                   <label className="text-[10px] text-muted-400 font-bold mb-1 block uppercase tracking-wide">Descripción (opcional)</label>
-                  <input
-                    value={freeName}
-                    onChange={(e) => setFreeName(e.target.value)}
-                    placeholder="Ej: Transporte, Descuento..."
-                    className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500"
-                  />
+                  <input value={freeName} onChange={(e) => setFreeName(e.target.value)} placeholder="Ej: Transporte, Descuento..." className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </div>
                 <div className="sm:w-36">
                   <label className="text-[10px] text-muted-400 font-bold mb-1 block uppercase tracking-wide">Precio ({baseCurrency}) *</label>
-                  <input
-                    type="number"
-                    value={freePrice}
-                    onChange={(e) => setFreePrice(e.target.value)}
-                    placeholder="0.00"
-                    step="0.01"
-                    className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500"
-                  />
+                  <input type="number" value={freePrice} onChange={(e) => setFreePrice(e.target.value)} placeholder="0.00" step="0.01" className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </div>
-                <Button variant="primary" size="sm" icon={<Plus size={14} />} onClick={handleFreeAdd} className="py-2 text-xs">
-                  Añadir
-                </Button>
+                <Button variant="primary" size="sm" icon={<Plus size={14} />} onClick={handleFreeAdd} className="py-2 text-xs">Añadir</Button>
               </div>
             </motion.div>
           )}
@@ -355,14 +310,10 @@ export default function Products() {
           <div className="flex-1">
             <SearchBar value={search} onChange={setSearch} placeholder="Buscar producto..." />
           </div>
-          {/* Categories Horizontal scrollable on mobile, flex wrap on tablet+ */}
           <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar select-none -mx-4 px-4 md:mx-0 md:px-0">
             <button
               onClick={() => setActiveCat(null)}
-              className={clsx(
-                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border',
-                !activeCat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground'
-              )}
+              className={clsx('px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border', !activeCat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground')}
             >
               Todos
             </button>
@@ -370,10 +321,7 @@ export default function Products() {
               <button
                 key={cat}
                 onClick={() => setActiveCat(activeCat === cat ? null : cat)}
-                className={clsx(
-                  'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border',
-                  activeCat === cat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground'
-                )}
+                className={clsx('px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 border', activeCat === cat ? 'bg-brand-600 border-brand-500 text-white shadow-glow-sm' : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground')}
               >
                 {cat}
               </button>
@@ -386,35 +334,23 @@ export default function Products() {
       <div className="flex-1">
         <AnimatePresence>
           {filtered.length === 0 ? (
-            <motion.div
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center h-48 gap-3"
-            >
+            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-48 gap-3">
               <Package size={36} className="text-muted-400" />
-              <p className="text-sm text-muted-400">
-                {search || activeCat ? 'Sin resultados' : 'Añade tu primer producto'}
-              </p>
+              <p className="text-sm text-muted-400">{search || activeCat ? 'Sin resultados' : 'Añade tu primer producto'}</p>
               {!search && !activeCat && (
-                <Button variant="outline" size="sm" icon={<Plus size={14} />} onClick={() => openModal('addProduct')}>
-                  Crear producto
-                </Button>
+                <Button variant="outline" size="sm" icon={<Plus size={14} />} onClick={() => openModal('addProduct')}>Crear producto</Button>
               )}
             </motion.div>
           ) : (
-            <motion.div
-              layout
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-            >
+            <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filtered.map((p) => (
                 <ProductCard
                   key={p.id}
                   product={p}
                   onEdit={(prod) => openModal('addProduct', { product: prod })}
                   onDuplicate={(prod) => {
-                    const { id, created_at, ...duplicateData } = prod;
-                    openModal('addProduct', { product: duplicateData });
+                    const { id, created_at, updated_at, ...duplicateData } = prod
+                    openDuplicate('addProduct', duplicateData)
                   }}
                   onDelete={handleDelete}
                   onAdd={handleAdd}

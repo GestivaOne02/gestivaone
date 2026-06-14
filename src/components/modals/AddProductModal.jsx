@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Package, Tag, DollarSign, Archive, Link2, FileUp } from 'lucide-react'
+import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -22,7 +22,7 @@ const schema = z.object({
   stock: z.coerce.number().min(0).optional(),
   attachment_url: z.string().optional(),
   attachment_name: z.string().optional(),
-  discount_type: z.enum(['percentage', 'fixed']).optional().nullable(),
+  discount_type: z.string().optional().nullable(),
   discount_value: z.coerce.number().min(0).optional().nullable(),
   discount_ends_at: z.string().optional().nullable(),
 })
@@ -31,11 +31,12 @@ const UNITS = ['KG', 'LB', 'UND', 'L', 'M']
 const UNIT_LABELS = {}
 
 export default function AddProductModal({ open }) {
-  const addProduct = useProductStore((s) => s.addProduct)
+  const addProduct    = useProductStore((s) => s.addProduct)
   const updateProduct = useProductStore((s) => s.updateProduct)
-  const closeModal = useUIStore((s) => s.closeModal)
-  const editing = useUIStore((s) => s.editingProduct)
-  const baseCurrency = useCurrencyStore((s) => s.baseCurrency)
+  const closeModal    = useUIStore((s) => s.closeModal)
+  const editing       = useUIStore((s) => s.editingProduct)
+  const duplicating   = useUIStore((s) => s.duplicatingProduct)
+  const baseCurrency  = useCurrencyStore((s) => s.baseCurrency)
 
   const userSettings = useAuthStore((s) => s.user?.settings)
   const customCats = userSettings?.custom_categories || []
@@ -56,6 +57,27 @@ export default function AddProductModal({ open }) {
   const [hasDiscount, setHasDiscount] = useState(false)
 
   useEffect(() => {
+    // Duplicating: pre-fill form but treat as new product (no id)
+    if (open && duplicating) {
+      const isEditingUnlimited = duplicating.unit === 'ILIMITADO' || duplicating.stock >= 999999999
+      setIsUnlimited(isEditingUnlimited)
+      setHasDiscount(!!duplicating.discount_value && duplicating.discount_value > 0)
+      reset({
+        ...duplicating,
+        name: `${duplicating.name} (Copia)`,
+        unit: duplicating.unit === 'ILIMITADO' ? 'UND' : duplicating.unit,
+        stock: isEditingUnlimited ? 0 : (duplicating.stock ?? 0),
+        cost: duplicating.cost ?? 0,
+        attachment_url: duplicating.attachment_url ?? '',
+        attachment_name: duplicating.attachment_name ?? '',
+        discount_type: duplicating.discount_type || 'percentage',
+        discount_value: duplicating.discount_value || 0,
+        discount_ends_at: duplicating.discount_ends_at ? duplicating.discount_ends_at.split('T')[0] : ''
+      })
+      setCustomCategoryName('')
+      return
+    }
+    // Editing existing product
     if (open && editing) {
       const isEditingUnlimited = editing.unit === 'ILIMITADO' || editing.stock >= 999999999
       setIsUnlimited(isEditingUnlimited)
@@ -79,7 +101,7 @@ export default function AddProductModal({ open }) {
       reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '' })
       setCustomCategoryName('')
     }
-  }, [open, editing, reset])
+  }, [open, editing, duplicating, reset])
 
   const onSubmit = async (data) => {
     let finalCategory = data.category
@@ -98,22 +120,26 @@ export default function AddProductModal({ open }) {
       category: finalCategory,
       stock: isUnlimited ? 999999999 : Number(data.stock || 0),
       discount_value: hasDiscount ? Number(data.discount_value || 0) : null,
-      discount_type: hasDiscount ? data.discount_type : null,
+      discount_type: hasDiscount ? (data.discount_type || 'percentage') : null,
       discount_ends_at: hasDiscount && data.discount_ends_at ? new Date(data.discount_ends_at + 'T23:59:59').toISOString() : null,
     }
 
+    // Editing an existing product
     if (editing) {
       await updateProduct(editing.id, finalData)
       toast.success('Producto actualizado')
     } else {
+      // Both 'new' and 'duplicate' flows create a new product
       await addProduct(finalData)
-      toast.success(`${finalData.name} añadido`)
+      toast.success(duplicating ? `${finalData.name} duplicado ✓` : `${finalData.name} añadido`)
     }
     closeModal()
   }
 
+  const modalTitle = editing ? 'Editar Producto' : duplicating ? 'Duplicar Producto' : 'Nuevo Producto'
+
   return (
-    <Modal open={open} onClose={closeModal} title={editing ? 'Editar Producto' : 'Nuevo Producto'} size="md">
+    <Modal open={open} onClose={closeModal} title={modalTitle} size="md">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
           label="Nombre del producto *"

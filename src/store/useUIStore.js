@@ -21,6 +21,7 @@ export const useUIStore = create(
       theme: 'system', // 'dark' | 'light' | 'system'
       activeModal:   null,
       editingProduct: null,
+      duplicatingProduct: null,
       editingClient:  null,
       invoicePanelOpen: true,
 
@@ -34,10 +35,13 @@ export const useUIStore = create(
       },
 
       openModal: (name, payload = null) =>
-        set({ activeModal: name, editingProduct: payload?.product ?? null, editingClient: payload?.client ?? null }),
+        set({ activeModal: name, editingProduct: payload?.product ?? null, duplicatingProduct: null, editingClient: payload?.client ?? null }),
+
+      openDuplicate: (name, productData) =>
+        set({ activeModal: name, duplicatingProduct: productData, editingProduct: null, editingClient: null }),
 
       closeModal: () =>
-        set({ activeModal: null, editingProduct: null, editingClient: null }),
+        set({ activeModal: null, editingProduct: null, duplicatingProduct: null, editingClient: null }),
 
       toggleInvoicePanel: () =>
         set((s) => ({ invoicePanelOpen: !s.invoicePanelOpen })),
