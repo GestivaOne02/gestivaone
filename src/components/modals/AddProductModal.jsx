@@ -130,36 +130,42 @@ export default function AddProductModal({ open }) {
             step="0.01"
             {...register('cost')}
           />
-        </div>
-        
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Stock disponible</label>
-            <button
-              type="button"
-              onClick={() => {
-                setIsUnlimited(!isUnlimited)
-                if (!isUnlimited) setValue('stock', 0)
-              }}
-              className={clsx(
-                'text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors',
-                isUnlimited ? 'bg-success-500/20 text-success-400' : 'bg-surface-700 text-muted-400 hover:text-foreground'
-              )}
-            >
-              Ilimitado
-            </button>
+          <div>
+            <label className="text-xs font-medium text-muted-500 uppercase tracking-wide block mb-1.5">Stock disponible</label>
+            <div className={clsx(
+              'flex items-stretch bg-surface-700 border rounded-xl overflow-hidden transition-all',
+              isUnlimited ? 'border-success-500/30' : 'border-subtle focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/50'
+            )}>
+              <div className="pl-3 flex items-center text-muted-400">
+                <Archive size={14} />
+              </div>
+              <input
+                type="number"
+                placeholder="Ej: 999"
+                disabled={isUnlimited}
+                className="w-full bg-transparent px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-400 disabled:opacity-50"
+                {...register('stock')}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setIsUnlimited(!isUnlimited)
+                  if (!isUnlimited) setValue('stock', 0)
+                }}
+                className={clsx(
+                  'px-4 text-xs font-semibold transition-colors border-l',
+                  isUnlimited 
+                    ? 'bg-success-600 text-white border-success-500 hover:bg-success-500' 
+                    : 'bg-surface-600 text-muted-400 border-subtle hover:bg-surface-500 hover:text-foreground'
+                )}
+              >
+                Ilimitado
+              </button>
+            </div>
+            {isUnlimited && (
+              <p className="text-[11px] text-success-400 mt-1.5">Stock ilimitado activado. No descontará inventario al venderse.</p>
+            )}
           </div>
-          <Input
-            icon={<Archive size={14} />}
-            placeholder="0"
-            type="number"
-            disabled={isUnlimited}
-            {...register('stock')}
-          />
-          {isUnlimited && (
-            <p className="text-[11px] text-muted-400 mt-1.5">Este producto no descuenta inventario al venderse.</p>
-          )}
-        </div>
 
         {/* Unit selector */}
         <div className="flex flex-col gap-1.5">
