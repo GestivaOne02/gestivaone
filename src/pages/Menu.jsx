@@ -72,6 +72,11 @@ function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }
 }
 
 function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, totalBilled, status }) {
+  const { baseCurrency, rates } = useCurrencyStore()
+  
+  const clientCurrency = client.currency
+  const showCurrencyRate = clientCurrency && clientCurrency !== baseCurrency && rates[clientCurrency]
+  const rateValue = showCurrencyRate ? (rates[baseCurrency] / rates[clientCurrency]).toFixed(2) : null
   return (
     <motion.div
       layout
@@ -112,6 +117,11 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
             <Badge status={status} />
             {pendingAmount > 0 && (
               <span className="text-sm text-danger-400 font-semibold">{format$(pendingAmount)} pendiente</span>
+            )}
+            {showCurrencyRate && (
+              <span className="text-[11px] font-bold text-brand-500/80 bg-brand-500/10 px-2 py-0.5 rounded-full border border-brand-500/20">
+                1 {clientCurrency} = {rateValue} {baseCurrency}
+              </span>
             )}
           </div>
           {lastInvoice && (

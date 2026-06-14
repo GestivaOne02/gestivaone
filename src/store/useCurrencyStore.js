@@ -1,7 +1,10 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-const CACHE_TTL = 24 * 60 * 60 * 1000 // 24 hours in ms
+const CACHE_TTL = 24 * 60 * 60 * 1000 // Fallback max cache
+
+const API_KEY = 'fxf_blLiARmGS5OCsev2R1hP'
+const FXFEED_URL = 'https://api.fxfeed.io/v2/latest'
 
 const SUPPORTED_CURRENCIES = [
   { code: 'USD', name: 'US Dollar',         symbol: '$',  flag: '🇺🇸' },
@@ -62,22 +65,28 @@ export const useCurrencyStore = create(
       fetchRates: async (force = false) => {
         const { lastFetched, loading } = get()
         const now = Date.now()
-        if (!force && lastFetched && (now - lastFetched) < CACHE_TTL) return
+        
+        const isStale = get().isStale()
+        if (!force && !isStale) return
         if (loading) return
 
         set({ loading: true, error: null })
         try {
-          // Direct v2 endpoint avoids redirects and provides stable rates
-          const res = await fetch('https://api.frankfurter.dev/v2/rates?base=USD')
-          if (!res.ok) throw new Error('Exchange rate fetch failed')
+          // Fetch from FXFeed API directly
+          const url = `${FXFEED_URL}?api_key=${API_KEY}&base=USD`
+          const res = await fetch(url)
+          if (!res.ok) throw new Error(`Exchange rate fetch failed: ${res.status}`)
+          
           const data = await res.json()
+          if (!data || !data.rates) throw new Error('Invalid response from FXFeed')
+
           set({
             rates: { ...FALLBACK_RATES, ...data.rates, USD: 1 },
             lastFetched: now,
             loading: false,
           })
         } catch (err) {
-          console.warn('⚠️ Currency rate fetch failed (possibly CORS). Using highly accurate fallback rates:', err)
+          console.warn('⚠️ Currency rate fetch failed. Using highly accurate fallback rates:', err)
           set({ 
             rates: get().rates && Object.keys(get().rates).length > 0 ? get().rates : FALLBACK_RATES,
             error: err.message, 
@@ -129,7 +138,20 @@ export const useCurrencyStore = create(
       isStale: () => {
         const { lastFetched } = get()
         if (!lastFetched) return true
-        return (Date.now() - lastFetched) >= CACHE_TTL
+
+        const now = new Date()
+        const fetched = new Date(lastFetched)
+
+        // Stale if it was fetched before today's 12:00 PM, and it is currently past 12:00 PM today.
+        const noonToday = new Date()
+        noonToday.setHours(12, 0, 0, 0)
+
+        if (now >= noonToday && fetched < noonToday) {
+          return true
+        }
+
+        // Hard fallback if more than 24 hours have passed
+        return (now.getTime() - fetched.getTime()) >= CACHE_TTL
       },
     }),
     {

@@ -20,6 +20,8 @@ const schema = z.object({
   type:          z.enum(['frequent', 'express']),
   document_id:   z.string().optional().or(z.literal('')),
   document_type: z.string().optional().or(z.literal('')),
+  country:       z.string().optional(),
+  currency:      z.string().optional(),
 })
 
 export default function AddClientModal({ open }) {
@@ -31,7 +33,7 @@ export default function AddClientModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13' },
+    defaultValues: { type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13', country: '', currency: '' },
   })
 
   const clientType = watch('type')
@@ -40,7 +42,7 @@ export default function AddClientModal({ open }) {
     if (open && editingClient) {
       reset({ ...editingClient })
     } else if (open) {
-      reset({ type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13' })
+      reset({ type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13', country: '', currency: '' })
     }
   }, [open, editingClient])
 
@@ -146,6 +148,40 @@ export default function AddClientModal({ open }) {
                 error={errors.email?.message}
                 {...register('email')}
               />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-muted-400 font-medium uppercase tracking-wide">País (Opcional)</label>
+                <select
+                  {...register('country')}
+                  className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+                >
+                  <option value="">Ninguno</option>
+                  <option value="CO">Colombia</option>
+                  <option value="US">Estados Unidos</option>
+                  <option value="ES">España</option>
+                  <option value="MX">México</option>
+                  <option value="AR">Argentina</option>
+                  <option value="PE">Perú</option>
+                  <option value="CL">Chile</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-muted-400 font-medium uppercase tracking-wide">Divisa (Opcional)</label>
+                <select
+                  {...register('currency')}
+                  className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
+                >
+                  <option value="">Moneda base</option>
+                  <option value="COP">COP - Peso Colombiano</option>
+                  <option value="USD">USD - Dólar Estadounidense</option>
+                  <option value="EUR">EUR - Euro</option>
+                  <option value="MXN">MXN - Peso Mexicano</option>
+                  <option value="ARS">ARS - Peso Argentino</option>
+                  <option value="PEN">PEN - Sol Peruano</option>
+                  <option value="CLP">CLP - Peso Chileno</option>
+                </select>
+              </div>
             </div>
           </>
         )}
