@@ -83,62 +83,65 @@ export default function Sidebar({ isMobile }) {
   const handleNavClick = () => { if (isMobile) closeMobile() }
 
   // ── Nav link (desktop) ──────────────────────────────────────
+  // IMPORTANT: Icon must NEVER shift. We use a fixed-width row:
+  //   [px-3] [18px icon] [label animates width 0→auto without pushing icon]
   const NavItem = ({ to, icon: Icon, label, perm }) => {
     const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
     const allowed = permissions[perm] ?? true
 
     return (
-      <div className="relative">
-        <NavLink
-          to={allowed ? to : '#'}
-          onClick={allowed ? handleNavClick : (e) => e.preventDefault()}
-          target="_self"
-          title={label}
-          className={clsx(
-            'relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200',
-            !allowed && 'opacity-50 cursor-not-allowed',
-            isActive && allowed
-              ? 'text-brand-300'
-              : allowed
-              ? 'text-muted-400 hover:text-white hover:bg-surface-600'
-              : 'text-muted-400'
-          )}
-        >
-          {/* Active highlight */}
-          {isActive && allowed && (
-            <motion.div
-              layoutId="activeIndicator"
-              className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            />
-          )}
+      <NavLink
+        to={allowed ? to : '#'}
+        onClick={allowed ? handleNavClick : (e) => e.preventDefault()}
+        target="_self"
+        title={label}
+        className={clsx(
+          // Fixed height + padding, NO gap — label is handled separately
+          'relative flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200',
+          !allowed && 'opacity-50 cursor-not-allowed',
+          isActive && allowed
+            ? 'text-brand-300'
+            : allowed
+            ? 'text-muted-400 hover:text-white hover:bg-surface-600'
+            : 'text-muted-400'
+        )}
+      >
+        {/* Active highlight pill — never moves */}
+        {isActive && allowed && (
+          <motion.div
+            layoutId="activeIndicator"
+            className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          />
+        )}
 
-          {/* Icon — always visible, always same position */}
-          <div className="relative z-10 shrink-0 w-[18px] flex items-center justify-center">
-            <Icon size={18} />
-          </div>
+        {/* Icon — FIXED, never moves regardless of label state */}
+        <div className="relative z-10 shrink-0 w-[18px] h-[18px] flex items-center justify-center">
+          <Icon size={18} />
+        </div>
 
-          {/* Label — slides in from the right, fades out to the right */}
+        {/* Label — animates width without pushing the icon */}
+        <div className="overflow-hidden relative z-10">
           <AnimatePresence initial={false}>
             {!collapsed && (
               <motion.span
                 key="label"
-                initial={{ opacity: 0, x: -8, width: 0 }}
-                animate={{ opacity: 1, x: 0, width: 'auto' }}
-                exit={{ opacity: 0, x: -8, width: 0 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                className="relative z-10 whitespace-nowrap overflow-hidden"
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                className="block pl-3 whitespace-nowrap"
               >
                 {label}
               </motion.span>
             )}
           </AnimatePresence>
+        </div>
 
-          {/* Lock badges */}
-          {!allowed && !collapsed && <Lock size={12} className="text-muted-400 relative z-10 ml-auto" />}
-          {!allowed && collapsed && <Lock size={10} className="absolute -bottom-0.5 -right-0.5 text-muted-400" />}
-        </NavLink>
-      </div>
+        {/* Lock badges */}
+        {!allowed && !collapsed && <Lock size={12} className="text-muted-400 relative z-10 ml-auto" />}
+        {!allowed && collapsed && <Lock size={10} className="absolute -bottom-0.5 -right-0.5 text-muted-400" />}
+      </NavLink>
     )
   }
 

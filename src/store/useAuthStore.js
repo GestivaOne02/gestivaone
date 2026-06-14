@@ -333,7 +333,36 @@ export const useAuthStore = create(
 
         const userId = authData.user.id
 
-        // 2. Create Company
+        // 2. ⚠️ Unique company name check (anti-fraud / anti-impersonation)
+        //    Normalize: trim + lowercase + collapse multiple spaces
+        const normalizeCompanyName = (name) =>
+          (name || '').trim().toLowerCase().replace(/\s+/g, ' ')
+
+        const normalizedInput = normalizeCompanyName(data.companyName)
+        if (!normalizedInput) {
+          set({ loading: false })
+          return { success: false, error: 'El nombre de la empresa no puede estar vacío.' }
+        }
+
+        // Fetch all company names and compare normalized (case-insensitive, space-collapsed)
+        const { data: allCompanies, error: namesError } = await supabase
+          .from('companies')
+          .select('name')
+
+        if (!namesError && allCompanies) {
+          const isDuplicate = allCompanies.some(
+            (c) => normalizeCompanyName(c.name) === normalizedInput
+          )
+          if (isDuplicate) {
+            set({ loading: false })
+            return {
+              success: false,
+              error: `Ya existe una empresa registrada con el nombre "${data.companyName}". Por seguridad y para evitar suplantación de identidad, cada empresa debe tener un nombre único. Elige un nombre diferente.`
+            }
+          }
+        }
+
+        // 3. Create Company
         const { data: company, error: compError } = await supabase
           .from('companies')
           .insert([{
@@ -348,7 +377,7 @@ export const useAuthStore = create(
           return { success: false, error: 'Error al crear empresa: ' + compError.message }
         }
 
-        // 3. Create Profile
+        // 4. Create Profile
         const isFreePremium = PREMIUM_EMAILS.includes(data.email?.toLowerCase())
         const { error: profError } = await supabase
           .from('profiles')
@@ -713,7 +742,36 @@ export const useAuthStore = create(
         const targetCompanyId = user.companyId || data.company_id
         if (targetCompanyId) {
           const companyUpdates = {}
-          if (data.companyName !== undefined) companyUpdates.name = data.companyName
+
+          // ⚠️ Unique company name check on rename (anti-fraud / anti-impersonation)
+          if (data.companyName !== undefined) {
+            const normalizeCompanyName = (name) =>
+              (name || '').trim().toLowerCase().replace(/\s+/g, ' ')
+            const normalizedNew = normalizeCompanyName(data.companyName)
+
+            if (!normalizedNew) {
+              return { success: false, error: 'El nombre de la empresa no puede estar vacío.' }
+            }
+
+            const { data: allCompanies } = await supabase
+              .from('companies')
+              .select('id, name')
+
+            if (allCompanies) {
+              const isDuplicate = allCompanies.some(
+                (c) => c.id !== targetCompanyId && normalizeCompanyName(c.name) === normalizedNew
+              )
+              if (isDuplicate) {
+                return {
+                  success: false,
+                  error: `Ya existe una empresa con el nombre "${data.companyName}". Cada empresa debe tener un nombre único para evitar suplantación de identidad.`
+                }
+              }
+            }
+
+            companyUpdates.name = data.companyName
+          }
+
           if (data.companyLogo !== undefined) companyUpdates.logo_url = data.companyLogo
           if (data.country !== undefined) companyUpdates.country = data.country
           if (data.base_currency !== undefined) companyUpdates.currency = data.base_currency
