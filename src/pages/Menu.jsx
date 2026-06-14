@@ -15,6 +15,14 @@ import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
+const DOC_TYPES = {
+  '13': 'CC',
+  '31': 'NIT',
+  '22': 'CE',
+  '41': 'PAS'
+}
+const getDocTypeStr = (code) => DOC_TYPES[String(code)] || ''
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
@@ -95,6 +103,11 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
             <p className="text-sm font-semibold text-foreground truncate">{client.name}</p>
             {selected && <Check size={12} className="text-brand-400 shrink-0" />}
           </div>
+          {client.document_type && (
+            <p className="text-[11px] font-bold text-brand-500/80 mt-0.5 uppercase">
+              {getDocTypeStr(client.document_type)} {client.document_id ? ` ${client.document_id}` : ''}
+            </p>
+          )}
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <Badge status={status} />
             {pendingAmount > 0 && (
@@ -192,7 +205,8 @@ export default function Menu() {
         (c.name || '').toLowerCase().includes(q) ||
         (c.email || '').toLowerCase().includes(q) ||
         (c.phone || '').includes(q) ||
-        (c.doc_id || '').includes(q)
+        (c.document_id || '').includes(q) ||
+        getDocTypeStr(c.document_type).toLowerCase().includes(q)
       )
     }
 
@@ -205,10 +219,10 @@ export default function Menu() {
     if (sortMode === 'recent') {
       list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
     } else if (sortMode === 'id') {
-      // Sort by doc_id or id if possible
+      // Sort by document_id or id if possible
       list.sort((a, b) => {
-        const idA = a.doc_id || a.id || ''
-        const idB = b.doc_id || b.id || ''
+        const idA = a.document_id || a.id || ''
+        const idB = b.document_id || b.id || ''
         return idA.toString().localeCompare(idB.toString(), undefined, { numeric: true })
       })
     } else if (sortMode === 'letter') {
