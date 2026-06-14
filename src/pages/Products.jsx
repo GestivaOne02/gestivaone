@@ -93,9 +93,11 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
       {/* Price & unit */}
       <div className="flex items-center justify-between">
         <span className="text-base sm:text-lg font-bold text-foreground">{format$(product.price)}</span>
-        <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
-          {UNIT_LABELS[product.unit] || product.unit}
-        </span>
+        {product.unit !== 'ILIMITADO' && (
+          <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
+            {UNIT_LABELS[product.unit] || product.unit}
+          </span>
+        )}
       </div>
 
       {/* Stock */}
@@ -104,7 +106,7 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           <div className="flex-1 h-1 bg-success-500/20 rounded-full overflow-hidden">
             <div className="h-full rounded-full bg-success-500 w-full" />
           </div>
-          <span className="text-[10px] text-success-400 font-semibold">Stock ilimitado</span>
+          <span className={clsx('text-xs font-semibold px-2 py-0.5 rounded-lg', UNIT_COLORS.ILIMITADO)}>Ilimitado</span>
         </div>
       ) : product.stock !== undefined && product.stock !== null && (
         <div className="flex items-center gap-1.5">
