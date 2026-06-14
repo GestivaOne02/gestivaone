@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { useCurrencyStore } from './useCurrencyStore'
 import { useAuthStore } from './useAuthStore'
+import { getProductDiscount } from './useProductStore'
 
 const TAX_RATES = {
   COP: 0.19,
@@ -62,11 +63,14 @@ export const useCartStore = create((set, get) => {
 
     addItem: (product, qty = 1) => {
       setAndRecalc((s) => {
+        const discountInfo = getProductDiscount(product)
+        const effectivePrice = discountInfo ? discountInfo.finalPrice : Number(product.price)
+
         const existing = s.items.find((i) => i.productId === product.id)
         if (existing) {
           return {
             items: s.items.map((i) =>
-               i.productId === product.id ? { ...i, qty: i.qty + qty } : i
+               i.productId === product.id ? { ...i, qty: i.qty + qty, price: effectivePrice } : i
             ),
           }
         }
@@ -77,10 +81,11 @@ export const useCartStore = create((set, get) => {
               id: `cart-${Date.now()}-${Math.random()}`,
               productId: product.id,
               name: product.name,
-              price: Number(product.price),
+              price: effectivePrice,
               qty,
               unit: product.unit ?? 'UND',
               isCustom: product.isCustom ?? false,
+              discountApplied: discountInfo ? { amount: discountInfo.amount, type: discountInfo.type, value: discountInfo.value } : null,
               attachment_url: product.attachment_url ?? null,
               attachment_name: product.attachment_name ?? null,
             },

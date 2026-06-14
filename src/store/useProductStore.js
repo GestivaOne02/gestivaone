@@ -5,6 +5,22 @@ import { useAuthStore } from './useAuthStore'
 const CATEGORIES = ['Alimentos', 'Bebidas', 'Limpieza', 'Electrónica', 'Ropa', 'Servicios', 'Otros']
 export { CATEGORIES }
 
+export function getProductDiscount(product) {
+  if (!product.discount_value || product.discount_value <= 0) return null
+  if (product.discount_ends_at && new Date(product.discount_ends_at) < new Date()) return null
+  
+  const amount = product.discount_type === 'percentage' 
+    ? product.price * (product.discount_value / 100)
+    : product.discount_value
+    
+  return {
+    finalPrice: Math.max(0, product.price - amount),
+    amount,
+    type: product.discount_type,
+    value: product.discount_value
+  }
+}
+
 export const useProductStore = create((set, get) => ({
   products: [],
   loading: false,

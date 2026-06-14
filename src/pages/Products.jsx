@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Edit2, Trash2, Package, DollarSign, Tag, ShoppingCart, Pencil, Link2, FileText } from 'lucide-react'
+import { Package, Search, Plus, Archive, Trash2, Edit2, AlertCircle, Copy, Link2, FileText, DollarSign, Tag, ShoppingCart, Pencil } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import SearchBar from '@/components/ui/SearchBar'
-import { useProductStore, CATEGORIES } from '@/store/useProductStore'
+import { useProductStore, CATEGORIES, getProductDiscount } from '@/store/useProductStore'
 import { useCartStore } from '@/store/useCartStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
@@ -32,11 +32,12 @@ const UNIT_COLORS = {
 
 const UNIT_LABELS = { ILIMITADO: 'Ilimitado' }
 
-function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
+function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ }) {
   const [qty, setQty] = useState('')
   const [added, setAdded] = useState(false)
   const hasUnlimitedStock = product.unit === 'ILIMITADO' || product.stock >= 999999999
   const isOutOfStock = !hasUnlimitedStock && product.stock !== undefined && product.stock !== null && product.stock <= 0
+  const discountInfo = getProductDiscount(product)
 
   const handleAdd = () => {
     const finalQty = qty === '' ? 1 : Number(qty)
@@ -65,10 +66,13 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           <p className="text-[11px] text-muted-400 mt-0.5">{product.category}</p>
         </div>
         <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
-          <button onClick={() => onEdit(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600">
+          <button onClick={() => onDuplicate(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600" title="Duplicar">
+            <Copy size={12} />
+          </button>
+          <button onClick={() => onEdit(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600" title="Editar">
             <Edit2 size={12} />
           </button>
-          <button onClick={() => onDelete(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30">
+          <button onClick={() => onDelete(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30" title="Borrar">
             <Trash2 size={12} />
           </button>
         </div>
@@ -92,7 +96,21 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
 
       {/* Price & unit */}
       <div className="flex items-center justify-between">
-        <span className="text-base sm:text-lg font-bold text-foreground">{format$(product.price)}</span>
+        <div className="flex flex-col">
+          {discountInfo ? (
+            <>
+              <span className="text-xs text-muted-400 line-through">{format$(product.price)}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-base sm:text-lg font-bold text-brand-400">{format$(discountInfo.finalPrice)}</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-500/15 text-brand-400">
+                  {discountInfo.type === 'percentage' ? `-${discountInfo.value}%` : `-${format$(discountInfo.value)}`}
+                </span>
+              </div>
+            </>
+          ) : (
+            <span className="text-base sm:text-lg font-bold text-foreground">{format$(product.price)}</span>
+          )}
+        </div>
         {product.unit !== 'ILIMITADO' && (
           <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
             {UNIT_LABELS[product.unit] || product.unit}
@@ -394,6 +412,10 @@ export default function Products() {
                   key={p.id}
                   product={p}
                   onEdit={(prod) => openModal('addProduct', { product: prod })}
+                  onDuplicate={(prod) => {
+                    const { id, created_at, ...duplicateData } = prod;
+                    openModal('addProduct', { product: duplicateData });
+                  }}
                   onDelete={handleDelete}
                   onAdd={handleAdd}
                   format$={format$}
