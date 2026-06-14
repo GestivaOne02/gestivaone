@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -47,9 +47,48 @@ export default function InvoicePanel({ isMobile }) {
   const [newChargeType, setNewChargeType] = useState('fixed') // 'fixed' | 'percent'
   const [newChargePinned, setNewChargePinned] = useState(false)
 
+  // Resizing state
+  const MIN_WIDTH = 288
+  const MAX_WIDTH = MIN_WIDTH + 150 // Allowing ~150px expansion
+  const [panelWidth, setPanelWidth] = useState(MIN_WIDTH)
+  const [isResizing, setIsResizing] = useState(false)
+
   useEffect(() => {
     loadPinnedCharges()
   }, [])
+
+  useEffect(() => {
+    if (!isResizing) return
+
+    const handleMouseMove = (e) => {
+      // Panel is on the right, so width is screen width - mouse X
+      let newWidth = window.innerWidth - e.clientX
+      if (newWidth < MIN_WIDTH) newWidth = MIN_WIDTH
+      if (newWidth > MAX_WIDTH) newWidth = MAX_WIDTH
+      setPanelWidth(newWidth)
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+      document.body.style.cursor = 'default'
+      document.body.style.userSelect = 'auto'
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isResizing])
+
+  const startResizing = (e) => {
+    setIsResizing(true)
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+    e.preventDefault()
+  }
 
   const handleAddCharge = async () => {
     const val = Number(newChargeValue)
@@ -361,7 +400,7 @@ export default function InvoicePanel({ isMobile }) {
       {/* Toggle tab */}
       <motion.button
         onClick={togglePanel}
-        animate={{ right: panelOpen ? 284 : 0 }}
+        animate={{ right: panelOpen ? panelWidth - 4 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
         className="fixed top-1/2 -translate-y-1/2 z-20 bg-brand-600 rounded-l-xl px-1.5 py-9 text-white hover:bg-brand-700 transition-colors shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.1)]"
       >
@@ -377,15 +416,24 @@ export default function InvoicePanel({ isMobile }) {
 
       {/* Panel with smooth spring width animation */}
       <motion.aside
-        animate={{ width: panelOpen ? 288 : 0 }}
+        animate={{ width: panelOpen ? panelWidth : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
         className={clsx(
-          "h-screen bg-surface-800 flex flex-col overflow-hidden shrink-0 z-10",
+          "h-screen bg-surface-800 flex flex-col overflow-hidden shrink-0 z-10 relative",
           panelOpen ? "border-l border-subtle" : "border-l-0"
         )}
       >
-        {/* Fixed-width content container prevents text squishing during collapse */}
-        <div className="w-[288px] h-full flex flex-col shrink-0">
+        {panelOpen && (
+          <div
+            onMouseDown={startResizing}
+            className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-brand-500/50 active:bg-brand-500 transition-colors z-30 group flex items-center justify-center"
+          >
+            <div className="h-8 w-1 rounded-full bg-brand-500/0 group-hover:bg-brand-500 transition-colors" />
+          </div>
+        )}
+
+        {/* Content container */}
+        <div style={{ width: panelWidth }} className="h-full flex flex-col shrink-0">
           {/* Header */}
           <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
             <FileText size={16} className="text-brand-400" />
