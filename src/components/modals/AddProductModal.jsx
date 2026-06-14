@@ -132,11 +132,11 @@ export default function AddProductModal({ open }) {
           />
         </div>
 
-        <div>
+          <div>
             <label className="text-xs font-medium text-muted-500 uppercase tracking-wide block mb-1.5">Stock disponible</label>
             <div className={clsx(
               'flex items-stretch bg-surface-700 border rounded-xl overflow-hidden transition-all',
-              isUnlimited ? 'border-success-500/30' : 'border-subtle focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/50'
+              isUnlimited ? 'border-brand-500 ring-2 ring-brand-500/20' : 'border-subtle focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/50'
             )}>
               <div className="pl-3 flex items-center text-muted-400">
                 <Archive size={14} />
@@ -155,17 +155,17 @@ export default function AddProductModal({ open }) {
                   if (!isUnlimited) setValue('stock', 0)
                 }}
                 className={clsx(
-                  'px-4 text-xs font-semibold transition-colors border-l',
+                  'px-4 text-xs font-semibold transition-colors border-l border-brand-600',
                   isUnlimited 
-                    ? 'bg-success-600 text-white border-success-500 hover:bg-success-500' 
-                    : 'bg-surface-600 text-muted-400 border-subtle hover:bg-surface-500 hover:text-foreground'
+                    ? 'bg-brand-700 text-white' 
+                    : 'bg-brand-600 text-white hover:bg-brand-700'
                 )}
               >
-                Ilimitado
+                {isUnlimited ? 'Ilimitado ✓' : 'Ilimitado'}
               </button>
             </div>
             {isUnlimited && (
-              <p className="text-[11px] text-success-400 mt-1.5">Stock ilimitado activado. No descontará inventario al venderse.</p>
+              <p className="text-[11px] text-brand-400 mt-1.5">Stock marcado como ilimitado</p>
             )}
           </div>
 
