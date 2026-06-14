@@ -130,7 +130,9 @@ export default function AddProductModal({ open }) {
             step="0.01"
             {...register('cost')}
           />
-          <div>
+        </div>
+
+        <div>
             <label className="text-xs font-medium text-muted-500 uppercase tracking-wide block mb-1.5">Stock disponible</label>
             <div className={clsx(
               'flex items-stretch bg-surface-700 border rounded-xl overflow-hidden transition-all',
