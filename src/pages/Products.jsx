@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Edit2, Trash2, Package, DollarSign, Tag, ShoppingCart, Pencil } from 'lucide-react'
+import { Plus, Edit2, Trash2, Package, DollarSign, Tag, ShoppingCart, Pencil, Link2, FileText } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import SearchBar from '@/components/ui/SearchBar'
 import { useProductStore, CATEGORIES } from '@/store/useProductStore'
@@ -73,6 +73,22 @@ function ProductCard({ product, onEdit, onDelete, onAdd, format$ }) {
           </button>
         </div>
       </div>
+
+      {/* Attachment indicators */}
+      {(product.attachment_url || product.attachment_name) && (
+        <div className="absolute top-3 right-3 flex items-center gap-1 sm:group-hover:opacity-0 transition-opacity pointer-events-none">
+          {product.attachment_url && product.attachment_url.trim() !== '' && (
+            <span title={product.attachment_name || 'Enlace adjunto'} className="flex items-center justify-center w-5 h-5 rounded-md bg-blue-500/15 border border-blue-500/25">
+              <Link2 size={10} className="text-blue-400" />
+            </span>
+          )}
+          {product.attachment_name && !product.attachment_url && (
+            <span title={product.attachment_name} className="flex items-center justify-center w-5 h-5 rounded-md bg-orange-500/15 border border-orange-500/25">
+              <FileText size={10} className="text-orange-400" />
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Price & unit */}
       <div className="flex items-center justify-between">

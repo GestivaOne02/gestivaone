@@ -142,12 +142,6 @@ CREATE POLICY "Permitir eliminación de clientes a administradores"
         )
     );
 
-
--- 5. ACTUALIZAR PLAN A PREMIUM PARA dayanneguiselle@gmail.com
-UPDATE public.profiles
-SET plan = 'empresarial'
-WHERE LOWER(email) = 'dayanneguiselle@gmail.com';
-
--- 6. COLUMNA PARA REGISTRO DE SESIÓN ÚNICA ACTIVA
+-- 5. COLUMNA PARA REGISTRO DE SESIÓN ÚNICA ACTIVA
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS active_session_id TEXT;
 

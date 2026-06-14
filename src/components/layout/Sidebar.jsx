@@ -105,7 +105,7 @@ export default function Sidebar({ isMobile }) {
             {user?.companyName || 'Mi Empresa'}
           </span>
           <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">
-            Gestiva One
+            GestivaOne
           </span>
         </div>
       )}
