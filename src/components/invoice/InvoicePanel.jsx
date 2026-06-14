@@ -37,15 +37,25 @@ export default function InvoicePanel({ isMobile }) {
   const toggleCustomChargeApplied = useCartStore((s) => s.toggleCustomChargeApplied)
   const toggleCustomChargePin = useCartStore((s) => s.toggleCustomChargePin)
   const loadPinnedCharges = useCartStore((s) => s.loadPinnedCharges)
+
+  const globalDiscount = useCartStore((s) => s.globalDiscount)
+  const setGlobalDiscount = useCartStore((s) => s.setGlobalDiscount)
+  const globalDiscountAmount = useCartStore((s) => s.globalDiscountAmount)
+
   const total = useCartStore((s) => s.total)
   const taxAmount = useCartStore((s) => s.taxAmount)
 
-  // Local state for custom charge inline form
+  // Local state for adding charges
   const [showAddCharge, setShowAddCharge] = useState(false)
   const [newChargeName, setNewChargeName] = useState('')
   const [newChargeValue, setNewChargeValue] = useState('')
-  const [newChargeType, setNewChargeType] = useState('fixed') // 'fixed' | 'percent'
+  const [newChargeType, setNewChargeType] = useState('fixed')
   const [newChargePinned, setNewChargePinned] = useState(false)
+
+  // Local state for adding global discount
+  const [showGlobalDiscountForm, setShowGlobalDiscountForm] = useState(false)
+  const [globalDiscountInputValue, setGlobalDiscountInputValue] = useState('')
+  const [globalDiscountInputType, setGlobalDiscountInputType] = useState('percent')
 
   // Resizing state
   const MIN_WIDTH = 288
@@ -121,6 +131,90 @@ export default function InvoicePanel({ isMobile }) {
 
   const format = useCurrencyStore((s) => s.format)
   const canOrder = items.length > 0
+
+  const handleApplyGlobalDiscount = () => {
+    const val = Number(globalDiscountInputValue)
+    if (isNaN(val) || val <= 0) {
+      return toast.error('Ingresa un valor de descuento válido')
+    }
+    setGlobalDiscount({ value: val, type: globalDiscountInputType })
+    setShowGlobalDiscountForm(false)
+    setGlobalDiscountInputValue('')
+    toast.success('Descuento global aplicado')
+  }
+
+  const handleRemoveGlobalDiscount = () => {
+    setGlobalDiscount(null)
+    toast.success('Descuento global eliminado')
+  }
+
+  const renderGlobalDiscountSection = () => {
+    return (
+      <div className="border-b border-subtle pb-3 mb-3">
+        <div className="flex items-center justify-between text-xs text-muted-400 mb-2">
+          <span className="font-bold text-[10px] uppercase tracking-wider text-muted-400">Descuento Global</span>
+          {!globalDiscount && (
+            <button
+              type="button"
+              onClick={() => setShowGlobalDiscountForm(!showGlobalDiscountForm)}
+              className="text-brand-500 dark:text-brand-400 hover:text-brand-600 dark:hover:text-brand-300 font-bold text-[10px] uppercase transition-colors"
+            >
+              {showGlobalDiscountForm ? 'Cancelar' : '+ Agregar Descuento'}
+            </button>
+          )}
+        </div>
+
+        {showGlobalDiscountForm && !globalDiscount && (
+          <div className="bg-surface-700/50 p-3 rounded-2xl border border-subtle mb-3 space-y-2.5">
+            <div className="flex gap-2">
+              <input
+                type="number"
+                value={globalDiscountInputValue}
+                onChange={(e) => setGlobalDiscountInputValue(e.target.value)}
+                placeholder="Valor/Monto"
+                className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
+              />
+              <select
+                value={globalDiscountInputType}
+                onChange={(e) => setGlobalDiscountInputType(e.target.value)}
+                className="bg-surface-600 border border-subtle rounded-xl px-2 py-1 text-xs text-foreground focus:outline-none"
+              >
+                <option value="percent">%</option>
+                <option value="fixed">{baseCurrency}</option>
+              </select>
+            </div>
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={handleApplyGlobalDiscount}
+                className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] uppercase px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Aplicar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {globalDiscount && (
+          <div className="flex items-center justify-between text-xs text-foreground py-0.5">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-muted-300">Descuento aplicado</span>
+              <span className="text-[10px] text-danger-400 font-bold">
+                {globalDiscount.type === 'percent' ? `(${globalDiscount.value}%)` : `(${format(globalDiscount.value)})`}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={handleRemoveGlobalDiscount}
+              className="text-muted-500 hover:text-danger-400 transition-colors leading-none"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   const renderCustomChargesSection = () => {
     return (
@@ -353,10 +447,17 @@ export default function InvoicePanel({ isMobile }) {
                 {/* Footer */}
                 <div className="p-5 border-t border-subtle shrink-0 space-y-3 pb-safe">
                   {renderCustomChargesSection()}
+                  {renderGlobalDiscountSection()}
                   <div className="flex justify-between text-xs text-muted-400">
                     <span>Subtotal</span>
                     <span className="text-foreground font-medium">{format(subtotal)}</span>
                   </div>
+                  {globalDiscountAmount > 0 && (
+                    <div className="flex justify-between text-xs text-danger-400">
+                      <span>Descuento</span>
+                      <span className="font-medium">-{format(globalDiscountAmount)}</span>
+                    </div>
+                  )}
                   {taxRate > 0 && (
                     <div className="flex items-center justify-between text-xs text-muted-400">
                       <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
@@ -533,10 +634,17 @@ export default function InvoicePanel({ isMobile }) {
           {/* Footer */}
           <div className="p-4 border-t border-subtle shrink-0 space-y-3">
             {renderCustomChargesSection()}
+            {renderGlobalDiscountSection()}
             <div className="flex justify-between text-xs text-muted-400">
               <span>Subtotal</span>
               <span className="text-foreground font-medium">{format(subtotal)}</span>
             </div>
+            {globalDiscountAmount > 0 && (
+              <div className="flex justify-between text-xs text-danger-400">
+                <span>Descuento</span>
+                <span className="font-medium">-{format(globalDiscountAmount)}</span>
+              </div>
+            )}
             {taxRate > 0 && (
               <div className="flex items-center justify-between text-xs text-muted-400">
                 <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">

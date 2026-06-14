@@ -20,6 +20,7 @@ export const useCartStore = create((set, get) => {
     const items = state.items ?? get().items
     const includeTax = state.includeTax ?? get().includeTax
     const customCharges = state.customCharges ?? get().customCharges
+    const globalDiscount = state.globalDiscount ?? get().globalDiscount
     
     const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0)
     const baseCurrency = useCurrencyStore.getState().baseCurrency
@@ -35,9 +36,19 @@ export const useCartStore = create((set, get) => {
           return sum + val
         }
       }, 0)
-    const total = subtotal + taxAmount + customChargesSum
+
+    let globalDiscountAmount = 0
+    if (globalDiscount && globalDiscount.value > 0) {
+      if (globalDiscount.type === 'percent') {
+        globalDiscountAmount = subtotal * (globalDiscount.value / 100)
+      } else {
+        globalDiscountAmount = Number(globalDiscount.value)
+      }
+    }
+
+    const total = subtotal - globalDiscountAmount + taxAmount + customChargesSum
     
-    return { subtotal, taxAmount, customChargesSum, total }
+    return { subtotal, taxAmount, customChargesSum, globalDiscountAmount, total }
   }
 
   const setAndRecalc = (updateFnOrObj) => {
@@ -54,9 +65,11 @@ export const useCartStore = create((set, get) => {
     note: '',
     includeTax: false,
     customCharges: [], // { id, name, type: 'percent'|'fixed', value, applied, pinned }
+    globalDiscount: null, // { value: number, type: 'percent'|'fixed' }
     subtotal: 0,
     taxAmount: 0,
     customChargesSum: 0,
+    globalDiscountAmount: 0,
     total: 0,
 
     toggleTax: () => setAndRecalc((s) => ({ includeTax: !s.includeTax })),
@@ -132,7 +145,7 @@ export const useCartStore = create((set, get) => {
     clearCart: () => {
       // Keep pinned custom charges when clearing cart
       const pinned = get().customCharges.filter(c => c.pinned)
-      setAndRecalc({ items: [], note: '', includeTax: false, customCharges: pinned.map(c => ({ ...c, applied: true })) })
+      setAndRecalc({ items: [], note: '', includeTax: false, globalDiscount: null, customCharges: pinned.map(c => ({ ...c, applied: true })) })
     },
 
     addCustomCharge: async (charge) => {
@@ -190,6 +203,10 @@ export const useCartStore = create((set, get) => {
         }
         await auth.updateProfile({ settings: updatedSettings })
       }
+    },
+
+    setGlobalDiscount: (discount) => {
+      setAndRecalc({ globalDiscount: discount })
     },
   }
 })
