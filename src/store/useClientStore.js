@@ -1,18 +1,26 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
+import { idbStorage } from '@/lib/idbStorage'
 
-export const useClientStore = create((set, get) => ({
-  clients: [],
-  selectedClientId: null,
-  loading: false,
+const STALE_TIME = 1000 * 60 * 60 * 24 // 24 horas
 
-  clientsFetched: false,
+export const useClientStore = create(
+  persist(
+    (set, get) => ({
+      clients: [],
+      selectedClientId: null,
+      loading: false,
+      lastFetch: 0,
 
   fetchClients: async (force = false) => {
-    const { clientsFetched } = get()
+    const { lastFetch } = get()
     const { user } = useAuthStore.getState()
-    if (!user?.companyId || (clientsFetched && !force)) return
+    if (!user?.companyId) return
+    
+    const isStale = Date.now() - lastFetch > STALE_TIME
+    if (!isStale && !force) return
     
     set({ loading: true })
     const { data, error } = await supabase
@@ -21,7 +29,7 @@ export const useClientStore = create((set, get) => ({
       .eq('company_id', user.companyId)
       .order('created_at', { ascending: false })
 
-    if (!error) set({ clients: data || [], clientsFetched: true })
+    if (!error) set({ clients: data || [], lastFetch: Date.now() })
     set({ loading: false })
   },
 
@@ -96,5 +104,12 @@ export const useClientStore = create((set, get) => ({
   },
 
   getFrequent: () => get().clients.filter((c) => !c.type || c.type === 'frequent'),
-}))
+    }),
+    {
+      name: 'gestiva-clients-storage',
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({ clients: state.clients, lastFetch: state.lastFetch }),
+    }
+  )
+)
 

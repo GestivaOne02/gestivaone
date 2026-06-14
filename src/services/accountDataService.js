@@ -234,11 +234,11 @@ export const importAccountBackup = async (file) => {
 }
 
 export const refreshAccountStores = async () => {
-  useProductStore.setState({ products: [], productsFetched: false })
-  useClientStore.setState({ clients: [], clientsFetched: false, selectedClientId: null })
-  useInvoiceStore.setState({ invoices: [], invoicesFetched: false })
-  useExpenseStore.setState({ expenses: [], expensesFetched: false })
-  useNotificationStore.setState({ notifications: [] })
+  useProductStore.setState({ products: [], lastFetch: 0 })
+  useClientStore.setState({ clients: [], lastFetch: 0, selectedClientId: null })
+  useInvoiceStore.setState({ invoices: [], lastFetch: 0 })
+  useExpenseStore.setState({ expenses: [], lastFetch: 0 })
+  useNotificationStore.setState({ notifications: [], lastFetch: 0 })
   usePocketStore.setState({ pockets: [] })
 
   await Promise.allSettled([

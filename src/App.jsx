@@ -186,27 +186,8 @@ export default function App() {
   useEffect(() => { checkOverdue() }, [])
 
   useEffect(() => {
-    if (!isAuthenticated || !user?.id) return
-
-    const handleFocus = () => {
-      const authState = useAuthStore.getState()
-      if (authState.isAuthenticated && authState.user?.id) {
-        authState.syncProfile(authState.user.id)
-      }
-    }
-    window.addEventListener('focus', handleFocus)
-
-    const interval = setInterval(() => {
-      const authState = useAuthStore.getState()
-      if (authState.isAuthenticated && authState.user?.id) {
-        authState.syncProfile(authState.user.id)
-      }
-    }, 15000)
-
-    return () => {
-      window.removeEventListener('focus', handleFocus)
-      clearInterval(interval)
-    }
+    // Egress fix: Polling and focus listeners removed to achieve 0 egress in idle.
+    // Auth state is maintained solely by Supabase JWT and onAuthStateChange events.
   }, [isAuthenticated, user?.id])
 
   if (!initialized) {

@@ -1,20 +1,29 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { useProductStore } from './useProductStore'
 import { usePocketStore } from './usePocketStore'
+import { idbStorage } from '@/lib/idbStorage'
 import { isAfter, parseISO, differenceInDays, format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
-export const useInvoiceStore = create((set, get) => ({
-  invoices: [],
-  loading: false,
-  invoicesFetched: false,
+const STALE_TIME = 1000 * 60 * 60 // 1 hora
+
+export const useInvoiceStore = create(
+  persist(
+    (set, get) => ({
+      invoices: [],
+      loading: false,
+      lastFetch: 0,
 
   fetchInvoices: async (force = false) => {
-    const { invoicesFetched } = get()
+    const { lastFetch } = get()
     const { user } = useAuthStore.getState()
-    if (!user?.companyId || (invoicesFetched && !force)) return
+    if (!user?.companyId) return
+    
+    const isStale = Date.now() - lastFetch > STALE_TIME
+    if (!isStale && !force) return
     
     set({ loading: true })
     const { data, error } = await supabase
@@ -58,7 +67,7 @@ export const useInvoiceStore = create((set, get) => ({
         }
       })
 
-      set({ invoices: mappedInvoices, invoicesFetched: true })
+      set({ invoices: mappedInvoices, lastFetch: Date.now() })
     } else {
       console.error('❌ Error fetching invoices:', error)
     }
@@ -512,4 +521,11 @@ export const useInvoiceStore = create((set, get) => ({
       })
     return months
   },
-}))
+    }),
+    {
+      name: 'gestiva-invoices-storage',
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({ invoices: state.invoices, lastFetch: state.lastFetch }),
+    }
+  )
+)

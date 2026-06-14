@@ -1,16 +1,25 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
+import { idbStorage } from '@/lib/idbStorage'
 
-export const useExpenseStore = create((set, get) => ({
-  expenses: [],
-  loading: false,
-  expensesFetched: false,
+const STALE_TIME = 1000 * 60 * 60 * 24 // 24 horas
+
+export const useExpenseStore = create(
+  persist(
+    (set, get) => ({
+      expenses: [],
+      loading: false,
+      lastFetch: 0,
 
   fetchExpenses: async (force = false) => {
-    const { expensesFetched } = get()
+    const { lastFetch } = get()
     const { user } = useAuthStore.getState()
-    if (!user?.companyId || (expensesFetched && !force)) return
+    if (!user?.companyId) return
+    
+    const isStale = Date.now() - lastFetch > STALE_TIME
+    if (!isStale && !force) return
     
     set({ loading: true })
     const { data, error } = await supabase
@@ -20,7 +29,7 @@ export const useExpenseStore = create((set, get) => ({
       .order('created_at', { ascending: false })
 
     if (!error) {
-      set({ expenses: data || [], expensesFetched: true })
+      set({ expenses: data || [], lastFetch: Date.now() })
     } else {
       console.error('❌ Error fetching expenses:', error)
     }
@@ -105,4 +114,11 @@ export const useExpenseStore = create((set, get) => ({
       .filter((e) => e.company_id === companyId)
       .reduce((sum, e) => sum + (e.amount || 0), 0)
   }
-}))
+    }),
+    {
+      name: 'gestiva-expenses-storage',
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({ expenses: state.expenses, lastFetch: state.lastFetch }),
+    }
+  )
+)

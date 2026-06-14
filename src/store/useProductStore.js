@@ -1,6 +1,8 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
+import { idbStorage } from '@/lib/idbStorage'
 
 const CATEGORIES = ['Alimentos', 'Bebidas', 'Limpieza', 'Electrónica', 'Ropa', 'Servicios', 'Otros']
 export { CATEGORIES }
@@ -21,10 +23,14 @@ export function getProductDiscount(product) {
   }
 }
 
-export const useProductStore = create((set, get) => ({
-  products: [],
-  loading: false,
-  productsFetched: false,
+const STALE_TIME = 1000 * 60 * 60 * 24 // 24 horas
+
+export const useProductStore = create(
+  persist(
+    (set, get) => ({
+      products: [],
+      loading: false,
+      lastFetch: 0,
 
   addCustomCategory: async (newCat) => {
     const auth = useAuthStore.getState()
@@ -41,9 +47,12 @@ export const useProductStore = create((set, get) => ({
   },
 
   fetchProducts: async (force = false) => {
-    const { productsFetched } = get()
+    const { lastFetch } = get()
     const { user } = useAuthStore.getState()
-    if (!user?.companyId || (productsFetched && !force)) return
+    if (!user?.companyId) return
+    
+    const isStale = Date.now() - lastFetch > STALE_TIME
+    if (!isStale && !force) return
     
     set({ loading: true })
     const { data, error } = await supabase
@@ -52,7 +61,7 @@ export const useProductStore = create((set, get) => ({
       .eq('company_id', user.companyId)
       .order('name')
 
-    if (!error) set({ products: data || [], productsFetched: true })
+    if (!error) set({ products: data || [], lastFetch: Date.now() })
     set({ loading: false })
   },
 
@@ -107,5 +116,11 @@ export const useProductStore = create((set, get) => ({
 
   getByCategory: (cat) =>
     cat ? get().products.filter((p) => p.category === cat) : get().products,
-}))
-
+    }),
+    {
+      name: 'gestiva-products-storage',
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({ products: state.products, lastFetch: state.lastFetch }),
+    }
+  )
+)

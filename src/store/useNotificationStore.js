@@ -1,18 +1,29 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { useProductStore } from './useProductStore'
 import { useInvoiceStore } from './useInvoiceStore'
+import { idbStorage } from '@/lib/idbStorage'
 import { parseISO, format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
-export const useNotificationStore = create((set, get) => ({
-  notifications: [],
-  loading: false,
+const STALE_TIME = 1000 * 60 * 5 // 5 minutos
 
-  fetchNotifications: async () => {
-    const { user } = useAuthStore.getState()
-    if (!user?.companyId) return
+export const useNotificationStore = create(
+  persist(
+    (set, get) => ({
+      notifications: [],
+      loading: false,
+      lastFetch: 0,
+
+      fetchNotifications: async (force = false) => {
+        const { lastFetch } = get()
+        const { user } = useAuthStore.getState()
+        if (!user?.companyId) return
+        
+        const isStale = Date.now() - lastFetch > STALE_TIME
+        if (!isStale && !force) return
     
     set({ loading: true })
     const { data, error } = await supabase
@@ -22,7 +33,7 @@ export const useNotificationStore = create((set, get) => ({
       .order('created_at', { ascending: false })
 
     if (!error) {
-      set({ notifications: data || [] })
+      set({ notifications: data || [], lastFetch: Date.now() })
     } else {
       console.error('❌ Error fetching notifications:', error)
     }
@@ -161,4 +172,11 @@ export const useNotificationStore = create((set, get) => ({
   getUnreadCount: () => {
     return get().notifications.filter(n => !n.read).length
   }
-}))
+    }),
+    {
+      name: 'gestiva-notifications-storage',
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({ notifications: state.notifications, lastFetch: state.lastFetch }),
+    }
+  )
+)

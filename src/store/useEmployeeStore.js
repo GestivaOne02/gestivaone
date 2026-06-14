@@ -1,17 +1,25 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
+import { idbStorage } from '@/lib/idbStorage'
 
-export const useEmployeeStore = create((set, get) => ({
-  employees: [],
-  loading: false,
+const STALE_TIME = 1000 * 60 * 60 * 24 // 24 horas
 
-  employeesFetched: false,
+export const useEmployeeStore = create(
+  persist(
+    (set, get) => ({
+      employees: [],
+      loading: false,
+      lastFetch: 0,
 
   fetchEmployees: async (force = false) => {
-    const { employeesFetched } = get()
+    const { lastFetch } = get()
     const { user } = useAuthStore.getState()
-    if (!user?.companyId || (employeesFetched && !force)) return
+    if (!user?.companyId) return
+    
+    const isStale = Date.now() - lastFetch > STALE_TIME
+    if (!isStale && !force) return
     
     set({ loading: true })
     const { data, error } = await supabase
@@ -20,7 +28,7 @@ export const useEmployeeStore = create((set, get) => ({
       .eq('company_id', user.companyId)
       .not('id', 'eq', user.id) // Exclude current owner
 
-    if (!error) set({ employees: data || [], employeesFetched: true })
+    if (!error) set({ employees: data || [], lastFetch: Date.now() })
     set({ loading: false })
   },
 
@@ -110,5 +118,12 @@ export const useEmployeeStore = create((set, get) => ({
     if (error || !data) return null
     return data
   },
-}))
+    }),
+    {
+      name: 'gestiva-employees-storage',
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({ employees: state.employees, lastFetch: state.lastFetch }),
+    }
+  )
+)
 
