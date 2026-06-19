@@ -6,6 +6,9 @@ import {
 } from 'lucide-react'
 import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
+import { useNotificationStore } from '@/store/useNotificationStore'
+import { supabase } from '@/lib/supabase'
+import { useEffect } from 'react'
 import clsx from 'clsx'
 
 const AVATAR_SIZE = 44
@@ -17,9 +20,34 @@ export default function Sidebar({ isMobile }) {
   const closeMobile = useUIStore((s) => s.closeMobileSidebar)
   const user = useAuthStore((s) => s.user)
   const location = useLocation()
+  
+  const unreadCount = useNotificationStore((s) => s.getUnreadCount())
+  const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)
 
   const role = user?.role || 'despachador'
   const permissions = ROLES[role]?.permissions || {}
+
+  useEffect(() => {
+    if (!user?.companyId) return
+
+    fetchNotifications()
+
+    const channel = supabase.channel('realtime:notifications')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'notifications', 
+        filter: `company_id=eq.${user.companyId}` 
+      }, () => {
+        // Fetch fresh notifications instantly
+        fetchNotifications(true)
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [user?.companyId])
 
   const renderAvatar = () => {
     const initial = user?.name?.charAt(0).toUpperCase() || 'G'
@@ -122,7 +150,7 @@ export default function Sidebar({ isMobile }) {
         </div>
 
         {/* Label — animates width without pushing the icon */}
-        <div className="overflow-hidden relative z-10">
+        <div className="overflow-hidden relative z-10 flex-1 flex items-center justify-between">
           <AnimatePresence initial={false}>
             {!collapsed && (
               <motion.span
@@ -131,17 +159,30 @@ export default function Sidebar({ isMobile }) {
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
                 transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                className="block pl-3 whitespace-nowrap"
+                className="block pl-3 whitespace-nowrap flex-1"
               >
                 {label}
               </motion.span>
             )}
           </AnimatePresence>
+          {!collapsed && label === 'Notificaciones' && unreadCount > 0 && (
+            <motion.div
+              initial={{ scale: 0 }} animate={{ scale: 1 }}
+              className="ml-auto bg-danger-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0"
+            >
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </motion.div>
+          )}
         </div>
 
-        {/* Lock badges */}
-        {!allowed && !collapsed && <Lock size={12} className="text-muted-400 relative z-10 ml-auto" />}
+        {/* Lock / Notification badges on collapsed */}
+        {!allowed && !collapsed && <Lock size={12} className="text-muted-400 relative z-10 ml-2" />}
         {!allowed && collapsed && <Lock size={10} className="absolute -bottom-0.5 -right-0.5 text-muted-400" />}
+        
+        {/* Notification badge on collapsed */}
+        {collapsed && label === 'Notificaciones' && unreadCount > 0 && (
+          <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-danger-500 rounded-full border border-surface-800 animate-pulse" />
+        )}
       </NavLink>
     )
   }
@@ -216,6 +257,14 @@ export default function Sidebar({ isMobile }) {
                             <Icon size={18} className="shrink-0 relative z-10" />
                             <span className="relative z-10 flex-1 flex items-center justify-between">
                               <span>{label}</span>
+                              {label === 'Notificaciones' && unreadCount > 0 && (
+                                <motion.div
+                                  initial={{ scale: 0 }} animate={{ scale: 1 }}
+                                  className="bg-danger-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                                >
+                                  {unreadCount > 99 ? '99+' : unreadCount}
+                                </motion.div>
+                              )}
                             </span>
                             {!allowed && <Lock size={12} className="text-muted-400 relative z-10" />}
                           </NavLink>

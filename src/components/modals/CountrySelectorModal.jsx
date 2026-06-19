@@ -27,7 +27,7 @@ export default function CountrySelectorModal() {
   const updateProfile = useAuthStore((s) => s.updateProfile)
 
   // Only show if user is logged in but has no country/currency set
-  const show = user && !user.country && !localStorage.getItem('gestiva-country-set')
+  const show = user && !user.country
 
   if (!show) return null
 
@@ -60,7 +60,6 @@ export default function CountrySelectorModal() {
       company_id: companyId
     })
     
-    localStorage.setItem('gestiva-country-set', 'true')
     window.location.reload()
   }
 

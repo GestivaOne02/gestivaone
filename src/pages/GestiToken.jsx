@@ -144,15 +144,17 @@ export default function GestiToken() {
       className="page-container space-y-6 max-w-5xl mx-auto p-4 md:p-8"
     >
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between border-b border-subtle pb-4">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
-            <Shield className="text-brand-500" size={24} />
-            GestiToken
-          </h1>
-          <p className="text-sm text-muted-400 mt-1">Control de seguridad y doble factor para consultas desde WhatsApp (GestiBot)</p>
+      <motion.div variants={itemVariants} className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <h1 className="text-lg md:text-xl font-bold text-foreground flex items-center gap-2">
+              <Shield className="text-brand-500" size={20} />
+              GestiToken
+            </h1>
+            <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Control de seguridad y doble factor para consultas desde WhatsApp (GestiBot)</p>
+          </div>
         </div>
-        <div className="mt-3 md:mt-0">
+        <div className="flex items-center gap-2 self-end sm:self-center">
           <Badge variant={enabled ? 'success' : 'danger'}>
             {enabled ? 'GestiBot Protegido 🔒' : 'Seguridad Inactiva 🔓'}
           </Badge>

@@ -203,21 +203,25 @@ export default function Pockets() {
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container flex flex-col gap-6">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Bolsillos de Ahorro</h1>
-          <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Distribuye tus fondos y programa gastos fijos</p>
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <h1 className="text-lg md:text-xl font-bold text-foreground">Bolsillos de Ahorro</h1>
+            <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Distribuye tus fondos y programa gastos fijos</p>
+          </div>
         </div>
-        <Button
+        <div className="flex items-center gap-2 self-end sm:self-center">
+          <Button
           variant="primary"
           size="sm"
           pill
           icon={<Plus size={14} />}
           onClick={() => setShowAddModal(true)}
           title="Crear un nuevo bolsillo con meta de ahorro o desvío automático de ventas"
-        >
-          Crear Bolsillo
-        </Button>
+          >
+            Crear Bolsillo
+          </Button>
+        </div>
       </div>
 
       {/* Pockets Grid */}

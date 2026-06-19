@@ -101,6 +101,7 @@ export const useSettingsStore = create(
         showTax: false,
         footerText: '¡Gracias por su compra!',
         themeColor: 'indigo',
+        bannerUrl: '',
       },
       setPrinter: (data) => {
         set((s) => ({ printer: { ...s.printer, ...data } }))

@@ -306,14 +306,12 @@ export default function DianAssistant() {
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container space-y-6 pb-12">
       {/* ── Fixed Sticky Page Header ─────────────────── */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">
-            Asistente DIAN
-          </h1>
-          <p className="hidden sm:block text-sm text-muted-400 mt-0.5">
-            Módulo tributario interactivo para estimar impuesto de renta, liquidación de IVA e información exógena.
-          </p>
+      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <h1 className="text-lg md:text-xl font-bold text-foreground">Asistente DIAN</h1>
+            <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Módulo tributario interactivo para estimar impuesto de renta, liquidación de IVA e información exógena.</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <select

@@ -122,15 +122,15 @@ export default function Notifications() {
       {/* Sticky Header & Categories Wrapper */}
       <motion.div 
         variants={itemVariants}
-        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0"
       >
         {/* Row 1: Title and Actions */}
-        <div className="flex flex-row items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg md:text-xl font-bold text-brand-600 dark:text-white">Notificaciones</h1>
+        <div className="flex flex-row items-center justify-between gap-4 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-3">
+            <div>
+              <h1 className="text-lg md:text-xl font-bold text-foreground">Notificaciones</h1>
+              <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Alertas importantes y anuncios</p>
             </div>
-            <p className="hidden sm:block text-sm text-muted-400 mt-0.5">Alertas importantes y anuncios</p>
           </div>
 
           <div className="flex gap-2 shrink-0">
