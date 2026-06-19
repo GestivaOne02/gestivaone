@@ -700,8 +700,8 @@ export default function Facturero() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch lg:h-[calc(100vh-160px)] flex-1 min-h-0">
-        {/* Left config form panel (8 cols on lg) */}
-        <div className="lg:col-span-7 space-y-6 lg:h-full lg:overflow-y-auto no-scrollbar lg:pr-2 pb-6">
+        {/* Left config form panel (6 cols on lg) */}
+        <div className="lg:col-span-6 space-y-6 lg:h-full lg:overflow-y-auto no-scrollbar lg:pr-2 pb-6">
           {/* Template Choices Card */}
           <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
@@ -1064,8 +1064,8 @@ export default function Facturero() {
           </div>
         </div>
 
-        {/* Right side live preview pane (5 cols on lg) */}
-        <div className="lg:col-span-5 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
+        {/* Right side live preview pane (6 cols on lg) */}
+        <div className="lg:col-span-6 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
           <div className="bg-surface-800 border border-subtle rounded-2xl p-5 space-y-4 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-subtle shrink-0">
               <span className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
