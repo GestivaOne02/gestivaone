@@ -68,14 +68,6 @@ export default function Landing() {
 
             {/* CTA / Auth Actions */}
             <div className="flex items-center gap-4">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-xl bg-surface-800 border border-subtle hover:bg-surface-700/60 transition-colors text-muted-400 hover:text-foreground"
-                aria-label="Toggle Theme"
-              >
-                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
-
               <Link
                 to="/auth?mode=login"
                 className="hidden sm:inline-block text-sm font-semibold text-muted-400 hover:text-foreground transition-colors px-4 py-2"
@@ -365,7 +357,7 @@ export default function Landing() {
             <p className="text-sm text-muted-400">Encuentra el plan perfecto para las necesidades de tu empresa.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {/* Plan 1: Standard */}
             <div className="bg-surface-750 border border-subtle p-8 rounded-3xl space-y-6 flex flex-col justify-between relative overflow-hidden">
               <div className="space-y-4">
@@ -462,6 +454,35 @@ export default function Landing() {
               >
                 Obtener Plan 360
               </Link>
+            </div>
+
+            {/* Plan 4: Enterprise */}
+            <div className="bg-surface-750 border border-subtle p-8 rounded-3xl space-y-6 flex flex-col justify-between relative overflow-hidden">
+              <div className="space-y-4">
+                <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-surface-650 text-muted-400 border border-subtle inline-block">Enterprise</span>
+                <div className="space-y-1">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-black text-foreground">A Medida</span>
+                  </div>
+                  <span className="text-[10px] text-muted-400 block font-bold">Plan personalizado</span>
+                </div>
+                <p className="text-xs text-muted-400">Soluciones de alto rendimiento para corporaciones complejas que requieren desarrollos customizados.</p>
+
+                <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
+                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Trabajadores ilimitados</li>
+                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Desarrollo a la medida</li>
+                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Migración premium</li>
+                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Infraestructura dedicada</li>
+                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Soporte 24/7</li>
+                </ul>
+              </div>
+
+              <a
+                href="mailto:soporte@gestivaone.com?subject=Consulta%20Plan%20Enterprise"
+                className="w-full text-center py-3 rounded-xl bg-surface-600 hover:bg-surface-500 border border-subtle text-foreground text-xs font-bold transition-all block"
+              >
+                Contactar Ventas
+              </a>
             </div>
           </div>
         </div>
@@ -560,6 +581,15 @@ export default function Landing() {
           </p>
         </div>
       </footer>
+
+      {/* Floating Theme Toggle */}
+      <button
+        onClick={toggleTheme}
+        className="fixed bottom-6 right-6 p-3 rounded-full bg-surface-800 border border-subtle hover:bg-surface-700 hover:text-brand-400 transition-colors text-muted-400 shadow-lg z-50 flex items-center justify-center"
+        aria-label="Toggle Theme"
+      >
+        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
 
     </div>
   )

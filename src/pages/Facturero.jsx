@@ -286,7 +286,9 @@ export default function Facturero() {
     const totalVal = MOCK_INVOICE.total
     const taxVal = showTax ? MOCK_INVOICE.taxAmount : 0
     const subtotalVal = showTax ? MOCK_INVOICE.subtotal : totalVal
-    const activeColor = THEME_COLORS[themeColor] || THEME_COLORS.indigo
+    const activeColor = themeColor.startsWith('#') 
+      ? { name: 'Personalizado', primary: themeColor, primaryDark: themeColor, bg: themeColor + '15', text: themeColor } 
+      : THEME_COLORS[themeColor] || THEME_COLORS.indigo
 
     if (previewType === 'pdf-corporate') {
       return (
@@ -1059,6 +1061,20 @@ export default function Facturero() {
                     </div>
                   </button>
                 ))}
+                
+                {/* Custom Color Option */}
+                <div className={`flex items-center gap-2.5 p-3 rounded-xl border text-left transition-all duration-300 ${themeColor.startsWith('#') ? 'bg-surface-700 border-brand-500 ring-2 ring-brand-500/20' : 'bg-surface-850 border-subtle hover:border-muted-500'}`}>
+                  <input
+                    type="color"
+                    value={themeColor.startsWith('#') ? themeColor : '#4f46e5'}
+                    onChange={(e) => setThemeColor(e.target.value)}
+                    className="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent shrink-0"
+                    title="Seleccionar color personalizado"
+                  />
+                  <div className="min-w-0">
+                    <span className="block text-xs font-bold text-foreground truncate">Personalizado</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

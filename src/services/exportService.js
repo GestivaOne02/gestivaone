@@ -230,45 +230,37 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
 
   const themeColor = settings.themeColor || 'indigo'
   
+  const hexToRgb = (hex) => {
+    let r = 0, g = 0, b = 0;
+    if (hex.length === 4) {
+      r = "0x" + hex[1] + hex[1];
+      g = "0x" + hex[2] + hex[2];
+      b = "0x" + hex[3] + hex[3];
+    } else if (hex.length === 7) {
+      r = "0x" + hex[1] + hex[2];
+      g = "0x" + hex[3] + hex[4];
+      b = "0x" + hex[5] + hex[6];
+    }
+    return [+(r), +(g), +(b)];
+  };
+
   const getThemeColorsRGB = (theme) => {
+    if (theme && theme.startsWith('#')) {
+      const rgb = hexToRgb(theme);
+      return {
+        dark: rgb.map(c => Math.max(0, c - 40)),
+        light: rgb.map(c => Math.min(255, c + 150)),
+        primary: rgb
+      }
+    }
     switch (theme) {
-      case 'emerald':
-        return {
-          dark: [6, 78, 59],
-          light: [167, 243, 208],
-          primary: [5, 150, 105]
-        }
-      case 'blue':
-        return {
-          dark: [30, 58, 138],
-          light: [191, 219, 254],
-          primary: [37, 99, 235]
-        }
-      case 'rose':
-        return {
-          dark: [76, 5, 25],
-          light: [254, 205, 211],
-          primary: [225, 29, 72]
-        }
-      case 'amber':
-        return {
-          dark: [120, 53, 15],
-          light: [253, 230, 138],
-          primary: [217, 119, 6]
-        }
-      case 'slate':
-        return {
-          dark: [15, 23, 42],
-          light: [203, 213, 225],
-          primary: [71, 85, 105]
-        }
+      case 'emerald': return { dark: [6, 78, 59], light: [167, 243, 208], primary: [5, 150, 105] }
+      case 'blue': return { dark: [30, 58, 138], light: [191, 219, 254], primary: [37, 99, 235] }
+      case 'rose': return { dark: [76, 5, 25], light: [254, 205, 211], primary: [225, 29, 72] }
+      case 'amber': return { dark: [120, 53, 15], light: [253, 230, 138], primary: [217, 119, 6] }
+      case 'slate': return { dark: [15, 23, 42], light: [203, 213, 225], primary: [71, 85, 105] }
       case 'indigo':
-      default:
-        return {
-          dark: [30, 27, 75],
-          light: [199, 210, 254],
-          primary: [79, 70, 229]
-        }
+      default: return { dark: [30, 27, 75], light: [199, 210, 254], primary: [79, 70, 229] }
     }
   }
   const rgbColors = getThemeColorsRGB(themeColor)

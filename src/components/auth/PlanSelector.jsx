@@ -4,9 +4,10 @@ import { PLANS } from '@/store/useAuthStore'
 import clsx from 'clsx'
 
 const glows = {
-  standard: 'glow-top-brand border-brand-500/10 hover:border-brand-500/30',
-  pro: 'glow-top-success border-success-500/10 hover:border-success-500/30',
-  empresarial: 'glow-top-warning border-warning-500/10 hover:border-warning-500/30',
+  standard: 'border-brand-500/10 hover:border-brand-500/30',
+  pro: 'border-success-500/10 hover:border-success-500/30',
+  empresarial: 'border-warning-500/10 hover:border-warning-500/30',
+  enterprise: 'border-brand-500/10 hover:border-brand-500/30',
 }
 
 const badgeStyles = {
@@ -29,7 +30,7 @@ export default function PlanSelector({ selected, onSelect }) {
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 w-full max-w-7xl mx-auto">
         {plans.map((plan) => {
           const isSelected = selected === plan.id
           const activeGlow = glows[plan.id] || glows.standard
@@ -40,15 +41,21 @@ export default function PlanSelector({ selected, onSelect }) {
               key={plan.id}
               whileHover={{ y: -6, scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              onClick={() => onSelect(plan.id)}
+              onClick={() => {
+                if (plan.isContact) {
+                  window.location.href = 'mailto:soporte@gestivaone.com?subject=Consulta%20Plan%20Enterprise';
+                } else {
+                  onSelect(plan.id)
+                }
+              }}
               className={clsx(
                 'group relative w-full text-left border rounded-2xl p-4 transition-all duration-500 ease-out-expo flex flex-col justify-between min-h-[300px] bg-surface-800/85 backdrop-blur-md overflow-hidden select-none',
                 isSelected
-                  ? 'border-brand-500 ring-2 ring-brand-500/10 shadow-glow'
+                  ? 'border-brand-500 ring-2 ring-brand-500/10'
                   : 'border-subtle/50 hover:border-surface-400'
               )}
             >
-              {/* Concentric Glow Top Effect */}
+              {/* Basic Background Wrapper */}
               <div className={clsx('absolute inset-0 pointer-events-none rounded-3xl', activeGlow)} />
 
               {plan.popular && (
@@ -106,15 +113,17 @@ export default function PlanSelector({ selected, onSelect }) {
                 </ul>
               </div>
 
-              {/* Styled pill-shaped indicator matching image 3 (Get started buttons) */}
+              {/* Styled pill-shaped indicator */}
               <div className="w-full mt-4 relative z-10">
                 <div className={clsx(
                   'w-full py-2.5 px-4 rounded-full text-xs font-black text-center transition-all duration-500 ease-out-expo select-none border',
                   isSelected 
-                    ? 'bg-brand-600 text-white border-brand-500/40 shadow-glow-sm' 
-                    : 'bg-surface-700/60 text-muted-400 border-subtle/40 group-hover:bg-surface-700 group-hover:text-white group-hover:border-surface-400'
+                    ? 'bg-brand-600 text-white border-brand-500/40' 
+                    : plan.isContact
+                      ? 'bg-brand-600/10 text-brand-400 border-brand-500/30 group-hover:bg-brand-600 group-hover:text-white'
+                      : 'bg-surface-700/60 text-muted-400 border-subtle/40 group-hover:bg-surface-700 group-hover:text-white group-hover:border-surface-400'
                 )}>
-                  {isSelected ? 'Plan Activo ✓' : 'Elegir Plan'}
+                  {plan.isContact ? 'Contactar Ventas' : isSelected ? 'Plan Activo ✓' : 'Elegir Plan'}
                 </div>
               </div>
             </motion.button>

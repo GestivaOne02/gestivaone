@@ -1045,16 +1045,15 @@ export default function Auth() {
 
           {/* Form card - with relative positioning for button overlay */}
           <div className="relative bg-surface-800 border border-subtle rounded-2xl p-4 sm:p-5 shadow-modal">
-            {/* Home button - positioned as a side tab on the bottom left */}
+            {/* Home button - positioned near top left */}
             <motion.button
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 25, delay: 0.1 }}
               onClick={() => window.location.href = '/'}
-              className="absolute bottom-6 sm:bottom-12 -left-8 sm:-left-12 w-8 sm:w-12 h-16 sm:h-20 bg-brand-600 rounded-l-xl sm:rounded-l-2xl flex items-center justify-center hover:bg-brand-700 transition-colors group z-[-1]"
+              className="absolute -top-4 -left-4 w-10 h-10 bg-surface-800 border border-subtle rounded-full flex items-center justify-center hover:bg-surface-700 hover:text-white transition-colors group z-20 text-muted-400 shadow-sm"
               title="Volver al inicio"
             >
-              <ChevronLeft size={20} className="text-white transition-colors mr-1 sm:mr-0" />
+              <Home size={18} className="transition-colors" />
             </motion.button>
 
             <AnimatePresence mode="wait">
