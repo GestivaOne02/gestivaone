@@ -37,14 +37,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
   const discountInfo = getProductDiscount(product)
 
   const unitColor = UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND
-  const unitAccent = {
-    KG: 'from-blue-500/20',
-    LB: 'from-purple-500/20',
-    UND: 'from-brand-500/20',
-    L: 'from-cyan-500/20',
-    M: 'from-orange-500/20',
-    ILIMITADO: 'from-success-500/20',
-  }[product.unit] || 'from-brand-500/20'
+
 
   const handleAdd = () => {
     const finalQty = qty === '' ? 1 : Number(qty)
@@ -74,11 +67,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
           : 'border-subtle hover:border-brand-500/40'
       )}
     >
-      {/* Accent gradient top stripe */}
-      <div className={clsx('h-1 w-full bg-gradient-to-r to-transparent', unitAccent)} />
 
-      {/* Hover glow overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-500/0 via-transparent to-brand-600/0 group-hover:from-brand-500/5 group-hover:to-brand-600/3 transition-all duration-500 pointer-events-none" />
 
       {/* ── Zone 1: Header ── */}
       <div className="relative px-3.5 pt-3 pb-2">
