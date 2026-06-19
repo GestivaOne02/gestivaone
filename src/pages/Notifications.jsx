@@ -71,14 +71,12 @@ const TYPE_STYLES = {
 }
 
 export default function Notifications() {
-  const getNotifications = useNotificationStore((s) => s.getNotifications)
+  const notifications = useNotificationStore((s) => s.notifications) || []
   const markAsRead = useNotificationStore((s) => s.markAsRead)
   const markAllAsRead = useNotificationStore((s) => s.markAllAsRead)
   const deleteNotification = useNotificationStore((s) => s.deleteNotification)
   const clearReadNotifications = useNotificationStore((s) => s.clearReadNotifications)
   const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)
-
-  const notifications = getNotifications()
 
   // Fetch notifications on mount
   useEffect(() => {
