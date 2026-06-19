@@ -63,9 +63,14 @@ export default function DianAssistant() {
   }, [retencionesFuente, selectedYear])
 
   const invoices = useInvoiceStore((s) => s.invoices)
+  const invLoading = useInvoiceStore((s) => s.loading)
   const expenses = useExpenseStore((s) => s.expenses)
+  const expLoading = useExpenseStore((s) => s.loading)
   const clients = useClientStore((s) => s.clients)
+  const cliLoading = useClientStore((s) => s.loading)
   const format$ = useCurrencyStore((s) => s.format)
+
+  const isLoading = invLoading || expLoading || cliLoading
 
   const fetchInvoices = useInvoiceStore((s) => s.fetchInvoices)
   const fetchExpenses = useExpenseStore((s) => s.fetchExpenses)
@@ -418,7 +423,11 @@ export default function DianAssistant() {
             <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between shadow-glow-sm">
               <div>
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">Ingresos Brutos ({selectedYear})</span>
-                <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalSales)}</h3>
+                {isLoading ? (
+                  <div className="h-8 w-24 bg-surface-700 rounded animate-pulse mt-1.5" />
+                ) : (
+                  <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalSales)}</h3>
+                )}
                 <span className="text-[10px] text-brand-400 font-semibold block mt-1">Soportados por Factura Electrónica</span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-success-500/10 text-success-400 flex items-center justify-center">
@@ -429,7 +438,11 @@ export default function DianAssistant() {
             <div className="bg-surface-800 border border-subtle p-5 rounded-2xl flex items-center justify-between shadow-glow-sm">
               <div>
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">Costos y Deducciones</span>
-                <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalCost)}</h3>
+                {isLoading ? (
+                  <div className="h-8 w-24 bg-surface-700 rounded animate-pulse mt-1.5" />
+                ) : (
+                  <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(totalCost)}</h3>
+                )}
                 <span className="text-[10px] text-brand-400 font-semibold block mt-1">Egresos operativos registrados</span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-danger-500/10 text-danger-400 flex items-center justify-center">
@@ -440,7 +453,11 @@ export default function DianAssistant() {
             <div className="bg-brand-600/10 border border-brand-500/30 p-5 rounded-2xl flex items-center justify-between shadow-glow-sm">
               <div>
                 <span className="text-xs text-brand-300 font-bold uppercase tracking-wider">Renta Líquida Gravable</span>
-                <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(rentaLiquidaGravable)}</h3>
+                {isLoading ? (
+                  <div className="h-8 w-24 bg-brand-500/20 rounded animate-pulse mt-1.5" />
+                ) : (
+                  <h3 className="text-2xl font-black text-foreground mt-1.5">{format$(rentaLiquidaGravable)}</h3>
+                )}
                 <span className="text-[10px] text-brand-300/80 font-semibold block mt-1">
                   ~ {netIncomeInUvt.toFixed(1)} UVT ({format$(uvtValue)} c/u)
                 </span>

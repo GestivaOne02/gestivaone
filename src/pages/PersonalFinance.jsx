@@ -38,6 +38,7 @@ export default function PersonalFinance() {
   const addExpense = useExpenseStore((s) => s.addExpense)
 
   const pockets = usePocketStore((s) => s.pockets)
+  const pckLoading = usePocketStore((s) => s.loading)
   const fetchPockets = usePocketStore((s) => s.fetchPockets)
   const addFunds = usePocketStore((s) => s.addFunds)
   const withdrawFunds = usePocketStore((s) => s.withdrawFunds)
@@ -497,7 +498,11 @@ export default function PersonalFinance() {
               
               <div>
                 <span className="text-xs font-bold text-white/70 uppercase tracking-widest">Fondos Disponibles</span>
-                <p className="text-2xl font-black text-white mt-1 drop-shadow-sm truncate">{format(balance)}</p>
+                {pckLoading ? (
+                  <div className="h-8 w-32 bg-white/20 rounded animate-pulse mt-1" />
+                ) : (
+                  <p className="text-2xl font-black text-white mt-1 drop-shadow-sm truncate">{format(balance)}</p>
+                )}
               </div>
 
               {/* Action Buttons */}
@@ -546,15 +551,23 @@ export default function PersonalFinance() {
                   <span className="text-xs font-bold text-success-400 uppercase tracking-widest">Por Cobrar</span>
                   <p className="text-xs text-muted-400 mt-0.5">Dinero Prestado</p>
                 </div>
-                <p className="text-sm font-extrabold text-success-400 mt-2">{format(loansSummary.toCollect)}</p>
+                {pckLoading ? (
+                  <div className="h-5 w-20 bg-surface-600 rounded animate-pulse mt-2" />
+                ) : (
+                  <p className="text-sm font-extrabold text-success-400 mt-2">{format(loansSummary.toCollect)}</p>
+                )}
               </div>
 
               <div className="bg-surface-700/20 border border-subtle rounded-2xl p-3.5 flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-bold text-danger-400 uppercase tracking-widest">Por Pagar</span>
-                  <p className="text-xs text-muted-400 mt-0.5">Dinero Recibido</p>
+                  <p className="text-xs text-muted-400 mt-0.5">Dinero Debiendo</p>
                 </div>
-                <p className="text-sm font-extrabold text-danger-400 mt-2">{format(loansSummary.toPay)}</p>
+                {pckLoading ? (
+                  <div className="h-5 w-20 bg-surface-600 rounded animate-pulse mt-2" />
+                ) : (
+                  <p className="text-sm font-extrabold text-danger-400 mt-2">{format(loansSummary.toPay)}</p>
+                )}
               </div>
             </div>
           </div>

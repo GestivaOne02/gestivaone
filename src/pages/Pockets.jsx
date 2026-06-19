@@ -31,6 +31,7 @@ const POCKET_TYPES = [
 export default function Pockets() {
   const user = useAuthStore((s) => s.user)
   const pockets = usePocketStore((s) => s.pockets)
+  const pckLoading = usePocketStore((s) => s.loading)
   const fetchPockets = usePocketStore((s) => s.fetchPockets)
   const addPocket = usePocketStore((s) => s.addPocket)
   const updatePocket = usePocketStore((s) => s.updatePocket)
@@ -226,7 +227,27 @@ export default function Pockets() {
 
       {/* Pockets Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {pockets.length === 0 ? (
+        {pckLoading ? (
+          <>
+            {[1, 2, 3].map(i => (
+              <div key={i} className="relative rounded-3xl p-5 border border-subtle bg-surface-800 animate-pulse flex flex-col justify-between min-h-[190px]">
+                <div>
+                  <div className="w-16 h-4 bg-surface-700 rounded mb-2"></div>
+                  <div className="w-3/4 h-5 bg-surface-700 rounded"></div>
+                </div>
+                <div className="mt-4">
+                  <div className="w-12 h-3 bg-surface-700 rounded mb-1"></div>
+                  <div className="w-1/2 h-6 bg-surface-700 rounded"></div>
+                </div>
+                <div className="flex gap-2 mt-4 pt-3 border-t border-subtle">
+                  <div className="flex-1 h-8 bg-surface-700 rounded-xl"></div>
+                  <div className="flex-1 h-8 bg-surface-700 rounded-xl"></div>
+                  <div className="w-8 h-8 bg-surface-700 rounded-xl"></div>
+                </div>
+              </div>
+            ))}
+          </>
+        ) : pockets.length === 0 ? (
           <div className="col-span-full bg-surface-800/40 border border-subtle border-dashed rounded-3xl p-12 text-center text-muted-400 flex flex-col items-center justify-center gap-3 shadow-glow-sm">
             <FolderPlus size={36} className="text-muted-500" />
             <div>

@@ -213,6 +213,7 @@ export default function Products() {
   const [activeLetter, setActiveLetter] = useState(null)
 
   const products      = useProductStore((s) => s.products)
+  const prdLoading    = useProductStore((s) => s.loading)
   const deleteProduct = useProductStore((s) => s.deleteProduct)
   const openModal     = useUIStore((s) => s.openModal)
   const openDuplicate = useUIStore((s) => s.openDuplicate)
@@ -307,7 +308,11 @@ export default function Products() {
           <div className="flex flex-wrap items-center gap-3">
             <div>
               <h1 className="text-lg md:text-xl font-bold text-foreground">Productos</h1>
-              <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">{products.length} productos en catálogo</p>
+              {prdLoading ? (
+                <div className="hidden sm:block h-4 w-32 bg-surface-700 rounded animate-pulse mt-0.5" />
+              ) : (
+                <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">{products.length} productos en catálogo</p>
+              )}
             </div>
             {selectedClient && (
               <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 px-3 py-1 rounded-full text-xs text-brand-300">
@@ -412,7 +417,20 @@ export default function Products() {
       {/* Product grid */}
       <div className="flex-1">
         <AnimatePresence>
-          {filtered.length === 0 ? (
+          {prdLoading ? (
+            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="bg-surface-800 border border-subtle rounded-2xl p-4 h-[120px] animate-pulse flex flex-col gap-3">
+                  <div className="w-3/4 h-4 bg-surface-700 rounded" />
+                  <div className="w-1/2 h-3 bg-surface-700 rounded" />
+                  <div className="mt-auto flex justify-between">
+                    <div className="w-16 h-5 bg-surface-700 rounded" />
+                    <div className="w-8 h-5 bg-surface-700 rounded" />
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          ) : filtered.length === 0 ? (
             <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-48 gap-3">
               <Package size={36} className="text-muted-400" />
               <p className="text-sm text-muted-400">{search || activeCat ? 'Sin resultados' : 'Añade tu primer producto'}</p>

@@ -88,6 +88,7 @@ function parseInvoiceNoteLocal(note) {
 export default function Dashboard() {
   const navigate = useNavigate()
   const invoices    = useInvoiceStore((s) => s.invoices)
+  const invLoading  = useInvoiceStore((s) => s.loading)
   const clients     = useClientStore((s) => s.clients)
   const products    = useProductStore((s) => s.products)
   const user        = useAuthStore((s) => s.user)
@@ -95,8 +96,11 @@ export default function Dashboard() {
   const checkOverdue = useInvoiceStore((s) => s.checkOverdue)
 
   const rawExpenses   = useExpenseStore((s) => s.expenses)
+  const expLoading    = useExpenseStore((s) => s.loading)
   const addExpense    = useExpenseStore((s) => s.addExpense)
   const deleteExpense = useExpenseStore((s) => s.deleteExpense)
+  
+  const isAppLoading = invLoading || expLoading
 
   const expenses = useMemo(() => {
     const companyId = user?.companyId || 'demo-company'
@@ -882,7 +886,7 @@ export default function Dashboard() {
             whileHover={{ y: -2, scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
           >
-            <KPICard {...kpi} />
+            <KPICard loading={isAppLoading} {...kpi} />
           </motion.div>
         ))}
       </div>

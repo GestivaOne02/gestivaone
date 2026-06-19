@@ -207,6 +207,7 @@ function NotificationsSection({ variants }) {
 
 export default function Account() {
   const user         = useAuthStore((s) => s.user)
+  const authLoading  = useAuthStore((s) => s.loading)
   const updateProfile = useAuthStore((s) => s.updateProfile)
   const logout       = useAuthStore((s) => s.logout)
   const navigate     = useNavigate()
@@ -254,16 +255,29 @@ export default function Account() {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-lg font-bold text-brand-600 dark:text-white truncate">{user?.name || 'Usuario'}</p>
-          <p className="text-sm text-muted-400 truncate">{user?.email}</p>
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-[10px] bg-brand-600/20 text-brand-300 border border-brand-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
-              <Zap size={10} /> Plan {planInfo.name}
-            </span>
-            <span className="text-[10px] bg-surface-600 text-muted-400 border border-subtle px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
-              {roleInfo.label}
-            </span>
-          </div>
+          {authLoading ? (
+            <div className="space-y-2">
+              <div className="h-5 w-32 bg-surface-700 rounded animate-pulse" />
+              <div className="h-4 w-48 bg-surface-700 rounded animate-pulse" />
+              <div className="flex gap-2 mt-2">
+                <div className="h-5 w-24 bg-surface-700 rounded-full animate-pulse" />
+                <div className="h-5 w-20 bg-surface-700 rounded-full animate-pulse" />
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="text-lg font-bold text-brand-600 dark:text-white truncate">{user?.name || 'Usuario'}</p>
+              <p className="text-sm text-muted-400 truncate">{user?.email}</p>
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <span className="text-[10px] bg-brand-600/20 text-brand-300 border border-brand-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+                  <Zap size={10} /> Plan {planInfo.name}
+                </span>
+                <span className="text-[10px] bg-surface-600 text-muted-400 border border-subtle px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
+                  {roleInfo.label}
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </motion.div>
 
