@@ -52,7 +52,11 @@ const CustomTooltip = ({ active, payload, label, formatFn }) => {
         <div key={p.name} className="flex items-center justify-between gap-3">
           <span className="flex items-center gap-1.5 text-[11px] text-muted-300 font-medium">
             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: p.stroke || p.color }} />
-            {p.name === 'revenue' || p.name === 'Revenue' ? 'Recaudado:' : 'Pendiente:'}
+            {p.name === 'revenue' || p.name === 'Revenue' ? 'Recaudado:' : 
+             p.name === 'pending' || p.name === 'Pending' ? 'Pendiente:' :
+             p.name === 'expenses' || p.name === 'Expenses' ? 'Gastos:' :
+             p.name === 'profit' || p.name === 'Profit' ? 'Utilidad:' :
+             p.name + ':'}
           </span>
           <span className="text-foreground font-bold">{formatFn(p.value)}</span>
         </div>
