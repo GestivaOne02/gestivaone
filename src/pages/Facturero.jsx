@@ -12,6 +12,7 @@ import Modal from '@/components/ui/Modal'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import { QRCodeSVG } from 'qrcode.react'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -368,8 +369,25 @@ export default function Facturero() {
               </div>
             )}
 
-            {/* Summary */}
-            <div className="flex justify-end pt-2">
+            {/* Summary and QR */}
+            <div className="flex justify-between items-end pt-2">
+              <div className="w-24 h-24 p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                <QRCodeSVG
+                  value={`https://gestivaone.com/v/${MOCK_INVOICE.id}`}
+                  size={80}
+                  bgColor={"#ffffff"}
+                  fgColor={activeColor.primaryDark || "#0f172a"}
+                  level={"Q"}
+                  imageSettings={{
+                    src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%234f46e5'/><text x='50%' y='53%' font-family='sans-serif' font-weight='900' font-size='65' fill='white' text-anchor='middle' dominant-baseline='middle'>G</text></svg>",
+                    x: undefined,
+                    y: undefined,
+                    height: 24,
+                    width: 24,
+                    excavate: true,
+                  }}
+                />
+              </div>
               <div className="w-64 bg-slate-50 border border-slate-100 rounded-xl p-4 space-y-2 text-[11px]">
                 {showTax && (
                   <>
@@ -464,7 +482,24 @@ export default function Facturero() {
           )}
 
           {/* Summary minimalist */}
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-between items-end pt-2">
+            <div className="w-20 h-20 p-1.5 bg-white border border-slate-100 rounded-lg flex items-center justify-center shrink-0">
+              <QRCodeSVG
+                value={`https://gestivaone.com/v/${MOCK_INVOICE.id}`}
+                size={65}
+                bgColor={"#ffffff"}
+                fgColor={activeColor.primaryDark || "#0f172a"}
+                level={"Q"}
+                imageSettings={{
+                  src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%234f46e5'/><text x='50%' y='53%' font-family='sans-serif' font-weight='900' font-size='65' fill='white' text-anchor='middle' dominant-baseline='middle'>G</text></svg>",
+                  x: undefined,
+                  y: undefined,
+                  height: 18,
+                  width: 18,
+                  excavate: true,
+                }}
+              />
+            </div>
             <div className="w-48 space-y-1.5 text-right text-[10px]">
               {showTax && (
                 <>
@@ -570,6 +605,26 @@ export default function Facturero() {
 
           <div className="border-t border-dashed border-black my-2"></div>
 
+          <div className="flex justify-center my-3">
+            <div className="p-1.5 bg-white rounded-md border border-slate-200">
+              <QRCodeSVG
+                value={`https://gestivaone.com/v/${MOCK_INVOICE.id}`}
+                size={70}
+                bgColor={"#ffffff"}
+                fgColor={"#000000"}
+                level={"Q"}
+                imageSettings={{
+                  src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23000000'/><text x='50%' y='53%' font-family='sans-serif' font-weight='900' font-size='65' fill='white' text-anchor='middle' dominant-baseline='middle'>G</text></svg>",
+                  x: undefined,
+                  y: undefined,
+                  height: 20,
+                  width: 20,
+                  excavate: true,
+                }}
+              />
+            </div>
+          </div>
+
           <div className="text-center text-[9px] space-y-1">
             <p className="font-bold">"{footerText}"</p>
             <p className="text-[7.5px] text-slate-700">Facturador Express - GestivaOne</p>
@@ -653,6 +708,26 @@ export default function Facturero() {
           </div>
 
           <div className="my-3 border-t border-dashed border-slate-200"></div>
+
+          <div className="flex justify-center my-3">
+            <div className="p-1.5 bg-white rounded-xl shadow-sm border border-slate-100">
+              <QRCodeSVG
+                value={`https://gestivaone.com/v/${MOCK_INVOICE.id}`}
+                size={75}
+                bgColor={"#ffffff"}
+                fgColor={activeColor.primaryDark || "#0f172a"}
+                level={"Q"}
+                imageSettings={{
+                  src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%234f46e5'/><text x='50%' y='53%' font-family='sans-serif' font-weight='900' font-size='65' fill='white' text-anchor='middle' dominant-baseline='middle'>G</text></svg>",
+                  x: undefined,
+                  y: undefined,
+                  height: 22,
+                  width: 22,
+                  excavate: true,
+                }}
+              />
+            </div>
+          </div>
 
           <div className="text-center text-xs space-y-1 text-slate-500">
             <p className="font-bold italic">"{footerText}"</p>
