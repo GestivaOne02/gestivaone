@@ -6,6 +6,7 @@ import {
   Database, Download, Upload, Trash2, AlertTriangle
 } from 'lucide-react'
 import { useAuthStore, PLANS, ROLES } from '@/store/useAuthStore'
+import { useSettingsStore } from '@/store/useSettingsStore'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
