@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Globe, RefreshCw, Check, Moon, Sun, Building2, Bell, Database,
   AlertTriangle, Monitor, Mail, MessageSquare, Server, FileText,
   FileSpreadsheet, Download, ChevronDown, ChevronUp, Loader2, Wifi, WifiOff, Lock,
-  Printer
+  Printer, Trash2
 } from 'lucide-react'
 import { useCurrencyStore, SUPPORTED_CURRENCIES } from '@/store/useCurrencyStore'
 import { useUIStore } from '@/store/useUIStore'
