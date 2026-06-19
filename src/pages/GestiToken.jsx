@@ -217,11 +217,7 @@ export default function GestiToken() {
         </div>
         <div className="flex items-center gap-2 self-end sm:self-center mt-1">
           <div className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${enabled ? 'text-success-500' : 'text-danger-500'}`}>
-            {enabled ? (
-              <>GestiBot Protegido <ShieldCheck size={14} /></>
-            ) : (
-              <>Seguridad Inactiva <ShieldAlert size={14} /></>
-            )}
+            {enabled ? (<>GestiBot Protegido <Lock size={14} /></>) : (<>Seguridad Inactiva <Unlock size={14} /></>)}
           </div>
         </div>
       </motion.div>
@@ -233,7 +229,7 @@ export default function GestiToken() {
         <motion.div variants={itemVariants} className="md:col-span-7 space-y-6">
           
           {/* Card 1: Main Toggle Switch */}
-          <div className="bg-surface-800 border border-subtle rounded-3xl p-5 md:p-6 space-y-5 shadow-sm">
+          <div className="rounded-3xl p-5 md:p-6 space-y-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h3 className="text-sm font-extrabold text-foreground">Requerir GestiToken en WhatsApp</h3>
@@ -289,7 +285,7 @@ export default function GestiToken() {
           </div>
 
           {/* Card 2: Security Information / Help */}
-          <div className="bg-surface-800/60 border border-subtle rounded-3xl p-5 md:p-6 space-y-4">
+          <div className="rounded-3xl p-5 md:p-6 space-y-5 shadow-sm">
             <h3 className="text-xs font-black text-muted-400 uppercase tracking-widest flex items-center gap-1.5">
               <ShieldAlert size={14} className="text-brand-500" />
               ¿Por qué activar el GestiToken?
@@ -313,7 +309,7 @@ export default function GestiToken() {
 
         {/* Right Column: Code Token Display Widget */}
         <motion.div variants={itemVariants} className="md:col-span-5">
-          <div className="bg-surface-800 border border-subtle rounded-3xl p-6 shadow-glow-sm relative overflow-hidden flex flex-col items-center justify-center text-center">
+          <div className="rounded-3xl p-6 shadow-glow-sm relative overflow-hidden flex flex-col items-center justify-center text-center">
             
             {/* Background design elements */}
             <div className="absolute -top-12 -right-12 w-36 h-36 bg-brand-500/10 rounded-full blur-2xl pointer-events-none" />

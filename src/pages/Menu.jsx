@@ -42,103 +42,138 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
   const clientCurrency = client.currency
   const showCurrencyRate = clientCurrency && clientCurrency !== baseCurrency && rates[clientCurrency]
   const rateValue = showCurrencyRate ? (rates[baseCurrency] / rates[clientCurrency]).toFixed(2) : null
+
+  const initial = (client.name || '?')[0].toUpperCase()
+  const docLabel = client.document_type
+    ? `${getDocTypeStr(client.document_type)}${client.document_id ? ` ${client.document_id}` : ''}`
+    : null
+
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ y: -2, scale: 1.005 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      whileHover={{ y: -3 }}
       onClick={onSelect}
       className={clsx(
-        'relative flex flex-col sm:flex-row sm:items-center gap-3.5 p-4 rounded-3xl border-2 cursor-pointer transition-colors duration-300 group',
+        'relative flex flex-col gap-0 rounded-2xl border cursor-pointer transition-all duration-300 group overflow-hidden',
         selected
-          ? 'border-brand-500 bg-brand-600/10 shadow-glow-sm'
-          : 'border-subtle bg-surface-800 hover:border-brand-500/30 hover:bg-surface-800/80'
+          ? 'border-brand-500 shadow-glow-sm ring-1 ring-brand-500/30'
+          : 'border-subtle hover:border-brand-500/40 hover:shadow-md'
       )}
       transition={smoothTransition}
     >
-      <motion.div layout className="flex items-center gap-3 flex-1 min-w-0" transition={smoothTransition}>
-        {/* Avatar */}
-        <motion.div layout className={clsx(
-          'w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold shrink-0 transition-colors duration-300',
-          selected ? 'bg-brand-600/40 text-brand-600 dark:text-brand-200' : 'bg-surface-600 text-foreground group-hover:bg-brand-600/20 group-hover:text-brand-600 dark:group-hover:text-brand-300'
-        )} transition={smoothTransition}>
-          {client.name[0].toUpperCase()}
-        </motion.div>
-
-        {/* Info */}
-        <motion.div layout className="flex-1 min-w-0 pr-2" transition={smoothTransition}>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold text-foreground truncate">{client.name}</p>
-            {selected && <Check size={12} className="text-brand-400 shrink-0" />}
-          </div>
-          {client.document_type && (
-            <p className="text-[11px] font-bold text-brand-500/80 mt-0.5 uppercase">
-              {getDocTypeStr(client.document_type)} {client.document_id ? ` ${client.document_id}` : ''}
-            </p>
+      {/* Top Section: Avatar + Name + Status */}
+      <div className={clsx(
+        'flex items-center gap-3.5 px-4 pt-4 pb-3 transition-colors duration-300',
+        selected ? 'bg-brand-600/8' : 'bg-surface-800 group-hover:bg-surface-800/90'
+      )}>
+        {/* Avatar with gradient ring */}
+        <div className={clsx(
+          'relative w-11 h-11 rounded-xl flex items-center justify-center text-base font-extrabold shrink-0 transition-all duration-300 ring-2 ring-offset-2 ring-offset-surface-800',
+          selected
+            ? 'bg-gradient-to-br from-brand-500 to-brand-700 text-white ring-brand-500/50'
+            : 'bg-surface-600 text-foreground ring-transparent group-hover:ring-brand-500/30 group-hover:bg-brand-600/20 group-hover:text-brand-300'
+        )}>
+          {initial}
+          {selected && (
+            <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-brand-500 border-2 border-surface-800 flex items-center justify-center">
+              <Check size={8} className="text-white stroke-[3]" />
+            </span>
           )}
-          <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <Badge status={status} />
-            {pendingAmount > 0 && (
-              <span className="text-sm text-danger-400 font-semibold">{format$(pendingAmount)} pendiente</span>
-            )}
-            {showCurrencyRate && (
-              <span className="text-[11px] font-bold text-brand-500/80 bg-brand-500/10 px-2 py-0.5 rounded-full border border-brand-500/20">
-                1 {clientCurrency} = {rateValue} {baseCurrency}
-              </span>
-            )}
-          </div>
-          {lastInvoice && (
-            <div className="mt-1.5 flex flex-col gap-0.5">
-              <p className="text-[13px] text-muted-400 flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-500/60 font-semibold"></span>
-                Última factura realizada:
-              </p>
-              <p className="text-sm font-bold text-foreground pl-2.5">
-                {format(new Date(lastInvoice.created_at), "dd/MM/yyyy")}
-              </p>
-            </div>
-          )}
-        </motion.div>
-      </motion.div>
+        </div>
 
-      {/* Action Area & Total Billed */}
-      <motion.div layout className="flex flex-col sm:items-end justify-center shrink-0 border-t sm:border-t-0 sm:border-l border-brand-500/20 pt-3 sm:pt-0 sm:pl-3 gap-2" transition={smoothTransition}>
-        <div className="flex items-center gap-2">
+        {/* Name + Doc ID */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-foreground truncate leading-tight">{client.name}</p>
+          {docLabel && (
+            <p className="text-[11px] font-semibold text-brand-400/80 mt-0.5 uppercase tracking-wide">{docLabel}</p>
+          )}
+        </div>
+
+        {/* Status Badge */}
+        <Badge status={status} />
+      </div>
+
+      {/* Middle Section: Info Grid */}
+      <div className="px-4 py-3 grid grid-cols-2 gap-x-3 gap-y-2.5 border-t border-subtle/60 bg-surface-900/40">
+        {/* Last Invoice Date */}
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-500">Última Factura</span>
+          <span className="text-xs font-semibold text-foreground flex items-center gap-1">
+            <CalendarDays size={11} className="text-muted-500 shrink-0" />
+            {lastInvoice
+              ? format(new Date(lastInvoice.created_at), "dd MMM yyyy", { locale: es })
+              : '—'
+            }
+          </span>
+        </div>
+
+        {/* Total Billed */}
+        <div className="flex flex-col gap-0.5 items-end">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-500">Total Generado</span>
+          <span className="text-xs font-extrabold text-brand-400">{format$(totalBilled)}</span>
+        </div>
+
+        {/* Pending (conditional) */}
+        {pendingAmount > 0 && (
+          <div className="col-span-2 flex items-center gap-1.5 bg-danger-500/8 border border-danger-500/15 rounded-lg px-2.5 py-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-danger-400 shrink-0 animate-pulse" />
+            <span className="text-[11px] font-bold text-danger-400">{format$(pendingAmount)} pendiente</span>
+          </div>
+        )}
+
+        {/* Currency rate (conditional) */}
+        {showCurrencyRate && (
+          <div className="col-span-2">
+            <span className="text-[11px] font-bold text-brand-500/80 bg-brand-500/10 px-2.5 py-1 rounded-lg border border-brand-500/15 inline-flex items-center gap-1">
+              1 {clientCurrency} = {rateValue} {baseCurrency}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Section: Action Buttons */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-t border-subtle/60 bg-surface-900/20">
+        <div className="flex items-center gap-1.5">
           <motion.button
-            layout
             onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
-            className="h-10 w-10 rounded-full flex items-center justify-center border border-brand-500/40 bg-brand-600 hover:bg-brand-500 text-white transition-colors duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
+            className="h-8 w-8 rounded-lg flex items-center justify-center bg-brand-600/15 hover:bg-brand-600 text-brand-400 hover:text-white transition-all duration-200 cursor-pointer"
             title="Ver Historial"
-            transition={smoothTransition}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <History size={14} />
+            <History size={13} />
           </motion.button>
           <motion.button
-            layout
             onClick={(e) => { e.stopPropagation(); onEdit() }}
-            className="h-10 w-10 rounded-full flex items-center justify-center border border-subtle bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground transition-colors duration-300 shrink-0 cursor-pointer shadow-sm"
+            className="h-8 w-8 rounded-lg flex items-center justify-center bg-surface-700/60 hover:bg-surface-600 text-muted-400 hover:text-foreground transition-all duration-200 cursor-pointer"
             title="Editar cliente"
-            transition={smoothTransition}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Edit2 size={14} />
+            <Edit2 size={13} />
           </motion.button>
           <motion.button
-            layout
             onClick={(e) => { e.stopPropagation(); onDelete() }}
-            className="h-10 w-10 rounded-full flex items-center justify-center border border-danger-500/10 bg-danger-500/5 hover:bg-danger-500/20 text-danger-400 transition-colors duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
+            className="h-8 w-8 rounded-lg flex items-center justify-center bg-danger-500/8 hover:bg-danger-500/25 text-danger-400/70 hover:text-danger-400 transition-all duration-200 cursor-pointer"
             title="Eliminar cliente"
-            transition={smoothTransition}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Trash2 size={14} />
+            <Trash2 size={13} />
           </motion.button>
         </div>
-        <div className="flex flex-col items-start sm:items-end leading-tight">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-400">Total Facturado</span>
-          <span className="text-sm font-black text-brand-400">{format$(totalBilled)}</span>
-        </div>
-      </motion.div>
+
+        {/* Quick select hint */}
+        <span className={clsx(
+          'text-[10px] font-semibold uppercase tracking-wider transition-colors duration-300',
+          selected ? 'text-brand-400' : 'text-muted-500 group-hover:text-brand-400/60'
+        )}>
+          {selected ? 'Seleccionado' : 'Seleccionar →'}
+        </span>
+      </div>
     </motion.div>
   )
 }
