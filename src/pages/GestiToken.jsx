@@ -33,10 +33,10 @@ export default function GestiToken() {
   const enabled = user?.settings?.gestibot_otp_enabled ?? false
   const duration = user?.settings?.gestibot_otp_duration ?? 3600000 // default 1 hour
 
-  // Code generation state
   const [otpCode, setOtpCode] = useState('000 000')
   const [timeLeft, setTimeLeft] = useState(60 - new Date().getSeconds())
   const [copied, setCopied] = useState(false)
+  const [isToggling, setIsToggling] = useState(false)
 
   // Circular progress dimensions
   const radius = 35
@@ -85,6 +85,9 @@ export default function GestiToken() {
 
   // Toggle dynamic key requirements
   const handleToggleSecurity = async () => {
+    if (isToggling) return
+    setIsToggling(true)
+
     const previousEnabled = enabled
     const newEnabled = !enabled
     
@@ -114,6 +117,7 @@ export default function GestiToken() {
       
       // We don't await this so the UI doesn't freeze
       updateProfile({ settings: updatedSettings }).then((res) => {
+        setIsToggling(false)
         if (res?.success === false) {
           // Revert on failure
           useAuthStore.setState((s) => ({
@@ -129,6 +133,7 @@ export default function GestiToken() {
         }
       })
     } catch (e) {
+      setIsToggling(false)
       // Revert on throw
       useAuthStore.setState((s) => ({
         user: {
@@ -236,9 +241,10 @@ export default function GestiToken() {
               </div>
               <button 
                 onClick={handleToggleSecurity}
+                disabled={isToggling}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${
                   enabled ? 'bg-brand-600' : 'bg-surface-600'
-                }`}
+                } ${isToggling ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 <span className="sr-only">Toggle Security</span>
                 <span
