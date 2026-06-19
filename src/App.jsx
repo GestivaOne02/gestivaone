@@ -15,6 +15,7 @@ import Facturero from '@/pages/Facturero'
 import DianAssistant from '@/pages/DianAssistant'
 import Pockets from '@/pages/Pockets'
 import PersonalFinance from '@/pages/PersonalFinance'
+import GestiToken from '@/pages/GestiToken'
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -139,7 +140,8 @@ export default function App() {
     '/notifications': 'Notificaciones',
     '/terms': 'Términos',
     '/facturero': 'Facturero',
-    '/dian': 'Asistente DIAN'
+    '/dian': 'Asistente DIAN',
+    '/seguridad': 'GestiToken'
   }
 
   useEffect(() => {
@@ -261,6 +263,7 @@ export default function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/facturero" element={<RequirePermission perm="dashboard"><Facturero /></RequirePermission>} />
           <Route path="/dian" element={<RequirePermission perm="dashboard"><DianAssistant /></RequirePermission>} />
+          <Route path="/seguridad" element={<RequirePermission perm="dashboard"><GestiToken /></RequirePermission>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

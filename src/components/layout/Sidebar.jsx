@@ -76,6 +76,7 @@ export default function Sidebar({ isMobile }) {
         { to: '/facturero', icon: Printer, label: 'Facturero', perm: 'dashboard' },
         { to: '/dian', icon: Calculator, label: 'Asistente DIAN', perm: 'dashboard' },
         { to: '/notifications', icon: Bell, label: 'Notificaciones', perm: 'dashboard' },
+        { to: '/seguridad', icon: Lock, label: 'GestiToken', perm: 'dashboard' },
       ]
     }
   ]

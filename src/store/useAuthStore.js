@@ -146,9 +146,14 @@ export const useAuthStore = create(
       loading: false,
       initialized: false,
 
-      // Initial session check and active listener
       init: async () => {
         try {
+          // Si es el bypass de desarrollo, evitar sobreescribir la sesión activa
+          if (import.meta.env.DEV && get().isAuthenticated && get().user?.id === 'mock-admin-id') {
+            set({ initialized: true })
+            return
+          }
+
           const { data: { session } } = await supabase.auth.getSession()
           if (session) {
             await get().syncProfile(session.user.id)
@@ -462,6 +467,23 @@ export const useAuthStore = create(
               return { success: false, error: 'Error al vincular el perfil: ' + profError.message }
             }
 
+            // 2b. Auto-provision HR Employee record
+            await supabase
+              .from('hr_employees')
+              .insert([{
+                profile_id: workerId,
+                company_id: company_id,
+                full_name: data.name,
+                email: data.email,
+                phone: data.phone || '',
+                document_id: 'VINCULADO',
+                salary: 1300000.00,
+                position: invite_role === 'contable' ? 'Asistente Contable' : 'Despachador Auxiliar',
+                department: invite_role === 'contable' ? 'Finanzas' : 'Logística',
+                arl_class: 'clase_1',
+                status: 'active'
+              }])
+
             await get().syncProfile(workerId)
             set({ loading: false })
             return { success: true, role: invite_role }
@@ -528,6 +550,23 @@ export const useAuthStore = create(
           return { success: false, error: 'Error al vincular el perfil: ' + profError.message }
         }
 
+        // 3b. Auto-provision HR Employee record (Fallback Path)
+        await supabase
+          .from('hr_employees')
+          .insert([{
+            profile_id: workerId,
+            company_id: targetCompany.id,
+            full_name: data.name,
+            email: data.email,
+            phone: data.phone || '',
+            document_id: 'VINCULADO',
+            salary: 1300000.00,
+            position: activeInvite.role === 'contable' ? 'Asistente Contable' : 'Despachador Auxiliar',
+            department: activeInvite.role === 'contable' ? 'Finanzas' : 'Logística',
+            arl_class: 'clase_1',
+            status: 'active'
+          }])
+
         // 4. Try updating the company settings (might fail under RLS, but we swallow warning so login succeeds)
         const updatedInvitations = invitations.map((inv) =>
           inv.code === codeInput ? { ...inv, used: true, usedBy: data.email, usedAt: new Date().toISOString() } : inv
@@ -554,6 +593,28 @@ export const useAuthStore = create(
 
       login: async (email, password) => {
         set({ loading: true })
+
+        // ── Bypass de Desarrollo (Sin Base de Datos) ──────────────────
+        if (import.meta.env.DEV && email.trim().toLowerCase() === 'admin@gestiva.com' && password === 'admin123') {
+          const mockUser = {
+            id: 'mock-admin-id',
+            name: 'Administrador Demo',
+            email: 'admin@gestiva.com',
+            phone: '3000000000',
+            role: 'administrador',
+            plan: 'empresarial',
+            companyId: 'mock-company-id',
+            companyName: 'Empresa Demo (Bypass)',
+            companyLogo: null,
+            country: 'CO',
+            settings: {},
+            branchId: null,
+            permissions: ['dashboard', 'menu', 'products', 'settings', 'employees', 'account'],
+            avatarUrl: null
+          }
+          set({ isAuthenticated: true, user: mockUser, loading: false })
+          return { success: true, role: 'administrador' }
+        }
 
         // ── Normal Supabase Login ────────────────────────────────────
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -722,9 +783,13 @@ export const useAuthStore = create(
         const { user } = get()
         if (!user) return
 
-        // Bypass for Master Admin (no DB profile)
-        if (user.id.startsWith('master-')) {
-          set({ user: { ...user, ...data } })
+        // Bypass for Master Admin & Mock Admin (no DB profile / offline dev)
+        if (user.id.startsWith('master-') || user.id === 'mock-admin-id') {
+          const updatedUser = { ...user, ...data }
+          if (data.settings && user.settings) {
+            updatedUser.settings = { ...user.settings, ...data.settings }
+          }
+          set({ user: updatedUser })
           return
         }
 

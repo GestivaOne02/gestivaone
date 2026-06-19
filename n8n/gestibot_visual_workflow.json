@@ -1,0 +1,662 @@
+{
+  "name": "GestiBot - WhatsApp AI Agent (Gemini 1.5 Flash Visual with Tools)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🤖 GestiBot - Agente IA con Acciones de Facturación\n\n### Nuevas Acciones Disponibles (Pruébalas en WhatsApp):\n1. **Pedir una factura en PDF**:\n   * *Ejemplo:* \"Gesti, envíame la factura F-1025 por aquí\".\n   * *Acción:* n8n te enviará un archivo PDF real directamente a tu chat de WhatsApp.\n\n2. **Registrar venta y facturar**:\n   * *Ejemplo:* \"Registra una venta a Carlos de un software por 45000 y mándame la factura\".\n   * *Acción:* El Agente registrará la venta y te enviará la factura en formato PDF por el chat.\n\n3. **Enviar factura por correo**:\n   * *Ejemplo:* \"Gesti, envíale la factura F-2000 al correo carlos@gmail.com\".\n   * *Acción:* Simulará el envío de correo y confirmará.\n\n### Configuración en n8n:\n- Selecciona tu credencial de **Google Gemini API** en el nodo **🧠 Gemini 1.5 Flash**.\n- Selecciona tu credencial de **OpenAI API** en el nodo **🎙️ Transcribir (Whisper)**.\n- Guarda (Ctrl+S) y presiona **Publish**.",
+        "height": 320,
+        "width": 540,
+        "color": 4
+      },
+      "id": "sticky-instructions",
+      "name": "📋 Instrucciones de Configuración",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-300, 2400]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-evolution",
+        "options": {}
+      },
+      "id": "a67a5eee-0e78-42d7-b85a-d837281898b7",
+      "name": "Recibir WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [-380, 2720],
+      "webhookId": "whatsapp-evolution-webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "map-messages",
+              "name": "messages",
+              "value": "={{ [ { from: $json.body.data.key.remoteJid, type: $json.body.data.messageType === 'audioMessage' ? 'audio' : 'text', text: { body: $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage?.text || '' }, audio: { id: $json.body.data.messageType === 'audioMessage' ? 'audio-id' : '' } } ] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-160, 2720],
+      "id": "0bfb6ff0-7a14-4fa2-b19b-524d18db00bb",
+      "name": "📱 WhatsApp Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-msg-check",
+              "leftValue": "={{ !!$json.messages && (!!$json.messages[0]?.text?.body || !!$json.messages[0]?.audio?.id) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [80, 2720],
+      "id": "44027b0c-c8f1-4627-846d-ea5d46232b31",
+      "name": "✅ Mensaje válido?"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messages[0]?.type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messages[0]?.type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [300, 2720],
+      "id": "2f920ebb-0fd0-48b3-bb5e-ab24aad2bec8",
+      "name": "🔀 Tipo de Mensaje"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-text-msg",
+              "name": "userMessage",
+              "value": "={{ $('📱 WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            },
+            {
+              "id": "set-text-phone",
+              "name": "userPhone",
+              "value": "={{ $('📱 WhatsApp Trigger').item.json.messages[0].from }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [520, 2600],
+      "id": "b3b00499-ec80-4a7d-b92d-3335b60c6d7c",
+      "name": "📝 Mensaje Texto"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evolution-api-6vt4.srv1720387.hstgr.cloud/chat/getBase64FromMediaMessage/GestiBot",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { message: { key: $('Recibir WhatsApp').first().json.body.data.key, message: $('Recibir WhatsApp').first().json.body.data.message }, convertToMp4: false } }}",
+        "options": {}
+      },
+      "id": "6e124df7-cdb6-4978-80af-2b211e35b89c",
+      "name": "📥 Descargar Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [520, 2840]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "convertAllData": false,
+        "sourceKey": "base64",
+        "options": {
+          "fileName": "audio.ogg",
+          "mimeType": "audio/ogg"
+        }
+      },
+      "id": "bdf91bcf-9c51-4d4b-bdbe-6c444353ffea",
+      "name": "Convertir Base64 a Binario",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [740, 2840]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [960, 2840],
+      "id": "27e095c7-54bc-4b1a-bdbb-f8f98ee53aca",
+      "name": "🎙️ Transcribir (Whisper)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-audio-msg",
+              "name": "userMessage",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "set-audio-phone",
+              "name": "userPhone",
+              "value": "={{ $('📱 WhatsApp Trigger').item.json.messages[0].from }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1180, 2840],
+      "id": "1c5b4597-771d-4d16-bf1b-7a0b14bf6a9d",
+      "name": "🎤 Transcripción Audio"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=MENSAJE_CLIENTE: {{ $if($('📝 Mensaje Texto').isExecuted, $('📝 Mensaje Texto').item.json.userMessage, $('🎤 Transcripción Audio').item.json.userMessage) }}\nTELEFONO_CLIENTE: {{ $if($('📝 Mensaje Texto').isExecuted, $('📝 Mensaje Texto').item.json.userPhone, $('🎤 Transcripción Audio').item.json.userPhone) }}\nFECHA_HOY: {{$now.format('yyyy-MM-dd')}}\nHORA_ACTUAL: {{$now.format('HH:mm')}}",
+        "options": {
+          "systemMessage": "Eres Gesti, el secretario personal de confianza del jefe para la gestión de facturación en GestivaOne. Tu objetivo es asistir de forma eficiente, ágil y con un alto nivel de servicio y respeto al patrón, registrando ventas, clientes, trabajadores y generando reportes financieros de inmediato.\n\n=== NORMAS DE CONDUCTA Y TONO ===\n- ESTÁ TOTALMENTE PROHIBIDO hablar como una IA, bot, chatbot o asistente virtual corporativo. Habla como un secretario humano real y dedicado.\n- Dirígete siempre al usuario de \"usted\" y llámalo con respeto como \"jefe\" o \"patrón\".\n- Mantén un tono sumamente respetuoso, educado, atento y profesional.\n- ESTÁ PROHIBIDO usar jerga callejera o informal (como \"camellar\", \"vuelta\", \"parce\", \"camella\", etc.). Usa expresiones de servicio formales y atentas como:\n  * \"Con el mayor gusto, patrón.\"\n  * \"De inmediato procedo a realizar la facturación, jefe.\"\n  * \"Quedo atento a sus instrucciones, patrón.\"\n  * \"Con mucho gusto, jefe. ¿En qué más le puedo colaborar?\"\n- Escribe de manera clara, concisa y profesional. Usa emojis de forma moderada e institucional (📄, 👍, 💼, ✉️).\n\n=== EJEMPLOS DE CONVERSACIÓN (Guía de estilo) ===\n\nEjemplo 1 (Saludo):\n- Usuario: \"Hola\"\n- Gesti: \"Muy buenos días, patrón. ¿Cómo se encuentra el día de hoy? Quedo atento a lo que usted requiera para la facturación.\"\n\nEjemplo 2 (Registrar venta):\n- Usuario: \"Registra una venta de un software a Carlos por 50 mil\"\n- Gesti: \"Entendido, patrón. Con el mayor gusto procedo a registrar la venta del software para don Carlos por un valor de $50.000 COP y le genero su respectiva factura.\"\n\nEjemplo 3 (Confirmar envío):\n- Gesti (después de ejecutar la herramienta): \"Listo, jefe. Ya quedó registrada la venta e inmediatamente le he enviado el documento PDF de la factura aquí en nuestro chat de WhatsApp. Por favor me confirma si lo recibió correctamente.\"\n\nEjemplo 4 (Reporte Financiero):\n- Usuario: \"Gesti, dame un reporte de ingresos y egresos de los últimos 3 días\"\n- Gesti: \"Entendido, patrón. Con el mayor gusto procedo a consultar la base de datos para extraer el reporte financiero de los últimos 3 días. Un momento, por favor.\"\n\n=== ACCIONES DISPONIBLES ===\nUtiliza siempre las herramientas personalizadas cuando el patrón te lo solicite:\n1. Enviar una factura por correo -> Usa la herramienta 'enviar_factura_email'.\n2. Obtener/Ver/Descargar un PDF de factura por aquí -> Usa la herramienta 'pedir_factura_pdf'.\n3. Registrar una nueva venta y generar su factura -> Usa la herramienta 'crear_venta_facturar'.\n4. Registrar o guardar un nuevo cliente -> Usa la herramienta 'crear_cliente'.\n5. Registrar o agregar un nuevo trabajador/empleado -> Usa la herramienta 'crear_trabajador'.\n6. Obtener reporte financiero de ingresos y egresos de los últimos N días -> Usa la herramienta 'obtener_reporte_financiero'.\n7. Validar el GestiToken de 6 dígitos -> Usa la herramienta 'validar_gestitoken'.\n\n=== REGLAS DE ENTREGA ===\n- Al usar 'pedir_factura_pdf' o 'crear_venta_facturar', la herramienta envía el PDF de manera automática. Infórmale al patrón con respeto que el documento ya está en el chat.\n- Si al intentar obtener un reporte financiero la herramienta te indica que el acceso está BLOQUEADO por seguridad (security_blocked: true), pídele con mucho respeto al patrón que te proporcione el código de 6 dígitos de su panel de GestivaOne (sección GestiToken). Una vez te lo proporcione, invoca la herramienta 'validar_gestitoken'. Al ser válida la sesión, repite la consulta original para enviarle su reporte."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1440,
+        2720
+      ],
+      "id": "75c41db9-e8af-4112-a895-f69d51664267",
+      "name": "🤖 Agente IA — Negocio"
+    },
+    {
+      "parameters": {
+        "modelName": "gemini-1.5-flash",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        2920
+      ],
+      "id": "266efd4f-7745-4267-ae59-79a0a13e6785",
+      "name": "🧠 Gemini 1.5 Flash"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10,
+        "sessionId": "={{ $json.userPhone || $json.sessionId || 'test-session' }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1440,
+        2920
+      ],
+      "id": "b1705bc2-a60d-4e89-a003-1517b40f834a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "name": "enviar_factura_email",
+        "description": "Utilízala para enviar una factura existente por correo electrónico a un destinatario. Requiere el ID o número de factura (factura_id) y el correo electrónico del destinatario (email).",
+        "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"factura_id\": {\n      \"type\": \"string\",\n      \"description\": \"El número o código de la factura (ej: F-1025)\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"description\": \"El correo electrónico del destinatario\"\n    }\n  },\n  \"required\": [\"factura_id\", \"email\"]\n}",
+        "jsCode": "return { success: true, message: `Factura ${query.factura_id} enviada de forma exitosa por correo electrónico a ${query.email}.` };"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        2920
+      ],
+      "id": "tool-send-email",
+      "name": "enviar_factura_email"
+    },
+    {
+      "parameters": {
+        "name": "pedir_factura_pdf",
+        "description": "Utilízala cuando el usuario solicite que le entregues, envíes o muestres una factura en PDF por el chat de WhatsApp. Requiere el ID o número de la factura (factura_id).",
+        "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"factura_id\": {\n      \"type\": \"string\",\n      \"description\": \"El ID o número de la factura (ej: F-1025)\"\n    }\n  },\n  \"required\": [\"factura_id\"]\n}",
+        "jsCode": "const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\nconst evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\nconst evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\nconst supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\nconst supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\nconst facturaId = query.factura_id || '';\n\ntry {\n  const searchVal = facturaId.replace('F-', '').toUpperCase();\n  const dbRes = await fetch(`${supabaseUrl}/rest/v1/invoices?id=ilike.*${searchVal}&select=id,client_name,total`, {\n    method: 'GET',\n    headers: {\n      'apikey': supabaseAnonKey,\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'Content-Type': 'application/json'\n    }\n  });\n\n  if (!dbRes.ok) throw new Error('No se pudo conectar con la base de datos de Supabase.');\n  const invoices = await dbRes.json();\n\n  if (!invoices || invoices.length === 0) {\n    return { success: false, message: `No encontré ninguna factura que coincida con el código ${facturaId}.` };\n  }\n\n  const invoice = invoices[0];\n  const pdfUrl = `${supabaseUrl}/storage/v1/object/public/facturas-pdf/${invoice.id}.pdf`;\n\n  await fetch(`${evolutionUrl}/message/sendMedia/GestiBot`, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'apikey': evolutionApiKey\n    },\n    body: JSON.stringify({\n      number: userPhone,\n      medias: [\n        {\n          media: pdfUrl,\n          fileName: `factura-${facturaId.toUpperCase()}.pdf`,\n          mediaType: \"document\",\n          caption: `Aquí tienes la factura ${facturaId.toUpperCase()} en formato PDF 📄` \n        }\n      ]\n    })\n  });\n  return { success: true, message: `Factura ${facturaId.toUpperCase()} enviada con éxito en PDF por WhatsApp.` };\n} catch (error) {\n  return { success: false, error: error.message };\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        2920
+      ],
+      "id": "tool-get-pdf",
+      "name": "pedir_factura_pdf"
+    },
+    {
+      "parameters": {
+        "name": "crear_venta_facturar",
+        "description": "Utilízala para registrar una venta en el sistema y generar su factura correspondiente en formato PDF para enviársela al cliente. Requiere el nombre del cliente (cliente_nombre), el producto o servicio vendido (producto) y el monto del pago (monto).",
+        "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"cliente_nombre\": {\n      \"type\": \"string\",\n      \"description\": \"Nombre de la persona que compra\"\n    },\n    \"producto\": {\n      \"type\": \"string\",\n      \"description\": \"Descripción del producto o servicio vendido\"\n    },\n    \"monto\": {\n      \"type\": \"number\",\n      \"description\": \"Monto de la venta\"\n    }\n  },\n  \"required\": [\"cliente_nombre\", \"producto\", \"monto\"]\n}",
+        "jsCode": "const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\nconst evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\nconst evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\nconst supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\nconst supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\nconst cliente = query.cliente_nombre || 'Cliente';\nconst producto = query.producto || 'Servicio';\nconst monto = query.monto || 10000;\n\ntry {\n  const edgeRes = await fetch(`${supabaseUrl}/functions/v1/crear-factura-bot`, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    },\n    body: JSON.stringify({\n      client_name: cliente,\n      product_name: producto,\n      amount: monto,\n      user_phone: userPhone\n    })\n  });\n\n  if (!edgeRes.ok) {\n    const errText = await edgeRes.text();\n    throw new Error(`Error en Edge Function: ${errText}`);\n  }\n\n  const resJson = await edgeRes.json();\n  const pdfUrl = resJson.pdf_url;\n  const facturaNo = resJson.invoice_number;\n\n  if (pdfUrl) {\n    await fetch(`${evolutionUrl}/message/sendMedia/GestiBot`, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'apikey': evolutionApiKey\n      },\n      body: JSON.stringify({\n        number: userPhone,\n        medias: [\n          {\n            media: pdfUrl,\n            fileName: `factura-${facturaNo}.pdf`,\n            mediaType: \"document\",\n            caption: `Factura ${facturaNo} generada por venta de ${producto} a ${cliente} ($${monto}) 📄` \n          }\n        ]\n      })\n    });\n  }\n  return { success: true, message: resJson.message };\n} catch (error) {\n  return { success: false, error: error.message };\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        2920
+      ],
+      "id": "tool-create-sale",
+      "name": "crear_venta_facturar"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evolution-api-6vt4.srv1720387.hstgr.cloud/message/sendText/GestiBot",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { number: $if($('📝 Mensaje Texto').isExecuted, $('📝 Mensaje Texto').item.json.userPhone, $('🎤 Transcripción Audio').item.json.userPhone), text: $json.output } }}",
+        "options": {}
+      },
+      "id": "msg-enviar-respuesta",
+      "name": "✉️ Enviar respuesta IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1680, 2720]
+    },
+    {
+      "parameters": {
+        "name": "crear_cliente",
+        "description": "Utilízala para registrar o guardar un nuevo cliente en el CRM de GestivaOne. Requiere el nombre completo del cliente (cliente_nombre) y opcionalmente su correo electrónico (correo), teléfono (telefono) y dirección física (direccion).",
+        "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"cliente_nombre\": {\n      \"type\": \"string\",\n      \"description\": \"Nombre completo del cliente\"\n    },\n    \"correo\": {\n      \"type\": \"string\",\n      \"description\": \"Correo electrónico del cliente\"\n    },\n    \"telefono\": {\n      \"type\": \"string\",\n      \"description\": \"Número de teléfono del cliente\"\n    },\n    \"direccion\": {\n      \"type\": \"string\",\n      \"description\": \"Dirección del cliente\"\n    }\n  },\n  \"required\": [\"cliente_nombre\"]\n}",
+        "jsCode": "const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\nconst supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\nconst supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\ntry {\n  const res = await fetch(`${supabaseUrl}/functions/v1/crear-factura-bot`, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    },\n    body: JSON.stringify({\n      action: \"crear_cliente\",\n      user_phone: userPhone,\n      client_name: query.cliente_nombre,\n      client_email: query.correo || null,\n      client_phone: query.telefono || null,\n      client_address: query.direccion || null\n    })\n  });\n\n  if (!res.ok) {\n    const errText = await res.text();\n    throw new Error(errText);\n  }\n\n  const resJson = await res.json();\n  return { success: true, message: resJson.message };\n} catch (error) {\n  return { success: false, error: error.message };\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        2920
+      ],
+      "id": "tool-create-client",
+      "name": "crear_cliente"
+    },
+    {
+      "parameters": {
+        "name": "crear_trabajador",
+        "description": "Utilízala para registrar a un nuevo trabajador, empleado o despachador en el equipo de la empresa. Requiere el nombre completo del trabajador (nombre), su correo electrónico (correo) y opcionalmente su rol (rol, ej: despachador, administrador).",
+        "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"nombre\": {\n      \"type\": \"string\",\n      \"description\": \"Nombre completo del trabajador\"\n    },\n    \"correo\": {\n      \"type\": \"string\",\n      \"description\": \"Correo electrónico del trabajador\"\n    },\n    \"rol\": {\n      \"type\": \"string\",\n      \"description\": \"Rol asignado (ej: despachador, administrador)\"\n    }\n  },\n  \"required\": [\"nombre\", \"correo\"]\n}",
+        "jsCode": "const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\nconst supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\nconst supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\ntry {\n  const res = await fetch(`${supabaseUrl}/functions/v1/crear-factura-bot`, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    },\n    body: JSON.stringify({\n      action: \"crear_trabajador\",\n      user_phone: userPhone,\n      worker_name: query.nombre,\n      worker_email: query.correo,\n      worker_role: query.rol || \"despachador\"\n    })\n  });\n\n  if (!res.ok) {\n    const errText = await res.text();\n    throw new Error(errText);\n  }\n\n  const resJson = await res.json();\n  return { success: true, message: resJson.message };\n} catch (error) {\n  return { success: false, error: error.message };\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        2920
+      ],
+      "id": "tool-create-worker",
+      "name": "crear_trabajador"
+    },
+    {
+      "parameters": {
+        "name": "obtener_reporte_financiero",
+        "description": "Utilízala para obtener un reporte resumido de ingresos (ventas/facturas) y egresos (gastos) de la empresa de los últimos N días. Requiere el número de días hacia atrás a consultar (dias, por defecto 3).",
+        "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"dias\": {\n      \"type\": \"number\",\n      \"description\": \"El número de días hacia atrás a consultar (ej: 3)\"\n    }\n  },\n  \"required\": []\n}",
+        "jsCode": "const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\nconst evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\nconst evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\nconst supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\nconst supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\nconst dias = query.dias || 3;\n\ntry {\n  const res = await fetch(`${supabaseUrl}/functions/v1/crear-factura-bot`, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    },\n    body: JSON.stringify({\n      action: \"obtener_reporte\",\n      user_phone: userPhone,\n      days: dias\n    })\n  });\n\n  if (!res.ok) {\n    const errText = await res.text();\n    throw new Error(errText);\n  }\n\n  const resJson = await res.json();\n  const pdfUrl = resJson.pdf_url;\n\n  if (pdfUrl) {\n    await fetch(`${evolutionUrl}/message/sendMedia/GestiBot`, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        'apikey': evolutionApiKey\n      },\n      body: JSON.stringify({\n        number: userPhone,\n        medias: [\n          {\n            media: pdfUrl,\n            fileName: `reporte-${dias}dias.pdf`,\n            mediaType: \"document\",\n            caption: `Reporte consolidado de los últimos ${dias} días 📊`\n          }\n        ]\n      })\n    });\n  }\n\n  return { success: true, message: resJson.message };\n} catch (error) {\n  return { success: false, error: error.message };\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        2920
+      ],
+      "id": "tool-financial-report",
+      "name": "obtener_reporte_financiero"
+    },
+    {
+      "parameters": {
+        "name": "validar_gestitoken",
+        "description": "Utilízala cuando el usuario proporcione el GestiToken de 6 dígitos para validar su identidad, iniciar sesión, autorizar el acceso o desbloquear el bot. Requiere el código de 6 dígitos (codigo).",
+        "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"codigo\": {\n      \"type\": \"string\",\n      \"description\": \"El GestiToken de 6 dígitos provisto por el usuario (ej: 483920)\"\n    }\n  },\n  \"required\": [\"codigo\"]\n}",
+        "jsCode": "const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\nconst supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\nconst supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\nconst codigo = query.codigo || '';\n\ntry {\n  const res = await fetch(`${supabaseUrl}/functions/v1/crear-factura-bot`, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    },\n    body: JSON.stringify({\n      action: \"validar_otp\",\n      user_phone: userPhone,\n      otp_code: codigo\n    })\n  });\n\n  const resJson = await res.json();\n  if (!res.ok) {\n    throw new Error(resJson.error || 'Código incorrecto');\n  }\n\n  return { success: true, message: resJson.message };\n} catch (error) {\n  return { success: false, error: error.message };\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        2920
+      ],
+      "id": "tool-validate-otp",
+      "name": "validar_gestitoken"
+    }
+  ],
+  "connections": {
+    "Recibir WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "📱 WhatsApp Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📱 WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "✅ Mensaje válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Mensaje válido?": {
+      "main": [
+        [
+          {
+            "node": "🔀 Tipo de Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 Tipo de Mensaje": {
+      "main": [
+        [
+          {
+            "node": "📝 Mensaje Texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📥 Descargar Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📥 Descargar Audio": {
+      "main": [
+        [
+          {
+            "node": "Convertir Base64 a Binario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir Base64 a Binario": {
+      "main": [
+        [
+          {
+            "node": "🎙️ Transcribir (Whisper)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎙️ Transcribir (Whisper)": {
+      "main": [
+        [
+          {
+            "node": "🎤 Transcripción Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Mensaje Texto": {
+      "main": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎤 Transcripción Audio": {
+      "main": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 Gemini 1.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "enviar_factura_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pedir_factura_pdf": {
+      "ai_tool": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_venta_facturar": {
+      "ai_tool": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_trabajador": {
+      "ai_tool": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener_reporte_financiero": {
+      "ai_tool": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validar_gestitoken": {
+      "ai_tool": [
+        [
+          {
+            "node": "🤖 Agente IA — Negocio",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Agente IA — Negocio": {
+      "main": [
+        [
+          {
+            "node": "✉️ Enviar respuesta IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0
+}
