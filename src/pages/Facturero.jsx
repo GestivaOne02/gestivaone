@@ -776,9 +776,22 @@ export default function Facturero() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch lg:h-[calc(100vh-160px)] flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch lg:h-[calc(100vh-160px)] flex-1 min-h-0 relative">
+        {/* Toggle Collapse Button for Sidebar */}
+        <button
+          type="button"
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className="absolute left-2 top-2 z-30 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground rounded-lg p-1.5 hidden lg:flex items-center justify-center transition-all shadow-md"
+          title={sidebarCollapsed ? "Expandir configuración" : "Colapsar configuración"}
+        >
+          <Settings size={14} className={clsx('transition-transform duration-300', !sidebarCollapsed && 'rotate-45')} />
+        </button>
+
         {/* Left config form panel (6 cols on lg) */}
-        <div className="lg:col-span-6 space-y-6 lg:h-full lg:overflow-y-auto no-scrollbar lg:pr-2 pb-6">
+        <div className={clsx(
+          'space-y-6 lg:h-full lg:overflow-y-auto no-scrollbar lg:pr-2 pb-6 transition-all duration-300',
+          sidebarCollapsed ? 'lg:col-span-1 lg:opacity-0 lg:pointer-events-none lg:w-0 lg:overflow-hidden lg:m-0 lg:p-0' : 'lg:col-span-6'
+        )}>
           {/* Template Choices Card */}
           <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
@@ -1156,9 +1169,25 @@ export default function Facturero() {
         </div>
 
         {/* Right side live preview pane (6 cols on lg) */}
-        <div className="lg:col-span-6 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 space-y-4 lg:h-full lg:flex lg:flex-col lg:overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-subtle shrink-0">
+        <div className={clsx(
+          'lg:h-full lg:flex lg:flex-col lg:overflow-hidden transition-all duration-300',
+          sidebarCollapsed ? 'lg:col-span-11 lg:pl-6' : 'lg:col-span-6'
+        )}>
+          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 space-y-4 lg:h-full lg:flex lg:flex-col lg:overflow-hidden relative">
+            {sidebarCollapsed && (
+              <button
+                type="button"
+                onClick={() => setSidebarCollapsed(false)}
+                className="absolute left-3 top-3 z-30 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground rounded-lg p-1 hidden lg:flex items-center justify-center transition-all shadow"
+                title="Expandir panel de configuración"
+              >
+                <Settings size={14} />
+              </button>
+            )}
+            <div className={clsx(
+              "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-subtle shrink-0",
+              sidebarCollapsed && "lg:pl-8"
+            )}>
               <span className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
                 <FileCheck size={16} className="text-brand-400" />
                 Vista Previa Interactiva

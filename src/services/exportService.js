@@ -232,16 +232,17 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   
   const hexToRgb = (hex) => {
     let r = 0, g = 0, b = 0;
-    if (hex.length === 4) {
-      r = "0x" + hex[1] + hex[1];
-      g = "0x" + hex[2] + hex[2];
-      b = "0x" + hex[3] + hex[3];
-    } else if (hex.length === 7) {
-      r = "0x" + hex[1] + hex[2];
-      g = "0x" + hex[3] + hex[4];
-      b = "0x" + hex[5] + hex[6];
+    const cleanHex = hex.replace('#', '');
+    if (cleanHex.length === 3) {
+      r = parseInt(cleanHex[0] + cleanHex[0], 16);
+      g = parseInt(cleanHex[1] + cleanHex[1], 16);
+      b = parseInt(cleanHex[2] + cleanHex[2], 16);
+    } else if (cleanHex.length === 6) {
+      r = parseInt(cleanHex.substring(0, 2), 16);
+      g = parseInt(cleanHex.substring(2, 4), 16);
+      b = parseInt(cleanHex.substring(4, 6), 16);
     }
-    return [+(r), +(g), +(b)];
+    return [r, g, b];
   };
 
   const getThemeColorsRGB = (theme) => {
@@ -499,7 +500,26 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   const footerText = settings.footerText || '¡Gracias por su compra!'
   
   doc.setDrawColor(226, 232, 240)
-  doc.line(15, pageHeight - 25, 195, pageHeight - 25)
+  doc.line(15, pageHeight - 35, 195, pageHeight - 35)
+
+  // QR Code insertion using an offscreen canvas to generate PNG data
+  try {
+    const qrText = `https://gestivaone.com/v/${invoice.id || 'N/A'}`
+    const canvas = document.createElement('canvas')
+    const QRCode = await import('qrcode')
+    await QRCode.toCanvas(canvas, qrText, {
+      width: 80,
+      margin: 1,
+      color: {
+        dark: themeColor.startsWith('#') ? themeColor : '#0f172a',
+        light: '#ffffff'
+      }
+    })
+    const qrImgData = canvas.toDataURL('image/png')
+    doc.addImage(qrImgData, 'PNG', 15, pageHeight - 32, 24, 24)
+  } catch (qrErr) {
+    console.warn('Could not render QR code in exportService PDF:', qrErr)
+  }
 
   doc.setFont('helvetica', 'italic')
   doc.setFontSize(8.5)
