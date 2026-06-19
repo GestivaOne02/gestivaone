@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Printer, FileText, Check, Save, Download, Image, HelpCircle, AlertCircle, Sparkles, Building2, Phone, Mail, FileCheck, Settings, Palette } from 'lucide-react'
 import { useSettingsStore } from '@/store/useSettingsStore'
