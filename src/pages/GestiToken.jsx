@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, ShieldAlert, ShieldCheck, Clock, Copy, Check, RefreshCw, Power } from 'lucide-react'
+import { Shield, ShieldAlert, ShieldCheck, Clock, Copy, Check, Lock, Unlock } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
@@ -132,7 +132,7 @@ export default function GestiToken() {
     const rawCode = otpCode.replace(' ', '')
     navigator.clipboard.writeText(rawCode)
     setCopied(true)
-    toast.success('GestiToken copiado al portapapeles 📄')
+    toast.success('GestiToken copiado al portapapeles')
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -155,8 +155,12 @@ export default function GestiToken() {
           </div>
         </div>
         <div className="flex items-center gap-2 self-end sm:self-center">
-          <Badge variant={enabled ? 'success' : 'danger'}>
-            {enabled ? 'GestiBot Protegido 🔒' : 'Seguridad Inactiva 🔓'}
+          <Badge variant={enabled ? 'success' : 'danger'} className="flex items-center gap-1">
+            {enabled ? (
+              <>GestiBot Protegido <Lock size={12} /></>
+            ) : (
+              <>Seguridad Inactiva <Unlock size={12} /></>
+            )}
           </Badge>
         </div>
       </motion.div>
@@ -233,7 +237,9 @@ export default function GestiToken() {
                 WhatsApp es un canal de comunicación muy ágil, pero es susceptible a clonación de números (SIM swapping) o robo físico del dispositivo.
               </p>
               <div className="p-3 bg-surface-900/60 rounded-xl border border-subtle/40 space-y-2">
-                <p className="font-bold text-foreground text-[11px]">🛡️ Seguridad Zero-Trust:</p>
+                <p className="font-bold text-foreground text-[11px] flex items-center gap-1.5">
+                  <Shield size={14} className="text-brand-500" /> Seguridad Zero-Trust:
+                </p>
                 <p className="text-[10px]">
                   Al activar el GestiToken, aunque alguien acceda a su chat de WhatsApp, **no podrá extraer información financiera de su negocio** ni consultar balances generales a menos que tenga acceso físico a este panel web para ver el código en tiempo real.
                 </p>
