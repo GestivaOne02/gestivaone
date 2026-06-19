@@ -167,8 +167,15 @@ export default function Dashboard() {
   const expressCount = expressInvoices.length
   const expressRevenue = expressInvoices.reduce((s, i) => s + (i.total || 0), 0)
 
-  const totalRevenue   = paid.reduce((s, i) => s + i.total, 0)
-  const pendingRevenue = [...pending, ...overdue].reduce((s, i) => s + i.total, 0)
+  const totalRevenue = paid.reduce((s, i) => s + i.total, 0) + [...pending, ...overdue].reduce((s, i) => {
+    const { paidAmount } = parseInvoiceNoteLocal(i.note)
+    return s + paidAmount
+  }, 0)
+
+  const pendingRevenue = [...pending, ...overdue].reduce((s, i) => {
+    const { paidAmount } = parseInvoiceNoteLocal(i.note)
+    return s + Math.max(0, i.total - paidAmount)
+  }, 0)
   const totalExpenses  = expenses.reduce((s, e) => s + (e.amount || 0), 0)
 
   // Monthly chart — last 6 months
@@ -189,15 +196,24 @@ export default function Dashboard() {
       const date = subMonths(referenceDate, 5 - idx)
       const key  = format(date, 'yyyy-MM')
       
-      const revenueAmt = filteredPaid
+      const revenueAmtPaid = filteredPaid
         .filter((i) => i.created_at && i.created_at.startsWith(key))
         .reduce((s, i) => s + i.total, 0)
+
+      const revenueAmtPending = filteredPending
+        .filter((i) => i.created_at && i.created_at.startsWith(key))
+        .reduce((s, i) => {
+          const { paidAmount } = parseInvoiceNoteLocal(i.note)
+          return s + paidAmount
+        }, 0)
+
+      const revenueAmt = revenueAmtPaid + revenueAmtPending
 
       const pendingAmt = filteredPending
         .filter((i) => i.created_at && i.created_at.startsWith(key))
         .reduce((s, i) => {
           const { paidAmount } = parseInvoiceNoteLocal(i.note)
-          return s + (i.total - paidAmount)
+          return s + Math.max(0, i.total - paidAmount)
         }, 0)
 
       const expenseAmt = expenses
