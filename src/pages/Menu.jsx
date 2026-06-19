@@ -35,42 +35,6 @@ const itemVariants = {
 
 const smoothTransition = { type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }
 
-function ExpandableButton({ icon: Icon, label, value, onClick, isPurple = true }) {
-  const [hovered, setHovered] = useState(false)
-
-  return (
-    <motion.button
-      layout
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={(e) => { e.stopPropagation(); onClick() }}
-      className={clsx(
-        "h-10 rounded-full flex items-center justify-start gap-2 border cursor-pointer select-none shrink-0 shadow-sm overflow-hidden",
-        isPurple
-          ? "bg-brand-600 hover:bg-brand-500 text-white border-brand-500/40 hover:shadow-glow-sm"
-          : "bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground border-subtle",
-        hovered ? "w-[170px] px-3.5" : "w-10 px-2.5 justify-center"
-      )}
-      transition={smoothTransition}
-    >
-      <Icon size={15} className="shrink-0" />
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -8 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="flex flex-col items-start leading-none text-left shrink-0 whitespace-nowrap"
-          >
-            <span className="text-[11px] font-bold uppercase tracking-wider opacity-80">{label}</span>
-            {value && <span className="text-xs font-black mt-0.5">{value}</span>}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.button>
-  )
-}
 
 function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, totalBilled, status }) {
   const { baseCurrency, rates } = useCurrencyStore()
@@ -139,33 +103,41 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
         </motion.div>
       </motion.div>
 
-      {/* Responsive Visual Indicators & Interactive Expandable Buttons */}
-      <motion.div layout className="flex items-center justify-end gap-2 shrink-0 border-t sm:border-t-0 sm:border-l border-brand-500/20 pt-3 sm:pt-0 sm:pl-3 h-auto sm:h-10" transition={smoothTransition}>
-        <ExpandableButton
-          icon={History}
-          label="Total Facturado"
-          value={format$(totalBilled)}
-          onClick={onOpenHistory}
-          isPurple={true}
-        />
-        <motion.button
-          layout
-          onClick={(e) => { e.stopPropagation(); onEdit() }}
-          className="h-10 w-10 rounded-full flex items-center justify-center border border-subtle bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground transition-colors duration-300 shrink-0 cursor-pointer shadow-sm"
-          title="Editar cliente"
-          transition={smoothTransition}
-        >
-          <Edit2 size={14} />
-        </motion.button>
-        <motion.button
-          layout
-          onClick={(e) => { e.stopPropagation(); onDelete() }}
-          className="h-10 w-10 rounded-full flex items-center justify-center border border-danger-500/10 bg-danger-500/5 hover:bg-danger-500/20 text-danger-400 transition-colors duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
-          title="Eliminar cliente"
-          transition={smoothTransition}
-        >
-          <Trash2 size={14} />
-        </motion.button>
+      {/* Action Area & Total Billed */}
+      <motion.div layout className="flex flex-col sm:items-end justify-center shrink-0 border-t sm:border-t-0 sm:border-l border-brand-500/20 pt-3 sm:pt-0 sm:pl-3 gap-2" transition={smoothTransition}>
+        <div className="flex items-center gap-2">
+          <motion.button
+            layout
+            onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
+            className="h-10 w-10 rounded-full flex items-center justify-center border border-brand-500/40 bg-brand-600 hover:bg-brand-500 text-white transition-colors duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
+            title="Ver Historial"
+            transition={smoothTransition}
+          >
+            <History size={14} />
+          </motion.button>
+          <motion.button
+            layout
+            onClick={(e) => { e.stopPropagation(); onEdit() }}
+            className="h-10 w-10 rounded-full flex items-center justify-center border border-subtle bg-surface-700 hover:bg-surface-600 text-muted-400 hover:text-foreground transition-colors duration-300 shrink-0 cursor-pointer shadow-sm"
+            title="Editar cliente"
+            transition={smoothTransition}
+          >
+            <Edit2 size={14} />
+          </motion.button>
+          <motion.button
+            layout
+            onClick={(e) => { e.stopPropagation(); onDelete() }}
+            className="h-10 w-10 rounded-full flex items-center justify-center border border-danger-500/10 bg-danger-500/5 hover:bg-danger-500/20 text-danger-400 transition-colors duration-300 shrink-0 cursor-pointer shadow-sm hover:shadow-glow-sm"
+            title="Eliminar cliente"
+            transition={smoothTransition}
+          >
+            <Trash2 size={14} />
+          </motion.button>
+        </div>
+        <div className="flex flex-col items-start sm:items-end leading-tight">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-400">Total Facturado</span>
+          <span className="text-sm font-black text-brand-400">{format$(totalBilled)}</span>
+        </div>
       </motion.div>
     </motion.div>
   )
