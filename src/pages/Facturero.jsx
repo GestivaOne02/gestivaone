@@ -106,6 +106,7 @@ export default function Facturero() {
   const [showTax, setShowTax] = useState(printer.showTax === true)
   const [footerText, setFooterText] = useState(printer.footerText || '¡Gracias por su compra!')
   const [bannerUrl, setBannerUrl] = useState(printer.bannerUrl || '')
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   // Metadata for the company
   const [companyName, setCompanyName] = useState(user?.companyName || 'GestivaOne')
