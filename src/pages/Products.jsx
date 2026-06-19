@@ -36,6 +36,16 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
   const isOutOfStock = !hasUnlimitedStock && product.stock !== undefined && product.stock !== null && product.stock <= 0
   const discountInfo = getProductDiscount(product)
 
+  const unitColor = UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND
+  const unitAccent = {
+    KG: 'from-blue-500/20',
+    LB: 'from-purple-500/20',
+    UND: 'from-brand-500/20',
+    L: 'from-cyan-500/20',
+    M: 'from-orange-500/20',
+    ILIMITADO: 'from-success-500/20',
+  }[product.unit] || 'from-brand-500/20'
+
   const handleAdd = () => {
     const finalQty = qty === '' ? 1 : Number(qty)
     onAdd(product, finalQty)
@@ -44,161 +54,198 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
     setQty('')
   }
 
+  // Stock percentage for bar
+  const stockPct = hasUnlimitedStock ? 100 : Math.min(100, ((product.stock ?? 0) / 100) * 100)
+  const stockColor = hasUnlimitedStock
+    ? 'bg-success-500'
+    : product.stock > 10 ? 'bg-success-500' : product.stock > 0 ? 'bg-warning-500' : 'bg-danger-500'
+
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}
-      className="bg-surface-800 border border-subtle rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex flex-col gap-3 group relative overflow-hidden shadow-glow-sm"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ y: -4 }}
+      className={clsx(
+        'relative flex flex-col rounded-2xl border overflow-hidden transition-all duration-300 group',
+        isOutOfStock
+          ? 'border-danger-500/20 opacity-75'
+          : 'border-subtle hover:border-brand-500/40 hover:shadow-lg'
+      )}
     >
-      {/* Hover glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-600/0 to-brand-600/0 group-hover:from-brand-600/5 group-hover:to-transparent transition-all rounded-2xl pointer-events-none" />
+      {/* Accent gradient top stripe */}
+      <div className={clsx('h-1 w-full bg-gradient-to-r to-transparent', unitAccent)} />
 
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-foreground truncate">{product.name}</p>
-          <p className="text-[11px] text-muted-400 mt-0.5">{product.category}</p>
-        </div>
-        <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
-          <button onClick={() => onDuplicate(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600" title="Duplicar">
+      {/* Hover glow overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-500/0 via-transparent to-brand-600/0 group-hover:from-brand-500/5 group-hover:to-brand-600/3 transition-all duration-500 pointer-events-none" />
+
+      {/* ── Zone 1: Header ── */}
+      <div className="relative px-3.5 pt-3 pb-2">
+        {/* Action buttons - fade in on hover */}
+        <div className="absolute top-2.5 right-2.5 flex gap-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => onDuplicate(product)}
+            className="p-1.5 rounded-lg text-muted-500 hover:text-brand-400 hover:bg-brand-500/10 transition-colors"
+            title="Duplicar"
+          >
             <Copy size={12} />
-          </button>
-          <button onClick={() => onEdit(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600" title="Editar">
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => onEdit(product)}
+            className="p-1.5 rounded-lg text-muted-500 hover:text-foreground hover:bg-surface-600 transition-colors"
+            title="Editar"
+          >
             <Edit2 size={12} />
-          </button>
-          <button onClick={() => onDelete(product)} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30" title="Borrar">
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => onDelete(product)}
+            className="p-1.5 rounded-lg text-muted-500 hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
+            title="Borrar"
+          >
             <Trash2 size={12} />
-          </button>
+          </motion.button>
+        </div>
+
+        {/* Attachment indicators */}
+        {(product.attachment_url || product.attachment_name) && (
+          <div className="absolute top-2.5 right-2.5 flex items-center gap-1 sm:group-hover:opacity-0 transition-opacity pointer-events-none">
+            {product.attachment_url && product.attachment_url.trim() !== '' && (
+              <span title={product.attachment_name || 'Enlace adjunto'} className="flex items-center justify-center w-5 h-5 rounded-md bg-blue-500/15 border border-blue-500/25">
+                <Link2 size={10} className="text-blue-400" />
+              </span>
+            )}
+            {product.attachment_name && !product.attachment_url && (
+              <span title={product.attachment_name} className="flex items-center justify-center w-5 h-5 rounded-md bg-orange-500/15 border border-orange-500/25">
+                <FileText size={10} className="text-orange-400" />
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Product name */}
+        <p className="text-sm font-bold text-foreground truncate pr-16 leading-tight">{product.name}</p>
+
+        {/* Category + Unit row */}
+        <div className="flex items-center gap-1.5 mt-1.5">
+          <span className="text-[10px] font-semibold text-muted-500 bg-surface-700/60 px-2 py-0.5 rounded-md truncate">
+            {product.category}
+          </span>
+          {product.unit !== 'ILIMITADO' && (
+            <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0', unitColor)}>
+              {UNIT_LABELS[product.unit] || product.unit}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Attachment indicators */}
-      {(product.attachment_url || product.attachment_name) && (
-        <div className="absolute top-3 right-3 flex items-center gap-1 sm:group-hover:opacity-0 transition-opacity pointer-events-none">
-          {product.attachment_url && product.attachment_url.trim() !== '' && (
-            <span title={product.attachment_name || 'Enlace adjunto'} className="flex items-center justify-center w-5 h-5 rounded-md bg-blue-500/15 border border-blue-500/25">
-              <Link2 size={10} className="text-blue-400" />
-            </span>
-          )}
-          {product.attachment_name && !product.attachment_url && (
-            <span title={product.attachment_name} className="flex items-center justify-center w-5 h-5 rounded-md bg-orange-500/15 border border-orange-500/25">
-              <FileText size={10} className="text-orange-400" />
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Price & unit */}
-      <div className="flex items-start justify-between gap-1">
-        <div className="flex flex-col">
-          {discountInfo ? (
-            <>
-              <span className="text-xs text-muted-400 line-through">{format$(product.price)}</span>
-              <div className="flex items-center gap-2 flex-wrap mt-1">
-                <span className="text-lg sm:text-xl font-black text-brand-400 drop-shadow-sm">{format$(discountInfo.finalPrice)}</span>
-                <span className="text-xs font-black px-2 py-0.5 rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/30">
-                  {discountInfo.type === 'percentage' ? `-${discountInfo.value}%` : `-${format$(discountInfo.value)}`}
-                </span>
-              </div>
-              {product.discount_ends_at && (
-                <span className="text-[10px] text-muted-400 font-medium mt-1">
-                  Promo hasta {new Date(product.discount_ends_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </span>
-              )}
-            </>
-          ) : (
-            <span className="text-base sm:text-lg font-bold text-foreground">{format$(product.price)}</span>
-          )}
-        </div>
-        {product.unit !== 'ILIMITADO' && (
-          <span className={clsx('text-xs font-semibold px-2 py-1 rounded-lg shrink-0', UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND)}>
-            {UNIT_LABELS[product.unit] || product.unit}
-          </span>
+      {/* ── Zone 2: Price Hero ── */}
+      <div className="px-3.5 py-3 bg-surface-900/30">
+        {discountInfo ? (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-lg sm:text-xl font-black text-brand-400 leading-none">{format$(discountInfo.finalPrice)}</span>
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/25 leading-none">
+                {discountInfo.type === 'percentage' ? `-${discountInfo.value}%` : `-${format$(discountInfo.value)}`}
+              </span>
+            </div>
+            <span className="text-[11px] text-muted-500 line-through leading-none">{format$(product.price)}</span>
+            {product.discount_ends_at && (
+              <span className="text-[9px] text-muted-500 font-medium mt-0.5">
+                Promo hasta {new Date(product.discount_ends_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="text-base sm:text-lg font-extrabold text-foreground leading-none">{format$(product.price)}</span>
         )}
       </div>
 
-      {/* Stock */}
-      {hasUnlimitedStock ? (
-        <div className="flex items-center gap-1.5">
-          <div className="flex-1 h-1 bg-success-500/20 rounded-full overflow-hidden">
-            <div className="h-full rounded-full bg-success-500 w-full" />
-          </div>
-          <span className={clsx('text-xs font-semibold px-2 py-0.5 rounded-lg', UNIT_COLORS.ILIMITADO)}>Ilimitado</span>
-        </div>
-      ) : product.stock !== undefined && product.stock !== null && (
-        <div className="flex items-center gap-1.5">
-          <div className="flex-1 h-1 bg-surface-600 rounded-full overflow-hidden">
-            <div
-              className={clsx('h-full rounded-full transition-all', product.stock > 10 ? 'bg-success-500' : product.stock > 0 ? 'bg-warning-500' : 'bg-danger-500')}
-              style={{ width: `${Math.min(100, (product.stock / 100) * 100)}%` }}
+      {/* ── Zone 3: Stock + Cart ── */}
+      <div className="px-3.5 pb-3 pt-0 mt-auto flex flex-col gap-2.5">
+        {/* Stock bar */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1 h-1 bg-surface-700 rounded-full overflow-hidden">
+            <motion.div
+              className={clsx('h-full rounded-full', stockColor)}
+              initial={{ width: 0 }}
+              animate={{ width: `${stockPct}%` }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             />
           </div>
-          <span className="text-[10px] text-muted-400">{product.stock} en stock</span>
+          <span className={clsx(
+            'text-[10px] font-semibold shrink-0',
+            hasUnlimitedStock ? 'text-success-400' : isOutOfStock ? 'text-danger-400' : 'text-muted-400'
+          )}>
+            {hasUnlimitedStock ? '∞' : isOutOfStock ? 'Agotado' : `${product.stock}`}
+          </span>
         </div>
-      )}
 
-      {/* Add to cart */}
-      <div className="flex gap-2 items-center">
-        <input
-          type="number"
-          min={1}
-          value={qty}
-          placeholder="1"
-          onChange={(e) => {
-            const val = e.target.value
-            if (val === '') { setQty('') } else { setQty(Math.max(1, Number(val))) }
-          }}
-          disabled={isOutOfStock}
-          className="w-16 bg-surface-700 border border-subtle rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        />
-        <motion.button
-          whileTap={isOutOfStock ? {} : { scale: 0.95 }}
-          onClick={isOutOfStock ? undefined : handleAdd}
-          disabled={isOutOfStock}
-          className={clsx(
-            'flex-1 flex items-center justify-center gap-1 py-1.5 rounded-full text-xs font-semibold transition-all',
-            isOutOfStock
-              ? 'bg-surface-700 text-muted-500 cursor-not-allowed border border-subtle'
-              : added
-                ? 'bg-success-500 text-white'
-                : 'bg-brand-600 hover:bg-brand-500 text-white'
-          )}
-        >
-          {isOutOfStock ? (
-            <span className="truncate">Agotado</span>
-          ) : added ? (
-            <><span>✓</span><span className="hidden sm:inline"> Añadido</span></>
-          ) : (
-            <><ShoppingCart size={13} className="shrink-0" /><span className="hidden sm:inline">Añadir</span></>
-          )}
-        </motion.button>
-      </div>
-
-      {/* Out of stock action */}
-      <AnimatePresence>
-        {isOutOfStock && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
+        {/* Add to cart row */}
+        <div className="flex gap-1.5 items-center">
+          <input
+            type="number"
+            min={1}
+            value={qty}
+            placeholder="1"
+            onChange={(e) => {
+              const val = e.target.value
+              if (val === '') { setQty('') } else { setQty(Math.max(1, Number(val))) }
+            }}
+            disabled={isOutOfStock}
+            className="w-14 bg-surface-800 border border-subtle rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          />
+          <motion.button
+            whileTap={isOutOfStock ? {} : { scale: 0.93 }}
+            whileHover={isOutOfStock ? {} : { scale: 1.02 }}
+            onClick={isOutOfStock ? undefined : handleAdd}
+            disabled={isOutOfStock}
+            className={clsx(
+              'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all duration-200',
+              isOutOfStock
+                ? 'bg-surface-700/50 text-muted-500 cursor-not-allowed border border-subtle'
+                : added
+                  ? 'bg-success-500 text-white shadow-md'
+                  : 'bg-brand-600 hover:bg-brand-500 text-white shadow-sm hover:shadow-md'
+            )}
           >
-            <button
-              onClick={() => onEdit(product)}
-              className="w-full mt-1 border border-warning-500/30 bg-warning-500/10 hover:bg-warning-500/20 text-warning-400 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+            {isOutOfStock ? (
+              <span className="truncate">Agotado</span>
+            ) : added ? (
+              <><span>✓</span><span className="hidden sm:inline">Añadido</span></>
+            ) : (
+              <><ShoppingCart size={13} className="shrink-0" /><span className="hidden sm:inline">Añadir</span></>
+            )}
+          </motion.button>
+        </div>
+
+        {/* Out of stock action */}
+        <AnimatePresence>
+          {isOutOfStock && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
             >
-              <Package size={13} />
-              ¿Añadir Stock?
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <button
+                onClick={() => onEdit(product)}
+                className="w-full border border-warning-500/25 bg-warning-500/8 hover:bg-warning-500/15 text-warning-400 py-1.5 rounded-xl text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5"
+              >
+                <Package size={12} />
+                ¿Añadir Stock?
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   )
 }
+
 
 export default function Products() {
   const [search, setSearch]       = useState('')
