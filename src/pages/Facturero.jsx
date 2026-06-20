@@ -10,9 +10,11 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Modal from '@/components/ui/Modal'
 import Badge from '@/components/ui/Badge'
+import React from 'react';
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
-import { QRCodeSVG } from 'qrcode.react'
+import { QRCodeSVG } from 'qrcode.react';
+import Section from '@/components/Section';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -749,9 +751,7 @@ export default function Facturero() {
       <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <h1 className="text-lg md:text-xl font-bold text-foreground">
-              Facturero
-            </h1>
+            <Section title="Facturero" />
             <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">
               Diseña, personaliza y prueba tus plantillas de facturación PDF y recibos térmicos.
             </p>
@@ -797,7 +797,7 @@ export default function Facturero() {
           <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Sparkles size={18} className="text-brand-400" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">1. Selección de Plantillas</h2>
+              <Section title="1. Selección de Plantillas" />
             </div>
 
             {/* PDF Templates choice */}
@@ -819,8 +819,9 @@ export default function Facturero() {
                     <Building2 size={16} />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-foreground">One Corporate (Clásica)</h4>
-                    <p className="text-xs text-muted-300 mt-0.5">Encabezado formal con color corporativo, doble bloque estructurado y diseño robusto.</p>
+                      <Section title="One Corporate (Clásica)">
+                        <p className="text-xs text-muted-300 mt-0.5">Encabezado formal con color corporativo, doble bloque estructurado y diseño robusto.</p>
+                      </Section>
                   </div>
                 </button>
 
@@ -839,8 +840,9 @@ export default function Facturero() {
                     <FileText size={16} />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-foreground">One Minimalist (Moderna)</h4>
-                    <p className="text-xs text-muted-300 mt-0.5">Diseño minimalista con alto espacio en blanco, líneas limpias y diseño contemporáneo.</p>
+                      <Section title="One Minimalist (Moderna)">
+                        <p className="text-xs text-muted-300 mt-0.5">Diseño minimalista con alto espacio en blanco, líneas limpias y diseño contemporáneo.</p>
+                      </Section>
                   </div>
                 </button>
               </div>
@@ -895,7 +897,7 @@ export default function Facturero() {
           <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Settings size={18} className="text-brand-400" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">2. Configuración Visual e Impresión</h2>
+              <Section title="2. Configuración Visual e Impresión" />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

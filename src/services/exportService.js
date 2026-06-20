@@ -17,10 +17,15 @@ export async function exportInvoicesPDF(invoices, companyName = 'Mi Empresa') {
   doc.setTextColor(167, 139, 250)
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.text('Gestiva', 14, 12)
+  doc.setFont('Inter', 'bold')
+doc.text('Gestiva', MARGIN, 12)
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(10)
-  doc.text('One', 14, 18)
+  doc.text('One', MARGIN, 18)
+doc.text(`Reporte de Facturas — ${companyName}`, MARGIN, 25)
+// Align date to right margin
+const pageWidth = doc.internal.pageSize.getWidth()
+doc.text(new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' }), pageWidth - MARGIN, 25, { align: 'right' })
   doc.setTextColor(200, 200, 200)
   doc.setFontSize(9)
   doc.text(`Reporte de Facturas — ${companyName}`, 14, 25)
@@ -203,6 +208,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   const { default: autoTable } = await import('jspdf-autotable')
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+const MARGIN = 15 // 15mm margin as per design
   const isMinimalist = settings.pdfTemplate === 'minimalist'
 
   const companyName = settings.companyName || 'GestivaOne'
@@ -270,54 +276,55 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   if (!isMinimalist) {
     // Corporate Header (Vibrant background band)
     doc.setFillColor(...rgbColors.dark)
-    doc.rect(0, 0, 210, 40, 'F')
+    doc.rect(0, 0, pageWidth, 40, 'F')
     
     doc.setTextColor(...rgbColors.light)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(22)
-    doc.text(companyName.toUpperCase(), 15, 18)
+    doc.setFont('Inter', 'bold')
+    doc.setFontSize(26)
+    doc.text(companyName.toUpperCase(), MARGIN, 18)
     
     doc.setFontSize(9)
     doc.setTextColor(255, 255, 255)
-    doc.text('FACTURA DE VENTA COMERCIAL', 15, 25)
+    doc.text('FACTURA DE VENTA COMERCIAL', MARGIN, 25)
     
     doc.setFontSize(8)
     doc.setTextColor(255, 255, 255)
-    if (companyPhone) doc.text(`Cel: ${companyPhone}`, 15, 30)
-    if (companyEmail) doc.text(`Email: ${companyEmail}`, 15, 34)
+    if (companyPhone) doc.text(`Cel: ${companyPhone}`, MARGIN, 30)
+    if (companyEmail) doc.text(`Email: ${companyEmail}`, MARGIN, 34)
 
     // Invoice badge
     doc.setFillColor(...rgbColors.primary)
-    doc.rect(145, 10, 50, 20, 'F')
+    // Badge positioned with margin
+    doc.rect(pageWidth - MARGIN - 50, 10, 50, 20, 'F')
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
-    doc.text(`FACTURA N°`, 150, 16)
+    doc.setFont('Inter', 'bold')
+    doc.text(`FACTURA N°`, pageWidth - MARGIN - 48, 16)
     doc.setFontSize(11)
-    doc.text(`#${invoiceIdStr}`, 150, 24)
+    doc.text(`#${invoiceIdStr}`, pageWidth - MARGIN - 48, 24)
   } else {
     // Minimalist Header (Clean whitespace, no background bands)
     doc.setTextColor(15, 23, 42) // Slate-900
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(26)
-    doc.text(companyName, 15, 20)
+    doc.text(companyName, MARGIN, 20)
     
     doc.setFontSize(9)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(100, 116, 139) // Slate-500
-    doc.text('Factura de Venta', 15, 26)
+    doc.text('Factura de Venta', MARGIN, 26)
     if (companyPhone || companyEmail) {
-      doc.text(`${companyPhone}  |  ${companyEmail}`, 15, 31)
+      doc.text(`${companyPhone}  |  ${companyEmail}`, MARGIN, 31)
     }
 
     // Minimalist Invoice Info on the right
     doc.setTextColor(15, 23, 42)
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(10)
-    doc.text(`N° FACTURA: #${invoiceIdStr}`, 195, 18, { align: 'right' })
-    doc.setFont('helvetica', 'normal')
+    doc.text(`N° FACTURA: #${invoiceIdStr}`, pageWidth - MARGIN, 18, { align: 'right' })
+    doc.setFont('Inter', 'normal')
     doc.setTextColor(100, 116, 139)
-    doc.text(`Fecha de Emisión: ${dateStr}`, 195, 24, { align: 'right' })
+    doc.text(`Fecha de Emisión: ${dateStr}`, pageWidth - MARGIN, 24, { align: 'right' })
   }
 
   // 2. CLIENT & METADATA SECTIONS
@@ -331,67 +338,70 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   if (!isMinimalist) {
     // Corporate Info Blocks (Increased height to 30 to prevent overflow)
     doc.setFillColor(248, 250, 252) // slate-50
-    doc.rect(14, startY, 86, 30, 'F')
-    doc.rect(110, startY, 86, 30, 'F')
+    // Left client block with margin
+    doc.rect(MARGIN, startY, 86, 30, 'F')
+    // Right metadata block, shifted by margin from right edge
+    const blockWidth = 86
+    doc.rect(pageWidth - MARGIN - blockWidth, startY, blockWidth, 30, 'F')
     
     doc.setDrawColor(226, 232, 240)
-    doc.rect(14, startY, 86, 30)
-    doc.rect(110, startY, 86, 30)
+    doc.rect(MARGIN, startY, 86, 30)
+    doc.rect(pageWidth - MARGIN - blockWidth, startY, blockWidth, 30)
 
     // Left block: Client Info
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(9)
     doc.setTextColor(...rgbColors.primary)
-    doc.text('FACTURAR A:', 18, startY + 5)
+    doc.text('FACTURAR A:', MARGIN + 4, startY + 5)
     
-    doc.setFont('helvetica', 'normal')
+    doc.setFont('Inter', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(51, 65, 85)
-    doc.text(`Nombre: ${clientName}`, 18, startY + 10)
-    doc.text(`C.C. / NIT / Código: ${clientDocId}`, 18, startY + 14)
-    doc.text(`Teléfono: ${clientPhone}`, 18, startY + 18)
-    doc.text(`Email: ${clientEmail}`, 18, startY + 22)
-    doc.text(`Dirección: ${clientAddress}`, 18, startY + 26)
+    doc.text(`Nombre: ${clientName}`, MARGIN + 4, startY + 10)
+    doc.text(`C.C. / NIT / Código: ${clientDocId}`, MARGIN + 4, startY + 14)
+    doc.text(`Teléfono: ${clientPhone}`, MARGIN + 4, startY + 18)
+    doc.text(`Email: ${clientEmail}`, MARGIN + 4, startY + 22)
+    doc.text(`Dirección: ${clientAddress}`, MARGIN + 4, startY + 26)
 
     // Right block: Invoice Metadata
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(9)
     doc.setTextColor(...rgbColors.primary)
-    doc.text('DETALLES DE FACTURA:', 114, startY + 5)
+    doc.text('DETALLES DE FACTURA:', pageWidth - MARGIN - 86, startY + 5)
     
-    doc.setFont('helvetica', 'normal')
+    doc.setFont('Inter', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(51, 65, 85)
-    doc.text(`Fecha: ${dateStr}`, 114, startY + 10)
-    doc.text(`Método Pago: ${invoice.payment_type === 'immediate' ? 'Inmediato' : 'Crédito'}`, 114, startY + 14)
+    doc.text(`Fecha: ${dateStr}`, pageWidth - MARGIN - 86, startY + 10)
+    doc.text(`Método Pago: ${invoice.payment_type === 'immediate' ? 'Inmediato' : 'Crédito'}`, pageWidth - MARGIN - 86, startY + 14)
     if (invoice.due_date || invoice.scheduledDate) {
       const d = invoice.due_date || invoice.scheduledDate
-      doc.text(`Vencimiento: ${new Date(d).toLocaleDateString('es-CO')}`, 114, startY + 18)
+      doc.text(`Vencimiento: ${new Date(d).toLocaleDateString('es-CO')}`, pageWidth - MARGIN - 86, startY + 18)
     } else {
-      doc.text(`Estado: ${invoice.payment_status === 'paid' ? 'Pagado' : 'Pendiente'}`, 114, startY + 18)
+      doc.text(`Estado: ${invoice.payment_status === 'paid' ? 'Pagado' : 'Pendiente'}`, pageWidth - MARGIN - 86, startY + 18)
     }
-    doc.text(`Moneda: COP (Peso Colombiano)`, 114, startY + 22)
+    doc.text(`Moneda: COP (Peso Colombiano)`, pageWidth - MARGIN - 86, startY + 22)
   } else {
     // Minimalist clean blocks
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(10)
     doc.setTextColor(15, 23, 42)
-    doc.text('CLIENTE', 15, startY)
+    doc.text('CLIENTE', MARGIN, startY)
     doc.text('DETALLES', 120, startY)
 
     doc.setDrawColor(241, 245, 249)
-    doc.line(15, startY + 2, 200, startY + 2)
+    doc.line(MARGIN, startY + 2, pageWidth - MARGIN, startY + 2)
 
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8.5)
     doc.setTextColor(51, 65, 85)
     
     // Client details
-    doc.text(clientName, 15, startY + 8)
-    doc.text(`C.C. / NIT / Código: ${clientDocId}`, 15, startY + 13)
-    doc.text(`Tel: ${clientPhone}`, 15, startY + 18)
-    doc.text(`Email: ${clientEmail}`, 15, startY + 23)
-    if (clientAddress !== '—') doc.text(`Dirección: ${clientAddress}`, 15, startY + 28)
+    doc.text(clientName, MARGIN, startY + 8)
+    doc.text(`C.C. / NIT / Código: ${clientDocId}`, MARGIN, startY + 13)
+    doc.text(`Tel: ${clientPhone}`, MARGIN, startY + 18)
+    doc.text(`Email: ${clientEmail}`, MARGIN, startY + 23)
+    if (clientAddress !== '—') doc.text(`Dirección: ${clientAddress}`, MARGIN, startY + 28)
 
     // Invoice details
     doc.text(`Fecha: ${dateStr}`, 120, startY + 8)
@@ -450,23 +460,23 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
 
     doc.setFontSize(9)
     doc.setTextColor(71, 85, 105)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont('Inter', 'normal')
     
     let currentY = finalY + 2
     if (taxVal > 0) {
       doc.text('Subtotal:', summaryX, currentY)
-      doc.text(formatCurrency(subtotalVal), 195, currentY, { align: 'right' })
+      doc.text(formatCurrency(subtotalVal), pageWidth - MARGIN, currentY, { align: 'right' })
       currentY += 6
       
       doc.text(`IVA (${taxRatePercent}%):`, summaryX, currentY)
-      doc.text(formatCurrency(taxVal), 195, currentY, { align: 'right' })
+      doc.text(formatCurrency(taxVal), pageWidth - MARGIN, currentY, { align: 'right' })
       currentY += 6
     }
     
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(...rgbColors.primary)
     doc.text('TOTAL A PAGAR:', summaryX, currentY)
-    doc.text(formatCurrency(totalVal), 195, currentY, { align: 'right' })
+    doc.text(formatCurrency(totalVal), pageWidth - MARGIN, currentY, { align: 'right' })
   } else {
     // Minimalist summary
     doc.setFontSize(9)
@@ -500,7 +510,9 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   const footerText = settings.footerText || '¡Gracias por su compra!'
   
   doc.setDrawColor(226, 232, 240)
-  doc.line(15, pageHeight - 35, 195, pageHeight - 35)
+  const lineStartX = MARGIN
+  const lineEndX = pageWidth - MARGIN
+  doc.line(lineStartX, pageHeight - 35, lineEndX, pageHeight - 35)
 
   // QR Code insertion using an offscreen canvas to generate PNG data
   try {
@@ -516,7 +528,9 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
       }
     })
     const qrImgData = canvas.toDataURL('image/png')
-    doc.addImage(qrImgData, 'PNG', 15, pageHeight - 32, 24, 24)
+    const qrX = pageWidth - MARGIN - 24
+    const qrY = pageHeight - MARGIN - 24
+    doc.addImage(qrImgData, 'PNG', qrX, qrY, 24, 24)
   } catch (qrErr) {
     console.warn('Could not render QR code in exportService PDF:', qrErr)
   }
