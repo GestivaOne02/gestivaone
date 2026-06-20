@@ -16,6 +16,7 @@ import DianAssistant from '@/pages/DianAssistant'
 import Pockets from '@/pages/Pockets'
 import PersonalFinance from '@/pages/PersonalFinance'
 import GestiToken from '@/pages/GestiToken'
+import CRM from '@/pages/CRM'
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -143,7 +144,8 @@ export default function App() {
     '/terms': 'Términos',
     '/facturero': 'Facturero',
     '/dian': 'Asistente DIAN',
-    '/seguridad': 'GestiToken'
+    '/seguridad': 'GestiToken',
+    '/crm': 'CRM'
   }
 
   useEffect(() => {
@@ -266,6 +268,7 @@ export default function App() {
           <Route path="/facturero" element={<RequirePermission perm="dashboard"><Facturero /></RequirePermission>} />
           <Route path="/dian" element={<RequirePermission perm="dashboard"><DianAssistant /></RequirePermission>} />
           <Route path="/seguridad" element={<RequirePermission perm="dashboard"><GestiToken /></RequirePermission>} />
+          <Route path="/crm" element={<RequirePermission perm="dashboard"><CRM /></RequirePermission>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

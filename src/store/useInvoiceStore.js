@@ -210,6 +210,18 @@ export const useInvoiceStore = create(
       }).catch(err => console.warn('Failed to send invoice email:', err))
     }
 
+    // ── CRM: Auto-log sale activity ──────────────────────────
+    if (client?.id) {
+      import('./useCRMStore').then(({ useCRMStore }) => {
+        useCRMStore.getState().logActivity({
+          clientId: client.id,
+          type: 'sale',
+          description: `Venta #${mappedSaved.id.slice(-8).toUpperCase()} por ${formattedTotal}`,
+          metadata: { invoiceId: mappedSaved.id, total: mappedSaved.total, items: items.length }
+        })
+      }).catch(() => {})
+    }
+
     return mappedSaved;
   },
 
