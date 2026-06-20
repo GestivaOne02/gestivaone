@@ -248,3 +248,30 @@ export async function sendVerificationCodeEmail(code, toEmail, company = {}) {
     html: verificationCodeTemplate(code, company)
   })
 }
+
+// ── Custom Campaigns ────────────────────────────────────────────────────────
+export async function sendCustomCampaignEmail({ to, subject, htmlBody, company = {} }) {
+  if (!to) return { success: false, error: 'Email de destino vacío' }
+
+  // Simple clean base template container for custom emails
+  const formattedHtml = `
+    <div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; color: #1f2937;">
+      ${company.companyLogo ? `<img src="${company.companyLogo}" alt="Logo" style="max-height: 48px; margin-bottom: 20px; border-radius: 6px;" />` : ''}
+      <div style="line-height: 1.6; font-size: 14px;">
+        ${htmlBody}
+      </div>
+      <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 25px 0;" />
+      <div style="font-size: 11px; color: #9ca3af; text-align: center;">
+        <p>Enviado por <strong>${company.companyName || 'GestivaOne'}</strong></p>
+        ${company.companyPhone ? `<p>Contacto: ${company.companyPhone}</p>` : ''}
+      </div>
+    </div>
+  `
+
+  return await callResendAPI({
+    to,
+    subject,
+    html: formattedHtml,
+    replyTo: company.companyEmail
+  })
+}

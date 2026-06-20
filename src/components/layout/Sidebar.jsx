@@ -2,7 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Receipt, Package,
-  Settings, ChevronLeft, X, Users, Lock, Bell, Printer, Calculator, Wallet, FolderClosed, Contact
+  Settings, ChevronLeft, X, Users, Lock, Bell, Printer, Calculator, Wallet, FolderClosed, Contact, Mail
 } from 'lucide-react'
 import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
@@ -96,6 +96,7 @@ export default function Sidebar({ isMobile }) {
         { to: '/employees', icon: Users, label: 'Empleados', perm: 'employees' },
         { to: '/pockets', icon: FolderClosed, label: 'Bolsillos', perm: 'dashboard' },
         { to: '/crm', icon: Contact, label: 'CRM', perm: 'dashboard' },
+        { to: '/emails', icon: Mail, label: 'Emails', perm: 'dashboard' },
         { to: '/personal-finance', icon: Wallet, label: 'Mi Gestión', perm: 'account' },
       ]
     },
