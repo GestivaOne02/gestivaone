@@ -39,27 +39,50 @@ export const useCRMStore = create(
         const { user } = useAuthStore.getState()
         if (!user?.companyId) return null
 
+        const localId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         const activity = {
+          id: localId,
           company_id: user.companyId,
           client_id: clientId,
           type, // 'sale', 'note', 'call', 'email', 'status_change'
           description,
           metadata,
-          created_by: user.id
+          created_by: user.id,
+          created_at: new Date().toISOString()
         }
 
-        const { data: saved, error } = await supabase
-          .from('crm_activities')
-          .insert([activity])
-          .select()
-          .single()
+        // Add to local state immediately (optimistic update)
+        set((s) => ({ activities: [activity, ...s.activities] }))
 
-        if (!error && saved) {
-          set((s) => ({ activities: [saved, ...s.activities] }))
-          return saved
+        try {
+          const { data: saved, error } = await supabase
+            .from('crm_activities')
+            .insert([{
+              company_id: user.companyId,
+              client_id: clientId,
+              type,
+              description,
+              metadata,
+              created_by: user.id
+            }])
+            .select()
+            .single()
+
+          if (!error && saved) {
+            // Replace local placeholder with real DB record
+            set((s) => ({
+              activities: s.activities.map((a) => (a.id === localId ? saved : a))
+            }))
+            return saved
+          }
+          if (error) {
+            console.warn('⚠️ Could not sync CRM activity to DB, keeping local copy:', error.message)
+          }
+        } catch (e) {
+          console.warn('⚠️ Network or database error logging CRM activity:', e)
         }
-        if (error) console.error('❌ CRM Activity log error:', error)
-        return null
+
+        return activity
       },
 
       // ── Get activities for a specific client ───────────────
