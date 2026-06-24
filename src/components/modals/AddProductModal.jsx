@@ -56,7 +56,7 @@ export default function AddProductModal({ open }) {
 
   const unit = watch('unit')
   const selectedCategory = watch('category')
-  const showImage = watch('show_image')
+  const [showImage, setShowImage] = useState(true)
 
   // Derived state for unlimited
   const [isUnlimited, setIsUnlimited] = useState(false)
@@ -105,6 +105,7 @@ export default function AddProductModal({ open }) {
       setHasDiscount(!!duplicating.discount_value && duplicating.discount_value > 0)
       
       const showImageVal = duplicating.image_url !== 'none'
+      setShowImage(showImageVal)
       const imageUrlVal = duplicating.image_url === 'none' ? '' : (duplicating.image_url || '')
 
       reset({
@@ -131,6 +132,7 @@ export default function AddProductModal({ open }) {
       setHasDiscount(!!editing.discount_value && editing.discount_value > 0)
       
       const showImageVal = editing.image_url !== 'none'
+      setShowImage(showImageVal)
       const imageUrlVal = editing.image_url === 'none' ? '' : (editing.image_url || '')
 
       reset({
@@ -151,6 +153,7 @@ export default function AddProductModal({ open }) {
     else if (open) {
       setIsUnlimited(false)
       setHasDiscount(false)
+      setShowImage(true)
       reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '' })
       setCustomCategoryName('')
     }
@@ -170,7 +173,7 @@ export default function AddProductModal({ open }) {
 
     // Process image_url
     let finalImageUrl = data.image_url?.trim() || ''
-    if (!data.show_image) {
+    if (!showImage) {
       finalImageUrl = 'none'
     }
 
@@ -370,11 +373,11 @@ export default function AddProductModal({ open }) {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2 text-brand-400">
                 <Image size={14} />
-                <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setValue('show_image', !showImage)}>Mostrar Imagen de Portada</label>
+                <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setShowImage(!showImage)}>Mostrar Imagen de Portada</label>
               </div>
               <button
                 type="button"
-                onClick={() => setValue('show_image', !showImage)}
+                onClick={() => setShowImage(!showImage)}
                 className={clsx(
                   'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
                   showImage ? 'bg-brand-500' : 'bg-surface-600'
