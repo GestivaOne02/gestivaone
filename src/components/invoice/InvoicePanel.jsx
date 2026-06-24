@@ -147,96 +147,115 @@ export default function InvoicePanel({ isMobile }) {
     setGlobalDiscount(null)
     toast.success('Descuento global eliminado')
   }
-
-  const renderGlobalDiscountSection = () => {
+  const renderTotalsSection = () => {
+    const activeTaxRate = taxRate || 0.19
     return (
-      <div className="border-b border-subtle pb-3 mb-3">
-        <div className="flex items-center justify-between text-xs text-muted-400 mb-2">
-          <span className="font-bold text-[10px] uppercase tracking-wider text-muted-400">Descuento Global</span>
-          {!globalDiscount && (
-            <button
-              type="button"
-              onClick={() => setShowGlobalDiscountForm(!showGlobalDiscountForm)}
-              className="text-brand-500 dark:text-brand-400 hover:text-brand-600 dark:hover:text-brand-300 font-bold text-[10px] uppercase transition-colors"
-            >
-              {showGlobalDiscountForm ? 'Cancelar' : '+ Agregar Descuento'}
-            </button>
-          )}
-        </div>
-
-        {showGlobalDiscountForm && !globalDiscount && (
-          <div className="bg-surface-700/50 p-3 rounded-2xl border border-subtle mb-3 space-y-2.5">
-            <div className="flex gap-2">
-              <input
-                type="number"
-                value={globalDiscountInputValue}
-                onChange={(e) => setGlobalDiscountInputValue(e.target.value)}
-                placeholder="Valor/Monto"
-                className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
-              />
-              <select
-                value={globalDiscountInputType}
-                onChange={(e) => setGlobalDiscountInputType(e.target.value)}
-                className="bg-surface-600 border border-subtle rounded-xl px-2 py-1 text-xs text-foreground focus:outline-none"
-              >
-                <option value="percent">%</option>
-                <option value="fixed">{baseCurrency}</option>
-              </select>
-            </div>
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={handleApplyGlobalDiscount}
-                className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] uppercase px-3 py-1.5 rounded-lg transition-colors"
-              >
-                Aplicar
-              </button>
-            </div>
+      <div className="space-y-3">
+        {/* Applied custom charges */}
+        {customCharges.length > 0 && (
+          <div className="space-y-2">
+            {customCharges.map((c) => (
+              <div key={c.id} className="flex items-center justify-between text-xs text-foreground py-0.5">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={c.applied}
+                    onChange={() => toggleCustomChargeApplied(c.id)}
+                    className="rounded border-subtle bg-surface-700 text-brand-500 w-3.5 h-3.5 focus:ring-0 cursor-pointer"
+                  />
+                  <span className="truncate max-w-[120px] font-semibold text-muted-300">{c.name}</span>
+                  <span className="text-[10px] text-brand-400 font-bold">
+                    {c.type === 'percent' ? `(${c.value}%)` : `(${format(c.value)})`}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => toggleCustomChargePin(c.id)}
+                    className={clsx(
+                      "text-[12px] transition-colors leading-none cursor-pointer",
+                      c.pinned ? "text-brand-400 hover:text-brand-300" : "text-muted-500 hover:text-muted-400"
+                    )}
+                    title={c.pinned ? "Desanclar de la plantilla" : "Fijar permanentemente"}
+                  >
+                    ✓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeCustomCharge(c.id)}
+                    className="text-muted-500 hover:text-danger-400 transition-colors leading-none cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                  <span className="text-foreground font-medium ml-1">
+                    +{format(c.type === 'percent' ? (subtotal * (c.value / 100)) : c.value)}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
+        {/* Applied global discount */}
         {globalDiscount && (
-          <div className="flex items-center justify-between text-xs text-foreground py-0.5">
+          <div className="flex items-center justify-between text-xs text-danger-400 py-0.5">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-muted-300">Descuento aplicado</span>
-              <span className="text-[10px] text-danger-400 font-bold">
+              <span className="font-semibold text-red-500 dark:text-red-400">Descuento</span>
+              <span className="text-[10px] font-bold">
                 {globalDiscount.type === 'percent' ? `(${globalDiscount.value}%)` : `(${format(globalDiscount.value)})`}
               </span>
+              <button
+                type="button"
+                onClick={handleRemoveGlobalDiscount}
+                className="text-muted-500 hover:text-danger-400 transition-colors leading-none cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={handleRemoveGlobalDiscount}
-              className="text-muted-500 hover:text-danger-400 transition-colors leading-none"
-            >
-              ✕
-            </button>
+            <span className="font-medium text-red-500 dark:text-red-400">-{format(globalDiscountAmount)}</span>
           </div>
         )}
-      </div>
-    )
-  }
 
-  const renderCustomChargesSection = () => {
-    return (
-      <div className="border-b border-subtle pb-3 mb-3">
-        <div className="flex items-center justify-between text-xs text-muted-400 mb-2">
-          <span className="font-bold text-[10px] uppercase tracking-wider text-muted-400">Impuestos y Cargos</span>
-          <button
-            type="button"
-            onClick={() => setShowAddCharge(!showAddCharge)}
-            className="text-brand-500 dark:text-brand-400 hover:text-brand-600 dark:hover:text-brand-300 font-bold text-[10px] uppercase transition-colors"
-          >
-            {showAddCharge ? 'Cancelar' : '+ Agregar Cargo'}
-          </button>
+        {/* Subtotal */}
+        <div className="flex justify-between text-xs text-muted-400 py-0.5">
+          <span>Subtotal</span>
+          <span className="text-foreground font-medium">{format(subtotal)}</span>
         </div>
 
+        {/* IVA (Fixed) */}
+        <div className="flex items-center justify-between text-xs text-muted-400 py-0.5">
+          <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
+            <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
+              {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
+            </div>
+            <span className={clsx("transition-colors select-none", includeTax ? "text-foreground font-semibold" : "text-muted-400 group-hover:text-muted-500")}>
+              IVA ({(activeTaxRate * 100).toFixed(0)}%)
+            </span>
+          </div>
+          <span className="text-foreground font-medium">{format(taxAmount)}</span>
+        </div>
+
+        {/* Total */}
+        <div className="flex justify-between text-sm font-bold text-foreground pt-1">
+          <span>Total</span>
+          <motion.span
+            key={total}
+            initial={{ scale: 1.05, color: '#a78bfa' }}
+            animate={{ scale: 1, color: 'var(--text-foreground)' }}
+            transition={{ duration: 0.2 }}
+          >
+            {format(total)}
+          </motion.span>
+        </div>
+
+        {/* Forms inline */}
         {showAddCharge && (
-          <div className="bg-surface-700/50 p-3 rounded-2xl border border-subtle mb-3 space-y-2.5">
+          <div className="bg-surface-700/30 p-3 rounded-xl border border-subtle space-y-2">
             <input
               value={newChargeName}
               onChange={(e) => setNewChargeName(e.target.value)}
               placeholder="Concepto (ej: Transporte)"
-              className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
+              className="w-full bg-surface-600 border border-subtle rounded-lg px-2.5 py-1 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
             />
             <div className="flex gap-2">
               <input
@@ -244,12 +263,12 @@ export default function InvoicePanel({ isMobile }) {
                 value={newChargeValue}
                 onChange={(e) => setNewChargeValue(e.target.value)}
                 placeholder="Valor/Monto"
-                className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
+                className="w-full bg-surface-600 border border-subtle rounded-lg px-2.5 py-1 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
               />
               <select
                 value={newChargeType}
                 onChange={(e) => setNewChargeType(e.target.value)}
-                className="bg-surface-600 border border-subtle rounded-xl px-2 py-1 text-xs text-foreground focus:outline-none"
+                className="bg-surface-600 border border-subtle rounded-lg px-2 py-1 text-xs text-foreground focus:outline-none"
               >
                 <option value="fixed">{baseCurrency}</option>
                 <option value="percent">%</option>
@@ -261,14 +280,61 @@ export default function InvoicePanel({ isMobile }) {
                   type="checkbox"
                   checked={newChargePinned}
                   onChange={(e) => setNewChargePinned(e.target.checked)}
-                  className="rounded border-subtle bg-surface-600 text-brand-500 w-3.5 h-3.5 focus:ring-0"
+                  className="rounded border-subtle bg-surface-600 text-brand-500 w-3 h-3 focus:ring-0"
                 />
                 Fijar permanentemente
               </label>
+              <div className="flex gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setShowAddCharge(false)}
+                  className="text-muted-500 hover:text-foreground text-[10px] uppercase font-bold px-2 py-1 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddCharge}
+                  className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded-lg transition-colors"
+                >
+                  Aplicar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showGlobalDiscountForm && (
+          <div className="bg-surface-700/30 p-3 rounded-xl border border-subtle space-y-2">
+            <div className="flex gap-2">
+              <input
+                type="number"
+                value={globalDiscountInputValue}
+                onChange={(e) => setGlobalDiscountInputValue(e.target.value)}
+                placeholder="Valor/Monto"
+                className="w-full bg-surface-600 border border-subtle rounded-lg px-2.5 py-1 text-xs text-foreground placeholder:text-muted-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
+              />
+              <select
+                value={globalDiscountInputType}
+                onChange={(e) => setGlobalDiscountInputType(e.target.value)}
+                className="bg-surface-600 border border-subtle rounded-lg px-2 py-1 text-xs text-foreground focus:outline-none"
+              >
+                <option value="percent">%</option>
+                <option value="fixed">{baseCurrency}</option>
+              </select>
+            </div>
+            <div className="flex justify-end gap-1.5 pt-1">
               <button
                 type="button"
-                onClick={handleAddCharge}
-                className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] uppercase px-3 py-1.5 rounded-lg transition-colors"
+                onClick={() => setShowGlobalDiscountForm(false)}
+                className="text-muted-500 hover:text-foreground text-[10px] uppercase font-bold px-2 py-1 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleApplyGlobalDiscount}
+                className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded-lg transition-colors"
               >
                 Aplicar
               </button>
@@ -276,43 +342,38 @@ export default function InvoicePanel({ isMobile }) {
           </div>
         )}
 
-        <div className="space-y-2">
-          {customCharges.map((c) => (
-            <div key={c.id} className="flex items-center justify-between text-xs text-foreground py-0.5">
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={c.applied}
-                  onChange={() => toggleCustomChargeApplied(c.id)}
-                  className="rounded border-subtle bg-surface-700 text-brand-500 w-3.5 h-3.5 focus:ring-0"
-                />
-                <span className="truncate max-w-[120px] font-semibold text-muted-300">{c.name}</span>
-                <span className="text-[10px] text-brand-400 font-bold">
-                  {c.type === 'percent' ? `(${c.value}%)` : `(${format(c.value)})`}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => toggleCustomChargePin(c.id)}
-                  className={clsx(
-                    "text-[12px] transition-colors leading-none",
-                    c.pinned ? "text-brand-400 hover:text-brand-300" : "text-muted-500 hover:text-muted-400"
-                  )}
-                  title={c.pinned ? "Desanclar de la plantilla" : "Fijar permanentemente"}
-                >
-                  ✓
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeCustomCharge(c.id)}
-                  className="text-muted-500 hover:text-danger-400 transition-colors leading-none"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          ))}
+        {/* Parallel Action Buttons */}
+        <div className="grid grid-cols-2 gap-2 pt-1">
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddCharge(!showAddCharge)
+              setShowGlobalDiscountForm(false)
+            }}
+            className={clsx(
+              "py-1.5 px-2 rounded-xl text-[10px] font-bold uppercase tracking-wider border transition-colors flex items-center justify-center gap-1 cursor-pointer",
+              showAddCharge
+                ? "bg-brand-600/10 border-brand-500/30 text-brand-400"
+                : "bg-surface-700/50 border-subtle text-muted-400 hover:border-surface-500 hover:text-foreground"
+            )}
+          >
+            <Plus size={10} /> Cargo
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowGlobalDiscountForm(!showGlobalDiscountForm)
+              setShowAddCharge(false)
+            }}
+            className={clsx(
+              "py-1.5 px-2 rounded-xl text-[10px] font-bold uppercase tracking-wider border transition-colors flex items-center justify-center gap-1 cursor-pointer",
+              showGlobalDiscountForm
+                ? "bg-brand-600/10 border-brand-500/30 text-brand-400"
+                : "bg-surface-700/50 border-subtle text-muted-400 hover:border-surface-500 hover:text-foreground"
+            )}
+          >
+            <Plus size={10} /> Descuento
+          </button>
         </div>
       </div>
     )
@@ -445,36 +506,8 @@ export default function InvoicePanel({ isMobile }) {
                 </div>
 
                 {/* Footer */}
-                <div className="p-5 border-t border-subtle shrink-0 space-y-3 pb-safe">
-                  {renderCustomChargesSection()}
-                  {renderGlobalDiscountSection()}
-                  <div className="flex justify-between text-xs text-muted-400">
-                    <span>Subtotal</span>
-                    <span className="text-foreground font-medium">{format(subtotal)}</span>
-                  </div>
-                  {globalDiscountAmount > 0 && (
-                    <div className="flex justify-between text-xs text-danger-400">
-                      <span>Descuento</span>
-                      <span className="font-medium">-{format(globalDiscountAmount)}</span>
-                    </div>
-                  )}
-                  {taxRate > 0 && (
-                    <div className="flex items-center justify-between text-xs text-muted-400">
-                      <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
-                        <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
-                          {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
-                        </div>
-                        <span className={clsx("transition-colors select-none", includeTax ? "text-foreground font-semibold" : "text-muted-400 group-hover:text-muted-500")}>
-                          IVA ({(taxRate * 100).toFixed(0)}%)
-                        </span>
-                      </div>
-                      <span className="text-foreground font-medium">{format(taxAmount)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-sm font-bold text-foreground">
-                    <span>Total</span>
-                    <span>{format(total)}</span>
-                  </div>
+                <div className="p-5 border-t border-subtle shrink-0 space-y-4 pb-safe">
+                  {renderTotalsSection()}
                   <Button
                     variant="primary"
                     size="md"
@@ -632,43 +665,8 @@ export default function InvoicePanel({ isMobile }) {
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-subtle shrink-0 space-y-3">
-            {renderCustomChargesSection()}
-            {renderGlobalDiscountSection()}
-            <div className="flex justify-between text-xs text-muted-400">
-              <span>Subtotal</span>
-              <span className="text-foreground font-medium">{format(subtotal)}</span>
-            </div>
-            {globalDiscountAmount > 0 && (
-              <div className="flex justify-between text-xs text-danger-400">
-                <span>Descuento</span>
-                <span className="font-medium">-{format(globalDiscountAmount)}</span>
-              </div>
-            )}
-            {taxRate > 0 && (
-              <div className="flex items-center justify-between text-xs text-muted-400">
-                <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
-                  <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
-                    {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
-                  </div>
-                  <span className={clsx("transition-colors select-none", includeTax ? "text-foreground font-semibold" : "text-muted-400 group-hover:text-muted-500")}>
-                    IVA ({(taxRate * 100).toFixed(0)}%)
-                  </span>
-                </div>
-                <span className="text-foreground font-medium">{format(taxAmount)}</span>
-              </div>
-            )}
-            <div className="flex justify-between text-sm font-bold text-foreground">
-              <span>Total</span>
-              <motion.span
-                key={total}
-                initial={{ scale: 1.05, color: '#a78bfa' }}
-                animate={{ scale: 1, color: 'var(--text-foreground)' }}
-                transition={{ duration: 0.2 }}
-              >
-                {format(total)}
-              </motion.span>
-            </div>
+          <div className="p-4 border-t border-subtle shrink-0 space-y-4">
+            {renderTotalsSection()}
             <Button
               variant="primary"
               size="md"

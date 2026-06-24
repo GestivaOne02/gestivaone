@@ -203,7 +203,7 @@ export default function GestiToken() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="page-container space-y-6 max-w-5xl mx-auto p-4 md:p-8"
+      className="page-container space-y-6 max-w-5xl mx-auto"
     >
       {/* Header */}
       <motion.div variants={itemVariants} className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
