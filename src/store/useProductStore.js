@@ -9,7 +9,13 @@ export { CATEGORIES }
 
 export function getProductDiscount(product) {
   if (!product.discount_value || product.discount_value <= 0) return null
-  if (product.discount_ends_at && new Date(product.discount_ends_at) < new Date()) return null
+  
+  if (product.discount_ends_at) {
+    const ends = new Date(product.discount_ends_at)
+    const now = new Date()
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    if (ends < todayStart) return null
+  }
   
   const amount = product.discount_type === 'percentage' 
     ? product.price * (product.discount_value / 100)

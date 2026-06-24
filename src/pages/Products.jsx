@@ -100,6 +100,9 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          {/* Gradient difuminado de la card hacia la imagen */}
+          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white dark:from-surface-800 to-transparent pointer-events-none" />
+          
           {discountInfo && (
             <span className="absolute top-2.5 left-2.5 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-brand-500 text-white shadow-sm leading-none">
               PROMO
