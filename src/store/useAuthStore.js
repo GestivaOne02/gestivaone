@@ -873,6 +873,29 @@ export const useAuthStore = create(
         await get().syncProfile(user.id)
       },
 
+      changePlan: async (newPlan) => {
+        const { user } = get()
+        if (!user) return { success: false, error: 'No user authenticated' }
+
+        if (user.id === 'mock-admin-id') {
+          const updatedUser = { ...user, plan: newPlan }
+          set({ user: updatedUser })
+          return { success: true }
+        }
+
+        const { error } = await supabase
+          .from('profiles')
+          .update({ plan: newPlan })
+          .eq('id', user.id)
+
+        if (error) {
+          return { success: false, error: error.message }
+        }
+
+        await get().syncProfile(user.id)
+        return { success: true }
+      },
+
       loginWithSocialEmail: async (email) => {
         set({ loading: true })
         const { data: profileList, error } = await supabase

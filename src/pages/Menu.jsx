@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { UserPlus, Users, Edit2, Trash2, Check, ShoppingBag, History, CalendarDays } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import ScrollIndicator from '@/components/ui/ScrollIndicator'
 import Badge from '@/components/ui/Badge'
 import SearchBar from '@/components/ui/SearchBar'
 import SortFilterBar from '@/components/ui/SortFilterBar'
@@ -520,6 +521,7 @@ export default function Menu() {
         </AnimatePresence>,
         document.body
       ) : null}
+      <ScrollIndicator targetSelector=".app-layout main > div" />
     </motion.div>
   )
 }

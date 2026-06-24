@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Percent } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import ScrollIndicator from '@/components/ui/ScrollIndicator'
 import SearchBar from '@/components/ui/SearchBar'
 import SortFilterBar from '@/components/ui/SortFilterBar'
 import { useProductStore, CATEGORIES, getProductDiscount } from '@/store/useProductStore'
@@ -72,7 +73,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
       product.discount_ends_at = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString()
     }
   }
-  const imageUrl = product.image_url || getFallbackImage(product.category)
+  const imageUrl = product.image_url === 'none' ? null : (product.image_url || getFallbackImage(product.category))
 
   const unitColor = UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND
 
@@ -460,16 +461,34 @@ export default function Products() {
               <SearchBar value={search} onChange={setSearch} placeholder="Buscar producto..." />
             </div>
             
-            <SortFilterBar 
-              sortMode={sortMode} 
-              onSortChange={setSortMode} 
-              activeLetter={activeLetter} 
-              onLetterChange={setActiveLetter} 
-              letters={letters} 
-            />
+            <div className="flex items-center gap-2 shrink-0">
+              <SortFilterBar 
+                sortMode={sortMode} 
+                onSortChange={setSortMode} 
+                activeLetter={activeLetter} 
+                onLetterChange={setActiveLetter} 
+                letters={letters} 
+              />
+              <div className="flex bg-surface-800 border border-subtle rounded-lg p-0.5 shrink-0 h-10 items-center">
+                <button
+                  onClick={() => setIsGrouped(false)}
+                  className={clsx('p-1.5 rounded-md transition-colors', !isGrouped ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
+                  title="Vista tradicional"
+                >
+                  <LayoutGrid size={14} />
+                </button>
+                <button
+                  onClick={() => setIsGrouped(true)}
+                  className={clsx('p-1.5 rounded-md transition-colors', isGrouped ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
+                  title="Agrupar por categoría"
+                >
+                  <Layers size={14} />
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between gap-3 overflow-x-auto pb-1 no-scrollbar select-none -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex items-center gap-3 overflow-x-auto pb-1 no-scrollbar select-none -mx-4 px-4 md:mx-0 md:px-0">
             <div className="flex gap-2">
               <button
                 onClick={() => setActiveCat(null)}
@@ -486,23 +505,6 @@ export default function Products() {
                   {cat}
                 </button>
               ))}
-            </div>
-
-            <div className="flex bg-surface-800 border border-subtle rounded-lg p-0.5 shrink-0">
-              <button
-                onClick={() => setIsGrouped(false)}
-                className={clsx('p-1.5 rounded-md transition-colors', !isGrouped ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
-                title="Vista tradicional"
-              >
-                <LayoutGrid size={14} />
-              </button>
-              <button
-                onClick={() => setIsGrouped(true)}
-                className={clsx('p-1.5 rounded-md transition-colors', isGrouped ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
-                title="Agrupar por categoría"
-              >
-                <Layers size={14} />
-              </button>
             </div>
           </div>
         </div>
@@ -579,6 +581,7 @@ export default function Products() {
           )}
         </AnimatePresence>
       </div>
+      <ScrollIndicator targetSelector=".app-layout main > div" />
     </motion.div>
   )
 }

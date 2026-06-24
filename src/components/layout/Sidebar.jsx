@@ -9,7 +9,7 @@ import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
 import { useNotificationStore } from '@/store/useNotificationStore'
 import { supabase } from '@/lib/supabase'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import clsx from 'clsx'
 
 const AVATAR_SIZE = 44
@@ -103,34 +103,54 @@ export default function Sidebar({ isMobile }) {
     )
   }
 
-  const NAV_GROUPS = [
-    {
-      title: 'Operaciones',
-      items: [
-        { to: '/menu', icon: Receipt, label: 'Menú', perm: 'menu' },
-        { to: '/products', icon: Package, label: 'Productos', perm: 'products' },
-      ]
-    },
-    {
-      title: 'Gestión',
-      items: [
-        { to: '/', icon: LayoutDashboard, label: 'Dashboard', perm: 'dashboard' },
-        { to: '/employees', icon: Users, label: 'Empleados', perm: 'employees' },
-        { to: '/pockets', icon: FolderClosed, label: 'Bolsillos', perm: 'dashboard' },
-        { to: '/crm', icon: Contact, label: 'CRM', perm: 'dashboard' },
-        { to: '/emails', icon: Mail, label: 'Emails', perm: 'dashboard' },
-        { to: '/personal-finance', icon: Wallet, label: 'Mi Gestión', perm: 'account' },
-      ]
-    },
-    {
-      title: 'Herramientas',
-      items: [
-        { to: '/facturero', icon: Printer, label: 'Facturero', perm: 'dashboard' },
-        { to: '/dian', icon: Calculator, label: 'Asistente DIAN', perm: 'dashboard' },
-        { to: '/seguridad', icon: Lock, label: 'GestiToken', perm: 'dashboard' },
-      ]
+  const purchasedFeatures = user?.settings?.purchased_features || []
+  const hasFeature = (key) => {
+    if (user?.plan === 'empresarial' || user?.plan === 'enterprise' || user?.role === 'master' || user?.plan === 'master' || user?.id === 'mock-admin-id') return true
+    if (Array.isArray(purchasedFeatures)) {
+      return purchasedFeatures.includes(key)
     }
-  ]
+    return !!purchasedFeatures[key]
+  }
+
+  const visibleGroups = useMemo(() => {
+    const groups = [
+      {
+        title: 'Operaciones',
+        items: [
+          { to: '/menu', icon: Receipt, label: 'Menú', perm: 'menu', feature: 'menu' },
+          { to: '/products', icon: Package, label: 'Productos', perm: 'products', feature: 'products' },
+        ]
+      },
+      {
+        title: 'Gestión',
+        items: [
+          { to: '/', icon: LayoutDashboard, label: 'Dashboard', perm: 'dashboard', feature: 'dashboard' },
+          { to: '/employees', icon: Users, label: 'Empleados', perm: 'employees', feature: 'employees' },
+          { to: '/pockets', icon: FolderClosed, label: 'Bolsillos', perm: 'dashboard', feature: 'pockets' },
+          { to: '/crm', icon: Contact, label: 'CRM', perm: 'dashboard', feature: 'crm' },
+          { to: '/emails', icon: Mail, label: 'Emails', perm: 'dashboard', feature: 'emails' },
+          { to: '/personal-finance', icon: Wallet, label: 'Mi Gestión', perm: 'account', feature: 'personal-finance' },
+        ]
+      },
+      {
+        title: 'Herramientas',
+        items: [
+          { to: '/facturero', icon: Printer, label: 'Facturero', perm: 'dashboard', feature: 'facturero' },
+          { to: '/dian', icon: Calculator, label: 'Asistente DIAN', perm: 'dashboard', feature: 'dian' },
+          { to: '/seguridad', icon: Lock, label: 'GestiToken', perm: 'dashboard', feature: 'seguridad' },
+        ]
+      }
+    ]
+
+    return groups.map(g => {
+      const filteredItems = g.items.filter(item => {
+        if (['menu', 'products', 'dashboard'].includes(item.feature)) return true
+        if (item.feature === 'employees' && user?.plan === 'pro') return true
+        return hasFeature(item.feature)
+      })
+      return { ...g, items: filteredItems }
+    }).filter(g => g.items.length > 0)
+  }, [user, purchasedFeatures])
 
   const handleNavClick = () => { if (isMobile) closeMobile() }
 
@@ -235,7 +255,7 @@ export default function Sidebar({ isMobile }) {
 
               {/* Nav */}
               <nav className="flex-1 py-4 px-2 flex flex-col gap-1 overflow-y-auto no-scrollbar">
-                {NAV_GROUPS.map((group, gIdx) => (
+                {visibleGroups.map((group, gIdx) => (
                   <div key={group.title} className="flex flex-col gap-1 mb-3">
                     <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-3 mb-1 mt-2 first:mt-0 select-none">
                       {group.title}
@@ -283,6 +303,19 @@ export default function Sidebar({ isMobile }) {
                     })}
                   </div>
                 ))}
+
+                {user?.plan !== 'empresarial' && user?.plan !== 'enterprise' && (
+                  <div className="px-3 py-2 shrink-0">
+                    <NavLink
+                      to="/upgrade"
+                      onClick={closeMobile}
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs tracking-wide shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_20px_rgba(147,51,234,0.6)] transition-all duration-300"
+                    >
+                      <Zap size={14} className="fill-current text-purple-200" />
+                      <span>+ Adquirir más funciones</span>
+                    </NavLink>
+                  </div>
+                )}
 
                 {/* Notifications at bottom */}
                 <div className="mt-auto pt-2 border-t border-subtle shrink-0 flex flex-col gap-1">
@@ -338,10 +371,10 @@ export default function Sidebar({ isMobile }) {
                 <AnimatePresence>
                   {showProfileMenu && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                      className="absolute bottom-16 left-4 right-4 z-50 bg-surface-800 border border-subtle shadow-2xl rounded-2xl p-1.5 flex flex-col gap-0.5 text-neutral-200"
+                      initial={{ opacity: 0, scale: 0.95, x: -10 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, x: -10 }}
+                      className="absolute z-50 bg-surface-800 border border-subtle shadow-2xl rounded-2xl p-1.5 flex flex-col gap-0.5 text-neutral-200 min-w-[210px] bottom-2 left-full ml-3"
                     >
                       <NavLink
                         to="/account"
@@ -456,7 +489,7 @@ export default function Sidebar({ isMobile }) {
 
       {/* Nav */}
       <nav className="flex-1 py-4 px-2 flex flex-col gap-1 overflow-y-auto no-scrollbar">
-        {NAV_GROUPS.map((group, gIdx) => (
+        {visibleGroups.map((group, gIdx) => (
           <div key={group.title} className="flex flex-col gap-1">
             <AnimatePresence initial={false}>
               {!collapsed ? (
@@ -486,6 +519,22 @@ export default function Sidebar({ isMobile }) {
             ))}
           </div>
         ))}
+
+        {user?.plan !== 'empresarial' && user?.plan !== 'enterprise' && (
+          <div className="px-2 py-1.5 shrink-0 mt-2">
+            <NavLink
+              to="/upgrade"
+              className={clsx(
+                "flex items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_20px_rgba(147,51,234,0.6)] transition-all duration-300",
+                collapsed ? "w-10 h-10 p-0" : "w-full px-4 py-2.5 text-xs tracking-wide gap-2"
+              )}
+              title="Adquirir más funciones"
+            >
+              <Zap size={14} className="fill-current text-purple-200 shrink-0" />
+              {!collapsed && <span>+ Adquirir más funciones</span>}
+            </NavLink>
+          </div>
+        )}
       </nav>
 
       {/* Notifications */}

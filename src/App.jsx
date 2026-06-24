@@ -18,6 +18,7 @@ import PersonalFinance from '@/pages/PersonalFinance'
 import GestiToken from '@/pages/GestiToken'
 import CRM from '@/pages/CRM'
 import Emails from '@/pages/Emails'
+import Upgrade from '@/pages/Upgrade'
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -38,6 +39,33 @@ function RequirePermission({ perm, children }) {
   const role = user?.role || 'despachador'
   const allowed = ROLES[role]?.permissions[perm] ?? false
   return allowed ? children : <Navigate to="/" replace />
+}
+
+function RequireFeature({ feature, children }) {
+  const user = useAuthStore((s) => s.user)
+  if (!user) return <Navigate to="/auth" replace />
+
+  // Master role/plan has all features
+  if (user.role === 'master' || user.plan === 'empresarial' || user.plan === 'enterprise' || user.id === 'mock-admin-id') {
+    return children
+  }
+
+  // Check purchased features
+  const purchasedFeatures = user.settings?.purchased_features || []
+  const hasPurchased = Array.isArray(purchasedFeatures) 
+    ? purchasedFeatures.includes(feature)
+    : !!purchasedFeatures[feature]
+
+  if (hasPurchased) {
+    return children
+  }
+
+  // Specific plan defaults
+  if (feature === 'employees' && user.plan === 'pro') {
+    return children
+  }
+
+  return <Navigate to="/upgrade" replace />
 }
 
 export default function App() {
@@ -261,17 +289,18 @@ export default function App() {
         >
           <Route path="/menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
           <Route path="/products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
-          <Route path="/employees" element={<RequirePermission perm="employees"><Employees /></RequirePermission>} />
+          <Route path="/employees" element={<RequirePermission perm="employees"><RequireFeature feature="employees"><Employees /></RequireFeature></RequirePermission>} />
           <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
           <Route path="/account" element={<Account />} />
-          <Route path="/pockets" element={<RequirePermission perm="dashboard"><Pockets /></RequirePermission>} />
-          <Route path="/personal-finance" element={<PersonalFinance />} />
+          <Route path="/upgrade" element={<Upgrade />} />
+          <Route path="/pockets" element={<RequirePermission perm="dashboard"><RequireFeature feature="pockets"><Pockets /></RequireFeature></RequirePermission>} />
+          <Route path="/personal-finance" element={<RequireFeature feature="personal-finance"><PersonalFinance /></RequireFeature>} />
           <Route path="/notifications" element={<Notifications />} />
-          <Route path="/facturero" element={<RequirePermission perm="dashboard"><Facturero /></RequirePermission>} />
-          <Route path="/dian" element={<RequirePermission perm="dashboard"><DianAssistant /></RequirePermission>} />
-          <Route path="/seguridad" element={<RequirePermission perm="dashboard"><GestiToken /></RequirePermission>} />
-          <Route path="/crm" element={<RequirePermission perm="dashboard"><CRM /></RequirePermission>} />
-          <Route path="/emails" element={<RequirePermission perm="dashboard"><Emails /></RequirePermission>} />
+          <Route path="/facturero" element={<RequirePermission perm="dashboard"><RequireFeature feature="facturero"><Facturero /></RequireFeature></RequirePermission>} />
+          <Route path="/dian" element={<RequirePermission perm="dashboard"><RequireFeature feature="dian"><DianAssistant /></RequireFeature></RequirePermission>} />
+          <Route path="/seguridad" element={<RequirePermission perm="dashboard"><RequireFeature feature="seguridad"><GestiToken /></RequireFeature></RequirePermission>} />
+          <Route path="/crm" element={<RequirePermission perm="dashboard"><RequireFeature feature="crm"><CRM /></RequireFeature></RequirePermission>} />
+          <Route path="/emails" element={<RequirePermission perm="dashboard"><RequireFeature feature="emails"><Emails /></RequireFeature></RequirePermission>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

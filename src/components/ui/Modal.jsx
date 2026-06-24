@@ -21,7 +21,7 @@ const mobileVariants = {
   exit:    { opacity: 1, y: '100%', transition: { duration: 0.2 } },
 }
 
-export default function Modal({ open, onClose, title, children, size = 'md', hideClose = false }) {
+export default function Modal({ open, onClose, title, children, size = 'md', hideClose = false, customLayout = false }) {
   const widths = {
     sm: 'max-w-md',
     md: 'max-w-lg',
@@ -76,7 +76,11 @@ export default function Modal({ open, onClose, title, children, size = 'md', hid
               </div>
             )}
             {/* Body */}
-            <div className="p-5 sm:p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+            {customLayout ? (
+              children
+            ) : (
+              <div className="p-5 sm:p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+            )}
           </motion.div>
         </motion.div>
       )}
