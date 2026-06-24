@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers } from 'lucide-react'
 import Button from '@/components/ui/Button'
@@ -279,6 +279,12 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
 
 
 export default function Products() {
+  const fetchProducts = useProductStore((s) => s.fetchProducts)
+  
+  useEffect(() => {
+    fetchProducts(true)
+  }, [])
+
   const [search, setSearch]       = useState('')
   const [activeCat, setActiveCat] = useState(null)
   const [freePrice, setFreePrice] = useState('')
