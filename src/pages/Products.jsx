@@ -95,12 +95,11 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ y: -4 }}
       className={clsx(
-        'relative flex flex-col rounded-2xl border overflow-hidden transition-all duration-300 group bg-white dark:bg-surface-800 shadow-sm',
+        'relative flex flex-col rounded-2xl border-2 overflow-hidden transition-all duration-200 group bg-white dark:bg-surface-800',
         isOutOfStock
           ? 'border-danger-500/20 opacity-75'
-          : 'border-neutral-200 dark:border-surface-700 hover:border-brand-500/40'
+          : 'border-neutral-200 dark:border-surface-700 hover:border-brand-500'
       )}
     >
       {/* ── Zone 0: Image Cover ── */}
