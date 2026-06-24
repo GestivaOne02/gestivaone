@@ -438,7 +438,7 @@ export default function InvoicePanel({ isMobile }) {
                   {selectedClient ? (
                     <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
                       <div className="w-7 h-7 rounded-full bg-brand-600/30 flex items-center justify-center shrink-0">
-                        <User size={12} className="text-brand-300" />
+                        <User size={12} className="text-brand-700 dark:text-brand-300 font-bold" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
@@ -584,7 +584,7 @@ export default function InvoicePanel({ isMobile }) {
             {selectedClient ? (
               <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
                 <div className="w-7 h-7 rounded-full bg-brand-600/30 flex items-center justify-center shrink-0">
-                  <User size={12} className="text-brand-300" />
+                  <User size={12} className="text-brand-700 dark:text-brand-300 font-bold" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
