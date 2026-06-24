@@ -118,7 +118,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
         {/* Pending (conditional) */}
         {pendingAmount > 0 && (
           <div className="col-span-2">
-            <span className="text-[11px] font-extrabold text-danger-600 dark:text-danger-400">{format$(pendingAmount)} pendiente</span>
+            <span className="text-[11px] font-extrabold text-red-600 dark:text-red-400">{format$(pendingAmount)} pendiente</span>
           </div>
         )}
 
