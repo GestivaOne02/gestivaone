@@ -437,7 +437,7 @@ export default function InvoicePanel({ isMobile }) {
                 <div className="px-5 py-3 border-b border-subtle shrink-0">
                   {selectedClient ? (
                     <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
-                      <div className="w-7 h-7 rounded-full bg-brand-600/30 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
                         <User size={12} className="text-brand-700 dark:text-brand-300 font-bold" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -583,7 +583,7 @@ export default function InvoicePanel({ isMobile }) {
           <div className="px-4 py-3 border-b border-subtle shrink-0">
             {selectedClient ? (
               <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
-                <div className="w-7 h-7 rounded-full bg-brand-600/30 flex items-center justify-center shrink-0">
+                <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
                   <User size={12} className="text-brand-700 dark:text-brand-300 font-bold" />
                 </div>
                 <div className="flex-1 min-w-0">
