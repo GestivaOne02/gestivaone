@@ -136,33 +136,27 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
       {/* Bottom Section: Action Buttons */}
       <div className="flex items-center justify-between px-4 py-2.5 border-t border-neutral-100 dark:border-surface-700/60 bg-transparent">
         <div className="flex items-center gap-1.5">
-          <motion.button
+          <button
             onClick={(e) => { e.stopPropagation(); onOpenHistory() }}
             className="h-8 w-8 rounded-lg flex items-center justify-center bg-brand-600/15 hover:bg-brand-600 text-brand-400 hover:text-white transition-all duration-200 cursor-pointer"
             title="Ver Historial"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
           >
             <History size={13} />
-          </motion.button>
-          <motion.button
+          </button>
+          <button
             onClick={(e) => { e.stopPropagation(); onEdit() }}
             className="h-8 w-8 rounded-lg flex items-center justify-center bg-surface-700/60 hover:bg-surface-600 text-muted-400 hover:text-foreground transition-all duration-200 cursor-pointer"
             title="Editar cliente"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
           >
             <Edit2 size={13} />
-          </motion.button>
-          <motion.button
+          </button>
+          <button
             onClick={(e) => { e.stopPropagation(); onDelete() }}
             className="h-8 w-8 rounded-lg flex items-center justify-center bg-transparent text-muted-400 hover:bg-red-100 hover:text-red-800 dark:hover:bg-red-950/50 dark:hover:text-red-400 transition-all duration-200 cursor-pointer"
             title="Eliminar cliente"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
           >
             <Trash2 size={13} />
-          </motion.button>
+          </button>
         </div>
 
         {/* Quick select hint */}
