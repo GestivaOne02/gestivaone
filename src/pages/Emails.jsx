@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Mail, Send, AlertCircle, CheckCircle2, User, Sparkles,
-  MessageSquare, Info, Star, Percent, ShoppingBag, Search,
+  MessageSquare, Info, Star, Percent, ShoppingBag, Search, ShoppingCart,
   Eye, Check, Copy, RefreshCw, Layers, Plus, Trash2,
   ArrowUp, ArrowDown, Type, AlignLeft, AlignCenter, AlignRight,
   FileText, Link2, Image as ImageIcon
