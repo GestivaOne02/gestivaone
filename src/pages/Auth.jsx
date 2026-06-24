@@ -1251,7 +1251,7 @@ export default function Auth() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               onClick={() => window.location.href = '/'}
-              className="absolute -top-4 -left-4 w-10 h-10 bg-surface-800 border border-subtle rounded-full flex items-center justify-center hover:bg-surface-700 hover:text-white transition-colors group z-20 text-muted-400 shadow-sm"
+              className="absolute -top-4 -left-4 w-10 h-10 bg-surface-800 border border-subtle rounded-full flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-surface-700 hover:text-black dark:hover:text-white transition-colors group z-20 text-muted-400 shadow-sm"
               title="Volver al inicio"
             >
               <Home size={18} className="transition-colors" />
