@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { UserPlus, Users, Edit2, Trash2, Check, ShoppingBag, History, CalendarDays, MousePointerClick } from 'lucide-react'
+import { UserPlus, Users, Edit2, Trash2, Check, ShoppingBag, History, CalendarDays, MousePointerClick, User, Building2, Globe, Plane } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import ScrollIndicator from '@/components/ui/ScrollIndicator'
 import Badge from '@/components/ui/Badge'
@@ -37,6 +37,15 @@ const itemVariants = {
 const smoothTransition = { type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }
 
 
+const getClientIcon = (docType) => {
+  const code = String(docType)
+  if (code === '13') return <User size={18} className="stroke-[2.5]" />
+  if (code === '31') return <Building2 size={18} className="stroke-[2.5]" />
+  if (code === '22') return <Globe size={18} className="stroke-[2.5]" />
+  if (code === '41') return <Plane size={18} className="stroke-[2.5]" />
+  return <User size={18} className="stroke-[2.5]" />
+}
+
 function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, totalBilled, status }) {
   const { baseCurrency, rates } = useCurrencyStore()
   
@@ -44,7 +53,6 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
   const showCurrencyRate = clientCurrency && clientCurrency !== baseCurrency && rates[clientCurrency]
   const rateValue = showCurrencyRate ? (rates[baseCurrency] / rates[clientCurrency]).toFixed(2) : null
 
-  const initial = (client.name || '?')[0].toUpperCase()
   const docLabel = client.document_type
     ? `${getDocTypeStr(client.document_type)}${client.document_id ? ` ${client.document_id}` : ''}`
     : null
@@ -71,12 +79,12 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
       )}>
         {/* Avatar with gradient ring */}
         <div className={clsx(
-          'relative w-11 h-11 rounded-xl flex items-center justify-center text-base font-extrabold shrink-0 transition-all duration-300 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-surface-800',
+          'relative w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-surface-800',
           selected
             ? 'bg-gradient-to-br from-brand-500 to-brand-700 text-white ring-brand-500/50'
             : 'bg-neutral-100 dark:bg-surface-600 text-neutral-600 dark:text-foreground ring-transparent group-hover:ring-brand-500/30 group-hover:bg-brand-600/20 group-hover:text-brand-300'
         )}>
-          {initial}
+          {getClientIcon(client.document_type)}
           {selected && (
             <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-brand-500 border-2 border-surface-800 dark:border-surface-700 flex items-center justify-center">
               <Check size={8} className="text-white stroke-[3]" />
