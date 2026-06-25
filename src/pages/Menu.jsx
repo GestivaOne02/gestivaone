@@ -37,12 +37,33 @@ const itemVariants = {
 const smoothTransition = { type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }
 
 
+const PassportIcon = ({ size = 18, className = "" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <rect x="5" y="3" width="14" height="18" rx="2" />
+    <path d="M8 3v18" />
+    <circle cx="13.5" cy="11.5" r="2.5" />
+    <path d="M12 9a4 4 0 0 1 3 0" />
+    <path d="M11 17h5" />
+  </svg>
+)
+
 const getClientIcon = (docType) => {
   const code = String(docType)
   if (code === '13') return <User size={18} className="stroke-[2.5]" />
   if (code === '31') return <Building2 size={18} className="stroke-[2.5]" />
   if (code === '22') return <Globe size={18} className="stroke-[2.5]" />
-  if (code === '41') return <Plane size={18} className="stroke-[2.5]" />
+  if (code === '41') return <PassportIcon size={18} />
   return <User size={18} className="stroke-[2.5]" />
 }
 

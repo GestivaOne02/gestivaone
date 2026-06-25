@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -21,6 +21,37 @@ const TAX_RATES = {
   DOP: 0.18,
 }
 import clsx from 'clsx'
+
+const PassportIcon = ({ size = 12, className = "" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <rect x="5" y="3" width="14" height="18" rx="2" />
+    <path d="M8 3v18" />
+    <circle cx="13.5" cy="11.5" r="2.5" />
+    <path d="M12 9a4 4 0 0 1 3 0" />
+    <path d="M11 17h5" />
+  </svg>
+)
+
+const getClientIcon = (docType) => {
+  const code = String(docType)
+  const cls = "text-brand-700 dark:text-brand-300 font-bold"
+  if (code === '13') return <User size={12} className={cls} />
+  if (code === '31') return <Building2 size={12} className={cls} />
+  if (code === '22') return <Globe size={12} className={cls} />
+  if (code === '41') return <PassportIcon size={12} className={cls} />
+  return <User size={12} className={cls} />
+}
 
 export default function InvoicePanel({ isMobile }) {
   const items = useCartStore((s) => s.items)
@@ -438,7 +469,7 @@ export default function InvoicePanel({ isMobile }) {
                   {selectedClient ? (
                     <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
                       <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
-                        <User size={12} className="text-brand-700 dark:text-brand-300 font-bold" />
+                        {getClientIcon(selectedClient.document_type)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
@@ -584,7 +615,7 @@ export default function InvoicePanel({ isMobile }) {
             {selectedClient ? (
               <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
                 <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
-                  <User size={12} className="text-brand-700 dark:text-brand-300 font-bold" />
+                  {getClientIcon(selectedClient.document_type)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>

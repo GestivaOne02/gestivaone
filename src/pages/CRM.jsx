@@ -4,13 +4,46 @@ import {
   Users, Search, ChevronRight, Phone, Mail, MapPin, TrendingUp,
   ShoppingCart, Calendar, Star, ArrowLeft, Clock, DollarSign,
   Activity, Tag, Filter, UserPlus, FileText, BarChart3, Eye,
-  X, Sparkles, Crown, ThermometerSun, Snowflake, UserCheck
+  X, Sparkles, Crown, ThermometerSun, Snowflake, UserCheck,
+  User, Building2, Globe
 } from 'lucide-react'
 import { useClientStore } from '@/store/useClientStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCRMStore } from '@/store/useCRMStore'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+
+// ── Passport & Type Icons ──────────────────────────────────
+const PassportIcon = ({ size = 14, className = "" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <rect x="5" y="3" width="14" height="18" rx="2" />
+    <path d="M8 3v18" />
+    <circle cx="13.5" cy="11.5" r="2.5" />
+    <path d="M12 9a4 4 0 0 1 3 0" />
+    <path d="M11 17h5" />
+  </svg>
+)
+
+const getClientIcon = (docType) => {
+  const code = String(docType)
+  const cls = "text-brand-700 dark:text-brand-300 font-bold"
+  if (code === '13') return <User size={14} className={cls} />
+  if (code === '31') return <Building2 size={14} className={cls} />
+  if (code === '22') return <Globe size={14} className={cls} />
+  if (code === '41') return <PassportIcon size={14} className={cls} />
+  return <User size={14} className={cls} />
+}
 
 // ── Formatters ────────────────────────────────────────────
 const fmtCOP = (v) =>
@@ -399,8 +432,8 @@ export default function CRM() {
                   >
                     {/* Name + contact */}
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/30 to-brand-700/30 border border-brand-500/20 flex items-center justify-center shrink-0 text-xs font-bold text-brand-300">
-                        {client.name?.charAt(0).toUpperCase() || '?'}
+                      <div className="w-9 h-9 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
+                        {getClientIcon(client.document_type)}
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs font-bold text-foreground truncate">{client.name}</p>
