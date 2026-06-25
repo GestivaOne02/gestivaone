@@ -410,16 +410,11 @@ export default function Products() {
               )}
             </div>
             {selectedClient && (
-              <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 px-3 py-1 rounded-full text-xs text-brand-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" />
+              <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 px-3 py-1 rounded-full text-xs text-brand-700 dark:text-brand-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400 animate-pulse" />
                 <span className="font-medium text-[11px] md:text-xs">
                   Cliente: <strong className="text-foreground dark:text-white">{selectedClient.name}</strong>
                 </span>
-                {selectedClient.type === 'express' ? (
-                  <span className="text-[9px] px-1.5 py-0.5 bg-brand-500/20 border border-brand-500/30 rounded font-bold uppercase tracking-wider text-brand-400">Express</span>
-                ) : (
-                  <span className="text-[9px] px-1.5 py-0.5 bg-success-500/15 border border-success-500/30 rounded font-bold uppercase tracking-wider text-success-400">Frecuente</span>
-                )}
               </div>
             )}
           </div>
