@@ -14,6 +14,7 @@ import { useProductStore } from '@/store/useProductStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { usePocketStore } from '@/store/usePocketStore'
+import { useRealtimeSync } from '@/hooks/useRealtimeSync'
 
 export default function AppLayout() {
   console.log('🏗️ AppLayout Rendering...')
@@ -28,6 +29,9 @@ export default function AppLayout() {
 
   const mobileSidebarOpen = useUIStore((s) => s.mobileSidebarOpen)
   const invoicePanelOpen  = useUIStore((s) => s.invoicePanelOpen)
+
+  // Initialize Real-time synchronization
+  useRealtimeSync()
 
   // Track if viewport is mobile (< lg breakpoint = 1024px)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1024)

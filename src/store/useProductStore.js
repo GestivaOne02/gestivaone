@@ -134,6 +134,23 @@ export const useProductStore = create(
     }
   },
 
+  applyRealtimeUpdate: (payload) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+    set((s) => {
+      let updatedProducts = [...s.products]
+      if (eventType === 'INSERT') {
+        if (!updatedProducts.some(p => p.id === newRecord.id)) {
+          updatedProducts.push(newRecord)
+        }
+      } else if (eventType === 'UPDATE') {
+        updatedProducts = updatedProducts.map(p => p.id === newRecord.id ? { ...p, ...newRecord } : p)
+      } else if (eventType === 'DELETE') {
+        updatedProducts = updatedProducts.filter(p => p.id !== oldRecord.id)
+      }
+      return { products: updatedProducts }
+    })
+  },
+
   getByCategory: (cat) =>
     cat ? get().products.filter((p) => p.category === cat) : get().products,
     }),

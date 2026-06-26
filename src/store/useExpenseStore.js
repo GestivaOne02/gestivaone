@@ -36,6 +36,23 @@ export const useExpenseStore = create(
     set({ loading: false })
   },
 
+  applyRealtimeUpdate: (payload) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+    set((s) => {
+      let updatedExpenses = [...s.expenses]
+      if (eventType === 'INSERT') {
+        if (!updatedExpenses.some(e => e.id === newRecord.id)) {
+          updatedExpenses = [newRecord, ...updatedExpenses]
+        }
+      } else if (eventType === 'UPDATE') {
+        updatedExpenses = updatedExpenses.map(e => e.id === newRecord.id ? { ...e, ...newRecord } : e)
+      } else if (eventType === 'DELETE') {
+        updatedExpenses = updatedExpenses.filter(e => e.id !== oldRecord.id)
+      }
+      return { expenses: updatedExpenses }
+    })
+  },
+
   addExpense: async (expense) => {
     const { user } = useAuthStore.getState()
     if (!user) return { success: false, error: 'No user authenticated' }

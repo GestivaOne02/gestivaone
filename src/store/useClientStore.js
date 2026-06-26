@@ -104,6 +104,26 @@ export const useClientStore = create(
     }
   },
 
+  applyRealtimeUpdate: (payload) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+    set((s) => {
+      let updatedClients = [...s.clients]
+      if (eventType === 'INSERT') {
+        if (!updatedClients.some(c => c.id === newRecord.id)) {
+          updatedClients = [newRecord, ...updatedClients]
+        }
+      } else if (eventType === 'UPDATE') {
+        updatedClients = updatedClients.map(c => c.id === newRecord.id ? { ...c, ...newRecord } : c)
+      } else if (eventType === 'DELETE') {
+        updatedClients = updatedClients.filter(c => c.id !== oldRecord.id)
+      }
+      return { 
+        clients: updatedClients,
+        selectedClientId: eventType === 'DELETE' && s.selectedClientId === oldRecord.id ? null : s.selectedClientId
+      }
+    })
+  },
+
   selectClient: (id) => set({ selectedClientId: id }),
   clearSelection: () => set({ selectedClientId: null }),
 

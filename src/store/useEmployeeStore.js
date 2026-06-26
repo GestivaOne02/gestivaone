@@ -32,6 +32,23 @@ export const useEmployeeStore = create(
     set({ loading: false })
   },
 
+  applyRealtimeUpdate: (payload) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+    set((s) => {
+      let updatedEmployees = [...s.employees]
+      if (eventType === 'INSERT') {
+        if (!updatedEmployees.some(e => e.id === newRecord.id)) {
+          updatedEmployees = [...updatedEmployees, newRecord]
+        }
+      } else if (eventType === 'UPDATE') {
+        updatedEmployees = updatedEmployees.map(e => e.id === newRecord.id ? { ...e, ...newRecord } : e)
+      } else if (eventType === 'DELETE') {
+        updatedEmployees = updatedEmployees.filter(e => e.id !== oldRecord.id)
+      }
+      return { employees: updatedEmployees }
+    })
+  },
+
   addEmployee: async (data) => {
     const { user, PLANS } = useAuthStore.getState()
     if (!user) return

@@ -74,6 +74,36 @@ export const useInvoiceStore = create(
     set({ loading: false })
   },
 
+  applyRealtimeUpdate: (payload) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+    set((s) => {
+      let updatedInvoices = [...s.invoices]
+      
+      if (eventType === 'INSERT') {
+        if (!updatedInvoices.some(i => i.id === newRecord.id)) {
+          // Normalize legacy structure if needed
+          let parsedNote = newRecord.note || ''
+          if (parsedNote.trim().startsWith('{') && parsedNote.trim().endsWith('}')) {
+             // Already parsed in DB? No, usually JSON string. We just ensure it's kept as is.
+          } else {
+             parsedNote = JSON.stringify({
+               notes: parsedNote,
+               payments: [],
+               custom_charges: [],
+               pocket_id: 'general'
+             })
+          }
+          updatedInvoices = [{ ...newRecord, note: parsedNote }, ...updatedInvoices]
+        }
+      } else if (eventType === 'UPDATE') {
+        updatedInvoices = updatedInvoices.map(i => i.id === newRecord.id ? { ...i, ...newRecord } : i)
+      } else if (eventType === 'DELETE') {
+        updatedInvoices = updatedInvoices.filter(i => i.id !== oldRecord.id)
+      }
+      return { invoices: updatedInvoices }
+    })
+  },
+
   createInvoice: async ({ client, items, subtotal, total, paymentType, scheduledDate, note, pocketId }) => {
     const { user } = useAuthStore.getState()
     if (!user) return null
