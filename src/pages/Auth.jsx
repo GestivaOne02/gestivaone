@@ -137,6 +137,12 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
     e.preventDefault()
     setLoading(true)
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\+\-\=\[\]\{\};':"\\|,.<>\/?~]).+$/;
+    if (!passwordRegex.test(pass)) {
+      setLoading(false)
+      return toast.error("La contraseña debe incluir al menos una mayúscula, una minúscula, un número y un carácter especial.")
+    }
+
     const finalAvatar = fileAvatar || ('color:' + colorAvatar)
 
     const res = await linkWorkerAndRegister({

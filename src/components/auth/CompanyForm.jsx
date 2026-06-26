@@ -11,7 +11,7 @@ const schema = z.object({
   name:        z.string().min(2, 'Mínimo 2 caracteres'),
   email:       z.string().email('Correo inválido'),
   phone:       z.string().min(7, 'Teléfono inválido'),
-  password:    z.string().min(6, 'Mínimo 6 caracteres'),
+  password:    z.string().min(6, 'Mínimo 6 caracteres').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\+\-\=\[\]\{\};':"\\|,.<>\/?~]).+$/, 'Debe contener mayúscula, minúscula, número y carácter especial'),
   repeatPassword: z.string(),
   terms:       z.literal(true, { errorMap: () => ({ message: 'Debes aceptar los términos' }) }),
 }).refine((data) => data.password === data.repeatPassword, {
