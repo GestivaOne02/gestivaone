@@ -137,6 +137,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
           icon={<User size={14} />} 
           placeholder="Establecer contraseña"
           error={errors.password?.message} 
+          hint="Requiere mayúscula, minúscula, número y un carácter especial"
           {...register('password')} 
           iconRight={
             <button 
