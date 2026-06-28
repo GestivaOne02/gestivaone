@@ -798,7 +798,7 @@ export default function Emails() {
             </div>
 
             {/* COLUMN 2: Live Preview (Right, span 7) - GMAIL STYLE */}
-            <div className="space-y-4 lg:col-span-7 flex flex-col h-[calc(100vh-160px)]">
+            <div className="space-y-4 lg:col-span-7 flex flex-col h-[calc(100vh-160px)] lg:sticky lg:top-6">
               <div className="bg-[#f2f6fc] dark:bg-surface-900 rounded-t-xl rounded-b-none lg:rounded-b-xl shadow-xl shadow-brand-900/10 flex-1 flex flex-col overflow-hidden border border-subtle/40 mx-[-16px] lg:mx-0">
                 
                 {/* Gmail Header */}

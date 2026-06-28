@@ -108,7 +108,7 @@ export default function Facturero() {
   const [showTax, setShowTax] = useState(printer.showTax === true)
   const [footerText, setFooterText] = useState(printer.footerText || '¡Gracias por su compra!')
   const [bannerUrl, setBannerUrl] = useState(printer.bannerUrl || '')
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+
 
   // Metadata for the company
   const [companyName, setCompanyName] = useState(user?.companyName || 'GestivaOne')
@@ -746,58 +746,44 @@ export default function Facturero() {
   ])
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container flex flex-col gap-6 h-full lg:h-full lg:overflow-hidden pb-12 lg:pb-0">
-      {/* Sticky Header & Control Panel */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
-        <div className="flex flex-wrap items-center gap-3">
-          <div>
-            <Section title="Facturero" />
-            <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">
-              Diseña, personaliza y prueba tus plantillas de facturación PDF y recibos térmicos.
-            </p>
-          </div>
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container flex flex-col gap-5 h-full">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
+        <div>
+          <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <FileCheck size={20} className="text-brand-400" />
+            Facturero
+          </h1>
+          <p className="text-xs text-muted-400 mt-0.5">
+            Diseña, personaliza y prueba tus plantillas de facturación PDF y recibos térmicos.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-center">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-1.5 font-bold shadow-glow"
-            title="Guardar todos los cambios realizados en la configuración de la empresa y plantillas"
-          >
-            {saving ? (
-              <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-            ) : (
-              <Save size={15} />
-            )}
-            <span>Guardar Configuración</span>
-          </Button>
-        </div>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-1.5 font-bold shadow-glow self-end sm:self-center"
+          title="Guardar todos los cambios"
+        >
+          {saving ? (
+            <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+          ) : (
+            <Save size={15} />
+          )}
+          <span>Guardar Configuración</span>
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch lg:h-[calc(100vh-160px)] flex-1 min-h-0 relative">
-        {/* Toggle Collapse Button for Sidebar */}
-        <button
-          type="button"
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="absolute left-2 top-2 z-30 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground rounded-lg p-1.5 hidden lg:flex items-center justify-center transition-all shadow-md"
-          title={sidebarCollapsed ? "Expandir configuración" : "Colapsar configuración"}
-        >
-          <Settings size={14} className={clsx('transition-transform duration-300', !sidebarCollapsed && 'rotate-45')} />
-        </button>
-
-        {/* Left config form panel (6 cols on lg) */}
-        <div className={clsx(
-          'space-y-6 lg:h-full lg:overflow-y-auto no-scrollbar lg:pr-2 pb-6 transition-all duration-300',
-          sidebarCollapsed ? 'lg:col-span-1 lg:opacity-0 lg:pointer-events-none lg:w-0 lg:overflow-hidden lg:m-0 lg:p-0' : 'lg:col-span-6'
-        )}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 min-h-0 items-start">
+        {/* Config Panel */}
+        <div className="lg:col-span-5 space-y-4 lg:h-[calc(100vh-160px)] lg:overflow-y-auto no-scrollbar lg:pr-1 pb-6">
           {/* Template Choices Card */}
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Sparkles size={18} className="text-brand-400" />
-              <Section title="1. Selección de Plantillas" />
+              <Section title="Plantillas de Facturación" />
             </div>
 
             {/* PDF Templates choice */}
@@ -819,9 +805,8 @@ export default function Facturero() {
                     <Building2 size={16} />
                   </div>
                   <div>
-                      <Section title="One Corporate (Clásica)">
-                        <p className="text-xs text-muted-300 mt-0.5">Encabezado formal con color corporativo, doble bloque estructurado y diseño robusto.</p>
-                      </Section>
+                      <h4 className="text-xs font-bold text-foreground">Corporativo</h4>
+                        <p className="text-[10px] text-muted-400 mt-0.5">Encabezado formal y robusto</p>
                   </div>
                 </button>
 
@@ -840,9 +825,8 @@ export default function Facturero() {
                     <FileText size={16} />
                   </div>
                   <div>
-                      <Section title="One Minimalist (Moderna)">
-                        <p className="text-xs text-muted-300 mt-0.5">Diseño minimalista con alto espacio en blanco, líneas limpias y diseño contemporáneo.</p>
-                      </Section>
+                      <h4 className="text-xs font-bold text-foreground">Minimalista</h4>
+                        <p className="text-[10px] text-muted-400 mt-0.5">Limpio y contemporáneo</p>
                   </div>
                 </button>
               </div>
@@ -894,10 +878,10 @@ export default function Facturero() {
               </div>
             </div>
           </div>
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Settings size={18} className="text-brand-400" />
-              <Section title="2. Configuración Visual e Impresión" />
+              <Section title="Configuración Visual" />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -907,8 +891,8 @@ export default function Facturero() {
                   className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
                 >
                   <div className="space-y-0.5">
-                    <span className="text-base font-bold text-foreground block">Impresión Automática</span>
-                    <span className="text-sm text-muted-300 block">Lanza el ticket automáticamente al realizar pedido</span>
+                    <span className="text-xs font-bold text-foreground block">Impresión Automática</span>
+                    <span className="text-[10px] text-muted-400 block">Lanza el ticket automáticamente al realizar pedido</span>
                   </div>
                   <input
                     type="checkbox"
@@ -939,8 +923,8 @@ export default function Facturero() {
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-base font-bold text-foreground block">Mostrar Logo Comercial</span>
-                  <span className="text-sm text-muted-300 block">Dibuja tu logotipo cargado en los documentos</span>
+                  <span className="text-xs font-bold text-foreground block">Mostrar Logo Comercial</span>
+                  <span className="text-[10px] text-muted-400 block">Dibuja tu logotipo cargado en los documentos</span>
                 </div>
                 <input
                   type="checkbox"
@@ -955,8 +939,8 @@ export default function Facturero() {
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-base font-bold text-foreground block">Nombre de Empresa</span>
-                  <span className="text-sm text-muted-300 block">Muestra tu nombre comercial como encabezado</span>
+                  <span className="text-xs font-bold text-foreground block">Nombre de Empresa</span>
+                  <span className="text-[10px] text-muted-400 block">Muestra tu nombre comercial como encabezado</span>
                 </div>
                 <input
                   type="checkbox"
@@ -971,8 +955,8 @@ export default function Facturero() {
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-base font-bold text-foreground block">Desglose de Productos</span>
-                  <span className="text-sm text-muted-300 block">Lista los artículos vendidos y sus totales</span>
+                  <span className="text-xs font-bold text-foreground block">Desglose de Productos</span>
+                  <span className="text-[10px] text-muted-400 block">Lista los artículos vendidos y sus totales</span>
                 </div>
                 <input
                   type="checkbox"
@@ -987,8 +971,8 @@ export default function Facturero() {
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-base font-bold text-foreground block">Contacto del Cliente</span>
-                  <span className="text-sm text-muted-300 block">Muestra nombre y celular del cliente</span>
+                  <span className="text-xs font-bold text-foreground block">Contacto del Cliente</span>
+                  <span className="text-[10px] text-muted-400 block">Muestra nombre y celular del cliente</span>
                 </div>
                 <input
                   type="checkbox"
@@ -1003,8 +987,8 @@ export default function Facturero() {
                 className="flex items-center justify-between p-3 rounded-xl bg-surface-750 border border-subtle cursor-pointer hover:border-surface-600 transition-colors"
               >
                 <div className="space-y-0.5">
-                  <span className="text-base font-bold text-foreground block">Aplicar Impuestos (IVA 19%)</span>
-                  <span className="text-sm text-muted-300 block">Añade desglose de IVA a los subtotales</span>
+                  <span className="text-xs font-bold text-foreground block">Aplicar Impuestos (IVA 19%)</span>
+                  <span className="text-[10px] text-muted-400 block">Añade desglose de IVA a los subtotales</span>
                 </div>
                 <input
                   type="checkbox"
@@ -1016,10 +1000,10 @@ export default function Facturero() {
             </div>
           </div>
 
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
+          <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Building2 size={18} className="text-brand-400" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">3. Datos de la Empresa y Logotipo</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">Datos de Empresa</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1119,11 +1103,11 @@ export default function Facturero() {
             </div>
           </div>
 
-          {/* 4. Color Theme Selector */}
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 sm:p-6 space-y-4">
+          {/* Color Theme Selector */}
+          <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
               <Palette size={18} className="text-brand-400" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">4. Paleta de Color y Tema</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">Paleta de Color</h2>
             </div>
 
             <div className="space-y-2">
@@ -1171,46 +1155,38 @@ export default function Facturero() {
           </div>
         </div>
 
-        {/* Right side live preview pane (6 cols on lg) */}
-        <div className={clsx(
-          'lg:h-full lg:flex lg:flex-col lg:overflow-hidden transition-all duration-300',
-          sidebarCollapsed ? 'lg:col-span-11 lg:pl-6' : 'lg:col-span-6'
-        )}>
-          <div className="bg-surface-800 border border-subtle rounded-2xl p-5 space-y-4 lg:h-full lg:flex lg:flex-col lg:overflow-hidden relative">
-            {sidebarCollapsed && (
-              <button
-                type="button"
-                onClick={() => setSidebarCollapsed(false)}
-                className="absolute left-3 top-3 z-30 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground rounded-lg p-1 hidden lg:flex items-center justify-center transition-all shadow"
-                title="Expandir panel de configuración"
-              >
-                <Settings size={14} />
-              </button>
-            )}
-            <div className={clsx(
-              "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-subtle shrink-0",
-              sidebarCollapsed && "lg:pl-8"
-            )}>
+        {/* Preview Panel */}
+        <div className="lg:col-span-7 lg:sticky lg:top-6 lg:h-[calc(100vh-160px)] flex flex-col">
+          <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 flex-1 flex flex-col overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-subtle shrink-0">
               <span className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
                 <FileCheck size={16} className="text-brand-400" />
                 Vista Previa Interactiva
               </span>
 
               {/* Preview Mode Selector */}
-              <select
-                value={previewType}
-                onChange={(e) => setPreviewType(e.target.value)}
-                className="bg-surface-700 border border-subtle rounded-lg px-2 py-1 text-xs text-foreground focus:ring-brand-500/20 focus:border-brand-500"
-              >
-                <option value="pdf-corporate">Factura PDF (Corporativo)</option>
-                <option value="pdf-minimalist">Factura PDF (Minimalista)</option>
-                <option value="ticket-classic">Ticket Térmico (Clásico)</option>
-                <option value="ticket-modern">Ticket Térmico (Moderno)</option>
-              </select>
+              <div className="flex gap-0.5 bg-surface-900 p-0.5 rounded-xl border border-subtle">
+                {[
+                  { key: 'pdf-corporate', label: 'Corp.', Icon: Building2 },
+                  { key: 'pdf-minimalist', label: 'Mini.', Icon: FileText },
+                  { key: 'ticket-classic', label: 'Clásico', Icon: Printer },
+                  { key: 'ticket-modern', label: 'Modern', Icon: Sparkles },
+                ].map(({ key, label, Icon }) => (
+                  <button key={key} type="button" onClick={() => setPreviewType(key)}
+                    className={clsx(
+                      'flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all',
+                      previewType === key ? 'bg-brand-500/20 text-brand-300 shadow-sm' : 'text-muted-500 hover:text-foreground'
+                    )}
+                  >
+                    <Icon size={11} />
+                    <span className="hidden sm:inline">{label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Simulated Sheet Canvas */}
-            <div className="p-3 bg-surface-900 border border-subtle rounded-xl flex-1 overflow-y-auto no-scrollbar min-h-[300px]">
+            <div className="p-3 rounded-xl flex-1 overflow-y-auto no-scrollbar min-h-[300px]" style={{ background: 'var(--color-surface-900, #0c0e14)', backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
               {livePreview}
             </div>
 
@@ -1252,10 +1228,10 @@ export default function Facturero() {
               )}
             </div>
 
-            <div className="p-3 rounded-xl bg-surface-750 border border-subtle flex items-start gap-2.5 shrink-0">
-              <AlertCircle size={16} className="text-brand-400 shrink-0 mt-0.5" />
-              <p className="text-xs text-muted-300 leading-normal">
-                Esta es una simulación visual en tiempo real. Los cambios en el logotipo, datos de la empresa e IVA se reflejarán inmediatamente en las facturas y tickets reales al presionar el botón <strong>Guardar Configuración</strong>.
+            <div className="p-2.5 rounded-xl bg-surface-900/50 border border-subtle flex items-start gap-2 shrink-0">
+              <AlertCircle size={14} className="text-brand-400 shrink-0 mt-0.5" />
+              <p className="text-[10px] text-muted-400 leading-normal">
+                Simulación visual en tiempo real. Presiona <strong className="text-foreground">Guardar Configuración</strong> para aplicar los cambios.
               </p>
             </div>
           </div>
