@@ -25,7 +25,11 @@
         // Self-healing mechanism for bundle hash changes, chunk load failures, or ReferenceErrors
         window.addEventListener('error', function(e) {
           var msg = e.message || '';
+          var isScriptError = e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK');
+          var isMimeError = msg.indexOf('Failed to load module script') > -1 || msg.indexOf('MIME type') > -1;
           if (
+            isScriptError ||
+            isMimeError ||
             msg.indexOf('Zap is not defined') > -1 || 
             msg.indexOf('ReferenceError') > -1 ||
             msg.indexOf('loading-failed') > -1 ||
