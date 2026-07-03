@@ -433,7 +433,7 @@ export default function Products() {
         <AnimatePresence>
           {showFree && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-              <div className="bg-surface-700/80 border border-brand-500/20 rounded-2xl p-3 md:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+              <div className="bg-surface-700/80 border border-subtle rounded-2xl p-3 md:p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
                 <div className="flex-1 min-w-[140px]">
                   <label className="text-[10px] text-muted-400 font-bold mb-1 block uppercase tracking-wide">Descripción (opcional)</label>
                   <input value={freeName} onChange={(e) => setFreeName(e.target.value)} placeholder="Ej: Transporte, Descuento..." className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500" />
