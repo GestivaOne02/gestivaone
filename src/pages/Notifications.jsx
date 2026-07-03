@@ -209,8 +209,8 @@ export default function Notifications() {
                   className={clsx(
                     "group relative overflow-hidden flex gap-4 p-4 rounded-2xl border transition-all duration-300 cursor-pointer select-none active:scale-[0.99]",
                     notif.read 
-                      ? "bg-surface-950/40 dark:bg-black/35 border-subtle/10 opacity-55 scale-[0.99] filter saturate-[0.35] blur-[0.4px] hover:opacity-75 hover:scale-[0.995] hover:blur-[0.1px]" 
-                      : clsx("bg-surface-800 border-subtle hover:border-brand-500/30 hover:scale-[1.01] shadow-sm", style.border)
+                      ? "bg-transparent border-transparent opacity-60 scale-[0.99] hover:opacity-80 hover:scale-[0.995]" 
+                      : clsx("bg-white dark:bg-surface-800 border-subtle hover:border-brand-500/30 hover:scale-[1.01] shadow-sm", style.border)
                   )}
                 >
                   {/* Left indicator strip for unread notifications */}
