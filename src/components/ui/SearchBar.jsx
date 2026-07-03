@@ -1,10 +1,15 @@
 import { Search, X } from 'lucide-react'
+import { useId } from 'react'
 
 export default function SearchBar({ value, onChange, placeholder = 'Buscar...', onClear }) {
+  const searchId = useId()
   return (
     <div className="relative">
       <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-400 pointer-events-none" />
       <input
+        id={searchId}
+        name="search"
+        aria-label="Buscar"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

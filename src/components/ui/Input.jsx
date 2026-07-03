@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useId } from 'react'
 import clsx from 'clsx'
 
 const Input = forwardRef(({
@@ -11,10 +11,13 @@ const Input = forwardRef(({
   hint,
   ...props
 }, ref) => {
+  const generatedId = useId()
+  const inputId = props.id || props.name || generatedId
+
   return (
     <div className={clsx('flex flex-col gap-1.5', containerClassName)}>
       {label && (
-        <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">
+        <label htmlFor={inputId} className="text-xs font-medium text-muted-500 uppercase tracking-wide">
           {label}
         </label>
       )}
@@ -25,6 +28,7 @@ const Input = forwardRef(({
           </div>
         )}
         <input
+          id={inputId}
           ref={ref}
           className={clsx(
             'w-full bg-surface-700 border rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-400 outline-none transition-all duration-150',

@@ -168,8 +168,10 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
           <p className="text-center text-xs text-muted-500 mb-2 sm:mb-4">Ingresa con tus credenciales vinculadas a la empresa.</p>
 
           <div>
-            <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+            <label htmlFor="worker-login-email" className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
             <input
+              id="worker-login-email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="tu@empresa.com"
@@ -180,8 +182,10 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
           </div>
 
           <div className="relative">
-            <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
+            <label htmlFor="worker-login-pass" className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
             <input
+              id="worker-login-pass"
+              name="password"
               value={pass}
               onChange={(e) => setPass(e.target.value)}
               placeholder="••••••"
@@ -253,6 +257,8 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
               <Camera size={11} className="text-white" />
             </button>
             <input
+              id="worker-register-avatar"
+              name="avatar"
               ref={fileInputRef}
               type="file"
               accept="image/*"
@@ -299,8 +305,10 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
       </div>
 
       <div>
-        <label className="text-xs font-bold text-muted-600 mb-1 block">Tu Nombre</label>
+        <label htmlFor="worker-register-name" className="text-xs font-bold text-muted-600 mb-1 block">Tu Nombre</label>
         <input
+          id="worker-register-name"
+          name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Nombre completo"
@@ -312,8 +320,10 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
 
       {socialData?.provider === 'Phone' ? (
         <div>
-          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+          <label htmlFor="worker-register-email" className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
           <input
+            id="worker-register-email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@correo.com"
@@ -324,8 +334,10 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
         </div>
       ) : (
         <div>
-          <label className="text-xs font-bold text-muted-600 mb-1 block">Número de Teléfono</label>
+          <label htmlFor="worker-register-phone" className="text-xs font-bold text-muted-600 mb-1 block">Número de Teléfono</label>
           <input
+            id="worker-register-phone"
+            name="phone"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+57 300 000 0000"
@@ -339,8 +351,10 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
 
       {socialData?.provider !== 'Phone' && (
         <div>
-          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+          <label htmlFor="worker-register-email-alt" className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
           <input
+            id="worker-register-email-alt"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@correo.com"
@@ -353,9 +367,11 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
       )}
 
       <div>
-        <label className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
+        <label htmlFor="worker-register-pass" className="text-xs font-bold text-muted-600 mb-1 block">Contraseña</label>
         <div className="relative">
           <input
+            id="worker-register-pass"
+            name="password"
             value={pass}
             onChange={(e) => setPass(e.target.value)}
             placeholder="••••••"
@@ -381,8 +397,10 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
       </div>
 
       <div>
-        <label className="text-xs font-bold text-brand-600 mb-1 block">Código de Vinculación</label>
+        <label htmlFor="worker-register-code" className="text-xs font-bold text-brand-600 mb-1 block">Código de Vinculación</label>
         <input
+          id="worker-register-code"
+          name="linkCode"
           value={linkCode}
           onChange={(e) => setLinkCode(e.target.value)}
           placeholder="GO-XXXXXX"
@@ -616,8 +634,10 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
     <div className="space-y-4">
       <form onSubmit={submit} className="space-y-3 sm:space-y-4">
         <div>
-          <label className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
+          <label htmlFor="login-email" className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
           <input
+            id="login-email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@empresa.com"
@@ -631,8 +651,10 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
           />
         </div>
         <div className="relative">
-          <label className="text-xs font-bold text-muted-600 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
+          <label htmlFor="login-pass" className="text-xs font-bold text-muted-600 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
           <input
+            id="login-pass"
+            name="password"
             value={pass}
             onChange={(e) => setPass(e.target.value)}
             placeholder="Introduce la contraseña"
@@ -662,8 +684,10 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
         {/* Remember me checkbox */}
         {!socialAutofill && (
           <div className="flex items-center justify-between pb-1 select-none">
-            <label className="flex items-center gap-2.5 cursor-pointer group">
+            <label htmlFor="login-remember-me" className="flex items-center gap-2.5 cursor-pointer group">
               <input
+                id="login-remember-me"
+                name="rememberMe"
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}

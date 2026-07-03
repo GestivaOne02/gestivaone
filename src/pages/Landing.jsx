@@ -531,21 +531,21 @@ export default function Landing() {
               <h3 className="text-base font-bold text-foreground">Envíanos un mensaje directo</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Nombre Completo</label>
-                  <input type="text" placeholder="Ej: Randy Mendoza" className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500" />
+                  <label htmlFor="contact-name" className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Nombre Completo</label>
+                  <input id="contact-name" name="name" type="text" placeholder="Ej: Randy Mendoza" className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </div>
                 <div>
-                  <label className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Correo electrónico</label>
-                  <input type="email" placeholder="correo@empresa.com" className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500" />
+                  <label htmlFor="contact-email" className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Correo electrónico</label>
+                  <input id="contact-email" name="email" type="email" placeholder="correo@empresa.com" className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </div>
               </div>
               <div>
-                <label className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Asunto</label>
-                <input type="text" placeholder="Ej: Consulta sobre el Plan Empresarial" className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500" />
+                <label htmlFor="contact-subject" className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Asunto</label>
+                <input id="contact-subject" name="subject" type="text" placeholder="Ej: Consulta sobre el Plan Empresarial" className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500" />
               </div>
               <div>
-                <label className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Tu mensaje</label>
-                <textarea rows={4} placeholder="Escribe tu duda o consulta aquí..." className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 resize-none" />
+                <label htmlFor="contact-message" className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Tu mensaje</label>
+                <textarea id="contact-message" name="message" rows={4} placeholder="Escribe tu duda o consulta aquí..." className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 resize-none" />
               </div>
               <button
                 type="button"
