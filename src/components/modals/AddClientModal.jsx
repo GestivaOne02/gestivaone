@@ -11,7 +11,6 @@ import { useUIStore } from '@/store/useUIStore'
 import toast from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
-import ScrollIndicator from '@/components/ui/ScrollIndicator'
 
 const schema = z.object({
   name:          z.string().min(2, 'Mínimo 2 caracteres'),
@@ -91,9 +90,6 @@ export default function AddClientModal({ open }) {
       customLayout={true}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[80vh] sm:max-h-[75vh] relative overflow-hidden">
-        {/* Scroll indicator for mobile */}
-        <ScrollIndicator targetRef={scrollRef} />
-
         {/* Scrollable body */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 no-scrollbar">
           {/* Client type */}

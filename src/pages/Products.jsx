@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Percent } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import ScrollIndicator from '@/components/ui/ScrollIndicator'
 import SearchBar from '@/components/ui/SearchBar'
 import SortFilterBar from '@/components/ui/SortFilterBar'
 import { useProductStore, CATEGORIES, getProductDiscount } from '@/store/useProductStore'
@@ -576,7 +575,6 @@ export default function Products() {
           )}
         </AnimatePresence>
       </div>
-      <ScrollIndicator targetSelector=".app-layout main > div" />
     </motion.div>
   )
 }
