@@ -1104,8 +1104,8 @@ export default function Dashboard() {
                       className={clsx(
                         "px-3 py-1 rounded-xl text-xs font-bold border transition-all select-none",
                         selectedYears.includes(yr)
-                          ? "bg-brand-600/20 border-brand-500 text-brand-300 shadow-glow-sm"
-                          : "border-subtle bg-surface-700/50 text-muted-400 hover:text-foreground"
+                          ? "bg-brand-500/15 dark:bg-brand-500/20 border-brand-500 text-brand-700 dark:text-brand-300 shadow-glow-sm"
+                          : "border-subtle bg-surface-200 dark:bg-surface-700/50 text-muted-500 dark:text-muted-400 hover:text-foreground"
                       )}
                     >
                       {yr}
