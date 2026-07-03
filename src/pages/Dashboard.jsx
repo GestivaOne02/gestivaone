@@ -913,8 +913,8 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Desktop View with smooth physical horizontal flex accordion */}
-      <div className="hidden lg:flex items-stretch gap-4 w-full h-[126px]">
+      {/* Desktop View */}
+      <div className="hidden lg:grid grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-4 w-full">
         {[
           {
             title: "Ingresos (Recaudado)",
@@ -967,23 +967,12 @@ export default function Dashboard() {
         ].map((kpi, i) => (
           <motion.div
             key={kpi.title}
-            onMouseEnter={() => handleKpiMouseEnter(i)}
-            onMouseLeave={handleKpiMouseLeave}
-            layout
-            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-            className={clsx(
-              "h-full",
-              hoveredKpi === i
-                ? "flex-[2.35] min-w-[280px] shrink-0"
-                : hoveredKpi !== null
-                  ? "flex-[0.62] max-w-[85px] shrink"
-                  : "flex-1 min-w-0 shrink"
-            )}
+            variants={itemVariants}
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="h-full"
           >
-            <KPICard
-              {...kpi}
-              collapsed={hoveredKpi !== null && hoveredKpi !== i}
-            />
+            <KPICard loading={isAppLoading} {...kpi} />
           </motion.div>
         ))}
       </div>

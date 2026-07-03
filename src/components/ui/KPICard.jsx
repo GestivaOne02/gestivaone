@@ -58,7 +58,7 @@ export default function KPICard({ title, value, subtitle, icon, trend, color = '
             {title}
           </p>
           {loading ? (
-            <div className="h-7 w-24 bg-surface-700 rounded-lg animate-pulse ml-auto" />
+            <div className="h-6 sm:h-7 w-24 bg-surface-700 rounded-lg animate-pulse ml-auto" />
           ) : (
             <p 
               className="text-base sm:text-lg xl:text-xl font-black text-foreground truncate cursor-help hover:text-foreground/90 transition-colors" 

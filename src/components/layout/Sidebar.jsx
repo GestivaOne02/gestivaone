@@ -447,9 +447,9 @@ export default function Sidebar({ isMobile }) {
     )
   }
 
-  // ── DESKTOP collapsible sidebar ────────────────────────────
   return (
     <motion.aside
+      initial={{ width: collapsed ? 68 : 220 }}
       animate={{ width: collapsed ? 68 : 220 }}
       transition={{ type: 'spring', stiffness: 380, damping: 32 }}
       className="sidebar-premium-dark relative h-screen bg-surface-800 border-r border-subtle flex flex-col shrink-0 z-30"
