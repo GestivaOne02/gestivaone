@@ -35,7 +35,7 @@ export const useNotificationStore = create(
     if (!error) {
       set({ notifications: data || [], lastFetch: Date.now() })
     } else {
-      console.error('❌ Error fetching notifications:', error)
+      console.error('Error fetching notifications:', error)
     }
     set({ loading: false })
   },

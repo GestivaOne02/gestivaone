@@ -69,7 +69,7 @@ export const useInvoiceStore = create(
 
       set({ invoices: mappedInvoices, lastFetch: Date.now() })
     } else {
-      console.error('❌ Error fetching invoices:', error)
+      console.error('Error fetching invoices:', error)
     }
     set({ loading: false })
   },
@@ -358,7 +358,7 @@ export const useInvoiceStore = create(
       .eq('invoice_id', invoiceId)
 
     if (fetchErr) {
-      console.error('❌ Error fetching all payments for recalculation:', fetchErr)
+      console.error('Error fetching all payments for recalculation:', fetchErr)
       return { success: false, error: fetchErr.message }
     }
 

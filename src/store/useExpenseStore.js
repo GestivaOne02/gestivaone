@@ -31,7 +31,7 @@ export const useExpenseStore = create(
     if (!error) {
       set({ expenses: data || [], lastFetch: Date.now() })
     } else {
-      console.error('❌ Error fetching expenses:', error)
+      console.error('Error fetching expenses:', error)
     }
     set({ loading: false })
   },

@@ -14,7 +14,7 @@ export function useRealtimeSync() {
   useEffect(() => {
     if (!user?.companyId) return
 
-    console.log('🔄 Inicializando sincronización en tiempo real para el POS...')
+    console.log('Inicializando sincronización en tiempo real para el POS...')
 
     const channel = supabase.channel(`company_realtime_${user.companyId}`)
 
@@ -73,12 +73,12 @@ export function useRealtimeSync() {
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-           console.log('✅ Conectado al canal en tiempo real del POS.')
+           console.log('Conectado al canal en tiempo real del POS.')
         }
       })
 
     return () => {
-      console.log('🛑 Desconectando canal en tiempo real...')
+      console.log('Desconectando canal en tiempo real...')
       supabase.removeChannel(channel)
     }
   }, [user?.companyId, user?.id])

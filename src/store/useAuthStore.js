@@ -676,7 +676,7 @@ export const useAuthStore = create(
               const dbSessionId = profile.active_session_id
 
               if (dbSessionId && localSessionToken && dbSessionId !== localSessionToken) {
-                console.warn('⚠️ Multiple active sessions detected on Standard plan. Logging out...')
+                console.warn('Multiple active sessions detected on Standard plan. Logging out...')
                 await supabase.auth.signOut()
                 localStorage.removeItem('gestiva-active-session-token')
                 set({ isAuthenticated: false, user: null })
