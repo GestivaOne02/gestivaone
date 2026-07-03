@@ -177,14 +177,20 @@ export const useAuthStore = create(
             return
           }
 
-          const { data: { session } } = await supabase.auth.getSession()
-          if (session) {
+          const { data: { session }, error } = await supabase.auth.getSession()
+          
+          if (error) {
+            console.error('Session validation error:', error)
+            await supabase.auth.signOut()
+            set({ isAuthenticated: false, user: null })
+          } else if (session) {
             await get().syncProfile(session.user.id)
           } else {
             set({ isAuthenticated: false, user: null })
           }
         } catch (e) {
           console.error('Session init error:', e)
+          await supabase.auth.signOut()
           set({ isAuthenticated: false, user: null })
         } finally {
           set({ initialized: true })
