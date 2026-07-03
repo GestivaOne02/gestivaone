@@ -816,29 +816,35 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
-      {/* Financial Export Panel */}
-      <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-glow-sm">
-        <div className="flex items-center gap-3">
-          <TrendingUp size={20} className="text-brand-400 shrink-0" />
-          <div>
-            <h3 className="text-sm font-bold text-brand-600 dark:text-white">Reportes Financieros Ejecutivos</h3>
-            <p className="text-xs text-muted-400 mt-0.5">Exporta reportes oficiales de facturación, abonos y gastos operacionales</p>
+      {/* Financial Export Panel - Mobile First & Fully Responsive */}
+      <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-2xl p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-6 shadow-glow-sm overflow-hidden">
+        <div className="flex items-start md:items-center gap-4 flex-1 min-w-0">
+          <TrendingUp size={24} className="text-brand-400 shrink-0 mt-0.5 md:mt-0" />
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm md:text-base font-bold text-brand-600 dark:text-white truncate">
+              Reportes Financieros Ejecutivos
+            </h3>
+            <p className="text-xs md:text-sm text-muted-400 mt-1 line-clamp-2 md:line-clamp-none">
+              Exporta reportes oficiales de facturación, abonos y gastos operacionales
+            </p>
           </div>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
           <button
             onClick={exportToPDF}
             title="Genera y descarga un reporte financiero detallado en PDF"
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-glow-sm"
+            className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors shadow-glow-sm whitespace-nowrap"
           >
-            <Download size={14} /> Exportar PDF
+            <Download size={16} className="shrink-0" />
+            <span>Exportar PDF</span>
           </button>
           <button
             onClick={exportToExcel}
             title="Genera y descarga una hoja de cálculo con todos tus movimientos en Excel"
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors"
+            className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors whitespace-nowrap"
           >
-            <Download size={14} /> Exportar Excel
+            <Download size={16} className="shrink-0" />
+            <span>Exportar Excel</span>
           </button>
         </div>
       </motion.div>
