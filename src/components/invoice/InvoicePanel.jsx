@@ -564,6 +564,7 @@ export default function InvoicePanel({ isMobile }) {
     <>
       {/* Toggle tab */}
       <motion.button
+        initial={{ right: panelOpen ? panelWidth - 4 : 0 }}
         onClick={togglePanel}
         animate={{ right: panelOpen ? panelWidth - 4 : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
@@ -581,6 +582,7 @@ export default function InvoicePanel({ isMobile }) {
 
       {/* Panel with smooth spring width animation */}
       <motion.aside
+        initial={{ width: panelOpen ? panelWidth : 0 }}
         animate={{ width: panelOpen ? panelWidth : 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
         className={clsx(
