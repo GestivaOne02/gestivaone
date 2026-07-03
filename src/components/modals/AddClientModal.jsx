@@ -61,25 +61,7 @@ export default function AddClientModal({ open }) {
     closeModal()
   }
 
-  const TypeBtn = ({ value, label, icon: Icon, desc }) => (
-    <motion.button
-      type="button"
-      whileTap={{ scale: 0.97 }}
-      onClick={() => setValue('type', value)}
-      className={clsx(
-        'flex-1 flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center',
-        clientType === value
-          ? 'border-brand-500 bg-brand-600/15'
-          : 'border-subtle bg-surface-700 hover:border-surface-300'
-      )}
-    >
-      <div className={clsx('p-2 rounded-lg', clientType === value ? 'bg-brand-500/20 text-brand-400' : 'bg-surface-500 text-muted-400')}>
-        <Icon size={18} />
-      </div>
-      <span className={clsx('text-sm font-semibold', clientType === value ? 'text-brand-600 dark:text-white' : 'text-muted-400')}>{label}</span>
-      <span className="text-[11px] text-muted-400 leading-tight">{desc}</span>
-    </motion.button>
-  )
+
 
   return (
     <Modal
@@ -92,13 +74,7 @@ export default function AddClientModal({ open }) {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[80vh] sm:max-h-[75vh] relative overflow-hidden">
         {/* Scrollable body */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 no-scrollbar">
-          {/* Client type */}
-          {!editingClient && (
-            <div className="flex gap-3">
-              <TypeBtn value="frequent" label="Frecuente" icon={UserCheck} desc="Historial & seguimiento" />
-              <TypeBtn value="express"  label="Express"   icon={Zap}       desc="Venta rápida, temporal" />
-            </div>
-          )}
+          {/* Form Fields */}
 
           <Input
             label="Nombre o Razón Social *"
@@ -130,8 +106,6 @@ export default function AddClientModal({ open }) {
             />
           </div>
 
-          {clientType === 'frequent' && (
-            <>
               <Input
                 label="Dirección"
                 icon={<MapPin size={14} />}
@@ -187,8 +161,6 @@ export default function AddClientModal({ open }) {
                   </select>
                 </div>
               </div>
-            </>
-          )}
         </div>
 
         {/* Fixed Footer */}
