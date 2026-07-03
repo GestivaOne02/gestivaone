@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   User, Shield, Bell, Zap, LogOut, Building2, Phone, Mail,
   Camera, Check, Eye, EyeOff, ChevronDown, ChevronUp, Key, Copy,
-  Database, Download, Upload, Trash2, AlertTriangle
+  Database, Download, Upload, Trash2, AlertTriangle, ArrowRight
 } from 'lucide-react'
 import { useAuthStore, PLANS, ROLES } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
@@ -233,53 +233,84 @@ export default function Account() {
         <p className="hidden sm:block text-sm text-muted-400 mt-0.5">Perfil y configuración de usuario</p>
       </motion.div>
 
-      {/* Profile card */}
-      <motion.div variants={itemVariants}
-        className="bg-surface-800 border border-subtle rounded-3xl p-6 flex items-center gap-5">
-        <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center shrink-0 border border-surface-700 shadow-sm">
-          {user?.avatarUrl && user.avatarUrl.startsWith('color:') ? (
-            <div 
-              style={{ backgroundColor: user.avatarUrl.replace('color:', '') }}
-              className="w-full h-full flex items-center justify-center text-2xl font-bold text-white"
-            >
-              {initial}
-            </div>
-          ) : user?.avatarUrl ? (
-            <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
-          ) : user?.companyLogo ? (
-            <img src={user.companyLogo} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-2xl font-bold text-white">
-              {initial}
-            </div>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          {authLoading ? (
-            <div className="space-y-2">
-              <div className="h-5 w-32 bg-surface-700 rounded animate-pulse" />
-              <div className="h-4 w-48 bg-surface-700 rounded animate-pulse" />
-              <div className="flex gap-2 mt-2">
-                <div className="h-5 w-24 bg-surface-700 rounded-full animate-pulse" />
-                <div className="h-5 w-20 bg-surface-700 rounded-full animate-pulse" />
+      {/* Top Cards: Profile + Upgrade Plan */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        {/* Profile card */}
+        <motion.div variants={itemVariants}
+          className="bg-surface-800 border border-subtle rounded-3xl p-6 flex items-center gap-5 h-full">
+          <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center shrink-0 border border-surface-700 shadow-sm">
+            {user?.avatarUrl && user.avatarUrl.startsWith('color:') ? (
+              <div 
+                style={{ backgroundColor: user.avatarUrl.replace('color:', '') }}
+                className="w-full h-full flex items-center justify-center text-2xl font-bold text-white"
+              >
+                {initial}
               </div>
-            </div>
-          ) : (
-            <>
-              <p className="text-lg font-bold text-brand-600 dark:text-white truncate">{user?.name || 'Usuario'}</p>
-              <p className="text-sm text-muted-400 truncate">{user?.email}</p>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                <span className="text-[10px] bg-brand-600/20 text-brand-300 border border-brand-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
-                  <Zap size={10} /> Plan {planInfo.name}
-                </span>
-                <span className="text-[10px] bg-surface-600 text-muted-400 border border-subtle px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
-                  {roleInfo.label}
-                </span>
+            ) : user?.avatarUrl ? (
+              <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+            ) : user?.companyLogo ? (
+              <img src={user.companyLogo} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-2xl font-bold text-white">
+                {initial}
               </div>
-            </>
-          )}
-        </div>
-      </motion.div>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            {authLoading ? (
+              <div className="space-y-2">
+                <div className="h-5 w-32 bg-surface-700 rounded animate-pulse" />
+                <div className="h-4 w-48 bg-surface-700 rounded animate-pulse" />
+                <div className="flex gap-2 mt-2">
+                  <div className="h-5 w-24 bg-surface-700 rounded-full animate-pulse" />
+                  <div className="h-5 w-20 bg-surface-700 rounded-full animate-pulse" />
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-lg font-bold text-brand-600 dark:text-white truncate">{user?.name || 'Usuario'}</p>
+                <p className="text-sm text-muted-400 truncate">{user?.email}</p>
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <span className="text-[10px] bg-brand-600/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+                    <Zap size={10} /> Plan {planInfo.name}
+                  </span>
+                  <span className="text-[10px] bg-surface-600 text-muted-400 border border-subtle px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
+                    {roleInfo.label}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Upgrade Plan card */}
+        <motion.div variants={itemVariants}
+          className="bg-gradient-to-br from-brand-600 to-brand-800 border border-brand-500/30 rounded-3xl p-6 flex flex-col justify-center relative overflow-hidden shadow-glow-sm h-full group">
+          
+          <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Zap className="text-brand-300 fill-brand-300" size={18} />
+                Lleva tu negocio al siguiente nivel
+              </h3>
+              <p className="text-brand-100/90 text-sm mt-1.5 leading-relaxed max-w-sm">
+                Desbloquea analíticas avanzadas, facturación ilimitada y soporte prioritario.
+              </p>
+            </div>
+            <div>
+              <button onClick={() => navigate('/settings?tab=plan')} className="bg-white text-brand-700 hover:bg-brand-50 hover:scale-[1.02] active:scale-95 font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-sm w-full sm:w-auto flex items-center justify-center gap-2">
+                Actualizar a Plan 360 <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Decorative elements */}
+          <div className="absolute -right-8 -bottom-10 w-40 h-40 bg-brand-400/20 blur-3xl rounded-full pointer-events-none group-hover:bg-brand-400/30 transition-colors" />
+          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
+            <Zap size={100} />
+          </div>
+        </motion.div>
+      </div>
 
       <ProfileSection      user={user} updateProfile={updateProfile} variants={itemVariants} />
       <NotificationsSection variants={itemVariants} />
