@@ -4,6 +4,7 @@ import { Plus, Coins, ArrowUpRight, ArrowDownRight, Trash2, Wallet, FileText, Ca
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { supabase } from '@/lib/supabase'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
@@ -412,6 +413,9 @@ export default function PersonalFinance() {
     }, { toCollect: 0, toPay: 0 })
   }, [loans])
 
+  const activeList = activeTab === 'expenses' ? expenses : loans
+  const { visibleItems: displayedItems, observerTarget, hasMore } = useInfiniteScroll(activeList)
+
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container flex flex-col gap-6">
       {/* Header */}
@@ -622,7 +626,7 @@ export default function PersonalFinance() {
                   <p className="text-[10px] text-muted-500 mt-1">Usa el botón superior para registrar tu primer gasto privado.</p>
                 </div>
               ) : (
-                expenses.map((e) => (
+                displayedItems.map((e) => (
                   <div key={e.id} className="flex items-center justify-between p-3.5 rounded-xl bg-surface-700/20 border border-subtle hover:border-surface-400 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-danger-500/10 border border-danger-500/20 flex items-center justify-center text-danger-400 font-bold text-xs shrink-0">
@@ -661,7 +665,7 @@ export default function PersonalFinance() {
                   <p className="text-[10px] text-muted-500 mt-1">Usa el botón superior para registrar tu primera cuenta por cobrar o por pagar.</p>
                 </div>
               ) : (
-                loans.map((l) => {
+                displayedItems.map((l) => {
                   const isLent = l.type === 'lent'
                   const isPaid = l.status === 'paid'
                   const isOverdue = l.due_date && new Date(l.due_date) < new Date() && !isPaid
@@ -782,6 +786,12 @@ export default function PersonalFinance() {
                   )
                 })
               )
+            )}
+            
+            {hasMore && (
+              <div ref={observerTarget} className="h-20 flex items-center justify-center mt-4">
+                <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+              </div>
             )}
           </div>
         </div>

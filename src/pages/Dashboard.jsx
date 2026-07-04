@@ -293,7 +293,8 @@ export default function Dashboard() {
         ...inv,
         days: Math.max(0, Math.floor((Date.now() - new Date(inv.scheduled_date || inv.created_at)) / 86400000))
       }))
-      .sort((a, b) => b.days - a.days),
+      .sort((a, b) => b.days - a.days)
+      .slice(0, 50),
   [overdue])
 
   const categoryData = useMemo(() => {
@@ -1684,7 +1685,7 @@ export default function Dashboard() {
                 <p className="text-xs">No se han registrado gastos operacionales aún.</p>
               </div>
             ) : (
-              expenses.map((e) => (
+              expenses.slice(0, 50).map((e) => (
                 <div key={e.id} className="flex items-center justify-between p-3 rounded-xl bg-surface-700/20 border border-subtle hover:border-surface-400 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-danger-500/10 border border-danger-500/20 flex items-center justify-center text-danger-400 font-bold text-xs shrink-0">

@@ -13,6 +13,7 @@ import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
@@ -277,6 +278,8 @@ export default function Menu() {
     return list
   }, [frequent, search, sortMode, activeLetter])
 
+  const { visibleItems: displayedClients, observerTarget, hasMore } = useInfiniteScroll(filtered)
+
   const getClientStatus = (clientId) => {
     const clientInvoices = invoices.filter((i) => i.client_id === clientId)
     if (clientInvoices.some((i) => i.payment_status === 'overdue')) return 'overdue'
@@ -374,7 +377,7 @@ export default function Menu() {
         <div className="flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <AnimatePresence>
-              {filtered.length === 0 ? (
+              {displayedClients.length === 0 ? (
                 <motion.div
                   key="empty"
                   initial={{ opacity: 0 }}
@@ -387,7 +390,7 @@ export default function Menu() {
                   </p>
                 </motion.div>
               ) : (
-                filtered.map((client) => (
+                displayedClients.map((client) => (
                   <ClientCard
                     key={client.id}
                     client={client}
@@ -410,6 +413,12 @@ export default function Menu() {
               )}
             </AnimatePresence>
           </div>
+          
+          {hasMore && (
+            <div ref={observerTarget} className="h-20 flex items-center justify-center mt-4">
+              <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
         </div>
       </div>
 

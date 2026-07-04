@@ -184,7 +184,7 @@ export default function Sidebar({ isMobile }) {
         title={label}
         className={clsx(
           // Fixed height + padding, NO gap — label is handled separately
-          'relative flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 cursor-pointer',
+          'relative flex items-center px-5 py-2.5 text-sm font-medium transition-colors duration-200 cursor-pointer',
           !allowed && 'opacity-50 cursor-not-allowed',
           isActive && allowed
             ? 'text-brand-300'
@@ -197,7 +197,7 @@ export default function Sidebar({ isMobile }) {
         {isActive && allowed && (
           <motion.div
             layoutId="activeIndicator"
-            className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
+            className="absolute inset-0 bg-brand-600/20 border-y border-r border-brand-500/30 border-l-4 border-l-brand-500"
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           />
         )}
@@ -269,10 +269,10 @@ export default function Sidebar({ isMobile }) {
               </div>
 
               {/* Nav */}
-              <nav className="flex-1 py-4 px-2 flex flex-col gap-1 overflow-y-auto no-scrollbar">
+              <nav className="flex-1 py-4 flex flex-col gap-1 overflow-y-auto no-scrollbar">
                 {visibleGroups.map((group, gIdx) => (
                   <div key={group.title} className="flex flex-col gap-1 mb-3">
-                    <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-3 mb-1 mt-2 first:mt-0 select-none">
+                    <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1 mt-2 first:mt-0 select-none">
                       {group.title}
                     </div>
                     {group.items.map(({ to, icon: Icon, label, perm }, i) => {
@@ -290,7 +290,7 @@ export default function Sidebar({ isMobile }) {
                             onClick={allowed ? handleNavClick : (e) => e.preventDefault()}
                             target="_self"
                             className={clsx(
-                              'relative flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-300',
+                              'relative flex items-center gap-3 px-5 py-3 text-sm font-medium transition-all duration-300',
                               !allowed && 'opacity-50 cursor-not-allowed',
                               isActive && allowed ? 'text-brand-300' : allowed ? 'text-muted-400 hover:text-white hover:bg-surface-600' : 'text-muted-400'
                             )}
@@ -298,7 +298,7 @@ export default function Sidebar({ isMobile }) {
                             {isActive && allowed && (
                               <motion.div
                                 layoutId="activeIndicatorMobile"
-                                className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
+                                className="absolute inset-0 bg-brand-600/20 border-y border-r border-brand-500/30 border-l-4 border-l-brand-500"
                                 transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                               />
                             )}
@@ -339,7 +339,7 @@ export default function Sidebar({ isMobile }) {
                     onClick={permissions['dashboard'] ? handleNavClick : (e) => e.preventDefault()}
                     target="_self"
                     className={clsx(
-                      'relative flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-300',
+                      'relative flex items-center gap-3 px-5 py-3 text-sm font-medium transition-all duration-300',
                       !permissions['dashboard'] && 'opacity-50 cursor-not-allowed',
                       location.pathname.startsWith('/notifications') && permissions['dashboard']
                         ? 'text-brand-300'
@@ -351,7 +351,7 @@ export default function Sidebar({ isMobile }) {
                     {location.pathname.startsWith('/notifications') && permissions['dashboard'] && (
                       <motion.div
                         layoutId="activeIndicatorMobile"
-                        className="absolute inset-0 rounded-xl bg-brand-600/20 border border-brand-500/30"
+                        className="absolute inset-0 bg-brand-600/20 border-y border-r border-brand-500/30 border-l-4 border-l-brand-500"
                         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                       />
                     )}
@@ -503,7 +503,7 @@ export default function Sidebar({ isMobile }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 px-2 flex flex-col gap-1 overflow-y-auto no-scrollbar">
+      <nav className="flex-1 py-4 flex flex-col gap-1 overflow-y-auto no-scrollbar">
         {visibleGroups.map((group, gIdx) => (
           <div key={group.title} className="flex flex-col gap-1">
             <AnimatePresence initial={false}>
@@ -514,7 +514,7 @@ export default function Sidebar({ isMobile }) {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                  className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-3 mb-1.5 mt-3.5 first:mt-0 select-none overflow-hidden"
+                  className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1.5 mt-3.5 first:mt-0 select-none overflow-hidden"
                 >
                   {group.title}
                 </motion.div>
@@ -524,7 +524,7 @@ export default function Sidebar({ isMobile }) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="border-t border-subtle/40 my-2 mx-2"
+                  className="border-t border-subtle/40 my-2 mx-0"
                 />
               ) : null}
             </AnimatePresence>
@@ -536,7 +536,7 @@ export default function Sidebar({ isMobile }) {
         ))}
 
         {user?.plan !== 'empresarial' && user?.plan !== 'enterprise' && (
-          <div className="px-2 py-1.5 shrink-0 mt-2">
+          <div className="px-4 py-1.5 shrink-0 mt-2">
             <NavLink
               to="/upgrade"
               className={clsx(
@@ -553,7 +553,7 @@ export default function Sidebar({ isMobile }) {
       </nav>
 
       {/* Notifications */}
-      <div className="px-2 py-1.5 border-t border-subtle shrink-0 flex flex-col gap-1">
+      <div className="py-1.5 border-t border-subtle shrink-0 flex flex-col gap-1">
         <NavItem to="/notifications" icon={Bell} label="Notificaciones" perm="dashboard" />
       </div>
 

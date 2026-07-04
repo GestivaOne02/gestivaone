@@ -12,6 +12,7 @@ import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCRMStore } from '@/store/useCRMStore'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 
 // ── Passport & Type Icons ──────────────────────────────────
 const PassportIcon = ({ size = 14, className = "" }) => (
@@ -315,6 +316,8 @@ export default function CRM() {
     return list.sort((a, b) => b.metrics.totalSpent - a.metrics.totalSpent)
   }, [enrichedClients, search, segmentFilter])
 
+  const { visibleItems: displayedClients, observerTarget, hasMore } = useInfiniteScroll(filtered)
+
   // Dashboard metrics
   const segments = useMemo(
     () => getSegmentDistribution(clients, invoices),
@@ -415,13 +418,13 @@ export default function CRM() {
 
               {/* Rows */}
               <div className="divide-y divide-subtle/50">
-                {filtered.length === 0 && (
+                {displayedClients.length === 0 && (
                   <div className="text-center py-12">
                     <Users size={32} className="mx-auto text-muted-600 mb-2" />
                     <p className="text-xs text-muted-500">No se encontraron clientes</p>
                   </div>
                 )}
-                {filtered.map((client, idx) => (
+                {displayedClients.map((client, idx) => (
                   <motion.div
                     key={client.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -475,6 +478,11 @@ export default function CRM() {
                 ))}
               </div>
             </div>
+            {hasMore && (
+              <div ref={observerTarget} className="h-20 flex items-center justify-center mt-4">
+                <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

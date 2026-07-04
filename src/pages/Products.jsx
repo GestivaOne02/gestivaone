@@ -8,6 +8,7 @@ import { useProductStore, CATEGORIES, getProductDiscount } from '@/store/useProd
 import { useCartStore } from '@/store/useCartStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useClientStore } from '@/store/useClientStore'
 import toast from 'react-hot-toast'
@@ -305,31 +306,6 @@ export default function Products() {
   const [sortMode, setSortMode] = useState('recent')
   const [activeLetter, setActiveLetter] = useState(null)
 
-  // Infinite Scroll state
-  const [visibleCount, setVisibleCount] = useState(30)
-  const observerTarget = useRef(null)
-
-  useEffect(() => {
-    setVisibleCount(30)
-  }, [search, activeCat, sortMode, activeLetter, isGrouped])
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => prev + 30)
-        }
-      },
-      { threshold: 0.1 }
-    )
-    
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current)
-    }
-    
-    return () => observer.disconnect()
-  }, [])
-
   const products      = useProductStore((s) => s.products)
   const prdLoading    = useProductStore((s) => s.loading)
   const deleteProduct = useProductStore((s) => s.deleteProduct)
@@ -384,16 +360,18 @@ export default function Products() {
     return list
   }, [products, activeCat, search, sortMode, activeLetter])
 
+  const { visibleItems: displayedProducts, observerTarget, hasMore } = useInfiniteScroll(filtered)
+
   const groupedProducts = useMemo(() => {
     if (!isGrouped) return {}
     const groups = {}
-    filtered.slice(0, visibleCount).forEach(p => {
+    displayedProducts.forEach(p => {
       const cat = p.category || 'Otros'
       if (!groups[cat]) groups[cat] = []
       groups[cat].push(p)
     })
     return groups
-  }, [filtered, isGrouped, visibleCount])
+  }, [displayedProducts, isGrouped])
 
   const handleAdd = (product, qty) => {
     addItem(product, qty)
@@ -581,7 +559,7 @@ export default function Products() {
             </motion.div>
           ) : (
             <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {filtered.slice(0, visibleCount).map((p) => (
+              {displayedProducts.map((p) => (
                 <ProductCard
                   key={p.id}
                   product={p}
@@ -600,7 +578,7 @@ export default function Products() {
         </AnimatePresence>
         
         {/* Intersection Observer Target */}
-        {visibleCount < filtered.length && (
+        {hasMore && (
           <div ref={observerTarget} className="h-20 flex items-center justify-center mt-4">
             <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
           </div>
