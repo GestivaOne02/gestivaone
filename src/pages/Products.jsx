@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Percent } from 'lucide-react'
 import Button from '@/components/ui/Button'
@@ -302,6 +302,31 @@ export default function Products() {
   const [showFree, setShowFree]   = useState(false)
   const [isGrouped, setIsGrouped] = useState(false)
 
+  // Infinite Scroll state
+  const [visibleCount, setVisibleCount] = useState(30)
+  const observerTarget = useRef(null)
+
+  useEffect(() => {
+    setVisibleCount(30)
+  }, [search, activeCat, sortMode, activeLetter, isGrouped])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => prev + 30)
+        }
+      },
+      { threshold: 0.1 }
+    )
+    
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current)
+    }
+    
+    return () => observer.disconnect()
+  }, [])
+
   // Sort & Filter state
   const [sortMode, setSortMode] = useState('recent')
   const [activeLetter, setActiveLetter] = useState(null)
@@ -363,13 +388,13 @@ export default function Products() {
   const groupedProducts = useMemo(() => {
     if (!isGrouped) return {}
     const groups = {}
-    filtered.forEach(p => {
+    filtered.slice(0, visibleCount).forEach(p => {
       const cat = p.category || 'Otros'
       if (!groups[cat]) groups[cat] = []
       groups[cat].push(p)
     })
     return groups
-  }, [filtered, isGrouped])
+  }, [filtered, isGrouped, visibleCount])
 
   const handleAdd = (product, qty) => {
     addItem(product, qty)
@@ -557,7 +582,7 @@ export default function Products() {
             </motion.div>
           ) : (
             <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {filtered.map((p) => (
+              {filtered.slice(0, visibleCount).map((p) => (
                 <ProductCard
                   key={p.id}
                   product={p}
@@ -574,6 +599,13 @@ export default function Products() {
             </motion.div>
           )}
         </AnimatePresence>
+        
+        {/* Intersection Observer Target */}
+        {visibleCount < filtered.length && (
+          <div ref={observerTarget} className="h-20 flex items-center justify-center mt-4">
+            <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
       </div>
     </motion.div>
   )
