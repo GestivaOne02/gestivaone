@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Receipt, Package,
@@ -9,7 +9,7 @@ import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
 import { useNotificationStore } from '@/store/useNotificationStore'
 import { supabase } from '@/lib/supabase'
-import { useEffect, useState, useRef, useMemo } from 'react'
+import { useEffect, useState, useRef, useMemo, startTransition } from 'react'
 import clsx from 'clsx'
 
 const AVATAR_SIZE = 44
@@ -152,7 +152,7 @@ export default function Sidebar({ isMobile }) {
     }).filter(g => g.items.length > 0)
   }, [user, purchasedFeatures])
 
-  const handleNavClick = () => { if (isMobile) closeMobile() }
+  const navigate = useNavigate()
 
   // ── Nav link (desktop) ──────────────────────────────────────
   // IMPORTANT: Icon must NEVER shift. We use a fixed-width row:
@@ -161,15 +161,30 @@ export default function Sidebar({ isMobile }) {
     const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
     const allowed = permissions[perm] ?? true
 
+    const handleItemClick = (e) => {
+      if (!allowed) {
+        e.preventDefault()
+        return
+      }
+      // Allow default behavior for modifier keys or non-primary clicks (open in new tab etc)
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+
+      e.preventDefault()
+      if (isMobile) closeMobile()
+      startTransition(() => {
+        navigate(to)
+      })
+    }
+
     return (
-      <NavLink
-        to={allowed ? to : '#'}
-        onClick={allowed ? handleNavClick : (e) => e.preventDefault()}
+      <a
+        href={allowed ? to : '#'}
+        onClick={handleItemClick}
         target="_self"
         title={label}
         className={clsx(
           // Fixed height + padding, NO gap — label is handled separately
-          'relative flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200',
+          'relative flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 cursor-pointer',
           !allowed && 'opacity-50 cursor-not-allowed',
           isActive && allowed
             ? 'text-brand-300'
@@ -216,7 +231,7 @@ export default function Sidebar({ isMobile }) {
         {/* Lock / Notification badges on collapsed */}
         {!allowed && !collapsed && <Lock size={12} className="text-muted-400 relative z-10 ml-2" />}
         {!allowed && collapsed && <Lock size={10} className="absolute -bottom-0.5 -right-0.5 text-muted-400" />}
-      </NavLink>
+      </a>
     )
   }
 
