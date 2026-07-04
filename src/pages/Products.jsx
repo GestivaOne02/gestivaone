@@ -502,7 +502,7 @@ export default function Products() {
       <div className="flex-1">
         <AnimatePresence>
           {(prdLoading && products.length === 0) ? (
-            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
               {Array.from({ length: 10 }).map((_, i) => (
                 <div key={i} className="bg-surface-800 border border-subtle rounded-2xl p-4 h-[120px] animate-pulse flex flex-col gap-3">
                   <div className="w-3/4 h-4 bg-surface-700 rounded" />
@@ -530,7 +530,7 @@ export default function Products() {
                     {category}
                     <span className="text-[10px] bg-surface-700 text-muted-400 px-2 py-0.5 rounded-full">{items.length}</span>
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                     {items.map((p) => (
                       <ProductCard
                         key={p.id}
@@ -550,7 +550,7 @@ export default function Products() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
               {displayedProducts.map((p) => (
                 <ProductCard
                   key={p.id}
