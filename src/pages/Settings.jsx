@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+// framer-motion removed for performance
 import {
   Globe, RefreshCw, Check, Moon, Sun, Building2, Bell, Database,
   AlertTriangle, Monitor, Mail, MessageSquare, Server, FileText,
@@ -102,30 +102,26 @@ export default function Settings() {
   const selectedCurrency = SUPPORTED_CURRENCIES.find((c) => c.code === baseCurrency)
 
   return (
-    <motion.div 
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+    <div
       className="page-container space-y-6"
     >
-      <motion.div 
-        variants={itemVariants}
+      <div
         className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0"
       >
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <h1 className="text-lg md:text-xl font-bold text-foreground">Configuración</h1>
+            <h1 className="text-lg md:text-xl font-bold text-foreground">ConfiguraciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n</h1>
             <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Personaliza tu plataforma</p>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* ─── Currency Section ─── */}
-      <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Currency Section ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
           icon={Globe}
           title="Divisa & Tasas de Cambio"
-          desc="Las tasas se actualizan automáticamente cada 24 horas desde el Banco Central Europeo"
+          desc="Las tasas se actualizan automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticamente cada 24 horas desde el Banco Central Europeo"
         />
 
         {/* Current rate info */}
@@ -158,15 +154,15 @@ export default function Settings() {
         {/* Last updated */}
         {lastFetched && (
           <p className="text-[11px] text-muted-400">
-            Última actualización: {format(new Date(lastFetched), "d 'de' MMMM, HH:mm", { locale: es })}
-            {isStale() && <span className="text-warning-400 ml-2">⚠ Tasas desactualizadas</span>}
+            ÃƒÆ’Ã†â€™Ãƒâ€¦Ã‚Â¡ltima actualizaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n: {format(new Date(lastFetched), "d 'de' MMMM, HH:mm", { locale: es })}
+            {isStale() && <span className="text-warning-400 ml-2">ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â  Tasas desactualizadas</span>}
           </p>
         )}
 
         {error && (
           <div className="flex items-center gap-2 bg-danger-900/30 border border-danger-500/30 rounded-xl px-4 py-3">
             <AlertTriangle size={14} className="text-danger-400" />
-            <p className="text-xs text-danger-400">Error al obtener tasas: {error}. Verifica tu conexión.</p>
+            <p className="text-xs text-danger-400">Error al obtener tasas: {error}. Verifica tu conexiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n.</p>
           </div>
         )}
 
@@ -181,10 +177,8 @@ export default function Settings() {
           />
           <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
             {filteredCurrencies.map((currency) => (
-              <motion.button
+              <button
                 key={currency.code}
-                whileHover={{ y: -1 }}
-                whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   setCurrency(currency.code)
                   toast.success(`Divisa cambiada a ${currency.name}`)
@@ -211,18 +205,18 @@ export default function Settings() {
                     {new Intl.NumberFormat('es', { maximumFractionDigits: 2 }).format(rates[currency.code])}
                   </span>
                 )}
-              </motion.button>
+              </button>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* ─── Theme Section ─── */}
-      <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Theme Section ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
           icon={Moon}
           title="Apariencia"
-          desc="Elige entre modo oscuro, claro, o deja que el sistema decida automáticamente"
+          desc="Elige entre modo oscuro, claro, o deja que el sistema decida automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticamente"
         />
 
         <div className="grid grid-cols-3 gap-3">
@@ -250,10 +244,8 @@ export default function Settings() {
           ].map(({ value, icon: Icon, label, desc }) => {
             const active = theme === value
             return (
-              <motion.button
+              <button
                 key={value}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.97 }}
                 onClick={() => { setTheme(value); toast.success(`Tema "${label}" activado`) }}
                 className={clsx(
                   'flex flex-col items-center gap-2.5 px-3 py-4 rounded-xl border-2 transition-all text-center',
@@ -275,85 +267,80 @@ export default function Settings() {
                   <p className="text-[10px] text-muted-400 mt-0.5 leading-tight">{desc}</p>
                 </div>
                 {active && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
+                  <div
                     className="w-4 h-4 rounded-full bg-brand-500 flex items-center justify-center"
                   >
                     <Check size={9} className="text-white" />
-                  </motion.div>
+                  </div>
                 )}
-              </motion.button>
+              </button>
             )
           })}
         </div>
 
         {/* System mode live indicator */}
-        <AnimatePresence>
+        <>
           {theme === 'system' && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+            <div
               className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-4 py-2.5"
             >
               <Monitor size={13} className="text-brand-400 shrink-0" />
               <p className="text-xs text-brand-300">
-                Modo sistema activo — la app seguirá tu preferencia del SO automáticamente.
+                Modo sistema activo ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â la app seguirÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ tu preferencia del SO automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticamente.
                 {' '}
                 <span className="text-muted-400">
-                  Actualmente: {window.matchMedia('(prefers-color-scheme: dark)').matches ? '🌙 Oscuro' : '☀️ Claro'}
+                  Actualmente: {window.matchMedia('(prefers-color-scheme: dark)').matches ? 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Oscuro' : 'ÃƒÆ’Ã‚Â¢Ãƒâ€¹Ã…â€œÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Claro'}
                 </span>
               </p>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
-      </motion.section>
+        </>
+      </section>
 
-      {/* ─── Resend ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Resend ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <ResendBlock />
 
-      {/* ─── WhatsApp ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ WhatsApp ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <IntegrationBlock
         icon={MessageSquare}
         title="WhatsApp Business"
-        desc="Envía notificaciones de cobro por WhatsApp"
+        desc="EnvÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a notificaciones de cobro por WhatsApp"
         enabledKey="whatsapp"
       >
         {({ cfg, set }) => (
           <div className="space-y-3">
-            <CfgInput label="Número de teléfono" value={cfg.phoneNumber} onChange={v => set({ phoneNumber: v })} placeholder="Ej: +57300..." />
+            <CfgInput label="NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºmero de telÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©fono" value={cfg.phoneNumber} onChange={v => set({ phoneNumber: v })} placeholder="Ej: +57300..." />
             <CfgInput label="API Key (Meta Business)" value={cfg.apiKey} onChange={v => set({ apiKey: v })} placeholder="Token de acceso permanente" type="password" />
             <div className="bg-warning-900/20 border border-warning-400/20 rounded-xl px-4 py-3">
-              <p className="text-xs text-warning-400">Requiere cuenta de Meta Business verificada y aprobación de plantillas de mensaje.</p>
+              <p className="text-xs text-warning-400">Requiere cuenta de Meta Business verificada y aprobaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de plantillas de mensaje.</p>
             </div>
           </div>
         )}
       </IntegrationBlock>
 
-      {/* ─── API REST ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ API REST ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <ApiBlock />
 
-      {/* ─── Impresión ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <PrinterBlock />
 
-      {/* ─── Export ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Export ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <ExportBlock />
 
-      {/* ─── Seguridad ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Seguridad ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <SecurityBlock />
 
-      {/* ─── Backup & Limpieza ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Backup & Limpieza ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <DataManagementBlock />
 
-      {/* ─── Zona de Peligro ─── */}
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Zona de Peligro ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <ResetWorkspaceBlock />
 
-    </motion.div>
+    </div>
   )
 }
 
-// ── Small helpers ───────────────────────────────────────────── 
+// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Small helpers ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ 
 function CfgInput({ label, value, onChange, placeholder, type = 'text', disabled }) {
   return (
     <div>
@@ -397,36 +384,31 @@ function ResendBlock() {
   }
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 15 }} 
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden animate-fade-in shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)} type="button"
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Mail size={16} /></div>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-foreground">Correo electrónico (Resend)</p>
-          <p className="text-xs text-muted-400">Envía facturas, comprobantes y notificaciones automáticas</p>
+          <p className="text-sm font-semibold text-foreground">Correo electrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³nico (Resend)</p>
+          <p className="text-xs text-muted-400">EnvÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a facturas, comprobantes y notificaciones automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticas</p>
         </div>
         <Toggle checked={resend.enabled} onChange={v => { setResend({ enabled: v }); toast(v ? `Servicio de correo activado` : `Servicio de correo desactivado`, { duration: 1500 }) }} />
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
-      <AnimatePresence>
+      <>
         {open && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }} 
-            exit={{ height: 0, opacity: 0 }} 
+          <div 
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
             <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-4">
               <div className="bg-surface-700/35 border border-subtle rounded-2xl p-4 space-y-3">
-                <p className="text-xs font-bold text-brand-400 uppercase tracking-wider">Eventos de Envío Automático</p>
+                <p className="text-xs font-bold text-brand-400 uppercase tracking-wider">Eventos de EnvÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­o AutomÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tico</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <ToggleRow
-                    label="Facturas de Crédito"
+                    label="Facturas de CrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dito"
                     desc="Al generar una factura programada"
                     checked={resend.onInvoice}
                     onChange={v => setResend({ onInvoice: v })}
@@ -484,10 +466,10 @@ function ResendBlock() {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </motion.section>
+      </>
+    </section>
   )
 }
 
@@ -506,9 +488,7 @@ function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 15 }} 
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
@@ -521,22 +501,19 @@ function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
         <Toggle checked={cfg.enabled} onChange={v => { setCfg({ enabled: v }); toast(v ? `${title} activado` : `${title} desactivado`, { duration: 1500 }) }} />
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
-      <AnimatePresence>
+      <>
         {open && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }} 
-            exit={{ height: 0, opacity: 0 }} 
+          <div 
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
             <div className="px-5 pb-5 border-t border-subtle pt-4">
               {children({ cfg, set: setCfg, enabled: cfg.enabled })}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </motion.section>
+      </>
+    </section>
   )
 }
 
@@ -574,9 +551,7 @@ function ApiBlock() {
   }
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 15 }} 
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
@@ -584,20 +559,17 @@ function ApiBlock() {
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Server size={16} /></div>
         <div className="flex-1 text-left">
           <p className="text-sm font-semibold text-foreground">Backend API REST</p>
-          <p className="text-xs text-muted-400">Sincronización multi-dispositivo</p>
+          <p className="text-xs text-muted-400">SincronizaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n multi-dispositivo</p>
         </div>
         <span className={clsx('text-[10px] font-semibold px-2 py-0.5 rounded-full border', statusColor,
           api.status === 'connected' ? 'bg-success-900/20 border-success-400/20' : 'bg-surface-700 border-subtle')}>
-          {api.status === 'connected' ? '● Conectado' : api.status === 'testing' ? '● Probando' : '○ Desconectado'}
+          {api.status === 'connected' ? 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ÂÃƒâ€šÃ‚Â Conectado' : api.status === 'testing' ? 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ÂÃƒâ€šÃ‚Â Probando' : 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ÂÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Desconectado'}
         </span>
         {open ? <ChevronUp size={14} className="text-muted-400" /> : <ChevronDown size={14} className="text-muted-400" />}
       </button>
-      <AnimatePresence>
+      <>
         {open && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }} 
-            exit={{ height: 0, opacity: 0 }} 
+          <div 
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
@@ -608,15 +580,15 @@ function ApiBlock() {
                 <button onClick={runTest} disabled={testing}
                   className="flex items-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50 font-semibold">
                   {testing ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
-                  {testing ? 'Probando...' : 'Probar conexión'}
+                  {testing ? 'Probando...' : 'Probar conexiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n'}
                 </button>
               </div>
-              {api.lastPing && <p className="text-[11px] text-muted-400">Último intento: {new Date(api.lastPing).toLocaleTimeString('es-CO')}</p>}
+              {api.lastPing && <p className="text-[11px] text-muted-400">ÃƒÆ’Ã†â€™Ãƒâ€¦Ã‚Â¡ltimo intento: {new Date(api.lastPing).toLocaleTimeString('es-CO')}</p>}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </motion.section>
+      </>
+    </section>
   )
 }
 
@@ -652,17 +624,17 @@ function ExportBlock() {
         </div>
         <div>
           <p className="text-sm font-bold text-foreground">Reportes PDF/Excel bloqueados</p>
-          <p className="text-xs text-muted-400 max-w-xs mx-auto">Mejora tu plan a Pro para descargar reportes detallados y análisis de tu negocio.</p>
+          <p className="text-xs text-muted-400 max-w-xs mx-auto">Mejora tu plan a Pro para descargar reportes detallados y anÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lisis de tu negocio.</p>
         </div>
         <button className="text-[11px] font-bold text-brand-400 uppercase tracking-widest hover:text-brand-300 transition-colors">
-          Ver Planes →
+          Ver Planes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢
         </button>
       </section>
     )
   }
 
   return (
-    <motion.section variants={itemVariants} className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-4 shadow-glow-sm">
+    <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-4 shadow-glow-sm">
       <SectionTitle icon={Download} title="Exportar a PDF / Excel" desc="Descarga reportes de facturas, clientes e inventario" />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {exports.map(({ key, label, icon: Icon, fn }) => (
@@ -680,7 +652,7 @@ function ExportBlock() {
         ))}
       </div>
       <p className="text-[11px] text-muted-400">Los reportes incluyen todos los datos actuales del sistema.</p>
-    </motion.section>
+    </section>
   )
 }
 
@@ -704,7 +676,7 @@ function PrinterBlock() {
   }
 
   const previewItems = [
-    { name: 'Café Cappuccino Grande', price: 9500, quantity: 2 },
+    { name: 'CafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© Cappuccino Grande', price: 9500, quantity: 2 },
     { name: 'Croissant de Almendras', price: 6500, quantity: 1 }
   ]
   const subtotal = 25500
@@ -743,7 +715,7 @@ function PrinterBlock() {
 
   const requestUsbPrinter = async () => {
     if (!navigator.usb) {
-      toast.error('Este navegador no soporta detección de dispositivos USB.')
+      toast.error('Este navegador no soporta detecciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de dispositivos USB.')
       return
     }
     try {
@@ -754,35 +726,30 @@ function PrinterBlock() {
         toast.success(`Impresora detectada: ${device.productName || 'Dispositivo USB'}`)
       }
     } catch (e) {
-      toast.error('No se detectó ningún dispositivo')
+      toast.error('No se detectÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ ningÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºn dispositivo')
     }
   }
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 15 }} 
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Printer size={16} /></div>
         <div className="flex-1 text-left">
-          <p className="text-sm font-semibold text-foreground">Impresión de Facturas</p>
+          <p className="text-sm font-semibold text-foreground">ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de Facturas</p>
           <p className="text-xs text-muted-400">Elige la plantilla y contenido de los recibos impresos</p>
         </div>
         {hasPrinter && (
-          <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `Impresión automática activada` : `Impresión automática desactivada`, { duration: 1500 }) }} />
+          <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tica activada` : `ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tica desactivada`, { duration: 1500 }) }} />
         )}
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
 
-      <AnimatePresence>
+      <>
         {open && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }} 
-            exit={{ height: 0, opacity: 0 }} 
+          <div 
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
@@ -791,9 +758,9 @@ function PrinterBlock() {
                 <div className="flex flex-col items-center justify-center text-center p-6 bg-surface-750 border border-dashed border-subtle rounded-2xl gap-3 shadow-glow-sm">
                   <Printer size={32} className="text-muted-500 animate-pulse" />
                   <div>
-                    <h4 className="text-sm font-bold text-foreground">No se detectó impresora configurada</h4>
+                    <h4 className="text-sm font-bold text-foreground">No se detectÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ impresora configurada</h4>
                     <p className="text-xs text-muted-400 mt-1 max-w-sm mx-auto">
-                      Para configurar el formato del ticket e imprimir de forma automática, vincula tu impresora térmica USB con el software.
+                      Para configurar el formato del ticket e imprimir de forma automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tica, vincula tu impresora tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rmica USB con el software.
                     </p>
                   </div>
                   <button
@@ -810,7 +777,7 @@ function PrinterBlock() {
               
               {/* Controls Column */}
               <div className="space-y-4">
-                <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider">Diseño y Campos</p>
+                <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider">DiseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±o y Campos</p>
                 
                 {/* Template picker */}
                 <div className="space-y-1.5">
@@ -828,7 +795,7 @@ function PrinterBlock() {
                             : 'bg-surface-700 border-subtle text-muted-400 hover:border-surface-300'
                         )}
                       >
-                        {t === 'classic' ? 'Clásica (Térmica)' : 'Moderna (Elegante)'}
+                        {t === 'classic' ? 'ClÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡sica (TÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rmica)' : 'Moderna (Elegante)'}
                       </button>
                     ))}
                   </div>
@@ -860,7 +827,7 @@ function PrinterBlock() {
 
                 {/* Footer text input */}
                 <div>
-                  <label className="text-xs text-muted-400 mb-1 block">Mensaje de pie de página</label>
+                  <label className="text-xs text-muted-400 mb-1 block">Mensaje de pie de pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina</label>
                   <textarea
                     rows={2}
                     value={printer.footerText}
@@ -972,8 +939,8 @@ function PrinterBlock() {
 
                     {/* Footer */}
                     <div className="text-center text-[9px] text-gray-500 leading-normal">
-                      <p>{printer.footerText || '¡Gracias por su compra!'}</p>
-                      <p className="text-[7px] text-gray-400 mt-2">GestivaOne — www.gestivaone.com</p>
+                      <p>{printer.footerText || 'ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡Gracias por su compra!'}</p>
+                      <p className="text-[7px] text-gray-400 mt-2">GestivaOne ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â www.gestivaone.com</p>
                     </div>
 
                   </div>
@@ -982,14 +949,14 @@ function PrinterBlock() {
             </div>
             )}
           </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </motion.section>
+      </>
+    </section>
   )
 }
 
-// ── Security Block ──────────────────────────────────────────────
+// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Security Block ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
 function SecurityBlock() {
   const user          = useAuthStore(s => s.user)
   const [current, setCurrent] = useState('')
@@ -1002,8 +969,8 @@ function SecurityBlock() {
   const [open, setOpen]       = useState(false)
 
   const changePassword = async () => {
-    if (next.length < 6)            return toast.error('Mínimo 6 caracteres')
-    if (next !== confirm)           return toast.error('Las contraseñas no coinciden')
+    if (next.length < 6)            return toast.error('MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­nimo 6 caracteres')
+    if (next !== confirm)           return toast.error('Las contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±as no coinciden')
     setSaving(true)
     
     const { error: authError } = await supabase.auth.signInWithPassword({
@@ -1013,30 +980,30 @@ function SecurityBlock() {
 
     if (authError) {
       setSaving(false)
-      return toast.error('Contraseña actual incorrecta')
+      return toast.error('ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a actual incorrecta')
     }
 
     const { error: updateError } = await supabase.auth.updateUser({ password: next })
     setSaving(false)
 
     if (updateError) {
-      return toast.error('Error al actualizar la contraseña: ' + updateError.message)
+      return toast.error('Error al actualizar la contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a: ' + updateError.message)
     }
 
     setCurrent(''); setNext(''); setConfirm('')
-    toast.success('Contraseña actualizada')
+    toast.success('ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a actualizada')
   }
 
   const generateBackupCodes = () => {
     const c = Array.from({ length: 8 }, () => Math.random().toString(36).slice(2, 8).toUpperCase())
     setCodes(c)
-    toast('Guarda estos códigos en un lugar seguro', { icon: '🔐' })
+    toast('Guarda estos cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digos en un lugar seguro', { icon: 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â' })
   }
 
   const pwInput = (label, value, onChange) => (
     <div className="relative">
       <label className="text-xs text-muted-400 mb-1 block">{label}</label>
-      <input type={show ? 'text' : 'password'} value={value} onChange={e => onChange(e.target.value)} placeholder="••••••••"
+      <input type={show ? 'text' : 'password'} value={value} onChange={e => onChange(e.target.value)} placeholder="ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢"
         className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
       <button type="button" onClick={() => setShow(!show)} className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground transition-colors">
         {show ? <AlertTriangle size={14} /> : <Check size={14} />} {/* Mocked icon toggle */}
@@ -1045,9 +1012,7 @@ function SecurityBlock() {
   )
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 15 }} 
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
@@ -1055,49 +1020,46 @@ function SecurityBlock() {
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Lock size={16} /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">Seguridad</p>
-          <p className="text-xs text-muted-400">Contraseña, 2FA y sesiones activas</p>
+          <p className="text-xs text-muted-400">ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a, 2FA y sesiones activas</p>
         </div>
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
-      <AnimatePresence>
+      <>
         {open && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }} 
-            exit={{ height: 0, opacity: 0 }} 
+          <div 
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
             <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-4">
-              <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider mb-2">Cambiar contraseña</p>
+              <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider mb-2">Cambiar contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a</p>
               <div className="space-y-3">
-                {pwInput('Contraseña actual', current, setCurrent)}
-                {pwInput('Nueva contraseña', next, setNext)}
-                {pwInput('Confirmar nueva contraseña', confirm, setConfirm)}
+                {pwInput('ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a actual', current, setCurrent)}
+                {pwInput('Nueva contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a', next, setNext)}
+                {pwInput('Confirmar nueva contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a', confirm, setConfirm)}
               </div>
               <button onClick={changePassword} disabled={saving || !current || !next || !confirm}
                 className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors w-full sm:w-auto justify-center">
-                <Lock size={14} /> {saving ? 'Guardando...' : 'Actualizar contraseña'}
+                <Lock size={14} /> {saving ? 'Guardando...' : 'Actualizar contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a'}
               </button>
 
               <div className="border-t border-subtle pt-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-foreground">Autenticación de dos factores (2FA)</p>
-                    <p className="text-[11px] text-muted-400">Añade una capa extra de seguridad a tu cuenta</p>
+                    <p className="text-sm font-medium text-foreground">AutenticaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de dos factores (2FA)</p>
+                    <p className="text-[11px] text-muted-400">AÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±ade una capa extra de seguridad a tu cuenta</p>
                   </div>
-                  <Toggle checked={twoFA} onChange={(v) => { setTwoFA(v); toast(v ? '2FA activado (simulado)' : '2FA desactivado', { icon: v ? '✅' : '🔓' }) }} />
+                  <Toggle checked={twoFA} onChange={(v) => { setTwoFA(v); toast(v ? '2FA activado (simulado)' : '2FA desactivado', { icon: v ? 'ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦' : 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ' }) }} />
                 </div>
                 {twoFA && (
                   <div className="space-y-2">
                     <button onClick={generateBackupCodes} className="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-1 font-semibold">
-                      <Lock size={11} /> Generar códigos de respaldo
+                      <Lock size={11} /> Generar cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digos de respaldo
                     </button>
                     {codes && (
                       <div className="bg-surface-900 border border-brand-500/20 rounded-xl p-3">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="text-[11px] text-muted-400 font-medium">Códigos de respaldo</p>
-                          <button onClick={() => { navigator.clipboard.writeText(codes.join('\n')); toast('Copiados', { icon: '📋' }) }}
+                          <p className="text-[11px] text-muted-400 font-medium">CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digos de respaldo</p>
+                          <button onClick={() => { navigator.clipboard.writeText(codes.join('\n')); toast('Copiados', { icon: 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹' }) }}
                             className="text-[11px] text-brand-400 flex items-center gap-1 font-semibold">Copiar</button>
                         </div>
                         <div className="grid grid-cols-4 gap-1.5">
@@ -1109,14 +1071,14 @@ function SecurityBlock() {
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </motion.section>
+      </>
+    </section>
   )
 }
 
-// ── Data Management Block ───────────────────────────────────────
+// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Data Management Block ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
 function DataManagementBlock() {
   const user = useAuthStore(s => s.user)
   const isAdmin = user?.role === 'administrador'
@@ -1131,7 +1093,7 @@ function DataManagementBlock() {
       await action()
       toast.success(successMessage)
     } catch (err) {
-      toast.error(err.message || 'No se pudo completar la acción')
+      toast.error(err.message || 'No se pudo completar la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n')
     } finally {
       setBusy(false)
     }
@@ -1152,9 +1114,7 @@ function DataManagementBlock() {
   }
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 15 }} 
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
@@ -1166,12 +1126,9 @@ function DataManagementBlock() {
         </div>
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
-      <AnimatePresence>
+      <>
         {open && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }} 
-            exit={{ height: 0, opacity: 0 }} 
+          <div 
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
@@ -1200,14 +1157,14 @@ function DataManagementBlock() {
                 <p className="text-[11px] text-muted-400 mt-2 text-center">Solo el administrador puede importar datos.</p>
               )}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </>
 
       <Modal open={!!pendingImportFile} onClose={() => setPendingImportFile(null)} title="Importar backup" size="sm">
         <div className="space-y-5">
           <p className="text-sm text-muted-300 leading-relaxed">
-            Importar este backup reemplazará los datos actuales de gestión. Continúa solo si ya tienes una copia segura.
+            Importar este backup reemplazarÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ los datos actuales de gestiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n. ContinÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºa solo si ya tienes una copia segura.
           </p>
           <div className="flex flex-col sm:flex-row justify-end gap-3">
             <button type="button" onClick={() => setPendingImportFile(null)} className="px-5 py-2.5 rounded-xl border border-subtle text-sm font-semibold text-muted-300 hover:bg-surface-600 transition-colors">
@@ -1219,11 +1176,11 @@ function DataManagementBlock() {
           </div>
         </div>
       </Modal>
-    </motion.section>
+    </section>
   )
 }
 
-// ── Reset Workspace Block (Danger Zone) ─────────────────────────
+// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Reset Workspace Block (Danger Zone) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
 function ResetWorkspaceBlock() {
   const user = useAuthStore(s => s.user)
   const isAdmin = user?.role === 'administrador'
@@ -1250,10 +1207,10 @@ function ResetWorkspaceBlock() {
       
       const res = await sendVerificationCodeEmail(code, user.email, company) 
       if (res.success) {
-        toast.success('Código de seguridad enviado a tu correo')
+        toast.success('CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo de seguridad enviado a tu correo')
         setModalOpen(true)
       } else {
-        toast.error('Error al enviar el código de verificación')
+        toast.error('Error al enviar el cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo de verificaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n')
       }
     } catch (e) {
       toast.error('Error enviando el correo')
@@ -1263,7 +1220,7 @@ function ResetWorkspaceBlock() {
   }
 
   const handleReset = async () => {
-    if (confirmCode !== sentCode) return toast.error('Código incorrecto')
+    if (confirmCode !== sentCode) return toast.error('CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo incorrecto')
     setBusy(true)
     try {
       const result = await resetWorkspaceData()
@@ -1276,16 +1233,14 @@ function ResetWorkspaceBlock() {
         toast.error(result?.error || 'Error al limpiar el espacio de trabajo')
       }
     } catch (err) {
-      toast.error(err.message || 'Ocurrió un error inesperado')
+      toast.error(err.message || 'OcurriÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ un error inesperado')
     } finally {
       setBusy(false)
     }
   }
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 15 }} 
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="bg-surface-800 border-2 border-danger-500/20 rounded-3xl overflow-hidden shadow-glow-sm"
     >
       <button onClick={() => setOpen(o => !o)}
@@ -1297,12 +1252,9 @@ function ResetWorkspaceBlock() {
         </div>
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
-      <AnimatePresence>
+      <>
         {open && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }} 
-            exit={{ height: 0, opacity: 0 }} 
+          <div 
             className="overflow-hidden"
             transition={{ duration: 0.2 }}
           >
@@ -1310,8 +1262,8 @@ function ResetWorkspaceBlock() {
               <div className="bg-danger-500/5 border border-danger-500/20 rounded-2xl p-4 space-y-2">
                 <p className="text-sm font-bold text-danger-300">Limpiar espacio de trabajo</p>
                 <p className="text-xs text-muted-400 leading-relaxed">
-                  Elimina <strong className="text-foreground">permanentemente</strong> toda la información de gestión: clientes, productos, facturas, pagos, egresos, bolsillos, préstamos y notificaciones.
-                  Tu cuenta, empresa y trabajadores <span className="text-foreground font-medium">no se verán afectados</span>.
+                  Elimina <strong className="text-foreground">permanentemente</strong> toda la informaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de gestiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n: clientes, productos, facturas, pagos, egresos, bolsillos, prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©stamos y notificaciones.
+                  Tu cuenta, empresa y trabajadores <span className="text-foreground font-medium">no se verÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡n afectados</span>.
                 </p>
                 <button
                   type="button"
@@ -1323,28 +1275,28 @@ function ResetWorkspaceBlock() {
                   Limpiar todo el espacio de trabajo
                 </button>
                 {!isAdmin && (
-                  <p className="text-[11px] text-muted-400">Solo el administrador puede realizar esta acción.</p>
+                  <p className="text-[11px] text-muted-400">Solo el administrador puede realizar esta acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n.</p>
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </>
 
-      <Modal open={modalOpen} onClose={() => { setModalOpen(false); setConfirmCode(''); setSentCode(null) }} title="⚠️ Confirmación requerida" size="sm">
+      <Modal open={modalOpen} onClose={() => { setModalOpen(false); setConfirmCode(''); setSentCode(null) }} title="ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â ConfirmaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n requerida" size="sm">
         <div className="space-y-5">
           <div className="bg-danger-500/10 border border-danger-500/25 rounded-xl p-4 space-y-2">
             <p className="text-sm font-bold text-danger-300 flex items-center gap-2">
-              <AlertTriangle size={14} /> Esta acción es irreversible
+              <AlertTriangle size={14} /> Esta acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n es irreversible
             </p>
             <p className="text-xs text-muted-300 leading-relaxed">
-              Hemos enviado un correo electrónico a <strong>{user?.email}</strong> con un código numérico de 4 dígitos. Ingrésalo a continuación para confirmar el borrado de datos.
+              Hemos enviado un correo electrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³nico a <strong>{user?.email}</strong> con un cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo numÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rico de 4 dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­gitos. IngrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©salo a continuaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n para confirmar el borrado de datos.
             </p>
           </div>
 
           <div>
             <label className="text-xs text-muted-400 mb-1 block">
-              Código de verificación (4 dígitos)
+              CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo de verificaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n (4 dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­gitos)
             </label>
             <input
               type="text"
@@ -1382,6 +1334,6 @@ function ResetWorkspaceBlock() {
           </div>
         </div>
       </Modal>
-    </motion.section>
+    </section>
   )
 }
