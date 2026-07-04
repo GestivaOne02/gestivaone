@@ -113,7 +113,16 @@ export default function OrderConfirmModal({ open }) {
       const { smtp, whatsapp, printer } = useSettingsStore.getState()
       
       if (sendEmail && emailTarget) {
-        toast.success(`📧 Factura en PDF enviada a ${emailTarget} con mensaje de agradecimiento.`, { duration: 4000 })
+        const company = {
+          companyName: user?.companyName || 'GestivaOne',
+          companyLogo: user?.companyLogo || null,
+          companyEmail: user?.email || '',
+          companyPhone: user?.phone || ''
+        }
+        import('@/services/emailService').then(({ sendInvoiceEmail }) => {
+          sendInvoiceEmail(invoice, emailTarget, company)
+        }).catch(err => console.warn('Failed to send invoice email:', err))
+        toast.success(`📧 Enviando factura a ${emailTarget}...`, { duration: 4000 })
       } else if (smtp?.enabled) {
         const emailTgt = emailTarget || client?.email || 'correo-cliente@express.com'
         toast.success(`📧 Enviando factura a ${emailTgt} vía SMTP...`, { duration: 3000 })
