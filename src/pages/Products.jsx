@@ -16,7 +16,7 @@ import clsx from 'clsx'
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
+  visible: { opacity: 1, transition: { duration: 0.15 } }
 }
 
 const UNIT_COLORS = {
@@ -91,11 +91,8 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
     : product.stock > 10 ? 'bg-success-500' : product.stock > 0 ? 'bg-warning-500' : 'bg-danger-500'
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+    <div
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 320px' }}
       className={clsx(
         'relative flex flex-col rounded-2xl border-2 overflow-hidden transition-all duration-200 group bg-white dark:bg-surface-800',
         isOutOfStock
@@ -109,6 +106,8 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
           <img
             src={imageUrl}
             alt={product.name}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
           {/* Gradient difuminado de la card hacia la imagen */}
@@ -126,30 +125,27 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
       <div className="relative px-3.5 pt-3 pb-2 bg-transparent">
         {/* Action buttons */}
         <div className="absolute top-2.5 right-2.5 flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
+          <button
             onClick={(e) => { e.stopPropagation(); onDuplicate(product) }}
-            className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-brand-500 dark:hover:text-brand-400 shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors"
+            className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-brand-500 dark:hover:text-brand-400 shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors active:scale-90"
             title="Duplicar"
           >
             <Copy size={12} />
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
+          </button>
+          <button
             onClick={(e) => { e.stopPropagation(); onEdit(product) }}
-            className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-foreground dark:hover:text-white shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors"
+            className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-foreground dark:hover:text-white shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors active:scale-90"
             title="Editar"
           >
             <Edit2 size={12} />
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
+          </button>
+          <button
             onClick={(e) => { e.stopPropagation(); onDelete(product) }}
-            className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-danger-500 dark:hover:text-danger-400 shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors"
+            className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-danger-500 dark:hover:text-danger-400 shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors active:scale-90"
             title="Borrar"
           >
             <Trash2 size={12} />
-          </motion.button>
+          </button>
         </div>
 
         {/* Attachment indicators */}
@@ -211,11 +207,9 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
         {/* Stock bar */}
         <div className="flex items-center gap-2">
           <div className="flex-1 h-1 bg-neutral-100 dark:bg-surface-700 rounded-full overflow-hidden">
-            <motion.div
-              className={clsx('h-full rounded-full', stockColor)}
-              initial={{ width: 0 }}
-              animate={{ width: `${stockPct}%` }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
+            <div
+              className={clsx('h-full rounded-full transition-[width] duration-500 ease-out', stockColor)}
+              style={{ width: `${stockPct}%` }}
             />
           </div>
           <span className={clsx(
@@ -240,9 +234,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
             disabled={isOutOfStock}
             className="w-14 bg-white dark:bg-surface-700 border border-neutral-200 dark:border-surface-600 rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           />
-          <motion.button
-            whileTap={isOutOfStock ? {} : { scale: 0.93 }}
-            whileHover={isOutOfStock ? {} : { scale: 1.02 }}
+          <button
             onClick={isOutOfStock ? undefined : handleAdd}
             disabled={isOutOfStock}
             className={clsx(
@@ -251,7 +243,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
                 ? 'bg-neutral-100 dark:bg-surface-700/50 text-neutral-400 dark:text-muted-500 cursor-not-allowed border border-neutral-200 dark:border-surface-700'
                 : added
                   ? 'bg-success-500 text-white'
-                  : 'bg-brand-600 hover:bg-brand-500 text-white'
+                  : 'bg-brand-600 hover:bg-brand-500 text-white active:scale-95'
             )}
           >
             {isOutOfStock ? (
@@ -261,7 +253,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
             ) : (
               <><ShoppingCart size={13} className="shrink-0" /><span className="hidden sm:inline">Añadir</span></>
             )}
-          </motion.button>
+          </button>
         </div>
 
         {/* Out of stock action */}
@@ -284,7 +276,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -531,7 +523,7 @@ export default function Products() {
               )}
             </motion.div>
           ) : isGrouped ? (
-            <motion.div layout className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6">
               {Object.entries(groupedProducts).map(([category, items]) => (
                 <div key={category} className="space-y-3">
                   <h3 className="text-sm font-black text-brand-400 uppercase tracking-widest px-1 flex items-center gap-2">
@@ -556,9 +548,9 @@ export default function Products() {
                   </div>
                 </div>
               ))}
-            </motion.div>
+            </div>
           ) : (
-            <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {displayedProducts.map((p) => (
                 <ProductCard
                   key={p.id}
@@ -573,7 +565,7 @@ export default function Products() {
                   format$={format$}
                 />
               ))}
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
         

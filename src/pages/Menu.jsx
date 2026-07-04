@@ -27,7 +27,7 @@ const getDocTypeStr = (code) => DOC_TYPES[String(code)] || ''
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } }
+  visible: { opacity: 1, transition: { duration: 0.15 } }
 }
 const itemVariants = {
   hidden: { opacity: 0, y: 16, scale: 0.98 },
@@ -79,18 +79,15 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
     : null
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.96 }}
+    <div
       onClick={onSelect}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 260px' }}
       className={clsx(
         'relative flex flex-col gap-0 rounded-2xl border-2 cursor-pointer transition-all duration-200 group overflow-hidden bg-white dark:bg-surface-800',
         selected
           ? 'border-brand-500 ring-1 ring-brand-500/30'
           : 'border-neutral-200 dark:border-surface-700 hover:border-brand-500'
       )}
-      transition={smoothTransition}
     >
       {/* Top Section: Avatar + Name + Status */}
       <div className={clsx(
@@ -202,7 +199,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
