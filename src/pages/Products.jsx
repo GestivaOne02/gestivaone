@@ -79,10 +79,12 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
 
   const handleAdd = () => {
     const finalQty = qty === '' ? 1 : Number(qty)
-    onAdd(product, finalQty)
-    setAdded(true)
-    setTimeout(() => setAdded(false), 800)
-    setQty('')
+    const success = onAdd(product, finalQty)
+    if (success) {
+      setAdded(true)
+      setTimeout(() => setAdded(false), 800)
+      setQty('')
+    }
   }
 
   const stockPct = hasUnlimitedStock ? 100 : Math.min(100, ((product.stock ?? 0) / 100) * 100)
@@ -366,8 +368,11 @@ export default function Products() {
   }, [displayedProducts, isGrouped])
 
   const handleAdd = (product, qty) => {
-    addItem(product, qty)
-    toast.success(`${qty}x ${product.name} al carrito`, { duration: 1500 })
+    const success = addItem(product, qty)
+    if (success) {
+      toast.success(`${qty}x ${product.name} al carrito`, { duration: 1500 })
+    }
+    return success
   }
 
   const handleDelete = (product) => {

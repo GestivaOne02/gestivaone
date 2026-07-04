@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { useCurrencyStore } from './useCurrencyStore'
 import { useAuthStore } from './useAuthStore'
-import { getProductDiscount } from './useProductStore'
+import { getProductDiscount, useProductStore } from './useProductStore'
+import toast from 'react-hot-toast'
 
 const TAX_RATES = {
   COP: 0.19,
@@ -75,15 +76,30 @@ export const useCartStore = create((set, get) => {
     toggleTax: () => setAndRecalc((s) => ({ includeTax: !s.includeTax })),
 
     addItem: (product, qty = 1) => {
-      setAndRecalc((s) => {
-        const discountInfo = getProductDiscount(product)
-        const effectivePrice = discountInfo ? discountInfo.finalPrice : Number(product.price)
+      const latestProduct = useProductStore.getState().products.find((p) => p.id === product.id) || product
+      const isUnlimited = latestProduct.unit === 'ILIMITADO' || latestProduct.stock >= 999990000
 
-        const existing = s.items.find((i) => i.productId === product.id)
+      let success = true
+      setAndRecalc((s) => {
+        const discountInfo = getProductDiscount(latestProduct)
+        const effectivePrice = discountInfo ? discountInfo.finalPrice : Number(latestProduct.price)
+
+        const existing = s.items.find((i) => i.productId === latestProduct.id)
+        const currentCartQty = existing ? existing.qty : 0
+        const targetQty = currentCartQty + qty
+
+        if (!isUnlimited && latestProduct.stock !== undefined && latestProduct.stock !== null) {
+          if (targetQty > latestProduct.stock) {
+            success = false
+            toast.error(`Solo quedan ${latestProduct.stock} unidades de ${latestProduct.name}`)
+            return {}
+          }
+        }
+
         if (existing) {
           return {
             items: s.items.map((i) =>
-               i.productId === product.id ? { ...i, qty: i.qty + qty, price: effectivePrice } : i
+               i.productId === latestProduct.id ? { ...i, qty: targetQty, price: effectivePrice } : i
             ),
           }
         }
@@ -92,19 +108,20 @@ export const useCartStore = create((set, get) => {
             ...s.items,
             {
               id: `cart-${Date.now()}-${Math.random()}`,
-              productId: product.id,
-              name: product.name,
+              productId: latestProduct.id,
+              name: latestProduct.name,
               price: effectivePrice,
               qty,
-              unit: product.unit ?? 'UND',
-              isCustom: product.isCustom ?? false,
+              unit: latestProduct.unit ?? 'UND',
+              isCustom: latestProduct.isCustom ?? false,
               discountApplied: discountInfo ? { amount: discountInfo.amount, type: discountInfo.type, value: discountInfo.value } : null,
-              attachment_url: product.attachment_url ?? null,
-              attachment_name: product.attachment_name ?? null,
+              attachment_url: latestProduct.attachment_url ?? null,
+              attachment_name: latestProduct.attachment_name ?? null,
             },
           ],
         }
       })
+      return success
     },
 
     addCustomItem: (name, price, description = '') => {
@@ -130,6 +147,21 @@ export const useCartStore = create((set, get) => {
 
     updateQty: (id, qty) => {
       if (qty <= 0) { get().removeItem(id); return }
+      
+      const item = get().items.find((i) => i.id === id)
+      if (item && item.productId) {
+        const latestProduct = useProductStore.getState().products.find((p) => p.id === item.productId)
+        if (latestProduct) {
+          const isUnlimited = latestProduct.unit === 'ILIMITADO' || latestProduct.stock >= 999990000
+          if (!isUnlimited && latestProduct.stock !== undefined && latestProduct.stock !== null) {
+            if (qty > latestProduct.stock) {
+              toast.error(`Solo quedan ${latestProduct.stock} unidades de ${item.name}`)
+              return
+            }
+          }
+        }
+      }
+
       setAndRecalc((s) => ({
         items: s.items.map((i) => (i.id === id ? { ...i, qty: Number(qty) } : i)),
       }))
