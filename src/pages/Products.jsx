@@ -301,6 +301,9 @@ export default function Products() {
   const [freeName, setFreeName]   = useState('')
   const [showFree, setShowFree]   = useState(false)
   const [isGrouped, setIsGrouped] = useState(false)
+  // Sort & Filter state
+  const [sortMode, setSortMode] = useState('recent')
+  const [activeLetter, setActiveLetter] = useState(null)
 
   // Infinite Scroll state
   const [visibleCount, setVisibleCount] = useState(30)
@@ -326,10 +329,6 @@ export default function Products() {
     
     return () => observer.disconnect()
   }, [])
-
-  // Sort & Filter state
-  const [sortMode, setSortMode] = useState('recent')
-  const [activeLetter, setActiveLetter] = useState(null)
 
   const products      = useProductStore((s) => s.products)
   const prdLoading    = useProductStore((s) => s.loading)
