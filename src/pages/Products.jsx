@@ -402,7 +402,7 @@ export default function Products() {
           <div className="flex flex-wrap items-center gap-3">
             <div>
               <h1 className="text-lg md:text-xl font-bold text-foreground">Productos</h1>
-              {prdLoading ? (
+              {(prdLoading && products.length === 0) ? (
                 <div className="hidden sm:block h-4 w-32 bg-surface-700 rounded animate-pulse mt-0.5" />
               ) : (
                 <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">{products.length} productos en catálogo</p>
@@ -507,7 +507,7 @@ export default function Products() {
       {/* Product grid */}
       <div className="flex-1">
         <AnimatePresence>
-          {prdLoading ? (
+          {(prdLoading && products.length === 0) ? (
             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {Array.from({ length: 10 }).map((_, i) => (
                 <div key={i} className="bg-surface-800 border border-subtle rounded-2xl p-4 h-[120px] animate-pulse flex flex-col gap-3">
