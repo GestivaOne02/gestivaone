@@ -19,6 +19,7 @@ import GestiToken from '@/pages/GestiToken'
 import CRM from '@/pages/CRM'
 import Emails from '@/pages/Emails'
 import Upgrade from '@/pages/Upgrade'
+import Store from '@/pages/Store'
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -173,7 +174,8 @@ export default function App() {
     '/dian': 'Asistente DIAN',
     '/seguridad': 'GestiToken',
     '/crm': 'CRM',
-    '/emails': 'Campañas'
+    '/emails': 'Campañas',
+    '/store': 'Mi Tienda'
   }
 
   useEffect(() => {
@@ -287,6 +289,7 @@ export default function App() {
         >
           <Route path="/menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
           <Route path="/products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
+          <Route path="/store" element={<RequirePermission perm="products"><Store /></RequirePermission>} />
           <Route path="/employees" element={<RequirePermission perm="employees"><RequireFeature feature="employees"><Employees /></RequireFeature></RequirePermission>} />
           <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
           <Route path="/account" element={<Account />} />

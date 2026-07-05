@@ -1,7 +1,7 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  LayoutDashboard, Receipt, Package,
+  LayoutDashboard, Receipt, Package, Store,
   Settings, ChevronLeft, X, Users, Lock, Bell, Printer, Calculator, Wallet, FolderClosed, Contact, Mail,
   User, CreditCard, LogOut, HelpCircle, MessageSquare, Zap
 } from 'lucide-react'
@@ -119,6 +119,7 @@ export default function Sidebar({ isMobile }) {
         items: [
           { to: '/menu', icon: Receipt, label: 'Menú', perm: 'menu', feature: 'menu' },
           { to: '/products', icon: Package, label: 'Productos', perm: 'products', feature: 'products' },
+          { to: '/store', icon: Store, label: 'Mi Tienda', perm: 'products', feature: 'store' },
         ]
       },
       {
@@ -144,7 +145,7 @@ export default function Sidebar({ isMobile }) {
 
     return groups.map(g => {
       const filteredItems = g.items.filter(item => {
-        if (['menu', 'products', 'dashboard'].includes(item.feature)) return true
+        if (['menu', 'products', 'dashboard', 'store'].includes(item.feature)) return true
         if (item.feature === 'employees' && user?.plan === 'pro') return true
         return hasFeature(item.feature)
       })
