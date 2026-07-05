@@ -768,6 +768,11 @@ export const useAuthStore = create(
             companyLogo: company?.logo_url,
             country: company?.country || null,
             settings: company?.settings,
+            // [NUEVO] Campos de la Tienda Virtual
+            storeEnabled: company?.store_enabled || false,
+            storeSlug: company?.store_slug || null,
+            storeSettings: company?.store_settings || {},
+            // ───────────────────────────────────
             branchId: profile.branch_id || null,
             permissions: profile.permissions || [],
             avatarUrl: profile.avatar_url || null
@@ -870,6 +875,12 @@ export const useAuthStore = create(
           if (data.country !== undefined) companyUpdates.country = data.country
           if (data.base_currency !== undefined) companyUpdates.currency = data.base_currency
           if (data.settings !== undefined) companyUpdates.settings = data.settings
+          
+          // [NUEVO] Tienda Virtual / Catálogo Público
+          if (data.storeEnabled !== undefined) companyUpdates.store_enabled = data.storeEnabled
+          if (data.storeSlug !== undefined) companyUpdates.store_slug = data.storeSlug
+          if (data.storeSettings !== undefined) companyUpdates.store_settings = data.storeSettings
+          // ──────────────────────────────────────────
 
           if (Object.keys(companyUpdates).length > 0) {
             await supabase.from('companies').update(companyUpdates).eq('id', targetCompanyId)

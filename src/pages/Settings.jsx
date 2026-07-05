@@ -4,7 +4,7 @@ import {
   Globe, RefreshCw, Check, Moon, Sun, Building2, Bell, Database,
   AlertTriangle, Monitor, Mail, MessageSquare, Server, FileText,
   FileSpreadsheet, Download, ChevronDown, ChevronUp, Loader2, Wifi, WifiOff, Lock,
-  Printer, Trash2
+  Printer, Trash2, ShoppingBag
 } from 'lucide-react'
 import { useCurrencyStore, SUPPORTED_CURRENCIES } from '@/store/useCurrencyStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -297,10 +297,13 @@ export default function Settings() {
         </>
       </section>
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Resend ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ─── Resend ─── */}
       <ResendBlock />
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ WhatsApp ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ─── Tienda Virtual ─── */}
+      <VirtualStoreBlock />
+
+      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ WhatsApp ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <IntegrationBlock
         icon={MessageSquare}
         title="WhatsApp Business"
@@ -469,6 +472,169 @@ function ResendBlock() {
           </div>
         )}
       </>
+    </section>
+  )
+}
+
+function VirtualStoreBlock() {
+  const user = useAuthStore(s => s.user)
+  const updateProfile = useAuthStore(s => s.updateProfile)
+
+  const [open, setOpen] = useState(false)
+  const [storeEnabled, setStoreEnabled] = useState(user?.storeEnabled || false)
+  const [storeSlug, setStoreSlug] = useState(user?.storeSlug || '')
+  const [whatsapp, setWhatsapp] = useState(user?.storeSettings?.whatsapp_contact || '')
+  const [seoDesc, setSeoDesc] = useState(user?.storeSettings?.seo_description || '')
+  const [accentColor, setAccentColor] = useState(user?.storeSettings?.accent_color || '#4f46e5')
+  const [bannerUrl, setBannerUrl] = useState(user?.storeSettings?.banner_url || '')
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      setStoreEnabled(user.storeEnabled || false)
+      setStoreSlug(user.storeSlug || '')
+      setWhatsapp(user.storeSettings?.whatsapp_contact || '')
+      setSeoDesc(user.storeSettings?.seo_description || '')
+      setAccentColor(user.storeSettings?.accent_color || '#4f46e5')
+      setBannerUrl(user.storeSettings?.banner_url || '')
+    }
+  }, [user])
+
+  const handleSave = async () => {
+    const cleanedSlug = storeSlug.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '')
+    if (storeEnabled && !cleanedSlug) {
+      return toast.error('El enlace personalizado no puede estar vacío si la tienda está activa.')
+    }
+
+    setSaving(true)
+    try {
+      await updateProfile({
+        storeEnabled,
+        storeSlug: cleanedSlug || null,
+        storeSettings: {
+          theme: 'classic',
+          accent_color: accentColor,
+          whatsapp_contact: whatsapp.trim(),
+          seo_description: seoDesc.trim(),
+          banner_url: bannerUrl.trim()
+        }
+      })
+      toast.success('Configuración de tienda virtual guardada')
+    } catch (err) {
+      toast.error('Error al guardar configuración')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <section className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm">
+      <button onClick={() => setOpen(o => !o)} type="button"
+        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><ShoppingBag size={16} /></div>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground">Tienda Virtual y Catálogo</p>
+          <p className="text-xs text-muted-400">Activa tu catálogo online público, configura enlace y marca</p>
+        </div>
+        <Toggle checked={storeEnabled} onChange={v => setStoreEnabled(v)} />
+        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+      </button>
+
+      {open && (
+        <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-4 font-sans">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-muted-400 mb-1 block">Enlace personalizado (Slug) *</label>
+              <div className="flex items-center bg-surface-700 border border-subtle rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-500/50">
+                <span className="px-3 text-xs text-muted-500 border-r border-subtle bg-surface-600/40 select-none">/store/</span>
+                <input
+                  type="text"
+                  value={storeSlug}
+                  onChange={e => setStoreSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
+                  placeholder="ej: mi-tienda"
+                  className="flex-1 bg-transparent px-3 py-2 text-xs text-foreground outline-none border-none"
+                />
+              </div>
+              <p className="text-[10px] text-muted-400 mt-1">Solo letras minúsculas, números y guiones. Ej: arepas-don-juan</p>
+            </div>
+
+            <CfgInput
+              label="Número de WhatsApp para pedidos"
+              value={whatsapp}
+              onChange={setWhatsapp}
+              placeholder="Ej: 573123456789"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-muted-400 mb-1 block">Color de acento de la tienda</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={accentColor}
+                  onChange={e => setAccentColor(e.target.value)}
+                  className="w-10 h-10 border border-subtle rounded-xl cursor-pointer bg-transparent"
+                />
+                <input
+                  type="text"
+                  value={accentColor.toUpperCase()}
+                  onChange={e => setAccentColor(e.target.value)}
+                  placeholder="#4F46E5"
+                  className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-xs text-foreground placeholder:text-muted-400 outline-none focus:ring-2 focus:ring-brand-500/50"
+                />
+              </div>
+            </div>
+
+            <CfgInput
+              label="URL de Imagen de Banner (Opcional)"
+              value={bannerUrl}
+              onChange={setBannerUrl}
+              placeholder="Ej: https://images.unsplash.com/..."
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-muted-400 mb-1 block">Descripción corta (SEO)</label>
+            <textarea
+              rows={2}
+              value={seoDesc}
+              onChange={e => setSeoDesc(e.target.value)}
+              placeholder="Ej: Las mejores arepas artesanales precocidas..."
+              className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
+            />
+          </div>
+
+          {storeEnabled && storeSlug && (
+            <div className="bg-brand-500/5 border border-brand-500/20 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold text-foreground">Tu catálogo está activo en:</p>
+                <p className="text-xs text-brand-500 dark:text-brand-300 font-mono select-all break-all mt-0.5">
+                  https://gestivaone-store.vercel.app/{storeSlug}
+                </p>
+              </div>
+              <a
+                href={`https://gestivaone-store.vercel.app/${storeSlug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shrink-0"
+              >
+                Visitar catálogo
+              </a>
+            </div>
+          )}
+
+          <button
+            onClick={handleSave}
+            type="button"
+            disabled={saving}
+            className="flex items-center justify-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-40 text-white px-5 py-2.5 rounded-xl font-bold transition-all w-full sm:w-auto cursor-pointer"
+          >
+            {saving ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+            {saving ? 'Guardando...' : 'Guardar configuración'}
+          </button>
+        </div>
+      )}
     </section>
   )
 }

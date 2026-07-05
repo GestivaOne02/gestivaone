@@ -28,6 +28,9 @@ const schema = z.object({
   discount_ends_at: z.string().optional().nullable(),
   show_image: z.boolean().optional(),
   image_url: z.string().optional(),
+  show_in_store: z.boolean().optional(),
+  featured: z.boolean().optional(),
+  description: z.string().optional(),
 })
 
 const UNITS = ['KG', 'LB', 'UND', 'L', 'M']
@@ -50,7 +53,7 @@ export default function AddProductModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '' },
+    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' },
   })
 
   const unit = watch('unit')
@@ -120,6 +123,9 @@ export default function AddProductModal({ open }) {
         discount_ends_at: duplicating.discount_ends_at ? duplicating.discount_ends_at.split('T')[0] : '',
         show_image: showImageVal,
         image_url: imageUrlVal,
+        show_in_store: duplicating.show_in_store ?? false,
+        featured: duplicating.featured ?? false,
+        description: duplicating.description ?? '',
       })
       setCustomCategoryName('')
       return
@@ -146,6 +152,9 @@ export default function AddProductModal({ open }) {
         discount_ends_at: editing.discount_ends_at ? editing.discount_ends_at.split('T')[0] : '',
         show_image: showImageVal,
         image_url: imageUrlVal,
+        show_in_store: editing.show_in_store ?? false,
+        featured: editing.featured ?? false,
+        description: editing.description ?? '',
       })
       setCustomCategoryName('')
     }
@@ -153,7 +162,7 @@ export default function AddProductModal({ open }) {
       setIsUnlimited(false)
       setHasDiscount(false)
       setShowImage(true)
-      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '' })
+      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
     }
   }, [open, editing, duplicating, reset])
@@ -189,6 +198,9 @@ export default function AddProductModal({ open }) {
       discount_value: hasDiscount ? Number(data.discount_value || 0) : null,
       discount_ends_at: hasDiscount && data.discount_ends_at ? new Date(data.discount_ends_at + 'T23:59:59').toISOString() : null,
       image_url: finalImageUrl,
+      show_in_store: data.show_in_store || false,
+      featured: data.featured || false,
+      description: data.description || '',
     }
 
     // Editing an existing product
@@ -394,6 +406,47 @@ export default function AddProductModal({ open }) {
                 <p className="text-[10px] text-muted-400">Si se deja vacío, el sistema asignará una imagen ilustrativa basada en la categoría seleccionada.</p>
               </div>
             )}
+          </div>
+
+          {/* Tienda Virtual Section */}
+          <div className="pt-2 border-t border-subtle space-y-3">
+            <p className="text-xs font-semibold text-brand-500 dark:text-brand-400 uppercase tracking-wide">Tienda Virtual / Catálogo</p>
+            
+            <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+              <div>
+                <p className="text-xs font-bold text-foreground">Mostrar en Tienda Virtual</p>
+                <p className="text-[10px] text-muted-400 mt-0.5">Hace que este producto sea visible públicamente en tu catálogo.</p>
+              </div>
+              <input
+                type="checkbox"
+                className="w-5 h-5 rounded-lg cursor-pointer"
+                style={{ width: '1.2rem', height: '1.2rem' }}
+                {...register('show_in_store')}
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+              <div>
+                <p className="text-xs font-bold text-foreground">Destacar en la Tienda</p>
+                <p className="text-[10px] text-muted-400 mt-0.5">Muestra un badge de "Destacado" y lo resalta en el catálogo.</p>
+              </div>
+              <input
+                type="checkbox"
+                className="w-5 h-5 rounded-lg cursor-pointer"
+                style={{ width: '1.2rem', height: '1.2rem' }}
+                {...register('featured')}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-muted-500 block mb-1.5 font-medium uppercase tracking-wide">Descripción Comercial (Pública)</label>
+              <textarea
+                rows={3}
+                placeholder="Escribe los detalles comerciales del producto, especificaciones, etc. para tus clientes..."
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
+                {...register('description')}
+              />
+            </div>
           </div>
 
           {/* Attachments Section */}
