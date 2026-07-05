@@ -64,6 +64,17 @@ export default function Landing() {
               <a href="#nosotros" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Nosotros</a>
               <a href="#precios" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Precios</a>
               <a href="#contacto" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Contacto</a>
+
+              {/* Shop link — abre la tienda pública de Gestiva */}
+              <a
+                href="https://gestivaone-store.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-400 hover:text-brand-300 transition-colors border-b-2 border-brand-500/40 hover:border-brand-400 pb-0.5"
+              >
+                <ShoppingCart size={14} />
+                Shop
+              </a>
             </div>
 
             {/* CTA / Auth Actions */}
