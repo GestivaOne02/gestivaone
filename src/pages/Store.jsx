@@ -268,7 +268,7 @@ export default function Store() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-container flex flex-col gap-6 h-full pb-16">
       
       {/* ─── Header Row ─── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-subtle pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-subtle pb-4 shrink-0">
         <div>
           <div className="flex items-center gap-2">
             <StoreIcon className="w-6 h-6 text-brand-400" />
@@ -290,7 +290,7 @@ export default function Store() {
       </div>
 
       {/* ─── Menu Navigation Tabs ─── */}
-      <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b border-subtle/50 no-scrollbar select-none">
+      <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b border-subtle/50 no-scrollbar select-none shrink-0">
         {[
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
           { id: 'appearance', label: 'Apariencia & Preview', icon: Palette },
@@ -524,7 +524,7 @@ export default function Store() {
                   <div className="text-xs font-bold text-muted-400 uppercase tracking-wide border-b border-subtle pb-1.5">Vista Previa (Móvil)</div>
                   
                   {/* Smartphone Frame Mockup */}
-                  <div className="rounded-2xl border-4 border-surface-600 bg-[#0a0a0f] p-3 aspect-[9/16] flex flex-col gap-3 overflow-hidden shadow-2xl relative">
+                  <div className="rounded-2xl border-4 border-surface-600 bg-[#0a0a0f] p-3 aspect-[9/16] flex flex-col gap-3 overflow-hidden shadow-2xl relative mx-auto w-full max-w-[260px]">
                     
                     {/* Tiny header mockup */}
                     <div className="flex items-center justify-between border-b border-subtle/50 pb-2">
