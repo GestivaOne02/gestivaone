@@ -578,14 +578,10 @@ export default function Store() {
             <motion.div key="catalog" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="card-surface p-5 flex flex-col gap-4">
               
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-subtle pb-3">
-                <h3 className="text-sm font-bold text-white">Productos en Tienda Virtual</h3>
-                <button
-                  onClick={() => openModal('addProduct')}
-                  className="btn btn-primary"
-                >
-                  <Plus size={14} />
-                  <span>Añadir Producto</span>
-                </button>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Productos en Tienda Virtual</h3>
+                  <p className="text-[11px] text-muted-400 mt-0.5">Controla la visibilidad, destacados y descuentos de tu catálogo. Para agregar nuevos productos al inventario general, ve a la sección de Productos.</p>
+                </div>
               </div>
 
               {/* Table List */}
