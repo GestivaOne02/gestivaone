@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Store as StoreIcon, LayoutDashboard, Palette, Package, Receipt, CreditCard,
   Truck, Search, Settings as SettingsIcon, Save, Eye, Check, ExternalLink,
-  ChevronRight, Phone, Printer, Plus, AlertCircle, TrendingUp, ShoppingBag, X, Star, Calendar, RefreshCw
+  ChevronRight, Phone, Printer, Plus, AlertCircle, TrendingUp, ShoppingBag, X, Star, Calendar, RefreshCw,
+  Zap, Link2, Globe, Lock, CheckCircle2, AlertTriangle, Loader2, PlugZap, Copy, ShieldCheck
 } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useProductStore, CATEGORIES } from '@/store/useProductStore'
@@ -51,6 +52,33 @@ export default function Store() {
   const [editPrice, setEditPrice] = useState(0)
   const [editDiscountType, setEditDiscountType] = useState(null)
   const [editDiscountValue, setEditDiscountValue] = useState(null)
+
+  // ─── Integrations: Dropi ───
+  const [dropiToken, setDropiToken] = useState('')
+  const [dropiTokenSaved, setDropiTokenSaved] = useState('')
+  const [dropiTestStatus, setDropiTestStatus] = useState(null) // null | 'ok' | 'error' | 'loading'
+  const [dropiTestMsg, setDropiTestMsg] = useState('')
+  const [dropiBusy, setDropiBusy] = useState(false)
+  const [dropiCityQuery, setDropiCityQuery] = useState('')
+  const [dropiCities, setDropiCities] = useState([])
+  const [dropiCityLoading, setDropiCityLoading] = useState(false)
+  const [integSaving, setIntegSaving] = useState(false)
+
+  // Load Dropi token from store_settings on mount
+  useEffect(() => {
+    if (!user?.companyId) return
+    async function loadIntegrations() {
+      const { data: company } = await supabase
+        .from('companies')
+        .select('store_settings')
+        .eq('id', user.companyId)
+        .single()
+      const token = company?.store_settings?.integrations?.dropi_token || ''
+      setDropiToken(token)
+      setDropiTokenSaved(token)
+    }
+    loadIntegrations()
+  }, [user?.companyId])
 
   // Load configuration & data
   useEffect(() => {
@@ -168,6 +196,123 @@ export default function Store() {
       toast.error('Error al guardar la configuración: ' + err.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  // ─── Save Dropi Token ───
+  const handleSaveDropiToken = async () => {
+    if (!user?.companyId) return
+    setIntegSaving(true)
+    try {
+      // Fetch current store_settings to merge
+      const { data: company } = await supabase
+        .from('companies')
+        .select('store_settings')
+        .eq('id', user.companyId)
+        .single()
+      const current = company?.store_settings || {}
+      const updated = {
+        ...current,
+        integrations: {
+          ...(current.integrations || {}),
+          dropi_token: dropiToken.trim()
+        }
+      }
+      const { error } = await supabase
+        .from('companies')
+        .update({ store_settings: updated })
+        .eq('id', user.companyId)
+      if (error) throw error
+      setDropiTokenSaved(dropiToken.trim())
+      setDropiTestStatus(null)
+      toast.success('Token de Dropi guardado correctamente.')
+    } catch (err) {
+      toast.error('Error al guardar el token: ' + err.message)
+    } finally {
+      setIntegSaving(false)
+    }
+  }
+
+  // ─── Test Dropi Connection ───
+  const handleTestDropi = async () => {
+    if (!dropiTokenSaved) { toast.error('Primero guarda un token de Dropi.'); return }
+    setDropiTestStatus('loading')
+    setDropiTestMsg('')
+    try {
+      const res = await fetch('https://dropi.co/api/external/v1/orders?page=1&per_page=1', {
+        headers: {
+          Authorization: `Bearer ${dropiTokenSaved}`,
+          Accept: 'application/json'
+        }
+      })
+      if (res.ok) {
+        setDropiTestStatus('ok')
+        setDropiTestMsg('Conexión exitosa con la API de Dropi ✓')
+      } else {
+        const body = await res.json().catch(() => ({}))
+        setDropiTestStatus('error')
+        setDropiTestMsg(body?.message || `Error HTTP ${res.status}`)
+      }
+    } catch (err) {
+      setDropiTestStatus('error')
+      setDropiTestMsg('No se pudo conectar con Dropi. Verifica tu token.')
+    }
+  }
+
+  // ─── Look up cities in Dropi ───
+  const handleDropiCitySearch = async () => {
+    if (!dropiTokenSaved) { toast.error('Primero guarda un token de Dropi.'); return }
+    if (!dropiCityQuery.trim()) return
+    setDropiCityLoading(true)
+    setDropiCities([])
+    try {
+      const res = await fetch(`https://dropi.co/api/external/v1/cities?search=${encodeURIComponent(dropiCityQuery)}`, {
+        headers: { Authorization: `Bearer ${dropiTokenSaved}`, Accept: 'application/json' }
+      })
+      const json = await res.json()
+      setDropiCities(json?.data || json?.cities || [])
+    } catch {
+      toast.error('Error al consultar ciudades en Dropi.')
+    } finally {
+      setDropiCityLoading(false)
+    }
+  }
+
+  // ─── Push a store order to Dropi ───
+  const handlePushToDropi = async (invoice) => {
+    if (!dropiTokenSaved) { toast.error('Primero configura tu token de Dropi.'); return }
+    setDropiBusy(true)
+    try {
+      const payload = {
+        customer_name: invoice.customer_name || 'Cliente',
+        customer_phone: invoice.customer_phone || '',
+        customer_address: invoice.customer_address || '',
+        customer_city: invoice.customer_city || '',
+        order_value: invoice.total || 0,
+        products: (invoice.items || []).map(it => ({
+          name: it.name,
+          quantity: it.quantity,
+          price: it.price
+        }))
+      }
+      const res = await fetch('https://dropi.co/api/external/v1/orders', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${dropiTokenSaved}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body?.message || `Error HTTP ${res.status}`)
+      }
+      toast.success(`Pedido enviado a Dropi correctamente ✓`)
+    } catch (err) {
+      toast.error('Error al enviar a Dropi: ' + err.message)
+    } finally {
+      setDropiBusy(false)
     }
   }
 
@@ -296,7 +441,8 @@ export default function Store() {
           { id: 'appearance', label: 'Apariencia & Preview', icon: Palette },
           { id: 'catalog', label: 'Catálogo Store', icon: Package },
           { id: 'orders', label: 'Pedidos Recibidos', icon: Receipt },
-          { id: 'settings', label: 'Pagos & Envíos', icon: SettingsIcon }
+          { id: 'settings', label: 'Pagos & Envíos', icon: SettingsIcon },
+          { id: 'integrations', label: 'Integraciones', icon: PlugZap }
         ].map(tab => {
           const Icon = tab.icon
           const active = activeTab === tab.id
@@ -947,6 +1093,279 @@ export default function Store() {
                   {saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
                   <span>Guardar Reglas de Envío</span>
                 </button>
+              </div>
+
+            </motion.div>
+          )}
+
+          {/* ══════════════════════════════════════════════════════════════ */}
+          {/* 6. INTEGRACIONES TAB                                          */}
+          {/* ══════════════════════════════════════════════════════════════ */}
+          {activeTab === 'integrations' && (
+            <motion.div
+              key="integrations"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Header */}
+              <div className="card-surface p-5 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center shrink-0">
+                  <PlugZap size={18} className="text-brand-400" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-white">Integraciones & Conexiones</h2>
+                  <p className="text-xs text-muted-400 mt-1 leading-relaxed max-w-xl">
+                    Conecta tu tienda Gestiva con plataformas de logística, dropshipping y canales de venta externos.
+                    Cada integración se activa con sus propias credenciales y opera de forma independiente.
+                  </p>
+                </div>
+              </div>
+
+              {/* ─── DROPI CARD ─── */}
+              <div className="card-surface p-5 flex flex-col gap-5">
+                {/* Card header */}
+                <div className="flex items-center justify-between pb-3 border-b border-subtle">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                      <Zap size={16} className="text-violet-400" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-white">Dropi</span>
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-violet-500/10 border border-violet-500/20 text-violet-400 uppercase tracking-wider">Dropshipping</span>
+                        {dropiTokenSaved && dropiTestStatus === 'ok' && (
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-success-500/10 border border-success-500/20 text-success-400 flex items-center gap-1">
+                            <CheckCircle2 size={9} />
+                            CONECTADO
+                          </span>
+                        )}
+                        {dropiTestStatus === 'error' && (
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-danger-500/10 border border-danger-500/20 text-danger-400 flex items-center gap-1">
+                            <AlertTriangle size={9} />
+                            ERROR
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-muted-400 mt-0.5">Plataforma de dropshipping líder en Colombia y Latinoamérica.</p>
+                    </div>
+                  </div>
+                  <a
+                    href="https://dropi.co"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-[10px] text-muted-400 hover:text-brand-400 transition-colors"
+                  >
+                    <Globe size={11} />
+                    dropi.co
+                  </a>
+                </div>
+
+                {/* ── Token config ── */}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
+                    <Lock size={12} className="text-muted-500" />
+                    <span className="text-xs font-bold text-white">API Token</span>
+                  </div>
+                  <p className="text-[10px] text-muted-400 leading-relaxed -mt-1">
+                    Obtén tu token en el panel de Dropi &gt; <strong className="text-muted-300">Configuración &gt; API</strong>.
+                    Este token permite enviar pedidos y consultar información de envíos directamente desde Gestiva.
+                  </p>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        type="password"
+                        value={dropiToken}
+                        onChange={e => setDropiToken(e.target.value)}
+                        placeholder="Pega aquí tu Bearer Token de Dropi…"
+                        className="input w-full pr-10 font-mono text-xs"
+                      />
+                      {dropiToken && (
+                        <button
+                          onClick={() => { navigator.clipboard.writeText(dropiToken); toast.success('Copiado'); }}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-500 hover:text-brand-400 transition-colors cursor-pointer"
+                        >
+                          <Copy size={13} />
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      onClick={handleSaveDropiToken}
+                      disabled={integSaving || dropiToken === dropiTokenSaved}
+                      className="btn btn-primary text-xs shrink-0"
+                    >
+                      {integSaving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+                      <span>Guardar</span>
+                    </button>
+                    <button
+                      onClick={handleTestDropi}
+                      disabled={!dropiTokenSaved || dropiTestStatus === 'loading'}
+                      className="btn btn-ghost text-xs shrink-0"
+                    >
+                      {dropiTestStatus === 'loading' ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
+                      <span>Probar</span>
+                    </button>
+                  </div>
+
+                  {/* Test feedback */}
+                  {dropiTestMsg && (
+                    <div className={clsx(
+                      'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border',
+                      dropiTestStatus === 'ok'
+                        ? 'bg-success-500/10 border-success-500/20 text-success-400'
+                        : 'bg-danger-500/10 border-danger-500/20 text-danger-400'
+                    )}>
+                      {dropiTestStatus === 'ok' ? <CheckCircle2 size={12} /> : <AlertTriangle size={12} />}
+                      {dropiTestMsg}
+                    </div>
+                  )}
+                </div>
+
+                {/* ── City Lookup ── */}
+                <div className="flex flex-col gap-3 pt-4 border-t border-subtle">
+                  <div className="flex items-center gap-2">
+                    <Globe size={12} className="text-muted-500" />
+                    <span className="text-xs font-bold text-white">Consultar Ciudades Disponibles</span>
+                  </div>
+                  <p className="text-[10px] text-muted-400 -mt-1">Verifica si una ciudad tiene cobertura de envío en Dropi antes de aceptar un pedido.</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={dropiCityQuery}
+                      onChange={e => setDropiCityQuery(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleDropiCitySearch()}
+                      placeholder="Ej: Medellín, Bogotá, Cali…"
+                      className="input flex-1 text-xs"
+                    />
+                    <button
+                      onClick={handleDropiCitySearch}
+                      disabled={dropiCityLoading || !dropiCityQuery.trim()}
+                      className="btn btn-ghost text-xs shrink-0"
+                    >
+                      {dropiCityLoading ? <Loader2 size={13} className="animate-spin" /> : <Search size={13} />}
+                      <span>Buscar</span>
+                    </button>
+                  </div>
+                  {dropiCities.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {dropiCities.slice(0, 20).map((city, i) => (
+                        <span key={i} className="px-2 py-1 rounded-lg bg-surface-700/60 border border-subtle text-[10px] text-muted-300 font-medium">
+                          {typeof city === 'string' ? city : (city.name || city.city_name || JSON.stringify(city))}
+                        </span>
+                      ))}
+                      {dropiCities.length > 20 && (
+                        <span className="px-2 py-1 text-[10px] text-muted-500">+{dropiCities.length - 20} más</span>
+                      )}
+                    </div>
+                  )}
+                  {dropiCities.length === 0 && !dropiCityLoading && dropiCityQuery && (
+                    <p className="text-[10px] text-muted-500 mt-1">Sin resultados para «{dropiCityQuery}»</p>
+                  )}
+                </div>
+
+                {/* ── Orders: Push to Dropi ── */}
+                {invoices.length > 0 && (
+                  <div className="flex flex-col gap-3 pt-4 border-t border-subtle">
+                    <div className="flex items-center gap-2">
+                      <Receipt size={12} className="text-muted-500" />
+                      <span className="text-xs font-bold text-white">Enviar Pedidos a Dropi</span>
+                    </div>
+                    <p className="text-[10px] text-muted-400 -mt-1">Envía pedidos COD de tu tienda directamente a Dropi con un clic para que gestionen el envío.</p>
+                    <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
+                      {invoices.slice(0, 12).map(inv => (
+                        <div key={inv.id} className="flex items-center justify-between gap-3 bg-surface-700/40 px-3 py-2.5 rounded-xl border border-subtle">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs font-semibold text-white truncate">{inv.customer_name || 'Sin nombre'}</div>
+                            <div className="text-[10px] text-muted-400">{inv.customer_city || '—'} · {formatCOP(inv.total)}</div>
+                          </div>
+                          <div className={clsx(
+                            'text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0',
+                            inv.payment_status === 'paid'
+                              ? 'bg-success-500/10 border-success-500/20 text-success-400'
+                              : 'bg-warning-500/10 border-warning-500/20 text-warning-400'
+                          )}>
+                            {inv.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE'}
+                          </div>
+                          <button
+                            onClick={() => handlePushToDropi(inv)}
+                            disabled={dropiBusy}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] font-bold hover:bg-violet-500/20 transition-all cursor-pointer shrink-0"
+                          >
+                            {dropiBusy ? <Loader2 size={11} className="animate-spin" /> : <Zap size={11} />}
+                            <span>Enviar a Dropi</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ─── PRÓXIMAS INTEGRACIONES ─── */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  {
+                    name: 'WhatsApp Business API',
+                    desc: 'Envía notificaciones de pedidos y confirmaciones automáticas por WhatsApp.',
+                    icon: Phone,
+                    color: 'green',
+                    tag: 'Próximamente'
+                  },
+                  {
+                    name: 'Shopify Sync',
+                    desc: 'Sincroniza tu catálogo Gestiva con una tienda Shopify en tiempo real.',
+                    icon: ShoppingBag,
+                    color: 'emerald',
+                    tag: 'Próximamente'
+                  },
+                  {
+                    name: 'WooCommerce',
+                    desc: 'Conecta con tiendas WordPress / WooCommerce para unificar inventario.',
+                    icon: Globe,
+                    color: 'indigo',
+                    tag: 'Próximamente'
+                  },
+                  {
+                    name: 'MercadoLibre',
+                    desc: 'Publica y sincroniza productos directamente desde Gestiva a MercadoLibre.',
+                    icon: TrendingUp,
+                    color: 'yellow',
+                    tag: 'Próximamente'
+                  },
+                  {
+                    name: 'Coordinadora / TCC',
+                    desc: 'Genera guías de envío y rastrea paquetes desde el panel de pedidos.',
+                    icon: Truck,
+                    color: 'orange',
+                    tag: 'Próximamente'
+                  },
+                  {
+                    name: 'Pasarela de Pago (PSE)',
+                    desc: 'Acepta pagos online seguros con PSE, tarjetas y billeteras digitales.',
+                    icon: ShieldCheck,
+                    color: 'sky',
+                    tag: 'En evaluación'
+                  }
+                ].map(integ => {
+                  const Icon = integ.icon
+                  return (
+                    <div key={integ.name} className="card-surface p-4 flex flex-col gap-3 opacity-60 hover:opacity-80 transition-opacity">
+                      <div className="flex items-center justify-between">
+                        <div className="w-8 h-8 rounded-lg bg-surface-700/80 border border-subtle flex items-center justify-center shrink-0">
+                          <Icon size={14} className="text-muted-400" />
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-surface-700/80 border border-subtle text-muted-500 uppercase tracking-wider">
+                          {integ.tag}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white">{integ.name}</div>
+                        <p className="text-[10px] text-muted-400 mt-1 leading-relaxed">{integ.desc}</p>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
 
             </motion.div>
