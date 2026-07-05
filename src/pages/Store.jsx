@@ -46,6 +46,12 @@ export default function Store() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
+  // Product Catalog Inline Edit States
+  const [editingProductId, setEditingProductId] = useState(null)
+  const [editPrice, setEditPrice] = useState(0)
+  const [editDiscountType, setEditDiscountType] = useState(null)
+  const [editDiscountValue, setEditDiscountValue] = useState(null)
+
   // Load configuration & data
   useEffect(() => {
     if (!user?.companyId) return
@@ -180,6 +186,34 @@ export default function Store() {
       toast.success('Producto actualizado en vivo.')
     } catch (err) {
       toast.error('Error al actualizar el producto: ' + err.message)
+    }
+  }
+
+  // Save inline edited product store details (price & discount)
+  const handleSaveProductStoreInfo = async (productId) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({
+          price: Number(editPrice),
+          discount_type: editDiscountType || null,
+          discount_value: editDiscountType ? Number(editDiscountValue) : null
+        })
+        .eq('id', productId)
+
+      if (error) throw error
+
+      setProductsList(prev => prev.map(p => p.id === productId ? {
+        ...p,
+        price: Number(editPrice),
+        discount_type: editDiscountType || null,
+        discount_value: editDiscountType ? Number(editDiscountValue) : null
+      } : p))
+
+      setEditingProductId(null)
+      toast.success('Precio y descuento de la tienda actualizados.')
+    } catch (err) {
+      toast.error('Error al guardar cambios: ' + err.message)
     }
   }
 
@@ -555,22 +589,26 @@ export default function Store() {
               </div>
 
               {/* Table List */}
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto border border-subtle/50 rounded-2xl">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-subtle text-muted-400 font-bold uppercase tracking-wider text-[10px]">
-                      <th className="py-2.5 px-3">Producto</th>
-                      <th className="py-2.5 px-3">Categoría</th>
-                      <th className="py-2.5 px-3">Precio</th>
-                      <th className="py-2.5 px-3 text-center">En Tienda</th>
-                      <th className="py-2.5 px-3 text-center">Destacado</th>
-                      <th className="py-2.5 px-3 text-center">Descuento</th>
+                    <tr className="border-b border-subtle bg-surface-800/60 text-muted-400 font-bold uppercase tracking-wider text-[10px]">
+                      <th className="py-3 px-4">Producto</th>
+                      <th className="py-3 px-3">Categoría</th>
+                      <th className="py-3 px-3">Precio Tienda</th>
+                      <th className="py-3 px-3 text-center">En Tienda</th>
+                      <th className="py-3 px-3 text-center">Destacado</th>
+                      <th className="py-3 px-3 text-center">Descuento</th>
+                      <th className="py-3 px-4 text-right">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {productsList.map(p => (
-                      <tr key={p.id} className="border-b border-subtle/50 hover:bg-surface-800/40 transition-colors">
-                        <td className="py-3 px-3">
+                      <tr key={p.id} className={clsx(
+                        'border-b border-subtle/50 hover:bg-surface-800/40 transition-colors',
+                        editingProductId === p.id && 'bg-brand-500/5'
+                      )}>
+                        <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             <span className="text-base">📦</span>
                             <div>
@@ -585,7 +623,19 @@ export default function Store() {
                           </span>
                         </td>
                         <td className="py-3 px-3 font-bold text-white">
-                          {formatCOP(p.price)}
+                          {editingProductId === p.id ? (
+                            <div className="relative">
+                              <span className="absolute left-2.5 top-1.5 text-[10px] text-muted-400 font-bold">$</span>
+                              <input
+                                type="number"
+                                value={editPrice}
+                                onChange={(e) => setEditPrice(Number(e.target.value))}
+                                className="bg-surface-700 border border-subtle rounded-xl pl-5 pr-2 py-1 text-xs text-white w-28 focus:outline-none focus:border-brand-500"
+                              />
+                            </div>
+                          ) : (
+                            formatCOP(p.price)
+                          )}
                         </td>
                         <td className="py-3 px-3 text-center">
                           <button
@@ -614,19 +664,72 @@ export default function Store() {
                           </button>
                         </td>
                         <td className="py-3 px-3 text-center font-bold text-brand-400">
-                          {p.discount_value && p.discount_value > 0 ? (
-                            <span className="px-2 py-0.5 bg-danger-500/10 border border-danger-500/20 rounded-md text-danger-400 text-[10px]">
-                              -{p.discount_value}{p.discount_type === 'percentage' ? '%' : ' COP'}
-                            </span>
+                          {editingProductId === p.id ? (
+                            <div className="flex items-center gap-1 justify-center">
+                              <select
+                                value={editDiscountType || ''}
+                                onChange={(e) => setEditDiscountType(e.target.value || null)}
+                                className="bg-surface-700 border border-subtle rounded-xl px-1.5 py-1 text-[11px] text-white focus:outline-none focus:border-brand-500"
+                              >
+                                <option value="">Sin Desc.</option>
+                                <option value="percentage">% Desc</option>
+                                <option value="fixed">$ Fijo</option>
+                              </select>
+                              {editDiscountType && (
+                                <input
+                                  type="number"
+                                  value={editDiscountValue || ''}
+                                  onChange={(e) => setEditDiscountValue(Number(e.target.value))}
+                                  placeholder="Valor"
+                                  className="bg-surface-700 border border-subtle rounded-xl px-2 py-1 text-xs text-white w-16 focus:outline-none focus:border-brand-500"
+                                />
+                              )}
+                            </div>
                           ) : (
-                            <span className="text-muted-500 font-medium">-</span>
+                            p.discount_value && p.discount_value > 0 ? (
+                              <span className="px-2 py-0.5 bg-danger-500/10 border border-danger-500/20 rounded-md text-danger-400 text-[10px]">
+                                -{p.discount_value}{p.discount_type === 'percentage' ? '%' : ' COP'}
+                              </span>
+                            ) : (
+                              <span className="text-muted-500 font-medium">-</span>
+                            )
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          {editingProductId === p.id ? (
+                            <div className="flex items-center gap-2 justify-end">
+                              <button
+                                onClick={() => handleSaveProductStoreInfo(p.id)}
+                                className="px-3 py-1.5 bg-success-600 hover:bg-success-500 text-white rounded-xl text-[10px] font-bold transition-all active:scale-95"
+                              >
+                                Guardar
+                              </button>
+                              <button
+                                onClick={() => setEditingProductId(null)}
+                                className="px-3 py-1.5 bg-surface-700 hover:bg-surface-600 text-muted-300 rounded-xl text-[10px] font-bold transition-all active:scale-95"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                setEditingProductId(p.id)
+                                setEditPrice(p.price || 0)
+                                setEditDiscountType(p.discount_type || null)
+                                setEditDiscountValue(p.discount_value || 0)
+                              }}
+                              className="px-3 py-1.5 bg-brand-600/15 hover:bg-brand-600/30 text-brand-400 rounded-xl text-[10px] font-bold transition-all border border-brand-500/20 active:scale-95"
+                            >
+                              Editar Tienda
+                            </button>
                           )}
                         </td>
                       </tr>
                     ))}
                     {productsList.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="py-8 text-center text-muted-500">No tienes productos en tu catálogo general.</td>
+                        <td colSpan={7} className="py-8 text-center text-muted-500">No tienes productos en tu catálogo general.</td>
                       </tr>
                     )}
                   </tbody>
