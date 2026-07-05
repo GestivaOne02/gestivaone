@@ -4,6 +4,9 @@ dist/
 dist-ssr/
 *.local
 
+# Database migration (sensitive)
+supabase/gestivaone_full_migration.sql
+
 # Environment variables
 .env
 .env.local
