@@ -110,6 +110,12 @@ textarea {
   color: var(--text-foreground) !important;
   border-color: var(--border-subtle) !important;
   caret-color: var(--brand-500) !important;
+  color-scheme: inherit !important; /* Corrige cursor I-beam blanco invisible de Chromium en light mode */
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='16' viewBox='0 0 8 16'><path d='M1 1h6M4 1v14M1 15h6' stroke='%236366f1' stroke-width='1.5' stroke-linecap='round'/></svg>") 4 8, text !important;
 }
 
 input::placeholder,
