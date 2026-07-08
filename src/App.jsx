@@ -24,7 +24,7 @@ import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
-import CookieBanner from '@/components/ui/CookieBanner'
+import ConsentBanner from '@/components/ui/ConsentBanner'
 import CountrySelectorModal from '@/components/modals/CountrySelectorModal'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
@@ -306,7 +306,7 @@ export default function App() {
         </Route>
       </Routes>
 
-      <CookieBanner />
+      <ConsentBanner />
       <CountrySelectorModal />
       <Analytics />
       <SpeedInsights />

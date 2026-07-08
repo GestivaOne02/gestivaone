@@ -4,7 +4,7 @@ import { Cookie, X, ShieldCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import Button from './Button'
 
-export default function CookieBanner() {
+export default function ConsentBanner() {
   const [show, setShow] = useState(false)
   const navigate = useNavigate()
 
