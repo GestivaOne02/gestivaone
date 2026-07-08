@@ -73,7 +73,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
       product.discount_ends_at = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString()
     }
   }
-  const imageUrl = product.image_url === 'none' ? null : (product.image_url || getFallbackImage(product.category))
+  const imageUrl = product.image_url && product.image_url !== 'none' && product.image_url.trim() !== '' ? product.image_url : null
 
   const unitColor = UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND
 
@@ -535,7 +535,7 @@ export default function Products() {
                     {category}
                     <span className="text-[10px] bg-surface-700 text-muted-400 px-2 py-0.5 rounded-full">{items.length}</span>
                   </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 items-start">
                     {items.map((p) => (
                       <ProductCard
                         key={p.id}
@@ -555,7 +555,7 @@ export default function Products() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 items-start">
               {displayedProducts.map((p) => (
                 <ProductCard
                   key={p.id}
