@@ -407,8 +407,8 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
             </motion.div>
           )}
         </AnimatePresence>
-      </AnimatePresence>
-    </motion.div>
+      </div>
+    </div>
   )
 }
 
