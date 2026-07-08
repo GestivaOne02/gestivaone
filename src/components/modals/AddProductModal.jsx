@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image } from 'lucide-react'
+import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -57,6 +57,13 @@ export default function AddProductModal({ open }) {
   const [workingHoursEnd, setWorkingHoursEnd]     = useState('17:00')
   const [nonWorkingDays, setNonWorkingDays]       = useState([0, 6]) // Saturdays and Sundays off by default
   const [is247, setIs247]                         = useState(false)
+
+  // Optional sections visibility (controlled by sidebar)
+  const [activeSections, setActiveSections] = useState({
+    image: false,
+    store: false,
+    attachments: false
+  })
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -162,6 +169,15 @@ export default function AddProductModal({ open }) {
       setNonWorkingDays(info.offDays)
       setIs247(info.is247)
 
+      const hasImg = duplicating.image_url && duplicating.image_url !== 'none' && duplicating.image_url.trim() !== ''
+      const hasStr = duplicating.show_in_store || duplicating.featured || (info.cleanDescription && info.cleanDescription.trim() !== '')
+      const hasAtt = duplicating.attachment_url || duplicating.attachment_name
+      setActiveSections({
+        image: !!hasImg,
+        store: !!hasStr,
+        attachments: !!hasAtt
+      })
+
       reset({
         ...duplicating,
         name: `${duplicating.name} (Copia)`,
@@ -200,6 +216,15 @@ export default function AddProductModal({ open }) {
       setNonWorkingDays(info.offDays)
       setIs247(info.is247)
 
+      const hasImg = editing.image_url && editing.image_url !== 'none' && editing.image_url.trim() !== ''
+      const hasStr = editing.show_in_store || editing.featured || (info.cleanDescription && info.cleanDescription.trim() !== '')
+      const hasAtt = editing.attachment_url || editing.attachment_name
+      setActiveSections({
+        image: !!hasImg,
+        store: !!hasStr,
+        attachments: !!hasAtt
+      })
+
       reset({
         ...editing,
         unit: editing.unit === 'ILIMITADO' ? 'UND' : editing.unit,
@@ -227,6 +252,11 @@ export default function AddProductModal({ open }) {
       setWorkingHoursEnd('17:00')
       setNonWorkingDays([0, 6])
       setIs247(false)
+      setActiveSections({
+        image: false,
+        store: false,
+        attachments: false
+      })
       reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
     }
@@ -244,13 +274,16 @@ export default function AddProductModal({ open }) {
       finalCategory = trimmedCustom
     }
 
-    // Process image_url
-    let finalImageUrl = data.image_url?.trim() || ''
-    if (!showImage) {
-      finalImageUrl = 'none'
+    // Process image_url (check if image section is active in sidebar)
+    let finalImageUrl = 'none'
+    if (activeSections.image) {
+      finalImageUrl = data.image_url?.trim() || ''
+      if (!showImage) {
+        finalImageUrl = 'none'
+      }
     }
 
-    let finalDescription = data.description || ''
+    let finalDescription = ''
     const isActuallyHourly = data.unit === 'HORA' && finalCategory === 'Servicios'
 
     if (isActuallyHourly) {
@@ -263,13 +296,15 @@ export default function AddProductModal({ open }) {
         } catch (e) {}
       }
       finalDescription = JSON.stringify({
-        description: data.description || '',
+        description: activeSections.store ? (data.description || '') : '',
         isUniqueResource,
         workingHours: { start: is247 ? '00:00' : workingHoursStart, end: is247 ? '23:00' : workingHoursEnd },
         nonWorkingDays: is247 ? [] : nonWorkingDays,
         occupiedSlots: previousOccupied,
         is247: is247
       })
+    } else {
+      finalDescription = activeSections.store ? (data.description || '') : ''
     }
 
     const finalUnit = isActuallyHourly ? 'HORA' : (isUnlimited ? 'ILIMITADO' : data.unit)
@@ -281,14 +316,14 @@ export default function AddProductModal({ open }) {
       unit: finalUnit,
       stock: (finalUnit === 'HORA' || isUnlimited) ? 999999999 : Number(data.stock || 0),
       category: finalCategory,
-      attachment_url: data.attachment_url,
-      attachment_name: data.attachment_name,
+      attachment_url: activeSections.attachments ? data.attachment_url : '',
+      attachment_name: activeSections.attachments ? data.attachment_name : '',
       discount_type: hasDiscount ? data.discount_type : null,
       discount_value: hasDiscount ? Number(data.discount_value || 0) : null,
       discount_ends_at: hasDiscount && data.discount_ends_at ? new Date(data.discount_ends_at + 'T23:59:59').toISOString() : null,
       image_url: finalImageUrl,
-      show_in_store: data.show_in_store || false,
-      featured: data.featured || false,
+      show_in_store: activeSections.store ? (data.show_in_store || false) : false,
+      featured: activeSections.store ? (data.featured || false) : false,
       description: finalDescription,
     }
 
@@ -329,15 +364,65 @@ export default function AddProductModal({ open }) {
   }
 
   return (
-    <Modal open={open} onClose={closeModal} title={modalTitle} size={isHourly ? 'xl' : 'md'} customLayout={true}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[85vh] sm:max-h-[80vh] relative overflow-hidden">
-        {/* Scrollable body */}
-        <div ref={scrollRef} className={clsx(
-          "flex-1 p-5 sm:p-6 no-scrollbar overflow-y-auto max-h-[65vh] lg:max-h-[66vh]",
-          isHourly && "lg:grid lg:grid-cols-12 lg:gap-6 lg:overflow-hidden"
-        )}>
-          {/* Columna Izquierda (Formulario del producto) */}
-          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 lg:max-h-[62vh] lg:overflow-y-auto pr-4 lg:pr-6 lg:border-r border-neutral-200 dark:border-surface-700/80 lg:no-scrollbar" : "space-y-5")}>
+    <Modal open={open} onClose={closeModal} title={modalTitle} size={isHourly ? 'xl' : 'lg'} customLayout={true}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-row w-full max-h-[85vh] sm:max-h-[80vh] relative overflow-hidden bg-surface-800 rounded-2xl">
+        {/* Sidebar de Secciones Opcionales */}
+        <div className="w-16 border-r border-neutral-200 dark:border-surface-700/80 bg-surface-900/40 flex flex-col items-center py-6 gap-5 shrink-0 select-none">
+          {/* Imagen Button */}
+          <button
+            type="button"
+            onClick={() => setActiveSections(prev => ({ ...prev, image: !prev.image }))}
+            className={clsx(
+              "p-3 rounded-xl border transition-all active:scale-95",
+              activeSections.image
+                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300 shadow-glow-sm"
+                : "border-subtle bg-surface-700 text-muted-400 hover:text-foreground hover:bg-surface-600"
+            )}
+            title="Imagen de Portada"
+          >
+            <ImagePlus size={20} />
+          </button>
+
+          {/* Tienda Virtual Button */}
+          <button
+            type="button"
+            onClick={() => setActiveSections(prev => ({ ...prev, store: !prev.store }))}
+            className={clsx(
+              "p-3 rounded-xl border transition-all active:scale-95",
+              activeSections.store
+                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300 shadow-glow-sm"
+                : "border-subtle bg-surface-700 text-muted-400 hover:text-foreground hover:bg-surface-600"
+            )}
+            title="Tienda Virtual / Catálogo"
+          >
+            <PackagePlus size={20} />
+          </button>
+
+          {/* Adjuntos Button */}
+          <button
+            type="button"
+            onClick={() => setActiveSections(prev => ({ ...prev, attachments: !prev.attachments }))}
+            className={clsx(
+              "p-3 rounded-xl border transition-all active:scale-95",
+              activeSections.attachments
+                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300 shadow-glow-sm"
+                : "border-subtle bg-surface-700 text-muted-400 hover:text-foreground hover:bg-surface-600"
+            )}
+            title="Enlaces y Documentos"
+          >
+            <FilePlus size={20} />
+          </button>
+        </div>
+
+        {/* Contenedor del Formulario (Scrollable Body + Footer) */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Scrollable body */}
+          <div ref={scrollRef} className={clsx(
+            "flex-1 p-5 sm:p-6 no-scrollbar overflow-y-auto max-h-[65vh] lg:max-h-[66vh]",
+            isHourly && "lg:grid lg:grid-cols-12 lg:gap-6 lg:overflow-hidden"
+          )}>
+            {/* Columna Izquierda (Formulario del producto) */}
+            <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 lg:max-h-[62vh] lg:overflow-y-auto pr-4 lg:pr-6 lg:border-r border-neutral-200 dark:border-surface-700/80 lg:no-scrollbar" : "space-y-5")}>
             <Input
               label="Nombre del producto *"
               icon={<Package size={14} />}
@@ -495,131 +580,137 @@ export default function AddProductModal({ open }) {
             )}
 
             {/* Image Settings Section */}
-            <div className="pt-2 border-t border-subtle">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-brand-400">
-                  <Image size={14} />
-                  <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setShowImage(!showImage)}>Mostrar Imagen de Portada</label>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowImage(!showImage)}
-                  className={clsx(
-                    'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
-                    showImage ? 'bg-brand-500' : 'bg-surface-600'
-                  )}
-                >
-                  <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', showImage ? 'translate-x-4' : 'translate-x-1')} />
-                </button>
-              </div>
-              
-              {showImage && (
-                <div className="mt-3 space-y-2">
-                  <Input
-                    label="URL de Imagen Personalizada"
-                    placeholder="Ej: https://images.unsplash.com/..."
-                    error={errors.image_url?.message}
-                    {...register('image_url')}
-                  />
-                  <p className="text-[10px] text-muted-400">Si se deja vacío, el sistema asignará una imagen ilustrativa basada en la categoría seleccionada.</p>
-                  {isHourly && (
-                    <p className="text-[9.5px] text-brand-400 font-bold flex items-center gap-1.5 animate-pulse mt-2.5 justify-center border border-brand-500/10 bg-brand-500/5 py-1.5 rounded-xl">
-                      <span>↓</span> Desliza hacia abajo para ver más (Tienda y Adjuntos)
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Tienda Virtual Section */}
-            <div className="pt-2 border-t border-subtle space-y-3">
-              <p className="text-xs font-semibold text-brand-500 dark:text-brand-400 uppercase tracking-wide">Tienda Virtual / Catálogo</p>
-              
-              <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
-                <div>
-                  <p className="text-xs font-bold text-foreground">Mostrar en Tienda Virtual</p>
-                  <p className="text-[10px] text-muted-400 mt-0.5">Hace que este producto sea visible públicamente en tu catálogo.</p>
-                </div>
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 rounded-lg cursor-pointer"
-                  style={{ width: '1.2rem', height: '1.2rem' }}
-                  {...register('show_in_store')}
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
-                <div>
-                  <p className="text-xs font-bold text-foreground">Destacar en la Tienda</p>
-                  <p className="text-[10px] text-muted-400 mt-0.5">Muestra un badge de "Destacado" y lo resalta en el catálogo.</p>
-                </div>
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 rounded-lg cursor-pointer"
-                  style={{ width: '1.2rem', height: '1.2rem' }}
-                  {...register('featured')}
-                />
-              </div>
-
-              <div>
-                <label className="text-xs text-muted-500 block mb-1.5 font-medium uppercase tracking-wide">Descripción Comercial (Pública)</label>
-                <textarea
-                  rows={3}
-                  placeholder="Escribe los detalles comerciales del producto, especificaciones, etc. para tus clientes..."
-                  className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
-                  {...register('description')}
-                />
-              </div>
-            </div>
-
-            {/* Attachments Section */}
-            <div className="pt-2 border-t border-subtle">
-              <p className="text-xs font-semibold text-muted-300 mb-2">Archivo Adjunto (Opcional)</p>
-              <div className="flex gap-2 mb-2">
-                <div className="relative w-full">
-                  <input 
-                    type="file" 
-                    id="file-upload" 
-                    className="hidden" 
-                    onChange={handleFileUpload} 
-                    disabled={uploading}
-                  />
-                  <label 
-                    htmlFor="file-upload"
+            {activeSections.image && (
+              <div className="pt-2 border-t border-subtle">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 text-brand-400">
+                    <Image size={14} />
+                    <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setShowImage(!showImage)}>Mostrar Imagen de Portada</label>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowImage(!showImage)}
                     className={clsx(
-                      "flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-bold rounded-xl border transition-all cursor-pointer",
-                      uploading ? "opacity-50 cursor-not-allowed border-subtle bg-surface-700 text-muted-400" : "border-brand-500/30 text-brand-400 hover:bg-brand-500/10 hover:border-brand-500"
+                      'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
+                      showImage ? 'bg-brand-500' : 'bg-surface-600'
                     )}
                   >
-                    {uploading ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-brand-500/20 border-t-brand-500 rounded-full animate-spin" />
-                        Subiendo archivo...
-                      </>
-                    ) : (
-                      <>
-                        <FileUp size={16} />
-                        Subir Archivo
-                      </>
+                    <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', showImage ? 'translate-x-4' : 'translate-x-1')} />
+                  </button>
+                </div>
+                
+                {showImage && (
+                  <div className="mt-3 space-y-2">
+                    <Input
+                      label="URL de Imagen Personalizada"
+                      placeholder="Ej: https://images.unsplash.com/..."
+                      error={errors.image_url?.message}
+                      {...register('image_url')}
+                    />
+                    <p className="text-[10px] text-muted-400">Si se deja vacío, el sistema asignará una imagen ilustrativa basada en la categoría seleccionada.</p>
+                    {isHourly && (
+                      <p className="text-[9.5px] text-brand-400 font-bold flex items-center gap-1.5 animate-pulse mt-2.5 justify-center border border-brand-500/10 bg-brand-500/5 py-1.5 rounded-xl">
+                        <span>↓</span> Desliza hacia abajo para ver más (Tienda y Adjuntos)
+                      </p>
                     )}
-                  </label>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Tienda Virtual Section */}
+            {activeSections.store && (
+              <div className="pt-2 border-t border-subtle space-y-3">
+                <p className="text-xs font-semibold text-brand-500 dark:text-brand-400 uppercase tracking-wide">Tienda Virtual / Catálogo</p>
+                
+                <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+                  <div>
+                    <p className="text-xs font-bold text-foreground">Mostrar en Tienda Virtual</p>
+                    <p className="text-[10px] text-muted-400 mt-0.5">Hace que este producto sea visible públicamente en tu catálogo.</p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="w-5 h-5 rounded-lg cursor-pointer"
+                    style={{ width: '1.2rem', height: '1.2rem' }}
+                    {...register('show_in_store')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+                  <div>
+                    <p className="text-xs font-bold text-foreground">Destacar en la Tienda</p>
+                    <p className="text-[10px] text-muted-400 mt-0.5">Muestra un badge de "Destacado" y lo resalta en el catálogo.</p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="w-5 h-5 rounded-lg cursor-pointer"
+                    style={{ width: '1.2rem', height: '1.2rem' }}
+                    {...register('featured')}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted-500 block mb-1.5 font-medium uppercase tracking-wide">Descripción Comercial (Pública)</label>
+                  <textarea
+                    rows={3}
+                    placeholder="Escribe los detalles comerciales del producto, especificaciones, etc. para tus clientes..."
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
+                    {...register('description')}
+                  />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <Input
-                  label="Nombre del Adjunto"
-                  icon={<Tag size={14} />}
-                  placeholder="Ej: Registro INVIMA"
-                  {...register('attachment_name')}
-                />
-                <Input
-                  label="Enlace del Adjunto"
-                  icon={<Link2 size={14} />}
-                  placeholder="Ej: https://drive.google.com/..."
-                  {...register('attachment_url')}
-                />
+            )}
+
+            {/* Attachments Section */}
+            {activeSections.attachments && (
+              <div className="pt-2 border-t border-subtle">
+                <p className="text-xs font-semibold text-muted-300 mb-2">Archivo Adjunto (Opcional)</p>
+                <div className="flex gap-2 mb-2">
+                  <div className="relative w-full">
+                    <input 
+                      type="file" 
+                      id="file-upload" 
+                      className="hidden" 
+                      onChange={handleFileUpload} 
+                      disabled={uploading}
+                    />
+                    <label 
+                      htmlFor="file-upload"
+                      className={clsx(
+                        "flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-bold rounded-xl border transition-all cursor-pointer",
+                        uploading ? "opacity-50 cursor-not-allowed border-subtle bg-surface-700 text-muted-400" : "border-brand-500/30 text-brand-400 hover:bg-brand-500/10 hover:border-brand-500"
+                      )}
+                    >
+                      {uploading ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-brand-500/20 border-t-brand-500 rounded-full animate-spin" />
+                          Subiendo archivo...
+                        </>
+                      ) : (
+                        <>
+                          <FileUp size={16} />
+                          Subir Archivo
+                        </>
+                      )}
+                    </label>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Input
+                    label="Nombre del Adjunto"
+                    icon={<Tag size={14} />}
+                    placeholder="Ej: Registro INVIMA"
+                    {...register('attachment_name')}
+                  />
+                  <Input
+                    label="Enlace del Adjunto"
+                    icon={<Link2 size={14} />}
+                    placeholder="Ej: https://drive.google.com/..."
+                    {...register('attachment_url')}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
            {/* Columna Derecha (Horarios & Gantt) */}
@@ -814,12 +905,13 @@ export default function AddProductModal({ open }) {
           </div>
         ) : (
           <div className="shrink-0 p-4 border-t border-subtle bg-surface-800/80 flex gap-3 z-10">
-            <Button type="button" variant="ghost" size="md" className="flex-1" onClick={closeModal}>Cancelar</Button>
             <Button type="submit" variant="primary" size="md" className="flex-1" loading={isSubmitting}>
-              {editing ? 'Guardar' : 'Añadir Producto'}
+              {editing ? 'Guardar Cambios' : 'Añadir Producto'}
             </Button>
+            <Button type="button" variant="ghost" size="md" className="flex-1" onClick={closeModal}>Cancelar</Button>
           </div>
         )}
+        </div> {/* Cierre del contenedor flex-col */}
       </form>
     </Modal>
   )
