@@ -368,7 +368,7 @@ export default function DianAssistant() {
         <div>
           <h3 className="text-sm font-bold">Módulo Experimental Informativo</h3>
           <p className="text-xs opacity-90 mt-1 leading-relaxed">
-            Las cifras simuladas aquí son proyecciones basadas únicamente en las facturas de venta y egresos registrados en Gestiva One. Esta simulación no reemplaza la asesoría oficial de un Contador Público Titulado y no constituye una declaración tributaria vinculante.
+            Las cifras simuladas aquí son proyecciones basadas únicamente en las facturas de venta y egresos registrados en GestivaOne. Esta simulación no reemplaza la asesoría oficial de un Contador Público Titulado y no constituye una declaración tributaria vinculante.
           </p>
         </div>
       </div>
@@ -819,7 +819,7 @@ export default function DianAssistant() {
               ¿Qué es la Exógena y para qué sirven estos archivos?
             </h3>
             <p className="text-xs opacity-90 mt-1 leading-relaxed">
-              La DIAN exige anualmente a las empresas reportar las operaciones realizadas con terceros (clientes y proveedores) en formatos XML predefinidos. Los archivos CSV que puedes descargar a continuación consolidan y formatean automáticamente tus registros en Gestiva One para rellenar fácilmente los borradores de los <strong>Formatos 1001 y 1007</strong> del Prevalidador de la DIAN.
+              La DIAN exige anualmente a las empresas reportar las operaciones realizadas con terceros (clientes y proveedores) en formatos XML predefinidos. Los archivos CSV que puedes descargar a continuación consolidan y formatean automáticamente tus registros en GestivaOne para rellenar fácilmente los borradores de los <strong>Formatos 1001 y 1007</strong> del Prevalidador de la DIAN.
             </p>
           </div>
 

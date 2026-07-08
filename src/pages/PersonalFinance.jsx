@@ -490,7 +490,7 @@ export default function PersonalFinance() {
                 <span className="text-xs tracking-[0.2em] text-white/70 font-mono font-medium">•••• •••• •••• 5678</span>
               </div>
               <div className="flex justify-between items-end text-[10px] text-white/50 font-medium">
-                <span>GESTIVA ONE</span>
+                <span>GESTIVAONE</span>
                 <span>Vence: 12/29</span>
               </div>
             </div>

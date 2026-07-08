@@ -314,7 +314,7 @@ export default function Landing() {
                 Impulsando la transformación digital de las empresas
               </h2>
               <p className="text-sm text-muted-400 leading-relaxed">
-                En Gestiva One, creemos que la contabilidad y la gestión operativa no deberían ser un dolor de cabeza para los emprendedores. Nacimos con la visión de crear un software intuitivo, potente y accesible que permita a cualquier negocio automatizar sus ventas, cobranzas y reportes ejecutivos.
+                En GestivaOne, creemos que la contabilidad y la gestión operativa no deberían ser un dolor de cabeza para los emprendedores. Nacimos con la visión de crear un software intuitivo, potente y accesible que permita a cualquier negocio automatizar sus ventas, cobranzas y reportes ejecutivos.
               </p>
               <p className="text-sm text-muted-400 leading-relaxed">
                 Nos dedicamos a construir herramientas estables en la nube que utilicen bases de datos rápidas, alertas preventivas y canales de comunicación modernos para que tengas una visualización integral del estado financiero de tu negocio estés donde estés.
@@ -575,7 +575,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex items-center justify-center gap-2">
             <Zap size={16} className="text-brand-400" />
-            <span className="font-extrabold uppercase text-foreground tracking-wider">GESTIVA ONE</span>
+            <span className="font-extrabold uppercase text-foreground tracking-wider">GESTIVAONE</span>
           </div>
           <p className="max-w-md mx-auto leading-relaxed">
             Plataforma digital avanzada para el control integral de negocios, inventarios y finanzas corporativas.
@@ -588,7 +588,7 @@ export default function Landing() {
             <span className="font-medium">Soporte Técnico</span>
           </div>
           <p className="pt-6 border-t border-white/5">
-            &copy; {new Date().getFullYear()} Gestiva One. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} GestivaOne. Todos los derechos reservados.
           </p>
         </div>
       </footer>

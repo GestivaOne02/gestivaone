@@ -174,7 +174,7 @@ export default function Sidebar({ isMobile }) {
               <span className="text-[16px] font-black text-white uppercase tracking-wide truncate max-w-[180px]" title={user?.companyName || 'Mi Empresa'}>
                 {user?.companyName || 'Mi Empresa'}
               </span>
-              <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">Gestiva One</span>
+              <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">GestivaOne</span>
             </div>
             <button onClick={closeMobile} className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600 transition-colors">
               <X size={16} />
