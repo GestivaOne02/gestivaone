@@ -303,17 +303,13 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
             <div className={clsx(
               "flex flex-col p-2.5 rounded-xl border text-[11px] font-bold leading-tight",
               availability?.status === 'available'
-                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                ? "bg-teal-500/10 border-teal-500/20 text-teal-600 dark:text-teal-400"
                 : availability?.status === 'occupied'
                   ? "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
                   : "bg-purple-500/10 border-purple-500/20 text-purple-600 dark:text-purple-400"
             )}>
-              <div className="flex items-center gap-1.5 justify-between">
+              <div className="flex items-center justify-between">
                 <span className="uppercase tracking-wider text-[10px]">{availability?.label}</span>
-                <span className={clsx(
-                  "w-1.5 h-1.5 rounded-full animate-pulse",
-                  availability?.status === 'available' ? "bg-emerald-500" : availability?.status === 'occupied' ? "bg-red-500" : "bg-purple-500"
-                )} />
               </div>
               <span className="text-[10px] font-medium text-muted-500 dark:text-muted-400 mt-1 block">
                 {availability?.desc}
@@ -1052,7 +1048,7 @@ export default function Products() {
                                   if (isEnd) return "bg-brand-600 border-brand-500 text-white shadow-glow-sm scale-[0.98] rounded-r-xl rounded-l-none border-l-0 z-10"
                                   if (isMiddle) return "bg-brand-500/25 border-brand-500/20 text-brand-500 dark:text-brand-300 rounded-none border-x-0 z-0"
                                   
-                                  return "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 hover:scale-[1.02] rounded-xl"
+                                  return "bg-teal-500/10 border-teal-500/20 text-teal-600 dark:text-teal-400 hover:bg-teal-500/20 hover:scale-[1.02] rounded-xl"
                                 })()
                           )}
                         >
