@@ -333,11 +333,11 @@ export default function AddProductModal({ open }) {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[85vh] sm:max-h-[80vh] relative overflow-hidden">
         {/* Scrollable body */}
         <div ref={scrollRef} className={clsx(
-          "flex-1 p-5 sm:p-6 no-scrollbar",
-          isHourly ? "grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden max-h-[66vh]" : "space-y-5 overflow-y-auto max-h-[65vh] sm:max-h-[70vh]"
+          "flex-1 p-5 sm:p-6 no-scrollbar overflow-y-auto max-h-[65vh] lg:max-h-[66vh]",
+          isHourly && "lg:grid lg:grid-cols-12 lg:gap-6 lg:overflow-hidden"
         )}>
           {/* Columna Izquierda (Formulario del producto) */}
-          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 max-h-[62vh] overflow-y-auto pr-6 lg:border-r border-neutral-200 dark:border-surface-700/80 no-scrollbar" : "space-y-5")}>
+          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 lg:max-h-[62vh] lg:overflow-y-auto pr-4 lg:pr-6 lg:border-r border-neutral-200 dark:border-surface-700/80 lg:no-scrollbar" : "space-y-5")}>
             <Input
               label="Nombre del producto *"
               icon={<Package size={14} />}
@@ -622,9 +622,9 @@ export default function AddProductModal({ open }) {
             </div>
           </div>
 
-          {/* Columna Derecha (Horarios & Gantt) */}
-          {isHourly && (
-            <div className="lg:col-span-7 bg-surface-800/40 border border-subtle p-5 rounded-2xl space-y-5 flex flex-col justify-start max-h-[62vh] overflow-y-auto pr-2 no-scrollbar">
+           {/* Columna Derecha (Horarios & Gantt) */}
+           {isHourly && (
+             <div className="lg:col-span-7 bg-surface-800/40 border border-subtle p-5 rounded-2xl space-y-5 flex flex-col justify-start lg:max-h-[62vh] lg:overflow-y-auto lg:pr-2 lg:no-scrollbar mt-6 lg:mt-0">
               <h3 className="text-sm font-black text-brand-400 uppercase tracking-widest flex items-center gap-2">
                 <CalendarDays size={16} />
                 Disponibilidad Gantt
@@ -749,7 +749,7 @@ export default function AddProductModal({ open }) {
                   </div>
                   
                   {/* Gantt list representing hours */}
-                  <div className="grid grid-cols-4 gap-y-2.5 gap-x-0 overflow-y-auto max-h-[160px] pr-1 no-scrollbar">
+                  <div className="grid grid-cols-4 gap-y-2.5 gap-x-0 overflow-y-auto max-h-[280px] lg:max-h-[320px] pr-1 no-scrollbar">
                     {(() => {
                       const startIdx = parseInt(workingHoursStart.split(':')[0])
                       const endIdx = parseInt(workingHoursEnd.split(':')[0])
@@ -802,19 +802,15 @@ export default function AddProductModal({ open }) {
         {/* Fixed Footer */}
         {isHourly ? (
           <div className="shrink-0 p-4 border-t border-subtle bg-surface-800/80 grid grid-cols-12 gap-6 z-10">
-            <div className="col-span-5 flex gap-3">
+            <div className="col-span-12 lg:col-span-5 flex gap-3">
               <Button type="submit" variant="primary" size="md" className="flex-1" loading={isSubmitting}>
-                {editing ? 'Guardar' : 'Añadir'}
+                {editing ? 'Guardar Cambios' : 'Añadir Producto'}
               </Button>
               <Button type="button" variant="ghost" size="md" className="flex-1" onClick={closeModal}>
                 Cancelar
               </Button>
             </div>
-            <div className="col-span-7 flex justify-end">
-              <Button type="submit" variant="primary" size="md" className="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold" loading={isSubmitting}>
-                Guardar Cambios
-              </Button>
-            </div>
+            <div className="hidden lg:block lg:col-span-7" />
           </div>
         ) : (
           <div className="shrink-0 p-4 border-t border-subtle bg-surface-800/80 flex gap-3 z-10">
