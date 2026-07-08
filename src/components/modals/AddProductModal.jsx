@@ -34,7 +34,7 @@ const schema = z.object({
 })
 
 const UNITS = ['KG', 'LB', 'UND', 'L', 'M', 'HORA']
-const UNIT_LABELS = { HORA: 'Hora' }
+const UNIT_LABELS = { HORA: 'H' }
 
 export default function AddProductModal({ open }) {
   const scrollRef = useRef(null)
@@ -56,6 +56,7 @@ export default function AddProductModal({ open }) {
   const [workingHoursStart, setWorkingHoursStart] = useState('08:00')
   const [workingHoursEnd, setWorkingHoursEnd]     = useState('17:00')
   const [nonWorkingDays, setNonWorkingDays]       = useState([0, 6]) // Saturdays and Sundays off by default
+  const [is247, setIs247]                         = useState(false)
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -65,6 +66,19 @@ export default function AddProductModal({ open }) {
   const unit = watch('unit')
   const selectedCategory = watch('category')
   const [showImage, setShowImage] = useState(true)
+
+  // Reactive logic between unit and category
+  useEffect(() => {
+    if (unit === 'HORA' && selectedCategory !== 'Servicios') {
+      setValue('category', 'Servicios')
+    }
+  }, [unit, selectedCategory, setValue])
+
+  useEffect(() => {
+    if (selectedCategory !== 'Servicios' && unit === 'HORA') {
+      setValue('unit', 'UND')
+    }
+  }, [selectedCategory, unit, setValue])
 
   // Derived state for unlimited
   const [isUnlimited, setIsUnlimited] = useState(false)
@@ -116,7 +130,8 @@ export default function AddProductModal({ open }) {
             isUnique: !!parsed.isUniqueResource,
             hoursStart: parsed.workingHours?.start || '08:00',
             hoursEnd: parsed.workingHours?.end || '17:00',
-            offDays: parsed.nonWorkingDays || [0, 6]
+            offDays: parsed.nonWorkingDays || [0, 6],
+            is247: !!parsed.is247
           }
         } catch (e) {}
       }
@@ -125,13 +140,14 @@ export default function AddProductModal({ open }) {
         isUnique: false,
         hoursStart: '08:00',
         hoursEnd: '17:00',
-        offDays: [0, 6]
+        offDays: [0, 6],
+        is247: false
       }
     }
 
     // Duplicating: pre-fill form but treat as new product (no id)
     if (open && duplicating) {
-      const isEditingUnlimited = duplicating.unit === 'ILIMITADO' || duplicating.stock >= 999990000
+      const isEditingUnlimited = (duplicating.unit === 'ILIMITADO' || duplicating.stock >= 999990000) && duplicating.unit !== 'HORA'
       setIsUnlimited(isEditingUnlimited)
       setHasDiscount(!!duplicating.discount_value && duplicating.discount_value > 0)
       
@@ -144,6 +160,7 @@ export default function AddProductModal({ open }) {
       setWorkingHoursStart(info.hoursStart)
       setWorkingHoursEnd(info.hoursEnd)
       setNonWorkingDays(info.offDays)
+      setIs247(info.is247)
 
       reset({
         ...duplicating,
@@ -168,7 +185,7 @@ export default function AddProductModal({ open }) {
 
     // Editing existing product
     if (open && editing) {
-      const isEditingUnlimited = editing.unit === 'ILIMITADO' || editing.stock >= 999990000
+      const isEditingUnlimited = (editing.unit === 'ILIMITADO' || editing.stock >= 999990000) && editing.unit !== 'HORA'
       setIsUnlimited(isEditingUnlimited)
       setHasDiscount(!!editing.discount_value && editing.discount_value > 0)
       
@@ -181,6 +198,7 @@ export default function AddProductModal({ open }) {
       setWorkingHoursStart(info.hoursStart)
       setWorkingHoursEnd(info.hoursEnd)
       setNonWorkingDays(info.offDays)
+      setIs247(info.is247)
 
       reset({
         ...editing,
@@ -208,6 +226,7 @@ export default function AddProductModal({ open }) {
       setWorkingHoursStart('08:00')
       setWorkingHoursEnd('17:00')
       setNonWorkingDays([0, 6])
+      setIs247(false)
       reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
     }
@@ -232,7 +251,9 @@ export default function AddProductModal({ open }) {
     }
 
     let finalDescription = data.description || ''
-    if (data.unit === 'HORA') {
+    const isActuallyHourly = data.unit === 'HORA' && finalCategory === 'Servicios'
+
+    if (isActuallyHourly) {
       let previousOccupied = []
       const oldDesc = editing?.description || duplicating?.description || ''
       if (oldDesc.trim().startsWith('{') && oldDesc.trim().endsWith('}')) {
@@ -244,18 +265,21 @@ export default function AddProductModal({ open }) {
       finalDescription = JSON.stringify({
         description: data.description || '',
         isUniqueResource,
-        workingHours: { start: workingHoursStart, end: workingHoursEnd },
-        nonWorkingDays,
-        occupiedSlots: previousOccupied
+        workingHours: { start: is247 ? '00:00' : workingHoursStart, end: is247 ? '23:00' : workingHoursEnd },
+        nonWorkingDays: is247 ? [] : nonWorkingDays,
+        occupiedSlots: previousOccupied,
+        is247: is247
       })
     }
+
+    const finalUnit = isActuallyHourly ? 'HORA' : (isUnlimited ? 'ILIMITADO' : data.unit)
 
     const finalData = {
       name: data.name,
       price: data.price,
       cost: data.cost === '' ? 0 : Number(data.cost),
-      unit: isUnlimited ? 'ILIMITADO' : data.unit,
-      stock: isUnlimited ? 999999999 : (data.unit === 'HORA' ? 999999999 : Number(data.stock || 0)),
+      unit: finalUnit,
+      stock: (finalUnit === 'HORA' || isUnlimited) ? 999999999 : Number(data.stock || 0),
       category: finalCategory,
       attachment_url: data.attachment_url,
       attachment_name: data.attachment_name,
@@ -309,11 +333,11 @@ export default function AddProductModal({ open }) {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[85vh] sm:max-h-[80vh] relative overflow-hidden">
         {/* Scrollable body */}
         <div ref={scrollRef} className={clsx(
-          "flex-1 overflow-y-auto p-5 sm:p-6 no-scrollbar",
-          isHourly ? "grid grid-cols-1 lg:grid-cols-12 gap-6" : "space-y-5"
+          "flex-1 p-5 sm:p-6 no-scrollbar",
+          isHourly ? "grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden max-h-[66vh]" : "space-y-5 overflow-y-auto max-h-[65vh] sm:max-h-[70vh]"
         )}>
           {/* Columna Izquierda (Formulario del producto) */}
-          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5" : "space-y-5")}>
+          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 max-h-[62vh] overflow-y-auto pr-2 no-scrollbar" : "space-y-5")}>
             <Input
               label="Nombre del producto *"
               icon={<Package size={14} />}
@@ -431,7 +455,7 @@ export default function AddProductModal({ open }) {
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-medium text-muted-500 uppercase tracking-wide">Unidad</span>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {UNITS.map((u) => (
+                {UNITS.filter(u => u !== 'HORA' || selectedCategory === 'Servicios').map((u) => (
                   <button
                     key={u}
                     type="button"
@@ -595,11 +619,41 @@ export default function AddProductModal({ open }) {
 
           {/* Columna Derecha (Horarios & Gantt) */}
           {isHourly && (
-            <div className="lg:col-span-7 bg-surface-800/40 border border-subtle p-5 rounded-2xl space-y-5 flex flex-col justify-start">
+            <div className="lg:col-span-7 bg-surface-800/40 border border-subtle p-5 rounded-2xl space-y-5 flex flex-col justify-start max-h-[62vh] overflow-y-auto pr-2 no-scrollbar">
               <h3 className="text-sm font-black text-brand-400 uppercase tracking-widest flex items-center gap-2">
                 <CalendarDays size={16} />
                 Disponibilidad Gantt
               </h3>
+
+              {/* Disponible 24/7 Switch */}
+              <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+                <div>
+                  <p className="text-xs font-bold text-foreground">Disponible 24/7</p>
+                  <p className="text-[10px] text-muted-400 mt-0.5">El recurso estará disponible todas las horas, todos los días de la semana.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextVal = !is247
+                    setIs247(nextVal)
+                    if (nextVal) {
+                      setWorkingHoursStart('00:00')
+                      setWorkingHoursEnd('23:00')
+                      setNonWorkingDays([])
+                    } else {
+                      setWorkingHoursStart('08:00')
+                      setWorkingHoursEnd('17:00')
+                      setNonWorkingDays([0, 6])
+                    }
+                  }}
+                  className={clsx(
+                    'relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0',
+                    is247 ? 'bg-brand-500' : 'bg-surface-600'
+                  )}
+                >
+                  <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', is247 ? 'translate-x-4' : 'translate-x-1')} />
+                </button>
+              </div>
 
               {/* Unique resource check */}
               <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
@@ -618,22 +672,24 @@ export default function AddProductModal({ open }) {
 
               {/* Working hours range */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
+                <div className={clsx("flex flex-col gap-1", is247 && "opacity-50 cursor-not-allowed")}>
                   <span className="text-[10px] text-muted-400 uppercase font-semibold">Hora Inicio</span>
                   <select 
                     value={workingHoursStart} 
                     onChange={(e) => setWorkingHoursStart(e.target.value)} 
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-brand-500/50 outline-none"
+                    disabled={is247}
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-brand-500/50 outline-none disabled:opacity-80"
                   >
                     {HOURS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
                   </select>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className={clsx("flex flex-col gap-1", is247 && "opacity-50 cursor-not-allowed")}>
                   <span className="text-[10px] text-muted-400 uppercase font-semibold">Hora Fin</span>
                   <select 
                     value={workingHoursEnd} 
                     onChange={(e) => setWorkingHoursEnd(e.target.value)} 
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-brand-500/50 outline-none"
+                    disabled={is247}
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-brand-500/50 outline-none disabled:opacity-80"
                   >
                     {HOURS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
                   </select>
@@ -641,7 +697,7 @@ export default function AddProductModal({ open }) {
               </div>
 
               {/* Working Days Selector */}
-              <div className="flex flex-col gap-2">
+              <div className={clsx("flex flex-col gap-2", is247 && "opacity-50 cursor-not-allowed")}>
                 <span className="text-[10px] text-muted-400 uppercase font-semibold">Días Laborables</span>
                 <div className="flex gap-2 flex-wrap">
                   {DAYS_OF_WEEK.map(({ val, label }) => {
@@ -650,9 +706,10 @@ export default function AddProductModal({ open }) {
                       <button
                         key={val}
                         type="button"
-                        onClick={() => toggleDay(val)}
+                        onClick={() => !is247 && toggleDay(val)}
+                        disabled={is247}
                         className={clsx(
-                          "w-8 h-8 rounded-full text-xs font-bold transition-all border flex items-center justify-center",
+                          "w-8 h-8 rounded-full text-xs font-bold transition-all border flex items-center justify-center disabled:cursor-not-allowed",
                           isWorking 
                             ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" 
                             : "bg-purple-500/20 border-purple-500/40 text-purple-400"
@@ -679,7 +736,7 @@ export default function AddProductModal({ open }) {
                   </div>
                   
                   {/* Gantt list representing hours */}
-                  <div className="grid grid-cols-4 gap-1.5 overflow-y-auto max-h-[160px] pr-1 no-scrollbar">
+                  <div className="grid grid-cols-4 gap-y-2.5 gap-x-0 overflow-y-auto max-h-[160px] pr-1 no-scrollbar">
                     {(() => {
                       const startIdx = parseInt(workingHoursStart.split(':')[0])
                       const endIdx = parseInt(workingHoursEnd.split(':')[0])
@@ -692,24 +749,31 @@ export default function AddProductModal({ open }) {
                       return hours.map(h => {
                         const isTodayOff = nonWorkingDays.includes(new Date().getDay())
                         const hourVal = parseInt(h.split(':')[0])
-                        // Mock one hour occupied for visualization (e.g. 11:00 or 12:00)
+                        
+                        // Mock 11 and 12 occupied for continuous visual styling
                         const isMockOccupied = hourVal === 11 || hourVal === 12
+                        const isStartMock = hourVal === 11
+                        const isEndMock = hourVal === 12
                         
                         return (
                           <div
                             key={h}
                             className={clsx(
-                              "p-2 rounded-lg text-center border text-[10px] font-bold transition-all shadow-sm",
+                              "p-2 text-center border text-[10px] font-bold transition-all shadow-sm",
                               isTodayOff
-                                ? "bg-purple-500/10 border-purple-500/30 text-purple-400"
+                                ? "bg-purple-500/10 border-purple-500/30 text-purple-400 rounded-xl"
                                 : isMockOccupied
-                                  ? "bg-red-500/10 border-red-500/30 text-red-400"
-                                  : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                                  ? clsx(
+                                      "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400",
+                                      isStartMock && "rounded-l-xl rounded-r-none border-r-0",
+                                      isEndMock && "rounded-r-xl rounded-l-none border-l-0"
+                                    )
+                                  : "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 rounded-xl"
                             )}
                           >
                             <div>{h}</div>
-                            <div className="text-[8px] opacity-75 font-normal mt-0.5">
-                              {isTodayOff ? 'No trabaja' : isMockOccupied ? 'Ocupado' : 'Disponible'}
+                            <div className="text-[7.5px] opacity-80 font-normal mt-0.5">
+                              {isTodayOff ? 'No trabaja' : isMockOccupied ? 'Ocupado' : 'Libre'}
                             </div>
                           </div>
                         )

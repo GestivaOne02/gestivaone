@@ -29,7 +29,7 @@ const UNIT_COLORS = {
   HORA: 'text-pink-400 bg-pink-500/10 border border-pink-500/20 shadow-sm shrink-0',
 }
 
-const UNIT_LABELS = { ILIMITADO: 'Ilimitado', HORA: 'Hora' }
+const UNIT_LABELS = { ILIMITADO: 'Ilimitado', HORA: 'H' }
 
 const getFallbackImage = (category) => {
   const normalized = (category || '').toLowerCase()
@@ -963,7 +963,7 @@ export default function Products() {
                   </div>
                 ) : (
                   <div 
-                    className="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-y-auto max-h-[300px] pr-1.5 no-scrollbar"
+                    className="grid grid-cols-4 gap-y-2.5 gap-x-0 overflow-y-auto max-h-[300px] pr-1.5 no-scrollbar"
                     onMouseLeave={() => {
                       if (isSelectingRange) {
                         setIsSelectingRange(false)
@@ -1022,17 +1022,43 @@ export default function Products() {
                             }
                           }}
                           className={clsx(
-                            "p-3 rounded-xl border text-center text-xs font-black transition-all cursor-pointer shadow-sm select-none",
+                            "p-2.5 text-center text-[11px] font-black transition-all cursor-pointer shadow-sm select-none border",
                             occupied
-                              ? "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400 cursor-not-allowed"
-                              : selected
-                                ? "bg-brand-500 border-brand-400 text-white shadow-glow-sm scale-[0.98]"
-                                : "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 hover:scale-[1.02]"
+                              ? "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400 cursor-not-allowed rounded-xl"
+                              : (() => {
+                                  const hVal = parseInt(h.split(':')[0])
+                                  let isStart = false
+                                  let isEnd = false
+                                  let isMiddle = false
+
+                                  if (rangeStart && rangeEnd && !isSelectingRange) {
+                                    const startVal = parseInt(rangeStart.split(':')[0])
+                                    const endVal = parseInt(rangeEnd.split(':')[0])
+                                    if (hVal === startVal) isStart = true
+                                    if (hVal === endVal) isEnd = true
+                                    if (hVal > startVal && hVal < endVal) isMiddle = true
+                                  } else if (isSelectingRange && rangeStart && hoveredHour) {
+                                    const startVal = parseInt(rangeStart.split(':')[0])
+                                    const hoverVal = parseInt(hoveredHour.split(':')[0])
+                                    const min = Math.min(startVal, hoverVal)
+                                    const max = Math.max(startVal, hoverVal)
+                                    if (hVal === min) isStart = true
+                                    if (hVal === max) isEnd = true
+                                    if (hVal > min && hVal < max) isMiddle = true
+                                  }
+
+                                  if (isStart && isEnd) return "bg-brand-600 border-brand-500 text-white shadow-glow-sm scale-[0.98] rounded-xl z-10"
+                                  if (isStart) return "bg-brand-600 border-brand-500 text-white shadow-glow-sm scale-[0.98] rounded-l-xl rounded-r-none border-r-0 z-10"
+                                  if (isEnd) return "bg-brand-600 border-brand-500 text-white shadow-glow-sm scale-[0.98] rounded-r-xl rounded-l-none border-l-0 z-10"
+                                  if (isMiddle) return "bg-brand-500/25 border-brand-500/20 text-brand-500 dark:text-brand-300 rounded-none border-x-0 z-0"
+                                  
+                                  return "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 hover:scale-[1.02] rounded-xl"
+                                })()
                           )}
                         >
                           <div>{h}</div>
-                          <div className="text-[8.5px] font-medium opacity-80 mt-1">
-                            {occupied ? 'Ocupado' : selected ? 'Seleccionado' : 'Disponible'}
+                          <div className="text-[7.5px] font-medium opacity-85 mt-0.5">
+                            {occupied ? 'Ocupado' : (selected ? 'Elegido' : 'Libre')}
                           </div>
                         </div>
                       )
