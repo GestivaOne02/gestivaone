@@ -109,6 +109,7 @@ textarea {
   background-color: var(--input-bg) !important;
   color: var(--text-foreground) !important;
   border-color: var(--border-subtle) !important;
+  caret-color: var(--brand-500) !important;
 }
 
 input::placeholder,
