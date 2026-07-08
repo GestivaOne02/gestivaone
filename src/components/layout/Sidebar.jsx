@@ -227,7 +227,7 @@ export default function Sidebar({ isMobile }) {
 
             {/* Scroll indicator */}
             {hasScrollBelow && (
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-14 flex flex-col items-center justify-end pb-2 bg-gradient-to-t from-surface-800 to-transparent">
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-14 flex flex-col items-end justify-end pb-2 pr-6 bg-gradient-to-t from-surface-800 to-transparent">
                 <div className="flex items-center gap-1 text-muted-500 text-[10px] font-semibold animate-bounce">
                   <ChevronDown size={12} />
                   <span>Más abajo</span>
@@ -412,8 +412,8 @@ export default function Sidebar({ isMobile }) {
 
         {/* Scroll indicator */}
         {hasScrollBelow && !collapsed && (
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 flex flex-col items-end justify-end pb-1 pr-4 bg-gradient-to-t from-surface-800 to-transparent">
-            <div className="flex items-center gap-1 text-[11px] font-black animate-bounce" style={{ color: '#4338ca' }}>
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 flex flex-col items-end justify-end pb-1 pr-6 bg-gradient-to-t from-surface-800 to-transparent">
+            <div className="flex items-center gap-1 text-[11px] font-black animate-bounce" style={{ color: 'var(--brand-500)' }}>
               <ChevronDown size={11} className="stroke-[3]" />
               <span>Más abajo</span>
             </div>
