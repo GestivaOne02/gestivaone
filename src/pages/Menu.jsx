@@ -333,6 +333,8 @@ export default function Menu() {
               pill
               icon={<UserPlus size={15} />}
               onClick={() => openModal('addClient')}
+              whileHover={{ y: 0 }}
+              whileTap={{ scale: 1 }}
               className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0"
             >
               <span className="hidden sm:inline">Añadir Cliente</span>
