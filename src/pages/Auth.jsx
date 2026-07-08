@@ -735,6 +735,7 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
   })
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(false)
+  const [confirmationRequired, setConfirmationRequired] = useState(false)
 
   const goNext = (data = {}) => {
     const nextData = { ...formData, ...data }
@@ -764,6 +765,7 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
       }
       return toast.error(res.error)
     }
+    setConfirmationRequired(!!res.emailConfirmationRequired)
     setStep('listo')
   }
 
@@ -788,7 +790,15 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.2 }}
         >
-          {step === 'plan' && <PlanSelector selected={plan} onSelect={setPlan} />}
+          {step === 'plan' && (
+            <PlanSelector 
+              selected={plan} 
+              onSelect={(selectedPlanId) => {
+                setPlan(selectedPlanId)
+                setStep('datos')
+              }} 
+            />
+          )}
           {step === 'datos' && <CompanyForm onSubmit={goNext} defaultValues={formData} plan={plan} socialData={socialData} />}
           {step === 'pago' && <PaymentForm plan={plan} onSubmit={handlePayment} loading={loading} />}
           {step === 'listo' && (
@@ -797,10 +807,23 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
                 <CheckCircle2 size={64} className="text-success-400 mx-auto" />
               </motion.div>
               <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">¡Registro exitoso!</h2>
-              <p className="text-muted-400 text-sm">Tu cuenta ha sido creada. Bienvenido a GestivaOne.</p>
-              <button onClick={() => navigate('/')} className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors mt-2">
-                Entrar al dashboard →
-              </button>
+              {confirmationRequired ? (
+                <>
+                  <p className="text-muted-400 text-sm px-4">
+                    Hemos enviado un correo de confirmación a tu bandeja de entrada. Por favor verifica tu correo electrónico para activar tu cuenta antes de ingresar.
+                  </p>
+                  <button onClick={() => window.location.reload()} className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors mt-2">
+                    Ir a Iniciar Sesión →
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-muted-400 text-sm">Tu cuenta ha sido creada. Bienvenido a GestivaOne.</p>
+                  <button onClick={() => navigate('/')} className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors mt-2">
+                    Entrar al dashboard →
+                  </button>
+                </>
+              )}
             </div>
           )}
         </motion.div>
@@ -810,13 +833,6 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
       {step !== 'plan' && step !== 'listo' && (
         <button onClick={handleBack} className="mt-4 flex items-center gap-1.5 text-xs text-muted-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
           <ArrowLeft size={13} /> Volver
-        </button>
-      )}
-
-      {/* Plan → next */}
-      {step === 'plan' && (
-        <button onClick={() => goNext()} className="mt-5 w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition-colors">
-          Continuar con {plan === 'standard' ? 'Standard' : plan === 'pro' ? 'Pro' : 'GO 360'} →
         </button>
       )}
     </div>
@@ -1011,7 +1027,7 @@ export default function Auth() {
     const params = new URLSearchParams(window.location.search)
     const code = params.get('code')
     const mode = params.get('mode')
-    if (code) {
+    if (code && code.length < 20) {
       setTab('worker')
     } else if (mode === 'register') {
       setTab('register')

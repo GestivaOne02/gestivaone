@@ -386,6 +386,65 @@ export const useHRStore = create(
           toast.error('Error al actualizar vacaciones: ' + e.message)
           return false
         }
+      },
+
+      applyRealtimeUpdate: (payload) => {
+        const { eventType, new: newRecord, old: oldRecord, table } = payload
+
+        set((s) => {
+          if (table === 'hr_employees') {
+            let updated = [...s.employees]
+            if (eventType === 'INSERT') {
+              if (!updated.some(e => e.id === newRecord.id)) {
+                updated = [...updated, newRecord]
+              }
+            } else if (eventType === 'UPDATE') {
+              updated = updated.map(e => e.id === newRecord.id ? { ...e, ...newRecord } : e)
+            } else if (eventType === 'DELETE') {
+              updated = updated.filter(e => e.id !== oldRecord.id)
+            }
+            return { employees: updated }
+          }
+
+          if (table === 'hr_recruitment_candidates') {
+            let updated = [...s.candidates]
+            if (eventType === 'INSERT') {
+              if (!updated.some(c => c.id === newRecord.id)) {
+                updated = [...updated, newRecord]
+              }
+            } else if (eventType === 'UPDATE') {
+              updated = updated.map(c => c.id === newRecord.id ? { ...c, ...newRecord } : c)
+            } else if (eventType === 'DELETE') {
+              updated = updated.filter(c => c.id !== oldRecord.id)
+            }
+            return { candidates: updated }
+          }
+
+          if (table === 'hr_vacations') {
+            let updated = [...s.vacations]
+            if (eventType === 'INSERT') {
+              if (!updated.some(v => v.id === newRecord.id)) {
+                const emp = s.employees.find(e => e.id === newRecord.employee_id)
+                const employeeName = emp ? emp.full_name : 'Empleado'
+                updated = [...updated, { ...newRecord, employee_name: employeeName }]
+              }
+            } else if (eventType === 'UPDATE') {
+              updated = updated.map(v => {
+                if (v.id === newRecord.id) {
+                  const emp = s.employees.find(e => e.id === newRecord.employee_id)
+                  const employeeName = emp ? emp.full_name : v.employee_name
+                  return { ...v, ...newRecord, employee_name: employeeName }
+                }
+                return v
+              })
+            } else if (eventType === 'DELETE') {
+              updated = updated.filter(v => v.id !== oldRecord.id)
+            }
+            return { vacations: updated }
+          }
+
+          return {}
+        })
       }
     }),
     {

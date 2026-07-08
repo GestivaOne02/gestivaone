@@ -118,7 +118,7 @@ export default function PlanSelector({ selected, onSelect }) {
                 }
               }}
               className={clsx(
-                'group relative w-[320px] md:w-full shrink-0 snap-center text-left border rounded-3xl p-5 transition-[border-color,background-color] duration-300 flex flex-col justify-between min-h-[420px] bg-surface-800 border-subtle/50 hover:border-surface-400 select-none shadow-sm relative overflow-hidden',
+                'group relative w-[280px] sm:w-[320px] md:w-full shrink-0 snap-center text-left border rounded-3xl p-4 sm:p-5 transition-[border-color,background-color] duration-300 flex flex-col justify-between min-h-[350px] xl:min-h-[420px] bg-surface-800 border-subtle/50 hover:border-surface-400 select-none shadow-sm relative overflow-hidden',
                 isSelected && 'ring-2 ring-brand-500/20 border-brand-500'
               )}
             >
@@ -174,7 +174,10 @@ export default function PlanSelector({ selected, onSelect }) {
                   </div>
                 </div>
 
-                <div className="w-full mt-4">
+                <div className="text-center text-[10px] text-brand-500 dark:text-brand-400 font-bold uppercase tracking-wider mt-4 mb-1">
+                  Toca para seleccionar
+                </div>
+                <div className="w-full mt-2">
                   <div className={clsx(
                     'w-full py-2.5 px-4 rounded-full text-xs font-black text-center transition-all duration-300 select-none border',
                     isSelected 
@@ -203,7 +206,7 @@ export default function PlanSelector({ selected, onSelect }) {
           whileHover={{ y: -4, scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           onClick={handleCustomPlanClick}
-          className="group relative w-[320px] md:w-full shrink-0 snap-center text-left border border-subtle/30 rounded-3xl p-5 transition-[border-color,background-color] duration-300 flex flex-col justify-between min-h-[420px] bg-surface-900/40 backdrop-blur-md overflow-hidden select-none opacity-80 hover:opacity-100 shadow-sm"
+          className="group relative w-[280px] sm:w-[320px] md:w-full shrink-0 snap-center text-left border border-subtle/30 rounded-3xl p-4 sm:p-5 transition-[border-color,background-color] duration-300 flex flex-col justify-between min-h-[350px] xl:min-h-[420px] bg-surface-900/40 backdrop-blur-md overflow-hidden select-none opacity-80 hover:opacity-100 shadow-sm"
         >
           <div className="w-full space-y-4 flex-1 flex flex-col justify-between relative z-10">
             <div className="space-y-4 w-full">

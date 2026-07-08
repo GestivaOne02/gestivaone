@@ -2,19 +2,8 @@ import { create } from 'zustand'
 import { useCurrencyStore } from './useCurrencyStore'
 import { useAuthStore } from './useAuthStore'
 import { getProductDiscount, useProductStore } from './useProductStore'
+import { getLocalizationByCurrency } from '@/services/localizationService'
 import toast from 'react-hot-toast'
-
-const TAX_RATES = {
-  COP: 0.19,
-  MXN: 0.16,
-  USD: 0.0,
-  EUR: 0.21,
-  ARS: 0.21,
-  CLP: 0.19,
-  PEN: 0.18,
-  CRC: 0.13,
-  DOP: 0.18,
-}
 
 export const useCartStore = create((set, get) => {
   const recalculate = (state) => {
@@ -25,7 +14,8 @@ export const useCartStore = create((set, get) => {
     
     const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0)
     const baseCurrency = useCurrencyStore.getState().baseCurrency
-    const taxRate = TAX_RATES[baseCurrency] ?? 0.0
+    const locConfig = getLocalizationByCurrency(baseCurrency)
+    const taxRate = locConfig?.defaultTaxRate ?? 0.0
     const taxAmount = includeTax ? subtotal * taxRate : 0
     const customChargesSum = customCharges
       .filter(c => c.applied)

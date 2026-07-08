@@ -354,10 +354,18 @@ export const useAuthStore = create(
       register: async (data) => {
         set({ loading: true })
 
-        // 1. Auth Signup
+        // 1. Auth Signup (passing metadata for trigger compatibility)
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
+          options: {
+            data: {
+              company_name: data.companyName,
+              full_name: data.name || 'Usuario',
+              phone: data.phone || '',
+              plan: data.plan || 'standard'
+            }
+          }
         })
 
         if (authError) {
@@ -367,8 +375,28 @@ export const useAuthStore = create(
 
         const userId = authData.user.id
 
+        // If email confirmation is ON, we cannot do client-side inserts (no session / anon client role).
+        // We must rely entirely on the Supabase Postgres trigger (on_auth_user_created).
+        if (!authData.session) {
+          set({ isAuthenticated: false, user: null, loading: false })
+          return { success: true, emailConfirmationRequired: true }
+        }
+
+        // ── Below runs only if email confirmation is OFF (session exists) ──
+        // Check if the trigger already created the profile to avoid duplicates
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id, company_id')
+          .eq('id', userId)
+          .single()
+
+        if (existingProfile) {
+          await get().syncProfile(userId)
+          set({ loading: false })
+          return { success: true, emailConfirmationRequired: false }
+        }
+
         // 2. ⚠️ Unique company name check (anti-fraud / anti-impersonation)
-        //    Normalize: trim + lowercase + collapse multiple spaces
         const normalizeCompanyName = (name) =>
           (name || '').trim().toLowerCase().replace(/\s+/g, ' ')
 
@@ -378,7 +406,6 @@ export const useAuthStore = create(
           return { success: false, error: 'El nombre de la empresa no puede estar vacío.' }
         }
 
-        // Fetch all company names and compare normalized (case-insensitive, space-collapsed)
         const { data: allCompanies, error: namesError } = await supabase
           .from('companies')
           .select('name')
@@ -441,7 +468,7 @@ export const useAuthStore = create(
         }).catch(err => console.warn('Failed to load email service:', err))
 
         set({ loading: false })
-        return { success: true }
+        return { success: true, emailConfirmationRequired: !authData.session }
       },
 
       linkWorkerAndRegister: async (data) => {
@@ -467,6 +494,16 @@ export const useAuthStore = create(
             const { data: authData, error: authError } = await supabase.auth.signUp({
               email: data.email,
               password: data.password,
+              options: {
+                data: {
+                  is_worker: true,
+                  company_id: company_id,
+                  full_name: data.name || 'Usuario',
+                  phone: data.phone || '',
+                  role: invite_role || 'despachador',
+                  plan: company_plan || 'standard'
+                }
+              }
             })
 
             if (authError) {
@@ -526,6 +563,16 @@ export const useAuthStore = create(
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
+          options: {
+            data: {
+              is_worker: true,
+              company_id: targetCompany.id,
+              full_name: data.name || 'Usuario',
+              phone: data.phone || '',
+              role: activeInvite.role || 'despachador',
+              plan: targetCompany.plan || 'standard'
+            }
+          }
         })
 
         if (authError) {
@@ -714,31 +761,53 @@ export const useAuthStore = create(
 
           if (profError || !profile) {
             console.warn('Profile not found, attempting to auto-recover...')
+            const meta = authUser?.user_metadata || {}
 
-            // 1. Create a default company
-            const { data: newComp } = await supabase
+            // 1. Create a default company (using metadata name if available)
+            const { data: newComp, error: autoCompErr } = await supabase
               .from('companies')
-              .insert([{ name: 'Mi Empresa' }])
+              .insert([{ name: meta.company_name || 'Mi Empresa' }])
               .select()
               .single()
 
             if (newComp) {
-              // 2. Insert the missing profile
-              await supabase
+              // 2. Insert the missing profile (using metadata details if available)
+              const { error: autoProfErr } = await supabase
                 .from('profiles')
                 .insert([{
                   id: userId,
                   company_id: newComp.id,
-                  full_name: authUser?.email?.split('@')[0] || 'Usuario',
+                  full_name: meta.full_name || authUser?.email?.split('@')[0] || 'Usuario',
                   email: authUser?.email,
+                  phone: meta.phone || '',
                   role: 'administrador',
-                  plan: 'standard'
+                  plan: meta.plan || 'standard'
                 }])
+              
+              if (!autoProfErr) {
+                profile = {
+                  id: userId,
+                  company_id: newComp.id,
+                  full_name: meta.full_name || authUser?.email?.split('@')[0] || 'Usuario',
+                  email: authUser?.email,
+                  phone: meta.phone || '',
+                  role: 'administrador',
+                  plan: meta.plan || 'standard'
+                }
+              } else {
+                console.error('Failed to auto-create profile:', autoProfErr)
+                toast.error('Error al configurar tu perfil de usuario.')
+                await supabase.auth.signOut()
+                set({ isAuthenticated: false, user: null })
+                return
+              }
+            } else {
+              console.error('Failed to auto-create company:', autoCompErr)
+              toast.error('Error al configurar tu empresa por RLS. Asegúrate de ejecutar el script de políticas.')
+              await supabase.auth.signOut()
+              set({ isAuthenticated: false, user: null })
+              return
             }
-
-            // Reload to fetch the freshly created profile properly
-            window.location.reload()
-            return
           }
 
           // 2. Fetch Company
@@ -810,7 +879,24 @@ export const useAuthStore = create(
         localStorage.setItem('gestiva-explicit-logout', 'true')
         localStorage.removeItem('gestiva-active-session-token')
         await supabase.auth.signOut()
+
+        // Clear all user-specific cache keys from localStorage to prevent leakage
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('gestiva-')) {
+            localStorage.removeItem(key)
+          }
+        })
+
+        // Clear all local records stored in IndexedDB (products, clients, invoices, etc.)
+        try {
+          const { clear } = await import('idb-keyval')
+          await clear()
+        } catch (e) {
+          console.warn('Error clearing IndexedDB on logout:', e)
+        }
+
         set({ isAuthenticated: false, user: null })
+        window.location.href = '/auth'
       },
 
       updateProfile: async (data) => {

@@ -7,6 +7,8 @@ import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { usePocketStore } from '@/store/usePocketStore'
+import { useHRStore } from '@/store/useHRStore'
+import { usePayrollStore } from '@/store/usePayrollStore'
 
 export function useRealtimeSync() {
   const user = useAuthStore((s) => s.user)
@@ -69,6 +71,38 @@ export function useRealtimeSync() {
                 usePocketStore.getState().fetchPockets()
              })
           }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'hr_employees', filter: `company_id=eq.${user.companyId}` },
+        (payload) => {
+          console.log('Realtime Update (hr_employees):', payload)
+          useHRStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'hr_recruitment_candidates', filter: `company_id=eq.${user.companyId}` },
+        (payload) => {
+          console.log('Realtime Update (hr_recruitment_candidates):', payload)
+          useHRStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'hr_vacations', filter: `company_id=eq.${user.companyId}` },
+        (payload) => {
+          console.log('Realtime Update (hr_vacations):', payload)
+          useHRStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'payroll_runs', filter: `company_id=eq.${user.companyId}` },
+        (payload) => {
+          console.log('Realtime Update (payroll_runs):', payload)
+          usePayrollStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .subscribe((status) => {

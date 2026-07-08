@@ -82,7 +82,7 @@ export default function App() {
   const location = useLocation()
 
   useEffect(() => {
-    const CURRENT_VERSION = '2.3'
+    const CURRENT_VERSION = '2.4'
     const lastVersion = localStorage.getItem('gestiva-app-version')
     const hasVersionChanged = lastVersion !== CURRENT_VERSION
 

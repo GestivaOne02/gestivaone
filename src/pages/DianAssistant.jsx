@@ -8,6 +8,8 @@ import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
+import { useAuthStore } from '@/store/useAuthStore'
+import { getLocalizationByCountry } from '@/services/localizationService'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
@@ -22,10 +24,40 @@ const itemVariants = {
 }
 
 export default function DianAssistant() {
+  const user = useAuthStore((s) => s.user)
+  const isColombia = user?.country === 'CO' || !user?.country
+
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
   const [taxType, setTaxType] = useState('juridica') // 'juridica' | 'natural'
   const [estimatedIvaRate, setEstimatedIvaRate] = useState(19) // Percentage of expenses with IVA
   const [activeTab, setActiveTab] = useState('renta') // 'renta' | 'iva' | 'exogena'
+
+  if (!isColombia) {
+    const userCountryConfig = getLocalizationByCountry(user?.country)
+    return (
+      <div className="page-container flex flex-col items-center justify-center min-h-[70vh] text-center px-4 max-w-2xl mx-auto space-y-6">
+        <div className="relative flex items-center justify-center w-24 h-24 rounded-3xl bg-amber-500/10 border border-amber-500/20 shadow-[0_0_50px_rgba(245,158,11,0.1)]">
+          <Landmark className="w-12 h-12 text-amber-500 animate-pulse" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-xl md:text-2xl font-black text-white">Asistente DIAN de Colombia</h1>
+          <p className="text-sm text-muted-400 leading-relaxed">
+            El Asistente DIAN es una herramienta exclusiva y adaptada a la legislación fiscal de **Colombia 🇨🇴** 
+            para la simulación de impuestos y reporte de información exógena.
+          </p>
+        </div>
+        <div className="p-4 rounded-2xl bg-surface-800/50 border border-subtle text-xs text-muted-400 max-w-md">
+          Tu empresa actualmente está configurada para operar en **{userCountryConfig?.name || user?.country}** con la moneda **{userCountryConfig?.currency}**. 
+          Próximamente habilitaremos asistentes tributarios adaptados para tu región fiscal.
+        </div>
+        <div className="pt-2">
+          <Button variant="primary" size="sm" onClick={() => window.history.back()} className="text-xs font-semibold py-2.5 px-6">
+            Volver atrás
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   // Persistent Renta inputs
   const [ingresosNoConstitutivos, setIngresosNoConstitutivos] = useState(() => {

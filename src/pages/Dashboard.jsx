@@ -915,7 +915,7 @@ export default function Dashboard() {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:grid grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-4 w-full">
+      <div className="hidden lg:grid grid-cols-3 gap-3 lg:gap-4 w-full">
         {[
           {
             title: "Ingresos (Recaudado)",

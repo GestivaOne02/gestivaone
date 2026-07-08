@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 // framer-motion removed for performance
 import {
   Globe, RefreshCw, Check, Moon, Sun, Building2, Bell, Database,
@@ -110,18 +110,18 @@ export default function Settings() {
       >
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <h1 className="text-lg md:text-xl font-bold text-foreground">ConfiguraciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n</h1>
+            <h1 className="text-lg md:text-xl font-bold text-foreground">Configuración</h1>
             <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Personaliza tu plataforma</p>
           </div>
         </div>
       </div>
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Currency Section ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Currency Section ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
           icon={Globe}
           title="Divisa & Tasas de Cambio"
-          desc="Las tasas se actualizan automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticamente cada 24 horas desde el Banco Central Europeo"
+          desc="Las tasas se actualizan automáticamente cada 24 horas desde el Banco Central Europeo"
         />
 
         {/* Current rate info */}
@@ -154,15 +154,15 @@ export default function Settings() {
         {/* Last updated */}
         {lastFetched && (
           <p className="text-[11px] text-muted-400">
-            ÃƒÆ’Ã†â€™Ãƒâ€¦Ã‚Â¡ltima actualizaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n: {format(new Date(lastFetched), "d 'de' MMMM, HH:mm", { locale: es })}
-            {isStale() && <span className="text-warning-400 ml-2">ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â  Tasas desactualizadas</span>}
+            Última actualización: {format(new Date(lastFetched), "d 'de' MMMM, HH:mm", { locale: es })}
+            {isStale() && <span className="text-warning-400 ml-2">⚠️ Tasas desactualizadas</span>}
           </p>
         )}
 
         {error && (
           <div className="flex items-center gap-2 bg-danger-900/30 border border-danger-500/30 rounded-xl px-4 py-3">
             <AlertTriangle size={14} className="text-danger-400" />
-            <p className="text-xs text-danger-400">Error al obtener tasas: {error}. Verifica tu conexiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n.</p>
+            <p className="text-xs text-danger-400">Error al obtener tasas: {error}. Verifica tu conexión.</p>
           </div>
         )}
 
@@ -211,12 +211,12 @@ export default function Settings() {
         </div>
       </section>
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Theme Section ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Theme Section ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
           icon={Moon}
           title="Apariencia"
-          desc="Elige entre modo oscuro, claro, o deja que el sistema decida automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticamente"
+          desc="Elige entre modo oscuro, claro, o deja que el sistema decida automáticamente"
         />
 
         <div className="grid grid-cols-3 gap-3">
@@ -286,10 +286,10 @@ export default function Settings() {
             >
               <Monitor size={13} className="text-brand-400 shrink-0" />
               <p className="text-xs text-brand-300">
-                Modo sistema activo ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â la app seguirÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ tu preferencia del SO automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticamente.
+                Modo sistema activo — la app seguirá tu preferencia del SO automáticamente.
                 {' '}
                 <span className="text-muted-400">
-                  Actualmente: {window.matchMedia('(prefers-color-scheme: dark)').matches ? 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ Oscuro' : 'ÃƒÆ’Ã‚Â¢Ãƒâ€¹Ã…â€œÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Claro'}
+                  Actualmente: {window.matchMedia('(prefers-color-scheme: dark)').matches ? '🌙 Oscuro' : '☀️ Claro'}
                 </span>
               </p>
             </div>
@@ -303,47 +303,47 @@ export default function Settings() {
       {/* ─── Tienda Virtual ─── */}
       <VirtualStoreBlock />
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ WhatsApp ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ WhatsApp ● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <IntegrationBlock
         icon={MessageSquare}
         title="WhatsApp Business"
-        desc="EnvÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a notificaciones de cobro por WhatsApp"
+        desc="Envía notificaciones de cobro por WhatsApp"
         enabledKey="whatsapp"
       >
         {({ cfg, set }) => (
           <div className="space-y-3">
-            <CfgInput label="NÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºmero de telÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©fono" value={cfg.phoneNumber} onChange={v => set({ phoneNumber: v })} placeholder="Ej: +57300..." />
+            <CfgInput label="Número de teléfono" value={cfg.phoneNumber} onChange={v => set({ phoneNumber: v })} placeholder="Ej: +57300..." />
             <CfgInput label="API Key (Meta Business)" value={cfg.apiKey} onChange={v => set({ apiKey: v })} placeholder="Token de acceso permanente" type="password" />
             <div className="bg-warning-900/20 border border-warning-400/20 rounded-xl px-4 py-3">
-              <p className="text-xs text-warning-400">Requiere cuenta de Meta Business verificada y aprobaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de plantillas de mensaje.</p>
+              <p className="text-xs text-warning-400">Requiere cuenta de Meta Business verificada y aprobación de plantillas de mensaje.</p>
             </div>
           </div>
         )}
       </IntegrationBlock>
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ API REST ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ API REST ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <ApiBlock />
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Impresión ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <PrinterBlock />
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Export ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Export ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <ExportBlock />
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Seguridad ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Seguridad ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <SecurityBlock />
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Backup & Limpieza ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
-      <DataManagementBlock />
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Backup & Limpieza ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* <DataManagementBlock /> */}
 
-      {/* ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Zona de Peligro ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
-      <ResetWorkspaceBlock />
+      {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Zona de Peligro ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
+      {/* <ResetWorkspaceBlock /> */}
 
     </div>
   )
 }
 
-// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Small helpers ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ 
+// ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Small helpers ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ 
 function CfgInput({ label, value, onChange, placeholder, type = 'text', disabled }) {
   return (
     <div>
@@ -390,16 +390,18 @@ function ResendBlock() {
     <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden animate-fade-in shadow-glow-sm"
     >
-      <button onClick={() => setOpen(o => !o)} type="button"
-        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
+      <div onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left cursor-pointer select-none">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Mail size={16} /></div>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-foreground">Correo electrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³nico (Resend)</p>
-          <p className="text-xs text-muted-400">EnvÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­a facturas, comprobantes y notificaciones automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ticas</p>
+          <p className="text-sm font-semibold text-foreground">Correo electrónico (Resend)</p>
+          <p className="text-xs text-muted-400">Envía facturas, comprobantes y notificaciones automáticas</p>
         </div>
-        <Toggle checked={resend.enabled} onChange={v => { setResend({ enabled: v }); toast(v ? `Servicio de correo activado` : `Servicio de correo desactivado`, { duration: 1500 }) }} />
+        <div onClick={e => e.stopPropagation()}>
+          <Toggle checked={resend.enabled} onChange={v => { setResend({ enabled: v }); toast(v ? `Servicio de correo activado` : `Servicio de correo desactivado`, { duration: 1500 }) }} />
+        </div>
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
-      </button>
+      </div>
       <>
         {open && (
           <div 
@@ -408,10 +410,10 @@ function ResendBlock() {
           >
             <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-4">
               <div className="bg-surface-700/35 border border-subtle rounded-2xl p-4 space-y-3">
-                <p className="text-xs font-bold text-brand-400 uppercase tracking-wider">Eventos de EnvÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­o AutomÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tico</p>
+                <p className="text-xs font-bold text-brand-400 uppercase tracking-wider">Eventos de Envío Automático</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <ToggleRow
-                    label="Facturas de CrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©dito"
+                    label="Facturas de Crédito"
                     desc="Al generar una factura programada"
                     checked={resend.onInvoice}
                     onChange={v => setResend({ onInvoice: v })}
@@ -529,16 +531,18 @@ function VirtualStoreBlock() {
 
   return (
     <section className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm">
-      <button onClick={() => setOpen(o => !o)} type="button"
-        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
+      <div onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left cursor-pointer select-none">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><ShoppingBag size={16} /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">Tienda Virtual y Catálogo</p>
           <p className="text-xs text-muted-400">Activa tu catálogo online público, configura enlace y marca</p>
         </div>
-        <Toggle checked={storeEnabled} onChange={v => setStoreEnabled(v)} />
+        <div onClick={e => e.stopPropagation()}>
+          <Toggle checked={storeEnabled} onChange={v => setStoreEnabled(v)} />
+        </div>
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
-      </button>
+      </div>
 
       {open && (
         <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-4 font-sans">
@@ -657,16 +661,18 @@ function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
     <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
-      <button onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
+      <div onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors cursor-pointer select-none">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon size={16} /></div>
         <div className="flex-1 text-left">
           <p className="text-sm font-semibold text-foreground">{title}</p>
           <p className="text-xs text-muted-400">{desc}</p>
         </div>
-        <Toggle checked={cfg.enabled} onChange={v => { setCfg({ enabled: v }); toast(v ? `${title} activado` : `${title} desactivado`, { duration: 1500 }) }} />
+        <div onClick={e => e.stopPropagation()}>
+          <Toggle checked={cfg.enabled} onChange={v => { setCfg({ enabled: v }); toast(v ? `${title} activado` : `${title} desactivado`, { duration: 1500 }) }} />
+        </div>
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
-      </button>
+      </div>
       <>
         {open && (
           <div 
@@ -725,11 +731,11 @@ function ApiBlock() {
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Server size={16} /></div>
         <div className="flex-1 text-left">
           <p className="text-sm font-semibold text-foreground">Backend API REST</p>
-          <p className="text-xs text-muted-400">SincronizaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n multi-dispositivo</p>
+          <p className="text-xs text-muted-400">Sincronización multi-dispositivo</p>
         </div>
         <span className={clsx('text-[10px] font-semibold px-2 py-0.5 rounded-full border', statusColor,
           api.status === 'connected' ? 'bg-success-900/20 border-success-400/20' : 'bg-surface-700 border-subtle')}>
-          {api.status === 'connected' ? 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ÂÃƒâ€šÃ‚Â Conectado' : api.status === 'testing' ? 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ÂÃƒâ€šÃ‚Â Probando' : 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬ÂÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ Desconectado'}
+          {api.status === 'connected' ? '\u25cf Conectado' : api.status === 'testing' ? '\u25cf Probando' : '\u25cf Desconectado'}
         </span>
         {open ? <ChevronUp size={14} className="text-muted-400" /> : <ChevronDown size={14} className="text-muted-400" />}
       </button>
@@ -746,10 +752,10 @@ function ApiBlock() {
                 <button onClick={runTest} disabled={testing}
                   className="flex items-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50 font-semibold">
                   {testing ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
-                  {testing ? 'Probando...' : 'Probar conexiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n'}
+                  {testing ? 'Probando...' : 'Probar conexión'}
                 </button>
               </div>
-              {api.lastPing && <p className="text-[11px] text-muted-400">ÃƒÆ’Ã†â€™Ãƒâ€¦Ã‚Â¡ltimo intento: {new Date(api.lastPing).toLocaleTimeString('es-CO')}</p>}
+              {api.lastPing && <p className="text-[11px] text-muted-400">Último intento: {new Date(api.lastPing).toLocaleTimeString('es-CO')}</p>}
             </div>
           </div>
         )}
@@ -790,10 +796,10 @@ function ExportBlock() {
         </div>
         <div>
           <p className="text-sm font-bold text-foreground">Reportes PDF/Excel bloqueados</p>
-          <p className="text-xs text-muted-400 max-w-xs mx-auto">Mejora tu plan a Pro para descargar reportes detallados y anÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lisis de tu negocio.</p>
+          <p className="text-xs text-muted-400 max-w-xs mx-auto">Mejora tu plan a Pro para descargar reportes detallados y análisis de tu negocio.</p>
         </div>
         <button className="text-[11px] font-bold text-brand-400 uppercase tracking-widest hover:text-brand-300 transition-colors">
-          Ver Planes ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢
+          Ver Planes →
         </button>
       </section>
     )
@@ -842,7 +848,7 @@ function PrinterBlock() {
   }
 
   const previewItems = [
-    { name: 'CafÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â© Cappuccino Grande', price: 9500, quantity: 2 },
+    { name: 'Café Cappuccino Grande', price: 9500, quantity: 2 },
     { name: 'Croissant de Almendras', price: 6500, quantity: 1 }
   ]
   const subtotal = 25500
@@ -881,7 +887,7 @@ function PrinterBlock() {
 
   const requestUsbPrinter = async () => {
     if (!navigator.usb) {
-      toast.error('Este navegador no soporta detecciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de dispositivos USB.')
+      toast.error('Este navegador no soporta detección de dispositivos USB.')
       return
     }
     try {
@@ -892,7 +898,7 @@ function PrinterBlock() {
         toast.success(`Impresora detectada: ${device.productName || 'Dispositivo USB'}`)
       }
     } catch (e) {
-      toast.error('No se detectÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ ningÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºn dispositivo')
+      toast.error('No se detectó ningún dispositivo')
     }
   }
 
@@ -900,18 +906,20 @@ function PrinterBlock() {
     <section
       className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm"
     >
-      <button onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
+      <div onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors cursor-pointer select-none">
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Printer size={16} /></div>
         <div className="flex-1 text-left">
-          <p className="text-sm font-semibold text-foreground">ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de Facturas</p>
+          <p className="text-sm font-semibold text-foreground">Impresión de Facturas</p>
           <p className="text-xs text-muted-400">Elige la plantilla y contenido de los recibos impresos</p>
         </div>
         {hasPrinter && (
-          <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tica activada` : `ImpresiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tica desactivada`, { duration: 1500 }) }} />
+          <div onClick={e => e.stopPropagation()}>
+            <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `Impresión automática activada` : `Impresión automática desactivada`, { duration: 1500 }) }} />
+          </div>
         )}
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
-      </button>
+      </div>
 
       <>
         {open && (
@@ -924,9 +932,9 @@ function PrinterBlock() {
                 <div className="flex flex-col items-center justify-center text-center p-6 bg-surface-750 border border-dashed border-subtle rounded-2xl gap-3 shadow-glow-sm">
                   <Printer size={32} className="text-muted-500 animate-pulse" />
                   <div>
-                    <h4 className="text-sm font-bold text-foreground">No se detectÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ impresora configurada</h4>
+                    <h4 className="text-sm font-bold text-foreground">No se detectó impresora configurada</h4>
                     <p className="text-xs text-muted-400 mt-1 max-w-sm mx-auto">
-                      Para configurar el formato del ticket e imprimir de forma automÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡tica, vincula tu impresora tÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rmica USB con el software.
+                      Para configurar el formato del ticket e imprimir de forma automática, vincula tu impresora térmica USB con el software.
                     </p>
                   </div>
                   <button
@@ -943,7 +951,7 @@ function PrinterBlock() {
               
               {/* Controls Column */}
               <div className="space-y-4">
-                <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider">DiseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±o y Campos</p>
+                <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider">Diseño y Campos</p>
                 
                 {/* Template picker */}
                 <div className="space-y-1.5">
@@ -961,7 +969,7 @@ function PrinterBlock() {
                             : 'bg-surface-700 border-subtle text-muted-400 hover:border-surface-300'
                         )}
                       >
-                        {t === 'classic' ? 'ClÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡sica (TÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rmica)' : 'Moderna (Elegante)'}
+                        {t === 'classic' ? 'Clásica (Térmica)' : 'Moderna (Elegante)'}
                       </button>
                     ))}
                   </div>
@@ -993,7 +1001,7 @@ function PrinterBlock() {
 
                 {/* Footer text input */}
                 <div>
-                  <label className="text-xs text-muted-400 mb-1 block">Mensaje de pie de pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina</label>
+                  <label className="text-xs text-muted-400 mb-1 block">Mensaje de pie de página</label>
                   <textarea
                     rows={2}
                     value={printer.footerText}
@@ -1105,8 +1113,8 @@ function PrinterBlock() {
 
                     {/* Footer */}
                     <div className="text-center text-[9px] text-gray-500 leading-normal">
-                      <p>{printer.footerText || 'ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡Gracias por su compra!'}</p>
-                      <p className="text-[7px] text-gray-400 mt-2">GestivaOne ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â www.gestivaone.com</p>
+                      <p>{printer.footerText || '¡Gracias por su compra!'}</p>
+                      <p className="text-[7px] text-gray-400 mt-2">GestivaOne — www.gestivaone.com</p>
                     </div>
 
                   </div>
@@ -1122,7 +1130,7 @@ function PrinterBlock() {
   )
 }
 
-// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Security Block ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
+// ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Security Block ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
 function SecurityBlock() {
   const user          = useAuthStore(s => s.user)
   const [current, setCurrent] = useState('')
@@ -1135,8 +1143,8 @@ function SecurityBlock() {
   const [open, setOpen]       = useState(false)
 
   const changePassword = async () => {
-    if (next.length < 6)            return toast.error('MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­nimo 6 caracteres')
-    if (next !== confirm)           return toast.error('Las contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±as no coinciden')
+    if (next.length < 6)            return toast.error('Mínimo 6 caracteres')
+    if (next !== confirm)           return toast.error('Las contraseñas no coinciden')
     setSaving(true)
     
     const { error: authError } = await supabase.auth.signInWithPassword({
@@ -1146,30 +1154,30 @@ function SecurityBlock() {
 
     if (authError) {
       setSaving(false)
-      return toast.error('ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a actual incorrecta')
+      return toast.error('Contraseña actual incorrecta')
     }
 
     const { error: updateError } = await supabase.auth.updateUser({ password: next })
     setSaving(false)
 
     if (updateError) {
-      return toast.error('Error al actualizar la contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a: ' + updateError.message)
+      return toast.error('Error al actualizar la contraseña: ' + updateError.message)
     }
 
     setCurrent(''); setNext(''); setConfirm('')
-    toast.success('ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a actualizada')
+    toast.success('Contraseña actualizada')
   }
 
   const generateBackupCodes = () => {
     const c = Array.from({ length: 8 }, () => Math.random().toString(36).slice(2, 8).toUpperCase())
     setCodes(c)
-    toast('Guarda estos cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digos en un lugar seguro', { icon: 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒâ€šÃ‚Â' })
+    toast('Guarda estos códigos en un lugar seguro', { icon: '🔒Ãƒâ€šÃ‚Â' })
   }
 
   const pwInput = (label, value, onChange) => (
     <div className="relative">
       <label className="text-xs text-muted-400 mb-1 block">{label}</label>
-      <input type={show ? 'text' : 'password'} value={value} onChange={e => onChange(e.target.value)} placeholder="ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢"
+      <input type={show ? 'text' : 'password'} value={value} onChange={e => onChange(e.target.value)} placeholder="••••••••"
         className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
       <button type="button" onClick={() => setShow(!show)} className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground transition-colors">
         {show ? <AlertTriangle size={14} /> : <Check size={14} />} {/* Mocked icon toggle */}
@@ -1186,7 +1194,7 @@ function SecurityBlock() {
         <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Lock size={16} /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">Seguridad</p>
-          <p className="text-xs text-muted-400">ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a, 2FA y sesiones activas</p>
+          <p className="text-xs text-muted-400">Contraseña, 2FA y sesiones activas</p>
         </div>
         <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
       </button>
@@ -1197,35 +1205,35 @@ function SecurityBlock() {
             transition={{ duration: 0.2 }}
           >
             <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-4">
-              <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider mb-2">Cambiar contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a</p>
+              <p className="text-[11px] font-bold text-brand-400 uppercase tracking-wider mb-2">Cambiar contraseña</p>
               <div className="space-y-3">
-                {pwInput('ContraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a actual', current, setCurrent)}
-                {pwInput('Nueva contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a', next, setNext)}
-                {pwInput('Confirmar nueva contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a', confirm, setConfirm)}
+                {pwInput('Contraseña actual', current, setCurrent)}
+                {pwInput('Nueva contraseña', next, setNext)}
+                {pwInput('Confirmar nueva contraseña', confirm, setConfirm)}
               </div>
               <button onClick={changePassword} disabled={saving || !current || !next || !confirm}
                 className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors w-full sm:w-auto justify-center">
-                <Lock size={14} /> {saving ? 'Guardando...' : 'Actualizar contraseÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±a'}
+                <Lock size={14} /> {saving ? 'Guardando...' : 'Actualizar contraseña'}
               </button>
 
               <div className="border-t border-subtle pt-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-foreground">AutenticaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de dos factores (2FA)</p>
-                    <p className="text-[11px] text-muted-400">AÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â±ade una capa extra de seguridad a tu cuenta</p>
+                    <p className="text-sm font-medium text-foreground">Autenticación de dos factores (2FA)</p>
+                    <p className="text-[11px] text-muted-400">Añade una capa extra de seguridad a tu cuenta</p>
                   </div>
-                  <Toggle checked={twoFA} onChange={(v) => { setTwoFA(v); toast(v ? '2FA activado (simulado)' : '2FA desactivado', { icon: v ? 'ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦' : 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ' }) }} />
+                  <Toggle checked={twoFA} onChange={(v) => { setTwoFA(v); toast(v ? '2FA activado (simulado)' : '2FA desactivado', { icon: v ? '🔒' : '🔒ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ' }) }} />
                 </div>
                 {twoFA && (
                   <div className="space-y-2">
                     <button onClick={generateBackupCodes} className="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-1 font-semibold">
-                      <Lock size={11} /> Generar cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digos de respaldo
+                      <Lock size={11} /> Generar códigos de respaldo
                     </button>
                     {codes && (
                       <div className="bg-surface-900 border border-brand-500/20 rounded-xl p-3">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="text-[11px] text-muted-400 font-medium">CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digos de respaldo</p>
-                          <button onClick={() => { navigator.clipboard.writeText(codes.join('\n')); toast('Copiados', { icon: 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹' }) }}
+                          <p className="text-[11px] text-muted-400 font-medium">Códigos de respaldo</p>
+                          <button onClick={() => { navigator.clipboard.writeText(codes.join('\n')); toast('Copiados', { icon: '📋' }) }}
                             className="text-[11px] text-brand-400 flex items-center gap-1 font-semibold">Copiar</button>
                         </div>
                         <div className="grid grid-cols-4 gap-1.5">
@@ -1244,7 +1252,7 @@ function SecurityBlock() {
   )
 }
 
-// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Data Management Block ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
+// ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Data Management Block ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
 function DataManagementBlock() {
   const user = useAuthStore(s => s.user)
   const isAdmin = user?.role === 'administrador'
@@ -1259,7 +1267,7 @@ function DataManagementBlock() {
       await action()
       toast.success(successMessage)
     } catch (err) {
-      toast.error(err.message || 'No se pudo completar la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n')
+      toast.error(err.message || 'No se pudo completar la acción')
     } finally {
       setBusy(false)
     }
@@ -1330,7 +1338,7 @@ function DataManagementBlock() {
       <Modal open={!!pendingImportFile} onClose={() => setPendingImportFile(null)} title="Importar backup" size="sm">
         <div className="space-y-5">
           <p className="text-sm text-muted-300 leading-relaxed">
-            Importar este backup reemplazarÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ los datos actuales de gestiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n. ContinÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºa solo si ya tienes una copia segura.
+            Importar este backup reemplazará los datos actuales de gestión. Continúa solo si ya tienes una copia segura.
           </p>
           <div className="flex flex-col sm:flex-row justify-end gap-3">
             <button type="button" onClick={() => setPendingImportFile(null)} className="px-5 py-2.5 rounded-xl border border-subtle text-sm font-semibold text-muted-300 hover:bg-surface-600 transition-colors">
@@ -1346,7 +1354,7 @@ function DataManagementBlock() {
   )
 }
 
-// ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Reset Workspace Block (Danger Zone) ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
+// ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Reset Workspace Block (Danger Zone) ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬
 function ResetWorkspaceBlock() {
   const user = useAuthStore(s => s.user)
   const isAdmin = user?.role === 'administrador'
@@ -1373,10 +1381,10 @@ function ResetWorkspaceBlock() {
       
       const res = await sendVerificationCodeEmail(code, user.email, company) 
       if (res.success) {
-        toast.success('CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo de seguridad enviado a tu correo')
+        toast.success('Código de seguridad enviado a tu correo')
         setModalOpen(true)
       } else {
-        toast.error('Error al enviar el cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo de verificaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n')
+        toast.error('Error al enviar el código de verificación')
       }
     } catch (e) {
       toast.error('Error enviando el correo')
@@ -1386,7 +1394,7 @@ function ResetWorkspaceBlock() {
   }
 
   const handleReset = async () => {
-    if (confirmCode !== sentCode) return toast.error('CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo incorrecto')
+    if (confirmCode !== sentCode) return toast.error('Código incorrecto')
     setBusy(true)
     try {
       const result = await resetWorkspaceData()
@@ -1399,7 +1407,7 @@ function ResetWorkspaceBlock() {
         toast.error(result?.error || 'Error al limpiar el espacio de trabajo')
       }
     } catch (err) {
-      toast.error(err.message || 'OcurriÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ un error inesperado')
+      toast.error(err.message || 'Ocurrió un error inesperado')
     } finally {
       setBusy(false)
     }
@@ -1428,8 +1436,8 @@ function ResetWorkspaceBlock() {
               <div className="bg-danger-500/5 border border-danger-500/20 rounded-2xl p-4 space-y-2">
                 <p className="text-sm font-bold text-danger-300">Limpiar espacio de trabajo</p>
                 <p className="text-xs text-muted-400 leading-relaxed">
-                  Elimina <strong className="text-foreground">permanentemente</strong> toda la informaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n de gestiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n: clientes, productos, facturas, pagos, egresos, bolsillos, prÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©stamos y notificaciones.
-                  Tu cuenta, empresa y trabajadores <span className="text-foreground font-medium">no se verÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡n afectados</span>.
+                  Elimina <strong className="text-foreground">permanentemente</strong> toda la información de gestión: clientes, productos, facturas, pagos, egresos, bolsillos, préstamos y notificaciones.
+                  Tu cuenta, empresa y trabajadores <span className="text-foreground font-medium">no se verán afectados</span>.
                 </p>
                 <button
                   type="button"
@@ -1441,7 +1449,7 @@ function ResetWorkspaceBlock() {
                   Limpiar todo el espacio de trabajo
                 </button>
                 {!isAdmin && (
-                  <p className="text-[11px] text-muted-400">Solo el administrador puede realizar esta acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n.</p>
+                  <p className="text-[11px] text-muted-400">Solo el administrador puede realizar esta acción.</p>
                 )}
               </div>
             </div>
@@ -1449,20 +1457,20 @@ function ResetWorkspaceBlock() {
         )}
       </>
 
-      <Modal open={modalOpen} onClose={() => { setModalOpen(false); setConfirmCode(''); setSentCode(null) }} title="ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â ConfirmaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n requerida" size="sm">
+      <Modal open={modalOpen} onClose={() => { setModalOpen(false); setConfirmCode(''); setSentCode(null) }} title="⚠️ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Confirmación requerida" size="sm">
         <div className="space-y-5">
           <div className="bg-danger-500/10 border border-danger-500/25 rounded-xl p-4 space-y-2">
             <p className="text-sm font-bold text-danger-300 flex items-center gap-2">
-              <AlertTriangle size={14} /> Esta acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n es irreversible
+              <AlertTriangle size={14} /> Esta acción es irreversible
             </p>
             <p className="text-xs text-muted-300 leading-relaxed">
-              Hemos enviado un correo electrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³nico a <strong>{user?.email}</strong> con un cÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo numÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rico de 4 dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­gitos. IngrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©salo a continuaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n para confirmar el borrado de datos.
+              Hemos enviado un correo electrónico a <strong>{user?.email}</strong> con un código numérico de 4 dígitos. Ingrésalo a continuación para confirmar el borrado de datos.
             </p>
           </div>
 
           <div>
             <label className="text-xs text-muted-400 mb-1 block">
-              CÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³digo de verificaciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n (4 dÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­gitos)
+              Código de verificación (4 dígitos)
             </label>
             <input
               type="text"

@@ -8,6 +8,8 @@ import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
+import { useAuthStore } from '@/store/useAuthStore'
+import { getLocalizationByCountry } from '@/services/localizationService'
 import toast from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
@@ -32,9 +34,16 @@ export default function AddClientModal({ open }) {
   const editingClient = useUIStore((s) => s.editingClient)
   const updateClient = useClientStore((s) => s.updateClient)
 
+  // Localized configuration
+  const user = useAuthStore((s) => s.user)
+  const countryConfig = getLocalizationByCountry(user?.country)
+  const docTypes = countryConfig?.documentTypes || []
+  const placeholderDoc = countryConfig?.placeholderDoc || 'Ej: 1020304050'
+  const taxLabelName = countryConfig?.taxLabel || 'Documento'
+
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13', country: '', currency: '' },
+    defaultValues: { type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: docTypes[0]?.value || '13', country: '', currency: '' },
   })
 
   const clientType = watch('type')
@@ -43,9 +52,19 @@ export default function AddClientModal({ open }) {
     if (open && editingClient) {
       reset({ ...editingClient })
     } else if (open) {
-      reset({ type: 'frequent', name: '', address: '', phone: '', email: '', document_id: '', document_type: '13', country: '', currency: '' })
+      reset({ 
+        type: 'frequent', 
+        name: '', 
+        address: '', 
+        phone: '', 
+        email: '', 
+        document_id: '', 
+        document_type: docTypes[0]?.value || '13', 
+        country: '', 
+        currency: '' 
+      })
     }
-  }, [open, editingClient])
+  }, [open, editingClient, user?.country])
 
   const onSubmit = async (data) => {
     if (editingClient) {
@@ -116,15 +135,14 @@ export default function AddClientModal({ open }) {
                 {...register('document_type')}
                 className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
               >
-                <option value="13">Cédula de Ciudadanía (CC)</option>
-                <option value="31">NIT (Número Identificación Tributaria)</option>
-                <option value="22">Cédula de Extranjería (CE)</option>
-                <option value="41">Pasaporte</option>
+                {docTypes.map((dt) => (
+                  <option key={dt.value} value={dt.value}>{dt.label}</option>
+                ))}
               </select>
             </div>
             <Input
-              label="Número de Documento / NIT"
-              placeholder="Ej: 1020304050"
+              label={`Número de Documento / ${taxLabelName}`}
+              placeholder={placeholderDoc}
               error={errors.document_id?.message}
               {...register('document_id')}
             />
