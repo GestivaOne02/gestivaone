@@ -18,7 +18,7 @@ const schema = z.object({
   name: z.string().min(2, 'Mínimo 2 caracteres'),
   price: z.coerce.number().positive('Precio inválido'),
   cost: z.coerce.number().min(0, 'Costo inválido').optional().or(z.literal('')),
-  unit: z.enum(['KG', 'LB', 'UND', 'L', 'M']),
+  unit: z.enum(['KG', 'LB', 'UND', 'L', 'M', 'HORA']),
   category: z.string().optional(),
   stock: z.coerce.number().min(0).optional(),
   attachment_url: z.string().optional(),
@@ -33,8 +33,8 @@ const schema = z.object({
   description: z.string().optional(),
 })
 
-const UNITS = ['KG', 'LB', 'UND', 'L', 'M']
-const UNIT_LABELS = {}
+const UNITS = ['KG', 'LB', 'UND', 'L', 'M', 'HORA']
+const UNIT_LABELS = { HORA: 'Hora' }
 
 export default function AddProductModal({ open }) {
   const scrollRef = useRef(null)
@@ -50,6 +50,12 @@ export default function AddProductModal({ open }) {
   const dynamicCategories = [...CATEGORIES.filter(c => c !== 'Otros'), ...customCats, 'Otros']
 
   const [customCategoryName, setCustomCategoryName] = useState('')
+
+  // Hourly bookings availability states
+  const [isUniqueResource, setIsUniqueResource]   = useState(false)
+  const [workingHoursStart, setWorkingHoursStart] = useState('08:00')
+  const [workingHoursEnd, setWorkingHoursEnd]     = useState('17:00')
+  const [nonWorkingDays, setNonWorkingDays]       = useState([0, 6]) // Saturdays and Sundays off by default
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -76,14 +82,14 @@ export default function AddProductModal({ open }) {
       const filePath = `${userSettings?.id || 'public'}/${fileName}`
 
       const { error: uploadError } = await supabase.storage
-        .from('attachments')
-        .upload(filePath, file)
+          .from('attachments')
+          .upload(filePath, file)
 
       if (uploadError) throw uploadError
 
       const { data: signedData, error: signedError } = await supabase.storage
-        .from('attachments')
-        .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10) // Válido por 10 años (URL segura/ofuscada)
+          .from('attachments')
+          .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10) // Válido por 10 años (URL segura/ofuscada)
 
       if (signedError) throw signedError
 
@@ -100,6 +106,29 @@ export default function AddProductModal({ open }) {
   }
 
   useEffect(() => {
+    // Helper to extract JSON from description if format is hourly settings
+    const parseDescriptionSettings = (desc = '') => {
+      if (desc.trim().startsWith('{') && desc.trim().endsWith('}')) {
+        try {
+          const parsed = JSON.parse(desc)
+          return {
+            cleanDescription: parsed.description || '',
+            isUnique: !!parsed.isUniqueResource,
+            hoursStart: parsed.workingHours?.start || '08:00',
+            hoursEnd: parsed.workingHours?.end || '17:00',
+            offDays: parsed.nonWorkingDays || [0, 6]
+          }
+        } catch (e) {}
+      }
+      return {
+        cleanDescription: desc,
+        isUnique: false,
+        hoursStart: '08:00',
+        hoursEnd: '17:00',
+        offDays: [0, 6]
+      }
+    }
+
     // Duplicating: pre-fill form but treat as new product (no id)
     if (open && duplicating) {
       const isEditingUnlimited = duplicating.unit === 'ILIMITADO' || duplicating.stock >= 999990000
@@ -109,6 +138,12 @@ export default function AddProductModal({ open }) {
       const showImageVal = duplicating.image_url !== 'none'
       setShowImage(showImageVal)
       const imageUrlVal = duplicating.image_url === 'none' ? '' : (duplicating.image_url || '')
+
+      const info = parseDescriptionSettings(duplicating.description)
+      setIsUniqueResource(info.isUnique)
+      setWorkingHoursStart(info.hoursStart)
+      setWorkingHoursEnd(info.hoursEnd)
+      setNonWorkingDays(info.offDays)
 
       reset({
         ...duplicating,
@@ -125,11 +160,12 @@ export default function AddProductModal({ open }) {
         image_url: imageUrlVal,
         show_in_store: duplicating.show_in_store ?? false,
         featured: duplicating.featured ?? false,
-        description: duplicating.description ?? '',
+        description: info.cleanDescription,
       })
       setCustomCategoryName('')
       return
     }
+
     // Editing existing product
     if (open && editing) {
       const isEditingUnlimited = editing.unit === 'ILIMITADO' || editing.stock >= 999990000
@@ -139,6 +175,12 @@ export default function AddProductModal({ open }) {
       const showImageVal = editing.image_url !== 'none'
       setShowImage(showImageVal)
       const imageUrlVal = editing.image_url === 'none' ? '' : (editing.image_url || '')
+
+      const info = parseDescriptionSettings(editing.description)
+      setIsUniqueResource(info.isUnique)
+      setWorkingHoursStart(info.hoursStart)
+      setWorkingHoursEnd(info.hoursEnd)
+      setNonWorkingDays(info.offDays)
 
       reset({
         ...editing,
@@ -154,7 +196,7 @@ export default function AddProductModal({ open }) {
         image_url: imageUrlVal,
         show_in_store: editing.show_in_store ?? false,
         featured: editing.featured ?? false,
-        description: editing.description ?? '',
+        description: info.cleanDescription,
       })
       setCustomCategoryName('')
     }
@@ -162,6 +204,10 @@ export default function AddProductModal({ open }) {
       setIsUnlimited(false)
       setHasDiscount(false)
       setShowImage(true)
+      setIsUniqueResource(false)
+      setWorkingHoursStart('08:00')
+      setWorkingHoursEnd('17:00')
+      setNonWorkingDays([0, 6])
       reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
     }
@@ -185,12 +231,31 @@ export default function AddProductModal({ open }) {
       finalImageUrl = 'none'
     }
 
+    let finalDescription = data.description || ''
+    if (data.unit === 'HORA') {
+      let previousOccupied = []
+      const oldDesc = editing?.description || duplicating?.description || ''
+      if (oldDesc.trim().startsWith('{') && oldDesc.trim().endsWith('}')) {
+        try {
+          const parsed = JSON.parse(oldDesc)
+          previousOccupied = parsed.occupiedSlots || []
+        } catch (e) {}
+      }
+      finalDescription = JSON.stringify({
+        description: data.description || '',
+        isUniqueResource,
+        workingHours: { start: workingHoursStart, end: workingHoursEnd },
+        nonWorkingDays,
+        occupiedSlots: previousOccupied
+      })
+    }
+
     const finalData = {
       name: data.name,
       price: data.price,
       cost: data.cost === '' ? 0 : Number(data.cost),
       unit: isUnlimited ? 'ILIMITADO' : data.unit,
-      stock: isUnlimited ? 999999999 : Number(data.stock || 0),
+      stock: isUnlimited ? 999999999 : (data.unit === 'HORA' ? 999999999 : Number(data.stock || 0)),
       category: finalCategory,
       attachment_url: data.attachment_url,
       attachment_name: data.attachment_name,
@@ -200,7 +265,7 @@ export default function AddProductModal({ open }) {
       image_url: finalImageUrl,
       show_in_store: data.show_in_store || false,
       featured: data.featured || false,
-      description: data.description || '',
+      description: finalDescription,
     }
 
     // Editing an existing product
@@ -217,287 +282,444 @@ export default function AddProductModal({ open }) {
 
   const modalTitle = editing ? 'Editar Producto' : duplicating ? 'Duplicar Producto' : 'Nuevo Producto'
 
+  const isHourly = unit === 'HORA'
+
+  const DAYS_OF_WEEK = [
+    { val: 1, label: 'L' },
+    { val: 2, label: 'M' },
+    { val: 3, label: 'M' },
+    { val: 4, label: 'J' },
+    { val: 5, label: 'V' },
+    { val: 6, label: 'S' },
+    { val: 0, label: 'D' }
+  ]
+
+  const HOURS_LIST = Array.from({ length: 24 }).map((_, i) => `${String(i).padStart(2, '0')}:00`)
+
+  const toggleDay = (dayVal) => {
+    if (nonWorkingDays.includes(dayVal)) {
+      setNonWorkingDays(nonWorkingDays.filter(d => d !== dayVal))
+    } else {
+      setNonWorkingDays([...nonWorkingDays, dayVal])
+    }
+  }
+
   return (
-    <Modal open={open} onClose={closeModal} title={modalTitle} size="md" customLayout={true}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[80vh] sm:max-h-[75vh] relative overflow-hidden">
+    <Modal open={open} onClose={closeModal} title={modalTitle} size={isHourly ? 'xl' : 'md'} customLayout={true}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-h-[85vh] sm:max-h-[80vh] relative overflow-hidden">
         {/* Scrollable body */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 no-scrollbar">
-          <Input
-            label="Nombre del producto *"
-            icon={<Package size={14} />}
-            error={errors.name?.message}
-            placeholder="Ej: Arroz blanco"
-            {...register('name')}
-          />
-
-          <div className="grid grid-cols-2 gap-3">
+        <div ref={scrollRef} className={clsx(
+          "flex-1 overflow-y-auto p-5 sm:p-6 no-scrollbar",
+          isHourly ? "grid grid-cols-1 lg:grid-cols-12 gap-6" : "space-y-5"
+        )}>
+          {/* Columna Izquierda (Formulario del producto) */}
+          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5" : "space-y-5")}>
             <Input
-              label={`Precio Venta (${baseCurrency}) *`}
-              icon={<DollarSign size={14} />}
-              error={errors.price?.message}
-              placeholder="0.00"
-              type="number"
-              step="0.01"
-              {...register('price')}
+              label="Nombre del producto *"
+              icon={<Package size={14} />}
+              error={errors.name?.message}
+              placeholder="Ej: Arroz blanco"
+              {...register('name')}
             />
-            <Input
-              label={`Costo Compra (${baseCurrency})`}
-              icon={<DollarSign size={14} />}
-              error={errors.cost?.message}
-              placeholder="0.00"
-              type="number"
-              step="0.01"
-              {...register('cost')}
-            />
-          </div>
 
-          <div>
-            <label className="text-xs font-medium text-muted-500 uppercase tracking-wide block mb-1.5">Stock disponible</label>
-            <div className={clsx(
-              'flex items-stretch bg-surface-700 border rounded-xl overflow-hidden transition-all',
-              isUnlimited ? 'border-brand-500 ring-2 ring-brand-500/20' : 'border-subtle focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/50'
-            )}>
-              <div className="pl-3 flex items-center text-muted-400">
-                <Archive size={14} />
-              </div>
-              <input
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label={`Precio Venta (${baseCurrency}) *`}
+                icon={<DollarSign size={14} />}
+                error={errors.price?.message}
+                placeholder="0.00"
                 type="number"
-                placeholder="Ej: 999"
-                disabled={isUnlimited}
-                className="w-full bg-transparent px-3 py-2.5 text-sm text-foreground outline-none border-none focus:ring-0 focus:border-transparent focus:outline-none placeholder:text-muted-400 disabled:opacity-50"
-                {...register('stock')}
+                step="0.01"
+                {...register('price')}
               />
-              <button
-                type="button"
-                onClick={() => {
-                  setIsUnlimited(!isUnlimited)
-                  if (!isUnlimited) setValue('stock', 0)
-                }}
-                className={clsx(
-                  'px-4 text-xs font-semibold transition-colors border-l border-brand-600',
-                  isUnlimited
-                    ? 'bg-brand-700 text-white'
-                    : 'bg-brand-600 text-white hover:bg-brand-700'
-                )}
-              >
-                {isUnlimited ? '✓' : 'Ilimitado'}
-              </button>
+              <Input
+                label={`Costo Compra (${baseCurrency})`}
+                icon={<DollarSign size={14} />}
+                error={errors.cost?.message}
+                placeholder="0.00"
+                type="number"
+                step="0.01"
+                {...register('cost')}
+              />
             </div>
-            {isUnlimited && (
-              <p className="text-[11px] text-brand-400 mt-1.5">Stock marcado como ilimitado</p>
+
+            {!isHourly && (
+              <div>
+                <label className="text-xs font-medium text-muted-500 uppercase tracking-wide block mb-1.5">Stock disponible</label>
+                <div className={clsx(
+                  'flex items-stretch bg-surface-700 border rounded-xl overflow-hidden transition-all',
+                  isUnlimited ? 'border-brand-500 ring-2 ring-brand-500/20' : 'border-subtle focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/50'
+                )}>
+                  <div className="pl-3 flex items-center text-muted-400">
+                    <Archive size={14} />
+                  </div>
+                  <input
+                    type="number"
+                    placeholder="Ej: 999"
+                    disabled={isUnlimited}
+                    className="w-full bg-transparent px-3 py-2.5 text-sm text-foreground outline-none border-none focus:ring-0 focus:border-transparent focus:outline-none placeholder:text-muted-400 disabled:opacity-50"
+                    {...register('stock')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUnlimited(!isUnlimited)
+                      if (!isUnlimited) setValue('stock', 0)
+                    }}
+                    className={clsx(
+                      'px-4 text-xs font-semibold transition-colors border-l border-brand-600',
+                      isUnlimited
+                        ? 'bg-brand-700 text-white'
+                        : 'bg-brand-600 text-white hover:bg-brand-700'
+                    )}
+                  >
+                    {isUnlimited ? '✓' : 'Ilimitado'}
+                  </button>
+                </div>
+                {isUnlimited && (
+                  <p className="text-[11px] text-brand-400 mt-1.5">Stock marcado como ilimitado</p>
+                )}
+              </div>
             )}
+
+            {/* Discount Section */}
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 text-brand-400">
+                  <Tag size={14} />
+                  <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setHasDiscount(!hasDiscount)}>Añadir Descuento</label>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setHasDiscount(!hasDiscount)}
+                  className={clsx(
+                    'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
+                    hasDiscount ? 'bg-brand-500' : 'bg-surface-600'
+                  )}
+                >
+                  <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', hasDiscount ? 'translate-x-4' : 'translate-x-1')} />
+                </button>
+              </div>
+              
+              {hasDiscount && (
+                <div className="grid grid-cols-2 gap-3 mt-3 p-3 bg-brand-500/5 rounded-xl border border-brand-500/20">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[11px] text-muted-400 uppercase font-medium">Tipo de descuento</span>
+                    <select {...register('discount_type')} className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-brand-500/50">
+                      <option value="percentage">Porcentaje (%)</option>
+                      <option value="fixed">Valor Fijo ($)</option>
+                    </select>
+                  </div>
+                  <Input
+                    label="Valor"
+                    type="number"
+                    placeholder={watch('discount_type') === 'percentage' ? 'Ej: 15' : 'Ej: 5000'}
+                    {...register('discount_value')}
+                  />
+                  <div className="col-span-2">
+                    <Input
+                      label="Válido hasta (Fecha límite)"
+                      type="date"
+                      {...register('discount_ends_at')}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Unit selector */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-muted-500 uppercase tracking-wide">Unidad</span>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {UNITS.map((u) => (
+                  <button
+                    key={u}
+                    type="button"
+                    onClick={() => setValue('unit', u)}
+                    className={clsx(
+                      'flex-1 py-2 text-xs font-semibold rounded-lg border transition-all',
+                      unit === u
+                        ? 'border-brand-500 bg-brand-600/20 text-brand-600 dark:text-brand-300'
+                        : 'border-subtle bg-surface-700 text-muted-400 hover:text-foreground'
+                    )}
+                  >
+                    {UNIT_LABELS[u] || u}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Category */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Categoría</label>
+              <select
+                {...register('category')}
+                className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+              >
+                {dynamicCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+
+            {selectedCategory === 'Otros' && (
+              <Input
+                label="Especificar otra categoría *"
+                value={customCategoryName}
+                onChange={(e) => setCustomCategoryName(e.target.value)}
+                placeholder="Ej: Limpieza Premium"
+                required
+              />
+            )}
+
+            {/* Image Settings Section */}
+            <div className="pt-2 border-t border-subtle">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 text-brand-400">
+                  <Image size={14} />
+                  <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setShowImage(!showImage)}>Mostrar Imagen de Portada</label>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowImage(!showImage)}
+                  className={clsx(
+                    'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
+                    showImage ? 'bg-brand-500' : 'bg-surface-600'
+                  )}
+                >
+                  <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', showImage ? 'translate-x-4' : 'translate-x-1')} />
+                </button>
+              </div>
+              
+              {showImage && (
+                <div className="mt-3 space-y-2">
+                  <Input
+                    label="URL de Imagen Personalizada"
+                    placeholder="Ej: https://images.unsplash.com/..."
+                    error={errors.image_url?.message}
+                    {...register('image_url')}
+                  />
+                  <p className="text-[10px] text-muted-400">Si se deja vacío, el sistema asignará una imagen ilustrativa basada en la categoría seleccionada.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Tienda Virtual Section */}
+            <div className="pt-2 border-t border-subtle space-y-3">
+              <p className="text-xs font-semibold text-brand-500 dark:text-brand-400 uppercase tracking-wide">Tienda Virtual / Catálogo</p>
+              
+              <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+                <div>
+                  <p className="text-xs font-bold text-foreground">Mostrar en Tienda Virtual</p>
+                  <p className="text-[10px] text-muted-400 mt-0.5">Hace que este producto sea visible públicamente en tu catálogo.</p>
+                </div>
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 rounded-lg cursor-pointer"
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                  {...register('show_in_store')}
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+                <div>
+                  <p className="text-xs font-bold text-foreground">Destacar en la Tienda</p>
+                  <p className="text-[10px] text-muted-400 mt-0.5">Muestra un badge de "Destacado" y lo resalta en el catálogo.</p>
+                </div>
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 rounded-lg cursor-pointer"
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                  {...register('featured')}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-muted-500 block mb-1.5 font-medium uppercase tracking-wide">Descripción Comercial (Pública)</label>
+                <textarea
+                  rows={3}
+                  placeholder="Escribe los detalles comerciales del producto, especificaciones, etc. para tus clientes..."
+                  className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
+                  {...register('description')}
+                />
+              </div>
+            </div>
+
+            {/* Attachments Section */}
+            <div className="pt-2 border-t border-subtle">
+              <p className="text-xs font-semibold text-muted-300 mb-2">Archivo Adjunto (Opcional)</p>
+              <div className="flex gap-2 mb-2">
+                <div className="relative w-full">
+                  <input 
+                    type="file" 
+                    id="file-upload" 
+                    className="hidden" 
+                    onChange={handleFileUpload} 
+                    disabled={uploading}
+                  />
+                  <label 
+                    htmlFor="file-upload"
+                    className={clsx(
+                      "flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-bold rounded-xl border transition-all cursor-pointer",
+                      uploading ? "opacity-50 cursor-not-allowed border-subtle bg-surface-700 text-muted-400" : "border-brand-500/30 text-brand-400 hover:bg-brand-500/10 hover:border-brand-500"
+                    )}
+                  >
+                    {uploading ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-brand-500/20 border-t-brand-500 rounded-full animate-spin" />
+                        Subiendo archivo...
+                      </>
+                    ) : (
+                      <>
+                        <FileUp size={16} />
+                        Subir Archivo
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Input
+                  label="Nombre del Adjunto"
+                  icon={<Tag size={14} />}
+                  placeholder="Ej: Registro INVIMA"
+                  {...register('attachment_name')}
+                />
+                <Input
+                  label="Enlace del Adjunto"
+                  icon={<Link2 size={14} />}
+                  placeholder="Ej: https://drive.google.com/..."
+                  {...register('attachment_url')}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Discount Section */}
-          <div className="pt-2">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2 text-brand-400">
-                <Tag size={14} />
-                <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setHasDiscount(!hasDiscount)}>Añadir Descuento</label>
+          {/* Columna Derecha (Horarios & Gantt) */}
+          {isHourly && (
+            <div className="lg:col-span-7 bg-surface-800/40 border border-subtle p-5 rounded-2xl space-y-5 flex flex-col justify-start">
+              <h3 className="text-sm font-black text-brand-400 uppercase tracking-widest flex items-center gap-2">
+                <CalendarDays size={16} />
+                Disponibilidad Gantt
+              </h3>
+
+              {/* Unique resource check */}
+              <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
+                <div>
+                  <p className="text-xs font-bold text-foreground">Recurso de Valor Único (Persona)</p>
+                  <p className="text-[10px] text-muted-400 mt-0.5">Define si el recurso es único. Solo permite reservas exclusivas por franja horaria.</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={isUniqueResource}
+                  onChange={(e) => setIsUniqueResource(e.target.checked)}
+                  className="w-5 h-5 rounded-lg cursor-pointer animate-none"
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                />
               </div>
-              <button
-                type="button"
-                onClick={() => setHasDiscount(!hasDiscount)}
-                className={clsx(
-                  'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
-                  hasDiscount ? 'bg-brand-500' : 'bg-surface-600'
-                )}
-              >
-                <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', hasDiscount ? 'translate-x-4' : 'translate-x-1')} />
-              </button>
-            </div>
-            
-            {hasDiscount && (
-              <div className="grid grid-cols-2 gap-3 mt-3 p-3 bg-brand-500/5 rounded-xl border border-brand-500/20">
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-[11px] text-muted-400 uppercase font-medium">Tipo de descuento</span>
-                  <select {...register('discount_type')} className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-brand-500/50">
-                    <option value="percentage">Porcentaje (%)</option>
-                    <option value="fixed">Valor Fijo ($)</option>
+
+              {/* Working hours range */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-muted-400 uppercase font-semibold">Hora Inicio</span>
+                  <select 
+                    value={workingHoursStart} 
+                    onChange={(e) => setWorkingHoursStart(e.target.value)} 
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-brand-500/50 outline-none"
+                  >
+                    {HOURS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
                   </select>
                 </div>
-                <Input
-                  label="Valor"
-                  type="number"
-                  placeholder={watch('discount_type') === 'percentage' ? 'Ej: 15' : 'Ej: 5000'}
-                  {...register('discount_value')}
-                />
-                <div className="col-span-2">
-                  <Input
-                    label="Válido hasta (Fecha límite)"
-                    type="date"
-                    {...register('discount_ends_at')}
-                  />
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-muted-400 uppercase font-semibold">Hora Fin</span>
+                  <select 
+                    value={workingHoursEnd} 
+                    onChange={(e) => setWorkingHoursEnd(e.target.value)} 
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-brand-500/50 outline-none"
+                  >
+                    {HOURS_LIST.map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Unit selector */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-muted-500 uppercase tracking-wide">Unidad</span>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {UNITS.map((u) => (
-                <button
-                  key={u}
-                  type="button"
-                  onClick={() => setValue('unit', u)}
-                  className={clsx(
-                    'flex-1 py-2 text-xs font-semibold rounded-lg border transition-all',
-                    unit === u
-                      ? 'border-brand-500 bg-brand-600/20 text-brand-600 dark:text-brand-300'
-                      : 'border-subtle bg-surface-700 text-muted-400 hover:text-foreground'
-                  )}
-                >
-                  {UNIT_LABELS[u] || u}
-                </button>
-              ))}
+              {/* Working Days Selector */}
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] text-muted-400 uppercase font-semibold">Días Laborables</span>
+                <div className="flex gap-2 flex-wrap">
+                  {DAYS_OF_WEEK.map(({ val, label }) => {
+                    const isWorking = !nonWorkingDays.includes(val)
+                    return (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => toggleDay(val)}
+                        className={clsx(
+                          "w-8 h-8 rounded-full text-xs font-bold transition-all border flex items-center justify-center",
+                          isWorking 
+                            ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" 
+                            : "bg-purple-500/20 border-purple-500/40 text-purple-400"
+                        )}
+                        title={isWorking ? "Laborable" : "No laborable (Día libre)"}
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
+                </div>
+                <p className="text-[9px] text-muted-400 mt-1">
+                  Verde: laborable. Morado: día no laborable (no trabaja).
+                </p>
+              </div>
+
+              {/* Preview Gantt Grid */}
+              <div className="flex flex-col gap-2 flex-1 pt-2 border-t border-subtle">
+                <span className="text-[10px] text-muted-400 uppercase font-semibold">Previsualización del Cronograma</span>
+                <div className="bg-surface-700/50 border border-subtle rounded-xl p-3 flex-1 flex flex-col gap-3">
+                  <div className="flex items-center justify-between text-xs border-b border-subtle/40 pb-1.5">
+                    <span className="font-bold text-foreground">Días Laborales</span>
+                    <span className="text-[10.5px] font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-md">Vista Gantt Diaria</span>
+                  </div>
+                  
+                  {/* Gantt list representing hours */}
+                  <div className="grid grid-cols-4 gap-1.5 overflow-y-auto max-h-[160px] pr-1 no-scrollbar">
+                    {(() => {
+                      const startIdx = parseInt(workingHoursStart.split(':')[0])
+                      const endIdx = parseInt(workingHoursEnd.split(':')[0])
+                      const hours = []
+                      for (let i = startIdx; i <= endIdx; i++) {
+                        hours.push(`${String(i).padStart(2, '0')}:00`)
+                      }
+                      if (hours.length === 0) return <p className="text-[11px] text-muted-400 col-span-4 text-center">Horario inválido</p>
+
+                      return hours.map(h => {
+                        const isTodayOff = nonWorkingDays.includes(new Date().getDay())
+                        const hourVal = parseInt(h.split(':')[0])
+                        // Mock one hour occupied for visualization (e.g. 11:00 or 12:00)
+                        const isMockOccupied = hourVal === 11 || hourVal === 12
+                        
+                        return (
+                          <div
+                            key={h}
+                            className={clsx(
+                              "p-2 rounded-lg text-center border text-[10px] font-bold transition-all shadow-sm",
+                              isTodayOff
+                                ? "bg-purple-500/10 border-purple-500/30 text-purple-400"
+                                : isMockOccupied
+                                  ? "bg-red-500/10 border-red-500/30 text-red-400"
+                                  : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                            )}
+                          >
+                            <div>{h}</div>
+                            <div className="text-[8px] opacity-75 font-normal mt-0.5">
+                              {isTodayOff ? 'No trabaja' : isMockOccupied ? 'Ocupado' : 'Disponible'}
+                            </div>
+                          </div>
+                        )
+                      })
+                    })()}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* Category */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Categoría</label>
-            <select
-              {...register('category')}
-              className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-            >
-              {dynamicCategories.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-
-          {selectedCategory === 'Otros' && (
-            <Input
-              label="Especificar otra categoría *"
-              value={customCategoryName}
-              onChange={(e) => setCustomCategoryName(e.target.value)}
-              placeholder="Ej: Limpieza Premium"
-              required
-            />
           )}
-
-          {/* Image Settings Section */}
-          <div className="pt-2 border-t border-subtle">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2 text-brand-400">
-                <Image size={14} />
-                <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setShowImage(!showImage)}>Mostrar Imagen de Portada</label>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowImage(!showImage)}
-                className={clsx(
-                  'relative inline-flex h-5 w-9 items-center rounded-full transition-colors',
-                  showImage ? 'bg-brand-500' : 'bg-surface-600'
-                )}
-              >
-                <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', showImage ? 'translate-x-4' : 'translate-x-1')} />
-              </button>
-            </div>
-            
-            {showImage && (
-              <div className="mt-3 space-y-2">
-                <Input
-                  label="URL de Imagen Personalizada"
-                  placeholder="Ej: https://images.unsplash.com/..."
-                  error={errors.image_url?.message}
-                  {...register('image_url')}
-                />
-                <p className="text-[10px] text-muted-400">Si se deja vacío, el sistema asignará una imagen ilustrativa basada en la categoría seleccionada.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Tienda Virtual Section */}
-          <div className="pt-2 border-t border-subtle space-y-3">
-            <p className="text-xs font-semibold text-brand-500 dark:text-brand-400 uppercase tracking-wide">Tienda Virtual / Catálogo</p>
-            
-            <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
-              <div>
-                <p className="text-xs font-bold text-foreground">Mostrar en Tienda Virtual</p>
-                <p className="text-[10px] text-muted-400 mt-0.5">Hace que este producto sea visible públicamente en tu catálogo.</p>
-              </div>
-              <input
-                type="checkbox"
-                className="w-5 h-5 rounded-lg cursor-pointer"
-                style={{ width: '1.2rem', height: '1.2rem' }}
-                {...register('show_in_store')}
-              />
-            </div>
-
-            <div className="flex items-center justify-between p-3 rounded-xl border border-subtle bg-surface-700/30">
-              <div>
-                <p className="text-xs font-bold text-foreground">Destacar en la Tienda</p>
-                <p className="text-[10px] text-muted-400 mt-0.5">Muestra un badge de "Destacado" y lo resalta en el catálogo.</p>
-              </div>
-              <input
-                type="checkbox"
-                className="w-5 h-5 rounded-lg cursor-pointer"
-                style={{ width: '1.2rem', height: '1.2rem' }}
-                {...register('featured')}
-              />
-            </div>
-
-            <div>
-              <label className="text-xs text-muted-500 block mb-1.5 font-medium uppercase tracking-wide">Descripción Comercial (Pública)</label>
-              <textarea
-                rows={3}
-                placeholder="Escribe los detalles comerciales del producto, especificaciones, etc. para tus clientes..."
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
-                {...register('description')}
-              />
-            </div>
-          </div>
-
-          {/* Attachments Section */}
-          <div className="pt-2 border-t border-subtle">
-            <p className="text-xs font-semibold text-muted-300 mb-2">Archivo Adjunto (Opcional)</p>
-            <div className="flex gap-2 mb-2">
-              <div className="relative w-full">
-                <input 
-                  type="file" 
-                  id="file-upload" 
-                  className="hidden" 
-                  onChange={handleFileUpload} 
-                  disabled={uploading}
-                />
-                <label 
-                  htmlFor="file-upload"
-                  className={clsx(
-                    "flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-bold rounded-xl border transition-all cursor-pointer",
-                    uploading ? "opacity-50 cursor-not-allowed border-subtle bg-surface-700 text-muted-400" : "border-brand-500/30 text-brand-400 hover:bg-brand-500/10 hover:border-brand-500"
-                  )}
-                >
-                  {uploading ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-brand-500/20 border-t-brand-500 rounded-full animate-spin" />
-                      Subiendo archivo...
-                    </>
-                  ) : (
-                    <>
-                      <FileUp size={16} />
-                      Subir Archivo
-                    </>
-                  )}
-                </label>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Input
-                label="Nombre del Adjunto"
-                icon={<Tag size={14} />}
-                placeholder="Ej: Registro INVIMA"
-                {...register('attachment_name')}
-              />
-              <Input
-                label="Enlace del Adjunto"
-                icon={<Link2 size={14} />}
-                placeholder="Ej: https://drive.google.com/..."
-                {...register('attachment_url')}
-              />
-            </div>
-            <p className="text-[10px] text-muted-400 mt-1">Este adjunto se incluirá cuando envíes facturas con este producto por correo o WhatsApp.</p>
-          </div>
         </div>
 
         {/* Fixed Footer */}

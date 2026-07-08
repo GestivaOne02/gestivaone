@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Percent } from 'lucide-react'
+import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Percent, CalendarDays } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import SearchBar from '@/components/ui/SearchBar'
 import SortFilterBar from '@/components/ui/SortFilterBar'
@@ -26,9 +26,10 @@ const UNIT_COLORS = {
   L: 'text-cyan-400 bg-cyan-500/10',
   M: 'text-orange-400 bg-orange-500/10',
   ILIMITADO: 'text-success-400 bg-success-500/10',
+  HORA: 'text-pink-400 bg-pink-500/10 border border-pink-500/20 shadow-sm shrink-0',
 }
 
-const UNIT_LABELS = { ILIMITADO: 'Ilimitado' }
+const UNIT_LABELS = { ILIMITADO: 'Ilimitado', HORA: 'Hora' }
 
 const getFallbackImage = (category) => {
   const normalized = (category || '').toLowerCase()
@@ -56,7 +57,7 @@ const getFallbackImage = (category) => {
   return null
 }
 
-function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ }) {
+function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, onSelectHourlyProduct }) {
   const [qty, setQty] = useState('')
   const [added, setAdded] = useState(false)
   const hasUnlimitedStock = product.unit === 'ILIMITADO' || product.stock >= 999990000
@@ -76,6 +77,96 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
   const imageUrl = product.image_url && product.image_url !== 'none' && product.image_url.trim() !== '' ? product.image_url : null
 
   const unitColor = UNIT_COLORS[product.unit] ?? UNIT_COLORS.UND
+
+  const isHourly = product.unit === 'HORA'
+  
+  const hourlySettings = useMemo(() => {
+    if (!isHourly) return null
+    const desc = product.description || ''
+    if (desc.trim().startsWith('{') && desc.trim().endsWith('}')) {
+      try {
+        return JSON.parse(desc)
+      } catch (e) {}
+    }
+    return {
+      description: desc,
+      isUniqueResource: false,
+      workingHours: { start: '08:00', end: '17:00' },
+      nonWorkingDays: [0, 6],
+      occupiedSlots: []
+    }
+  }, [product.description, isHourly])
+
+  const availability = useMemo(() => {
+    if (!isHourly || !hourlySettings) return null
+
+    const now = new Date()
+    const currentDay = now.getDay() // 0 = Dom, 6 = Sab
+    const currentHourStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+
+    // 1. Check if non-working day
+    if (hourlySettings.nonWorkingDays?.includes(currentDay)) {
+      return {
+        status: 'off',
+        label: 'No laborable',
+        desc: 'Hoy no trabaja'
+      }
+    }
+
+    const startHour = hourlySettings.workingHours?.start || '08:00'
+    const endHour = hourlySettings.workingHours?.end || '17:00'
+
+    // 2. Check if out of schedule
+    if (currentHourStr < startHour) {
+      return {
+        status: 'available',
+        label: 'Disponible',
+        desc: `Abre hoy a las ${startHour}`
+      }
+    }
+    if (currentHourStr > endHour) {
+      return {
+        status: 'off',
+        label: 'Cerrado',
+        desc: `Fuera del horario laboral`
+      }
+    }
+
+    // 3. Check occupied slots for today
+    const todayStr = now.toISOString().split('T')[0]
+    const currentHourVal = now.getHours()
+
+    const occupiedToday = hourlySettings.occupiedSlots || []
+    const isOccupied = occupiedToday.some(slot => {
+      if (slot.date !== todayStr) return false
+      const slotHour = parseInt(slot.time.split(':')[0])
+      const duration = slot.duration || 1
+      return currentHourVal >= slotHour && currentHourVal < (slotHour + duration)
+    })
+
+    if (isOccupied) {
+      const currentSlot = occupiedToday.find(slot => {
+        if (slot.date !== todayStr) return false
+        const slotHour = parseInt(slot.time.split(':')[0])
+        const duration = slot.duration || 1
+        return currentHourVal >= slotHour && currentHourVal < (slotHour + duration)
+      })
+      const releaseHour = currentSlot ? parseInt(currentSlot.time.split(':')[0]) + (currentSlot.duration || 1) : null
+      const releaseHourStr = releaseHour ? `${String(releaseHour).padStart(2, '0')}:00` : endHour
+
+      return {
+        status: 'occupied',
+        label: 'Ocupado',
+        desc: `Se desocupa hoy a las ${releaseHourStr}`
+      }
+    }
+
+    return {
+      status: 'available',
+      label: 'Disponible',
+      desc: 'Listo para agendar'
+    }
+  }, [isHourly, hourlySettings])
 
   const handleAdd = () => {
     const finalQty = qty === '' ? 1 : Number(qty)
@@ -206,57 +297,96 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
 
       {/* ── Zone 3: Stock + Cart ── */}
       <div className="px-3.5 pb-3 pt-0 mt-auto flex flex-col gap-2.5 bg-transparent">
-        {/* Stock bar */}
-        <div className="flex items-center gap-2">
-          <div className="flex-1 h-1 bg-neutral-100 dark:bg-surface-700 rounded-full overflow-hidden">
-            <div
-              className={clsx('h-full rounded-full transition-[width] duration-500 ease-out', stockColor)}
-              style={{ width: `${stockPct}%` }}
-            />
-          </div>
-          <span className={clsx(
-            'text-[10px] font-semibold shrink-0',
-            hasUnlimitedStock ? 'text-success-500 dark:text-success-400' : isOutOfStock ? 'text-danger-500 dark:text-danger-400' : 'text-muted-500'
-          )}>
-            {hasUnlimitedStock ? 'Ilimitado' : isOutOfStock ? 'Agotado' : `${product.stock}`}
-          </span>
-        </div>
+        {isHourly ? (
+          <div className="flex flex-col gap-2 w-full pt-1.5 border-t border-neutral-100 dark:border-surface-700/60">
+            {/* Availability Badge */}
+            <div className={clsx(
+              "flex flex-col p-2.5 rounded-xl border text-[11px] font-bold leading-tight",
+              availability?.status === 'available'
+                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                : availability?.status === 'occupied'
+                  ? "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"
+                  : "bg-purple-500/10 border-purple-500/20 text-purple-600 dark:text-purple-400"
+            )}>
+              <div className="flex items-center gap-1.5 justify-between">
+                <span className="uppercase tracking-wider text-[10px]">{availability?.label}</span>
+                <span className={clsx(
+                  "w-1.5 h-1.5 rounded-full animate-pulse",
+                  availability?.status === 'available' ? "bg-emerald-500" : availability?.status === 'occupied' ? "bg-red-500" : "bg-purple-500"
+                )} />
+              </div>
+              <span className="text-[10px] font-medium text-muted-500 dark:text-muted-400 mt-1 block">
+                {availability?.desc}
+              </span>
+            </div>
 
-        {/* Add to cart row */}
-        <div className="flex gap-1.5 items-center">
-          <input
-            type="number"
-            min={1}
-            value={qty}
-            placeholder="1"
-            onChange={(e) => {
-              const val = e.target.value
-              if (val === '') { setQty('') } else { setQty(Math.max(1, Number(val))) }
-            }}
-            disabled={isOutOfStock}
-            className="w-14 bg-white dark:bg-surface-700 border border-neutral-200 dark:border-surface-600 rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          />
-          <button
-            onClick={isOutOfStock ? undefined : handleAdd}
-            disabled={isOutOfStock}
-            className={clsx(
-              'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all duration-200',
-              isOutOfStock
-                ? 'bg-neutral-100 dark:bg-surface-700/50 text-neutral-400 dark:text-muted-500 cursor-not-allowed border border-neutral-200 dark:border-surface-700'
-                : added
-                  ? 'bg-success-500 text-white'
-                  : 'bg-brand-600 hover:bg-brand-500 text-white active:scale-95'
-            )}
-          >
-            {isOutOfStock ? (
-              <span className="truncate">Agotado</span>
-            ) : added ? (
-              <><span>✓</span><span className="hidden sm:inline">Añadido</span></>
-            ) : (
-              <><ShoppingCart size={13} className="shrink-0" /><span className="hidden sm:inline">Añadir</span></>
-            )}
-          </button>
-        </div>
+            {/* View Cronograma / Reserve Button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onSelectHourlyProduct(product) }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm border border-brand-500/30"
+            >
+              <CalendarDays size={14} className="shrink-0" />
+              <span>Ver Cronograma</span>
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Stock bar */}
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-1 bg-neutral-100 dark:bg-surface-700 rounded-full overflow-hidden">
+                <div
+                  className={clsx('h-full rounded-full transition-[width] duration-500 ease-out', stockColor)}
+                  style={{ width: `${stockPct}%` }}
+                />
+              </div>
+              <span className={clsx(
+                'text-[10px] font-semibold shrink-0',
+                hasUnlimitedStock ? 'text-success-500 dark:text-success-400' : isOutOfStock ? 'text-danger-500 dark:text-danger-400' : 'text-muted-500'
+              )}>
+                {hasUnlimitedStock ? 'Ilimitado' : isOutOfStock ? 'Agotado' : `${product.stock}`}
+              </span>
+            </div>
+
+            {/* Add to cart row */}
+            <div className="flex gap-1.5 items-center">
+              <input
+                type="number"
+                min={1}
+                value={qty}
+                placeholder="1"
+                onChange={(e) => {
+                  const val = e.target.value
+                  if (val === '') { setQty('') } else { setQty(Math.max(1, Number(val))) }
+                }}
+                disabled={isOutOfStock}
+                className="w-14 bg-white dark:bg-surface-700 border border-neutral-200 dark:border-surface-600 rounded-lg px-2 py-1.5 text-xs text-foreground text-center focus:outline-none focus:ring-1 focus:ring-brand-500/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              />
+              <button
+                onClick={isOutOfStock ? undefined : handleAdd}
+                disabled={isOutOfStock}
+                className={clsx(
+                  'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all duration-200',
+                  isOutOfStock
+                    ? 'bg-neutral-100 dark:bg-surface-700/50 text-neutral-400 dark:text-muted-500 cursor-not-allowed border border-neutral-200 dark:border-surface-700'
+                    : added
+                      ? 'bg-success-500 text-white'
+                      : 'bg-brand-600 hover:bg-brand-500 text-white active:scale-95'
+                )}
+              >
+                {isOutOfStock ? (
+                  <span className="truncate">Agotado</span>
+                ) : added ? (
+                  <><span>✓</span><span className="hidden sm:inline">Añadido</span></>
+                ) : (
+                  <>
+                    <ShoppingCart size={13} className="shrink-0" />
+                    <span className="hidden sm:inline">Añadir</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </>
+        )}
 
         {/* Out of stock action */}
         <AnimatePresence>
@@ -277,8 +407,8 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$ })
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </div>
+      </AnimatePresence>
+    </motion.div>
   )
 }
 
@@ -299,6 +429,129 @@ export default function Products() {
   // Sort & Filter state
   const [sortMode, setSortMode] = useState('recent')
   const [activeLetter, setActiveLetter] = useState(null)
+
+  // Gantt availability and hourly booking states
+  const [selectedHourlyProduct, setSelectedHourlyProduct] = useState(null)
+  const [selectedGanttDate, setSelectedGanttDate] = useState(new Date().toISOString().split('T')[0])
+  const [rangeStart, setRangeStart] = useState(null)
+  const [rangeEnd, setRangeEnd] = useState(null)
+  const [isSelectingRange, setIsSelectingRange] = useState(false)
+  const [hoveredHour, setHoveredHour] = useState(null)
+
+  const hourlySettings = useMemo(() => {
+    if (!selectedHourlyProduct) return null
+    const desc = selectedHourlyProduct.description || ''
+    if (desc.trim().startsWith('{') && desc.trim().endsWith('}')) {
+      try {
+        return JSON.parse(desc)
+      } catch (e) {}
+    }
+    return {
+      description: desc,
+      isUniqueResource: false,
+      workingHours: { start: '08:00', end: '17:00' },
+      nonWorkingDays: [0, 6],
+      occupiedSlots: []
+    }
+  }, [selectedHourlyProduct])
+
+  const isSelectedDateOff = useMemo(() => {
+    if (!hourlySettings) return false
+    const dateObj = new Date(selectedGanttDate + 'T00:00:00')
+    return hourlySettings.nonWorkingDays?.includes(dateObj.getDay())
+  }, [selectedGanttDate, hourlySettings])
+
+  const hoursListForGantt = useMemo(() => {
+    if (!hourlySettings) return []
+    const startIdx = parseInt(hourlySettings.workingHours?.start.split(':')[0] || '8')
+    const endIdx = parseInt(hourlySettings.workingHours?.end.split(':')[0] || '17')
+    const list = []
+    for (let i = startIdx; i <= endIdx; i++) {
+      list.push(`${String(i).padStart(2, '0')}:00`)
+    }
+    return list
+  }, [hourlySettings])
+
+  const isHourOccupiedOnDate = (hourStr) => {
+    if (!hourlySettings) return false
+    const occupied = hourlySettings.occupiedSlots || []
+    const hourVal = parseInt(hourStr.split(':')[0])
+    return occupied.some(slot => {
+      if (slot.date !== selectedGanttDate) return false
+      const slotHour = parseInt(slot.time.split(':')[0])
+      const duration = slot.duration || 1
+      return hourVal >= slotHour && hourVal < (slotHour + duration)
+    })
+  }
+
+  const isHourSelected = (h) => {
+    const hVal = parseInt(h.split(':')[0])
+    
+    if (rangeStart && rangeEnd && !isSelectingRange) {
+      const startVal = parseInt(rangeStart.split(':')[0])
+      const endVal = parseInt(rangeEnd.split(':')[0])
+      return hVal >= startVal && hVal <= endVal
+    }
+    
+    if (isSelectingRange && rangeStart && hoveredHour) {
+      const startVal = parseInt(rangeStart.split(':')[0])
+      const hoverVal = parseInt(hoveredHour.split(':')[0])
+      const min = Math.min(startVal, hoverVal)
+      const max = Math.max(startVal, hoverVal)
+      return hVal >= min && hVal <= max
+    }
+    
+    return false
+  }
+
+  const handleConfirmHourlyBooking = async () => {
+    if (!rangeStart || !rangeEnd) {
+      toast.error('Selecciona un rango de horas primero')
+      return
+    }
+
+    const startVal = parseInt(rangeStart.split(':')[0])
+    const endVal = parseInt(rangeEnd.split(':')[0])
+    const hoursCount = endVal - startVal + 1
+
+    const bookingName = `${selectedHourlyProduct.name} - Reserva: ${selectedGanttDate} (${rangeStart} - ${rangeEnd})`
+
+    const currentOccupied = hourlySettings.occupiedSlots || []
+    const newOccupied = [
+      ...currentOccupied,
+      { date: selectedGanttDate, time: rangeStart, duration: hoursCount }
+    ]
+    const updatedDescription = JSON.stringify({
+      ...hourlySettings,
+      occupiedSlots: newOccupied
+    })
+
+    try {
+      await useProductStore.getState().updateProduct(selectedHourlyProduct.id, {
+        description: updatedDescription
+      })
+      
+      addItem({
+        ...selectedHourlyProduct,
+        name: bookingName,
+        price: selectedHourlyProduct.price,
+        qty: hoursCount,
+        unit: 'HORA',
+        hourly_booking: {
+          date: selectedGanttDate,
+          start: rangeStart,
+          end: rangeEnd,
+          hours: hoursCount
+        }
+      }, hoursCount)
+
+      toast.success('Reserva añadida al carrito ✓')
+      setSelectedHourlyProduct(null)
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al guardar la reserva')
+    }
+  }
 
   const products      = useProductStore((s) => s.products)
   const prdLoading    = useProductStore((s) => s.loading)
@@ -548,6 +801,13 @@ export default function Products() {
                         onDelete={handleDelete}
                         onAdd={handleAdd}
                         format$={format$}
+                        onSelectHourlyProduct={(prod) => {
+                          setSelectedHourlyProduct(prod)
+                          setSelectedGanttDate(new Date().toISOString().split('T')[0])
+                          setRangeStart(null)
+                          setRangeEnd(null)
+                          setHoveredHour(null)
+                        }}
                       />
                     ))}
                   </div>
@@ -568,6 +828,13 @@ export default function Products() {
                   onDelete={handleDelete}
                   onAdd={handleAdd}
                   format$={format$}
+                  onSelectHourlyProduct={(prod) => {
+                    setSelectedHourlyProduct(prod)
+                    setSelectedGanttDate(new Date().toISOString().split('T')[0])
+                    setRangeStart(null)
+                    setRangeEnd(null)
+                    setHoveredHour(null)
+                  }}
                 />
               ))}
             </div>
@@ -581,6 +848,235 @@ export default function Products() {
           </div>
         )}
       </div>
+
+      {/* Gantt Reservation Drawer */}
+      <AnimatePresence>
+        {selectedHourlyProduct && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedHourlyProduct(null)}
+            className="fixed inset-0 z-[100] flex justify-end bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-lg h-full bg-surface-800 border-l border-subtle flex flex-col p-6 shadow-2xl relative overflow-hidden"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-subtle pb-4 mb-4 shrink-0">
+                <div>
+                  <h3 className="text-base font-black text-foreground uppercase tracking-wider">{selectedHourlyProduct.name}</h3>
+                  <span className="text-[10px] bg-brand-500/10 text-brand-400 font-bold px-2 py-0.5 rounded-md mt-1 inline-block">
+                    {UNIT_LABELS[selectedHourlyProduct.unit] || selectedHourlyProduct.unit} • {format$(selectedHourlyProduct.price)}/hr
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedHourlyProduct(null)}
+                  className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-500 transition-colors"
+                >
+                  <Plus className="rotate-45" size={18} />
+                </button>
+              </div>
+
+              {/* Date selection */}
+              <div className="space-y-4 shrink-0">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-muted-400 uppercase tracking-wide">Selecciona Fecha</label>
+                  <input
+                    type="date"
+                    value={selectedGanttDate}
+                    onChange={(e) => {
+                      setSelectedGanttDate(e.target.value)
+                      setRangeStart(null)
+                      setRangeEnd(null)
+                      setHoveredHour(null)
+                    }}
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-brand-500/50"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  {(() => {
+                    const todayStr = new Date().toISOString().split('T')[0]
+                    const tomorrow = new Date()
+                    tomorrow.setDate(tomorrow.getDate() + 1)
+                    const tomStr = tomorrow.toISOString().split('T')[0]
+                    const post = new Date()
+                    post.setDate(post.getDate() + 2)
+                    const postStr = post.toISOString().split('T')[0]
+
+                    return [
+                      { label: 'Hoy', date: todayStr },
+                      { label: 'Mañana', date: tomStr },
+                      { label: 'Pasado m.', date: postStr }
+                    ].map(d => (
+                      <button
+                        key={d.date}
+                        onClick={() => {
+                          setSelectedGanttDate(d.date)
+                          setRangeStart(null)
+                          setRangeEnd(null)
+                          setHoveredHour(null)
+                        }}
+                        className={clsx(
+                          "flex-1 py-1.5 rounded-lg text-xs font-bold border transition-all",
+                          selectedGanttDate === d.date
+                            ? "bg-brand-500/20 border-brand-500/40 text-brand-400"
+                            : "bg-surface-700 border-subtle text-muted-400 hover:text-foreground"
+                        )}
+                      >
+                        {d.label}
+                      </button>
+                    ))
+                  })()}
+                </div>
+              </div>
+
+              {/* Gantt view schedule */}
+              <div className="flex-1 overflow-y-auto mt-5 border border-subtle bg-surface-700/30 rounded-2xl p-4 flex flex-col min-h-0 select-none">
+                <span className="text-[11px] font-black text-brand-400 uppercase tracking-widest pb-2 border-b border-subtle/50 mb-3 flex items-center justify-between">
+                  <span>Cronograma de Disponibilidad</span>
+                  {isSelectedDateOff ? (
+                    <span className="text-[9px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded">Día de Descanso</span>
+                  ) : (
+                    <span className="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">Laborable</span>
+                  )}
+                </span>
+
+                {!isSelectedDateOff && (
+                  <p className="text-[9.5px] text-muted-400 mb-3 leading-relaxed">
+                    Mantén presionado el cursor y arrastra sobre los bloques en <strong>verde pastel</strong> para elegir un rango de horas.
+                  </p>
+                )}
+
+                {isSelectedDateOff ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center gap-2 text-purple-400 p-6 bg-purple-500/5 border border-purple-500/20 rounded-xl">
+                    <CalendarDays size={28} className="animate-pulse" />
+                    <p className="text-xs font-bold uppercase tracking-wider text-purple-500 dark:text-purple-400">No Laborable</p>
+                    <p className="text-[10px] text-muted-400 leading-normal">
+                      Este recurso o persona tiene configurado el día como no laborable o libre. Elige otra fecha.
+                    </p>
+                  </div>
+                ) : (
+                  <div 
+                    className="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-y-auto max-h-[300px] pr-1.5 no-scrollbar"
+                    onMouseLeave={() => {
+                      if (isSelectingRange) {
+                        setIsSelectingRange(false)
+                        setRangeStart(null)
+                        setHoveredHour(null)
+                      }
+                    }}
+                  >
+                    {hoursListForGantt.map(h => {
+                      const occupied = isHourOccupiedOnDate(h)
+                      const selected = isHourSelected(h)
+
+                      return (
+                        <div
+                          key={h}
+                          onMouseDown={() => {
+                            if (occupied) return
+                            setIsSelectingRange(true)
+                            setRangeStart(h)
+                            setRangeEnd(null)
+                            setHoveredHour(h)
+                          }}
+                          onMouseEnter={() => {
+                            if (isSelectingRange && !occupied) {
+                              setHoveredHour(h)
+                            }
+                          }}
+                          onMouseUp={() => {
+                            if (!isSelectingRange) return
+                            setIsSelectingRange(false)
+                            const hStart = rangeStart
+                            const hEnd = h
+                            if (hStart && hEnd) {
+                              const startVal = parseInt(hStart.split(':')[0])
+                              const endVal = parseInt(hEnd.split(':')[0])
+                              const sortedStart = startVal <= endVal ? hStart : hEnd
+                              const sortedEnd = startVal <= endVal ? hEnd : hStart
+                              
+                              let blocked = false
+                              for (let i = parseInt(sortedStart.split(':')[0]); i <= parseInt(sortedEnd.split(':')[0]); i++) {
+                                if (isHourOccupiedOnDate(`${String(i).padStart(2, '0')}:00`)) {
+                                  blocked = true
+                                  break
+                                }
+                              }
+                              
+                              if (blocked) {
+                                toast.error('El rango cruza sobre horas ya ocupadas')
+                                setRangeStart(null)
+                                setRangeEnd(null)
+                                setHoveredHour(null)
+                              } else {
+                                setRangeStart(sortedStart)
+                                setRangeEnd(sortedEnd)
+                              }
+                            }
+                          }}
+                          className={clsx(
+                            "p-3 rounded-xl border text-center text-xs font-black transition-all cursor-pointer shadow-sm select-none",
+                            occupied
+                              ? "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400 cursor-not-allowed"
+                              : selected
+                                ? "bg-brand-500 border-brand-400 text-white shadow-glow-sm scale-[0.98]"
+                                : "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 hover:scale-[1.02]"
+                          )}
+                        >
+                          <div>{h}</div>
+                          <div className="text-[8.5px] font-medium opacity-80 mt-1">
+                            {occupied ? 'Ocupado' : selected ? 'Seleccionado' : 'Disponible'}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Price Calculation and confirm row */}
+              {!isSelectedDateOff && rangeStart && rangeEnd && (
+                <div className="bg-surface-700/80 border border-subtle p-4 rounded-2xl mt-4 space-y-2.5 shrink-0">
+                  <div className="flex justify-between text-xs text-muted-400">
+                    <span>Horario reservado:</span>
+                    <strong className="text-foreground">{selectedGanttDate} ({rangeStart} - {rangeEnd})</strong>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-400">
+                    <span>Duración total:</span>
+                    {(() => {
+                      const count = parseInt(rangeEnd.split(':')[0]) - parseInt(rangeStart.split(':')[0]) + 1
+                      return <strong className="text-foreground">{count} {count === 1 ? 'hora' : 'horas'}</strong>
+                    })()}
+                  </div>
+                  <div className="flex justify-between text-sm font-bold border-t border-subtle/50 pt-2 text-foreground">
+                    <span>Total a facturar:</span>
+                    {(() => {
+                      const count = parseInt(rangeEnd.split(':')[0]) - parseInt(rangeStart.split(':')[0]) + 1
+                      const price = count * selectedHourlyProduct.price
+                      return <strong className="text-brand-400 font-black text-base">{format$(price)}</strong>
+                    })()}
+                  </div>
+
+                  <button
+                    onClick={handleConfirmHourlyBooking}
+                    className="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-xs flex items-center justify-center gap-2 mt-2 shadow-sm border border-brand-500/20"
+                  >
+                    <ShoppingCart size={14} className="shrink-0" />
+                    <span>Reservar y Añadir a Factura</span>
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }

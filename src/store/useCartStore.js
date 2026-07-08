@@ -67,14 +67,15 @@ export const useCartStore = create((set, get) => {
 
     addItem: (product, qty = 1) => {
       const latestProduct = useProductStore.getState().products.find((p) => p.id === product.id) || product
-      const isUnlimited = latestProduct.unit === 'ILIMITADO' || latestProduct.stock >= 999990000
+      const isUnlimited = latestProduct.unit === 'ILIMITADO' || latestProduct.stock >= 999990000 || latestProduct.unit === 'HORA'
 
       let success = true
       setAndRecalc((s) => {
         const discountInfo = getProductDiscount(latestProduct)
         const effectivePrice = discountInfo ? discountInfo.finalPrice : Number(latestProduct.price)
 
-        const existing = s.items.find((i) => i.productId === latestProduct.id)
+        const finalName = product.name || latestProduct.name
+        const existing = s.items.find((i) => i.productId === latestProduct.id && i.name === finalName)
         const currentCartQty = existing ? existing.qty : 0
         const targetQty = currentCartQty + qty
 
@@ -89,7 +90,7 @@ export const useCartStore = create((set, get) => {
         if (existing) {
           return {
             items: s.items.map((i) =>
-               i.productId === latestProduct.id ? { ...i, qty: targetQty, price: effectivePrice } : i
+               (i.productId === latestProduct.id && i.name === finalName) ? { ...i, qty: targetQty, price: effectivePrice } : i
             ),
           }
         }
@@ -99,7 +100,7 @@ export const useCartStore = create((set, get) => {
             {
               id: `cart-${Date.now()}-${Math.random()}`,
               productId: latestProduct.id,
-              name: latestProduct.name,
+              name: finalName,
               price: effectivePrice,
               qty,
               unit: latestProduct.unit ?? 'UND',
@@ -107,6 +108,7 @@ export const useCartStore = create((set, get) => {
               discountApplied: discountInfo ? { amount: discountInfo.amount, type: discountInfo.type, value: discountInfo.value } : null,
               attachment_url: latestProduct.attachment_url ?? null,
               attachment_name: latestProduct.attachment_name ?? null,
+              hourly_booking: product.hourly_booking ?? null,
             },
           ],
         }
