@@ -375,7 +375,7 @@ export default function AddProductModal({ open }) {
             className={clsx(
               "p-3 rounded-xl border transition-all active:scale-95",
               activeSections.image
-                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300 shadow-glow-sm"
+                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300"
                 : "border-subtle bg-surface-700 text-muted-400 hover:text-foreground hover:bg-surface-600"
             )}
             title="Imagen de Portada"
@@ -390,7 +390,7 @@ export default function AddProductModal({ open }) {
             className={clsx(
               "p-3 rounded-xl border transition-all active:scale-95",
               activeSections.store
-                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300 shadow-glow-sm"
+                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300"
                 : "border-subtle bg-surface-700 text-muted-400 hover:text-foreground hover:bg-surface-600"
             )}
             title="Tienda Virtual / Catálogo"
@@ -405,7 +405,7 @@ export default function AddProductModal({ open }) {
             className={clsx(
               "p-3 rounded-xl border transition-all active:scale-95",
               activeSections.attachments
-                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300 shadow-glow-sm"
+                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300"
                 : "border-subtle bg-surface-700 text-muted-400 hover:text-foreground hover:bg-surface-600"
             )}
             title="Enlaces y Documentos"
