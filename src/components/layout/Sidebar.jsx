@@ -300,7 +300,7 @@ export default function Sidebar({ isMobile }) {
   return (
     <aside
       className={clsx(
-        'sidebar-premium-dark relative h-screen bg-surface-800 flex flex-col shrink-0 z-30 overflow-hidden',
+        'sidebar-premium-dark relative h-screen bg-surface-800 flex flex-col shrink-0 z-30',
         'transition-[width] duration-300 ease-in-out',
         collapsed ? 'w-16' : 'w-60'
       )}
