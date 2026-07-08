@@ -337,7 +337,7 @@ export default function AddProductModal({ open }) {
           isHourly ? "grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden max-h-[66vh]" : "space-y-5 overflow-y-auto max-h-[65vh] sm:max-h-[70vh]"
         )}>
           {/* Columna Izquierda (Formulario del producto) */}
-          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 max-h-[62vh] overflow-y-auto pr-2 no-scrollbar" : "space-y-5")}>
+          <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 max-h-[62vh] overflow-y-auto pr-6 lg:border-r border-neutral-200 dark:border-surface-700/80 no-scrollbar" : "space-y-5")}>
             <Input
               label="Nombre del producto *"
               icon={<Package size={14} />}
@@ -522,6 +522,11 @@ export default function AddProductModal({ open }) {
                     {...register('image_url')}
                   />
                   <p className="text-[10px] text-muted-400">Si se deja vacío, el sistema asignará una imagen ilustrativa basada en la categoría seleccionada.</p>
+                  {isHourly && (
+                    <p className="text-[9.5px] text-brand-400 font-bold flex items-center gap-1.5 animate-pulse mt-2.5 justify-center border border-brand-500/10 bg-brand-500/5 py-1.5 rounded-xl">
+                      <span>↓</span> Desliza hacia abajo para ver más (Tienda y Adjuntos)
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -661,13 +666,16 @@ export default function AddProductModal({ open }) {
                   <p className="text-xs font-bold text-foreground">Recurso de Valor Único (Persona)</p>
                   <p className="text-[10px] text-muted-400 mt-0.5">Define si el recurso es único. Solo permite reservas exclusivas por franja horaria.</p>
                 </div>
-                <input
-                  type="checkbox"
-                  checked={isUniqueResource}
-                  onChange={(e) => setIsUniqueResource(e.target.checked)}
-                  className="w-5 h-5 rounded-lg cursor-pointer animate-none"
-                  style={{ width: '1.2rem', height: '1.2rem' }}
-                />
+                <button
+                  type="button"
+                  onClick={() => setIsUniqueResource(!isUniqueResource)}
+                  className={clsx(
+                    'relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0',
+                    isUniqueResource ? 'bg-brand-500' : 'bg-surface-600'
+                  )}
+                >
+                  <span className={clsx('inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', isUniqueResource ? 'translate-x-4' : 'translate-x-1')} />
+                </button>
               </div>
 
               {/* Working hours range */}
@@ -732,7 +740,12 @@ export default function AddProductModal({ open }) {
                 <div className="bg-surface-700/50 border border-subtle rounded-xl p-3 flex-1 flex flex-col gap-3">
                   <div className="flex items-center justify-between text-xs border-b border-subtle/40 pb-1.5">
                     <span className="font-bold text-foreground">Días Laborales</span>
-                    <span className="text-[10.5px] font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-md">Vista Gantt Diaria</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] text-brand-400 font-bold bg-brand-500/5 px-2 py-0.5 rounded-md border border-brand-500/10 flex items-center gap-1 animate-pulse">
+                        <span>↓</span> Desliza para ver horas (Scroll)
+                      </span>
+                      <span className="text-[10.5px] font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-md">Vista Gantt Diaria</span>
+                    </div>
                   </div>
                   
                   {/* Gantt list representing hours */}
@@ -787,12 +800,30 @@ export default function AddProductModal({ open }) {
         </div>
 
         {/* Fixed Footer */}
-        <div className="shrink-0 p-4 border-t border-subtle bg-surface-800/80 flex gap-3 z-10">
-          <Button type="button" variant="ghost" size="md" className="flex-1" onClick={closeModal}>Cancelar</Button>
-          <Button type="submit" variant="primary" size="md" className="flex-1" loading={isSubmitting}>
-            {editing ? 'Guardar' : 'Añadir Producto'}
-          </Button>
-        </div>
+        {isHourly ? (
+          <div className="shrink-0 p-4 border-t border-subtle bg-surface-800/80 grid grid-cols-12 gap-6 z-10">
+            <div className="col-span-5 flex gap-3">
+              <Button type="submit" variant="primary" size="md" className="flex-1" loading={isSubmitting}>
+                {editing ? 'Guardar' : 'Añadir'}
+              </Button>
+              <Button type="button" variant="ghost" size="md" className="flex-1" onClick={closeModal}>
+                Cancelar
+              </Button>
+            </div>
+            <div className="col-span-7 flex justify-end">
+              <Button type="submit" variant="primary" size="md" className="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold" loading={isSubmitting}>
+                Guardar Cambios
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="shrink-0 p-4 border-t border-subtle bg-surface-800/80 flex gap-3 z-10">
+            <Button type="button" variant="ghost" size="md" className="flex-1" onClick={closeModal}>Cancelar</Button>
+            <Button type="submit" variant="primary" size="md" className="flex-1" loading={isSubmitting}>
+              {editing ? 'Guardar' : 'Añadir Producto'}
+            </Button>
+          </div>
+        )}
       </form>
     </Modal>
   )
