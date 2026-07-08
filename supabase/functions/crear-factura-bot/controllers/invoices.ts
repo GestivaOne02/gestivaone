@@ -97,6 +97,7 @@ export async function generateInvoice(c: Context) {
     const { data: newInvoice, error: invoiceError } = await supabase
       .from("invoices")
       .insert([{
+        id: crypto.randomUUID(),
         company_id: companyId,
         client_name,
         client_id,
@@ -104,7 +105,6 @@ export async function generateInvoice(c: Context) {
         subtotal,
         tax: taxAmount, // Nota: el campo de IVA en DB se llama `tax` según la estructura SQL, aunque en el código original se insertó como `tax_amount` (revisaremos si es `tax`)
         total,
-        status: "paid",
         payment_type: "immediate",
         payment_status: "paid"
       }])
