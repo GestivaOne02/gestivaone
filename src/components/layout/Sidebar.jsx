@@ -237,7 +237,7 @@ export default function Sidebar({ isMobile }) {
           </div>
 
           {/* Bottom section — lighter bg to distinguish */}
-          <div className="shrink-0 bg-surface-700 border-t border-surface-600/40">
+          <div className="shrink-0 bg-surface-700 pt-3">
             {/* Notifications */}
             <NavLink
               to={permissions['dashboard'] ? '/notifications' : '#'}
@@ -422,7 +422,7 @@ export default function Sidebar({ isMobile }) {
       </div>
 
       {/* ── Bottom section — lighter bg ───────────────────────── */}
-      <div className="shrink-0 bg-surface-700" style={{ borderTop: '2px solid var(--brand-500)' }}>
+      <div className="shrink-0 bg-surface-700 pt-3">
 
         {/* Notifications row */}
         <a
