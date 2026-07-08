@@ -17,6 +17,7 @@ export async function generateInvoice(c: Context) {
 
   const { 
     client_name, 
+    client_email,
     product_name, 
     amount, 
     quantity = 1 
@@ -164,6 +165,44 @@ export async function generateInvoice(c: Context) {
           .from("facturas-pdf")
           .getPublicUrl(`${newInvoice.id}.pdf`)
         pdfUrl = publicUrlData?.publicUrl || ""
+        
+        // --- INICIO: Lógica para enviar correo con Resend ---
+        if (client_email) {
+          const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")
+          if (RESEND_API_KEY) {
+            try {
+              await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${RESEND_API_KEY}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  from: "GestivaOne <onboarding@resend.dev>", // Cambia por tu dominio verificado cuando esté en producción
+                  to: [client_email],
+                  subject: `Tu factura de ${companyName || 'GestivaOne'} está lista`,
+                  html: `
+                    <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                      <h2 style="color: #0f172a;">¡Hola ${client_name}!</h2>
+                      <p>Gracias por tu compra. Adjuntamos tu factura <strong>#${invoiceNumber}</strong> generada por ${companyName || 'GestivaOne'}.</p>
+                      <p>Puedes descargarla o verla en línea haciendo clic en el siguiente enlace:</p>
+                      <a href="${pdfUrl}" style="display: inline-block; padding: 12px 24px; background-color: #0f172a; color: #ffffff; text-decoration: none; border-radius: 6px; margin-top: 15px; font-weight: bold;">Ver Factura</a>
+                      <p style="margin-top: 40px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                        Generado automáticamente por GestivaOne.
+                      </p>
+                    </div>
+                  `,
+                })
+              })
+              console.log("Correo enviado exitosamente a:", client_email)
+            } catch (emailErr) {
+              console.error("Error al intentar enviar el correo con Resend:", emailErr)
+            }
+          } else {
+            console.warn("No se encontró RESEND_API_KEY en las variables de entorno de Supabase.")
+          }
+        }
+        // --- FIN: Lógica para enviar correo ---
       }
     } catch (pdfErr) {
       console.error("Excepción al generar o subir el PDF:", pdfErr)
@@ -261,7 +300,7 @@ export async function getInvoicePDF(c: Context) {
             .select("id")
             .eq("company_id", companyId)
 
-          const match = matchedInvoices?.find(inv => inv.id.toLowerCase().endsWith(cleanId))
+          const match = matchedInvoices?.find((inv: any) => inv.id.toLowerCase().endsWith(cleanId))
           if (match) {
             finalInvoiceId = match.id
           }

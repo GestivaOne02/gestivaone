@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -8,6 +8,7 @@ import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
+import InvoiceHistoryModal from '@/components/modals/InvoiceHistoryModal'
 
 const TAX_RATES = {
   COP: 0.19,
@@ -93,6 +94,7 @@ export default function InvoicePanel({ isMobile }) {
   const MAX_WIDTH = MIN_WIDTH + 150 // Allowing ~150px expansion
   const [panelWidth, setPanelWidth] = useState(MIN_WIDTH)
   const [isResizing, setIsResizing] = useState(false)
+  const [showHistoryModal, setShowHistoryModal] = useState(false)
 
   useEffect(() => {
     loadPinnedCharges()
@@ -446,6 +448,13 @@ export default function InvoicePanel({ isMobile }) {
                   <div className="flex items-center gap-2 px-5 py-3 border-b border-subtle">
                     <FileText size={16} className="text-brand-400" />
                     <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1">Factura en Tiempo Real</span>
+                    <button
+                      onClick={() => setShowHistoryModal(true)}
+                      className="p-1.5 rounded-lg text-brand-500 hover:text-brand-600 hover:bg-brand-500/10 transition-colors"
+                      title="Historial de Facturas"
+                    >
+                      <History size={15} />
+                    </button>
                     {items.length > 0 && (
                       <button
                         onClick={clearCart}
@@ -605,6 +614,13 @@ export default function InvoicePanel({ isMobile }) {
           <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
             <FileText size={16} className="text-brand-400" />
             <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
+            <button
+              onClick={() => setShowHistoryModal(true)}
+              className="p-1.5 rounded-lg text-brand-500 hover:text-brand-600 hover:bg-brand-500/10 transition-colors shrink-0"
+              title="Historial de Facturas"
+            >
+              <History size={15} />
+            </button>
             {items.length > 0 && (
               <button onClick={clearCart} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors shrink-0" title="Limpiar carrito">
                 <Trash2 size={13} />
@@ -712,6 +728,11 @@ export default function InvoicePanel({ isMobile }) {
           </div>
         </div>
       </motion.aside>
+
+      <InvoiceHistoryModal 
+        open={showHistoryModal} 
+        onClose={() => setShowHistoryModal(false)} 
+      />
     </>
   )
 }
