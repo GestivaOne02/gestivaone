@@ -160,10 +160,28 @@ function ProfileSection({ user, updateProfile, variants }) {
 
 // Secciones migradas a Settings.jsx
 
-// ── Notifications section ─────────────────────────────────────
 function NotificationsSection({ variants }) {
   const notifications    = useSettingsStore((s) => s.notifications)
   const setNotification  = useSettingsStore((s) => s.setNotification)
+  const [sendingReport, setSendingReport] = useState(false)
+
+  const handleSendWeeklyReportNow = async () => {
+    setSendingReport(true)
+    try {
+      const { useInvoiceStore } = await import('@/store/useInvoiceStore')
+      const res = await useInvoiceStore.getState().sendWeeklyReport(true)
+      if (res.success) {
+        toast.success('Reporte semanal enviado correctamente a tu correo')
+      } else {
+        toast.error(`Error al enviar: ${res.error}`)
+      }
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al generar el reporte')
+    } finally {
+      setSendingReport(false)
+    }
+  }
 
   const items = [
     { key: 'invoicePaid',    label: 'Factura pagada',      desc: 'Cuando un cliente marca una factura como pagada' },
@@ -182,6 +200,15 @@ function NotificationsSection({ variants }) {
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">{label}</p>
               <p className="text-[11px] text-muted-400">{desc}</p>
+              {key === 'weeklyReport' && !!notifications.weeklyReport && (
+                <button
+                  onClick={handleSendWeeklyReportNow}
+                  disabled={sendingReport}
+                  className="mt-2 text-[10.5px] font-bold text-brand-400 hover:text-brand-300 flex items-center gap-1 border border-brand-500/30 bg-brand-500/5 hover:bg-brand-500/10 px-2.5 py-1 rounded-lg transition-all"
+                >
+                  {sendingReport ? 'Enviando...' : 'Enviar reporte semanal ahora por correo'}
+                </button>
+              )}
             </div>
             <Toggle checked={!!notifications[key]} onChange={async (v) => {
               if (key === 'pushEnabled' && v) {

@@ -24,6 +24,7 @@ import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
+import { useSettingsStore } from '@/store/useSettingsStore'
 import ConsentBanner from '@/components/ui/ConsentBanner'
 import CountrySelectorModal from '@/components/modals/CountrySelectorModal'
 import { Analytics } from '@vercel/analytics/react'
@@ -220,6 +221,39 @@ export default function App() {
   useEffect(() => { initAuth() }, [])
   useEffect(() => { if (isStale()) fetchRates() }, [])
   useEffect(() => { checkOverdue() }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) return
+
+    const notifications = useSettingsStore.getState().notifications
+    if (notifications?.weeklyReport) {
+      const lastSentStr = user.settings?.lastWeeklyReportSent
+      const now = new Date()
+      let shouldSend = false
+
+      if (!lastSentStr) {
+        shouldSend = true
+      } else {
+        const lastSent = new Date(lastSentStr)
+        const diffMs = now.getTime() - lastSent.getTime()
+        const diffDays = diffMs / (1000 * 60 * 60 * 24)
+        if (diffDays >= 7) {
+          shouldSend = true
+        }
+      }
+
+      if (shouldSend) {
+        console.log('📊 Generando reporte semanal automático...')
+        useInvoiceStore.getState().sendWeeklyReport().then((res) => {
+          if (res.success) {
+            console.log('📊 Reporte semanal enviado con éxito en segundo plano')
+          } else {
+            console.warn('❌ Error al enviar reporte semanal automático:', res.error)
+          }
+        }).catch(err => console.warn('Error invoking sendWeeklyReport:', err))
+      }
+    }
+  }, [isAuthenticated, user?.id])
 
   useEffect(() => {
     // Egress fix: Polling and focus listeners removed to achieve 0 egress in idle.

@@ -70,6 +70,11 @@ export async function sendInvoiceEmail(invoice, clientEmail, company = {}) {
 }
 
 export async function sendOverdueEmail(invoice, clientEmail, company = {}) {
+  const notifications = useSettingsStore.getState().notifications
+  if (notifications && !notifications.invoiceOverdue) {
+    return { success: false, error: 'Aviso de mora desactivado en preferencias' }
+  }
+
   const settings = useSettingsStore.getState().resend
   if (settings && (!settings.enabled || !settings.onOverdue)) {
     return { success: false, error: 'Aviso de mora desactivado en configuración' }
@@ -92,6 +97,11 @@ export async function sendOverdueEmail(invoice, clientEmail, company = {}) {
 }
 
 export async function sendPaymentConfirmEmail(invoice, clientEmail, company = {}) {
+  const notifications = useSettingsStore.getState().notifications
+  if (notifications && !notifications.invoicePaid) {
+    return { success: false, error: 'Confirmación de pago desactivada en preferencias' }
+  }
+
   const settings = useSettingsStore.getState().resend
   if (settings && (!settings.enabled || !settings.onPayment)) {
     return { success: false, error: 'Confirmación de pago desactivada en configuración' }
@@ -150,6 +160,11 @@ export async function sendWorkerInviteEmail(invite, company = {}) {
 }
 
 export async function sendWeeklyReportEmail(stats, toEmail, company = {}) {
+  const notifications = useSettingsStore.getState().notifications
+  if (notifications && !notifications.weeklyReport) {
+    return { success: false, error: 'Reporte semanal desactivado en preferencias' }
+  }
+
   const settings = useSettingsStore.getState().resend
   if (settings && (!settings.enabled || !settings.onWeeklyReport)) {
     return { success: false, error: 'Reporte semanal desactivado en configuración' }
@@ -207,6 +222,11 @@ export async function sendExpenseEmail(expense, toEmail, company = {}) {
 
 // ── New Client Added ─────────────────────────────────────────────────────────
 export async function sendNewClientEmail(client, toEmail, company = {}) {
+  const notifications = useSettingsStore.getState().notifications
+  if (notifications && !notifications.newClient) {
+    return { success: false, error: 'Notificación de nuevo cliente desactivada en preferencias' }
+  }
+
   if (!toEmail) return { success: false, error: 'Email de destino vacío' }
 
   return await callResendAPI({
@@ -218,6 +238,11 @@ export async function sendNewClientEmail(client, toEmail, company = {}) {
 
 // ── Low Stock Alert ──────────────────────────────────────────────────────────
 export async function sendLowStockEmail(product, toEmail, company = {}) {
+  const notifications = useSettingsStore.getState().notifications
+  if (notifications && !notifications.lowStock) {
+    return { success: false, error: 'Alerta de stock bajo desactivada en preferencias' }
+  }
+
   if (!toEmail) return { success: false, error: 'Email de destino vacío' }
 
   return await callResendAPI({
