@@ -413,8 +413,8 @@ export default function Sidebar({ isMobile }) {
         {/* Scroll indicator */}
         {hasScrollBelow && !collapsed && (
           <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 flex flex-col items-end justify-end pb-1 pr-4 bg-gradient-to-t from-surface-800 to-transparent">
-            <div className="flex items-center gap-1 text-[10px] font-semibold animate-bounce" style={{ color: '#4338ca' }}>
-              <ChevronDown size={11} />
+            <div className="flex items-center gap-1 text-[11px] font-black animate-bounce" style={{ color: '#4338ca' }}>
+              <ChevronDown size={11} className="stroke-[3]" />
               <span>Más abajo</span>
             </div>
           </div>
@@ -422,7 +422,7 @@ export default function Sidebar({ isMobile }) {
       </div>
 
       {/* ── Bottom section — lighter bg ───────────────────────── */}
-      <div className="shrink-0 bg-surface-700/50" style={{ borderTop: '1px solid #4338ca' }}>
+      <div className="shrink-0 bg-surface-700/50" style={{ borderTop: '2.5px solid #4338ca' }}>
 
         {/* Notifications row */}
         <a
