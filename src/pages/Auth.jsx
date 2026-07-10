@@ -12,6 +12,14 @@ import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
+const goToDashboard = async () => {
+  try {
+    const { clear } = await import('idb-keyval')
+    await clear()
+  } catch (e) {}
+  window.location.href = '/'
+}
+
 // ── Register steps ────────────────────────────────────────────
 const STEPS = ['plan', 'datos', 'pago', 'listo']
 
@@ -130,7 +138,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
     setLoading(false)
     if (!res.success) return toast.error(res.error)
     toast.success('¡Bienvenido!')
-    navigate('/')
+    goToDashboard()
   }
 
   const handleRegister = async (e) => {
@@ -158,7 +166,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
 
     toast.success('¡Vinculación y registro exitoso! Bienvenido a bordo.')
     if (onClearSocialData) onClearSocialData()
-    navigate('/')
+    goToDashboard()
   }
 
   if (mode === 'login') {
@@ -539,7 +547,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
         if (result.success) {
           toast.success('Sesión restaurada automáticamente')
           localStorage.removeItem('gestiva-explicit-logout')
-          navigate('/', { replace: true })
+          goToDashboard()
         }
       }
       autoLogin()
@@ -608,7 +616,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
 
     // Force a small delay to ensure state is saved, then jump to dashboard
     setTimeout(() => {
-      navigate('/', { replace: true })
+      goToDashboard()
       // Emergency fallback if navigate doesn't trigger
       setTimeout(() => {
         if (window.location.pathname === '/auth') {
@@ -819,7 +827,7 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
               ) : (
                 <>
                   <p className="text-muted-400 text-sm">Tu cuenta ha sido creada. Bienvenido a GestivaOne.</p>
-                  <button onClick={() => navigate('/')} className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors mt-2">
+                  <button onClick={() => goToDashboard()} className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors mt-2">
                     Entrar al dashboard →
                   </button>
                 </>
