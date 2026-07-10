@@ -17,7 +17,7 @@ import { useSettingsStore } from '../store/useSettingsStore'
 
 import { supabase } from '../lib/supabase'
 
-async function callResendAPI({ to, subject, html, replyTo, from }) {
+async function callResendAPI({ to, subject, html, replyTo, from, attachments }) {
   try {
     const { data, error } = await supabase.functions.invoke('resend-email', {
       body: {
@@ -25,7 +25,8 @@ async function callResendAPI({ to, subject, html, replyTo, from }) {
         subject,
         html,
         from: from || 'GestivaOne <onboarding@resend.dev>',
-        reply_to: replyTo || undefined
+        reply_to: replyTo || undefined,
+        attachments
       }
     })
 
@@ -159,7 +160,7 @@ export async function sendWorkerInviteEmail(invite, company = {}) {
   })
 }
 
-export async function sendWeeklyReportEmail(stats, toEmail, company = {}) {
+export async function sendWeeklyReportEmail(stats, toEmail, company = {}, pdfBase64 = null) {
   const notifications = useSettingsStore.getState().notifications
   if (notifications && !notifications.weeklyReport) {
     return { success: false, error: 'Reporte semanal desactivado en preferencias' }
@@ -175,10 +176,19 @@ export async function sendWeeklyReportEmail(stats, toEmail, company = {}) {
   const subject = `📊 Reporte Semanal de Ventas - ${company.companyName || 'GestivaOne'}`
   const html = weeklyReportTemplate(stats, company)
 
+  const attachments = []
+  if (pdfBase64) {
+    attachments.push({
+      filename: `Reporte_Semanal_${company.companyName?.replace(/\s+/g, '_') || 'GestivaOne'}.pdf`,
+      content: pdfBase64
+    })
+  }
+
   return await callResendAPI({
     to: toEmail,
     subject,
-    html
+    html,
+    attachments
   })
 }
 
