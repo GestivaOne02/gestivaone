@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 
 export function generateWeeklyReportPDF(stats, company) {
   const doc = new jsPDF()
@@ -14,7 +14,7 @@ export function generateWeeklyReportPDF(stats, company) {
   doc.text(`${company.companyName || 'GestivaOne'} - ${stats.periodLabel}`, 14, 30)
 
   // Tabla principal de Resumen
-  doc.autoTable({
+  autoTable(doc, {
     startY: 40,
     head: [['Métrica', 'Valor']],
     body: [
