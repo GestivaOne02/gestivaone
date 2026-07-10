@@ -359,7 +359,7 @@ export const useAuthStore = create(
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: 'https://www.gestivaone.com/auth?mode=register',
+            emailRedirectTo: `${window.location.origin}/auth?mode=register`,
             data: {
               company_name: data.companyName,
               full_name: data.name || 'Usuario',
@@ -496,7 +496,7 @@ export const useAuthStore = create(
               email: data.email,
               password: data.password,
               options: {
-                emailRedirectTo: 'https://www.gestivaone.com/auth?mode=register',
+                emailRedirectTo: `${window.location.origin}/auth?mode=register`,
                 data: {
                   is_worker: true,
                   company_id: company_id,
@@ -566,7 +566,7 @@ export const useAuthStore = create(
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: 'https://www.gestivaone.com/auth?mode=register',
+            emailRedirectTo: `${window.location.origin}/auth?mode=register`,
             data: {
               is_worker: true,
               company_id: targetCompany.id,
