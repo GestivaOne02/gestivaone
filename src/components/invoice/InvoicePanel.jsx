@@ -450,7 +450,7 @@ export default function InvoicePanel({ isMobile }) {
                     <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1">Factura en Tiempo Real</span>
                     <button
                       onClick={() => setShowHistoryModal(true)}
-                      className="p-1.5 rounded-lg text-brand-500 hover:text-brand-600 hover:bg-brand-500/10 transition-colors"
+                      className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors"
                       title="Historial de Facturas"
                     >
                       <History size={15} />
@@ -616,7 +616,7 @@ export default function InvoicePanel({ isMobile }) {
             <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
             <button
               onClick={() => setShowHistoryModal(true)}
-              className="p-1.5 rounded-lg text-brand-500 hover:text-brand-600 hover:bg-brand-500/10 transition-colors shrink-0"
+              className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
               title="Historial de Facturas"
             >
               <History size={15} />
