@@ -247,7 +247,7 @@ export default function App() {
         useInvoiceStore.getState().sendWeeklyReport().then((res) => {
           if (res.success) {
             console.log('📊 Reporte semanal enviado con éxito en segundo plano')
-          } else {
+          } else if (!res.error?.includes('desactivado')) {
             console.warn('❌ Error al enviar reporte semanal automático:', res.error)
           }
         }).catch(err => console.warn('Error invoking sendWeeklyReport:', err))
