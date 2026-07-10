@@ -186,7 +186,7 @@ export default function Sidebar({ isMobile }) {
             <nav ref={navRef} className="h-full py-4 flex flex-col gap-1 overflow-y-auto no-scrollbar">
               {visibleGroups.map((group) => (
                 <div key={group.title} className="flex flex-col gap-1 mb-3">
-                  <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1 mt-2 first:mt-0 select-none">
+                  <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1 mt-2 first:mt-0 select-none whitespace-nowrap truncate">
                     {group.title}
                   </div>
                   {group.items.map(({ to, icon: Icon, label, perm }) => {
@@ -335,7 +335,7 @@ export default function Sidebar({ isMobile }) {
           {/* EXPANDED: grouped nav with labels */}
           {!collapsed && visibleGroups.map((group) => (
             <div key={group.title} className="flex flex-col">
-              <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1.5 mt-3.5 first:mt-0 select-none">
+              <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1.5 mt-3.5 first:mt-0 select-none whitespace-nowrap truncate">
                 {group.title}
               </div>
               {group.items.map(({ to, icon: Icon, label, perm }) => {
