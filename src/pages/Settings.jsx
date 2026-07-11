@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 // framer-motion removed for performance
 import {
   Globe, RefreshCw, Check, Moon, Sun, Building2, Bell, Database,
@@ -747,7 +747,6 @@ function ApiBlock() {
           >
             <div className="px-5 pb-5 border-t border-subtle pt-4 space-y-3">
               <CfgInput label="URL base de la API" value={api.url} onChange={v => setApi({ url: v })} placeholder="https://api.tudominio.com" />
-              <CfgInput label="API Key" value={api.apiKey} onChange={v => setApi({ apiKey: v })} placeholder="Bearer token..." type="password" />
               <div className="flex gap-2">
                 <button onClick={runTest} disabled={testing}
                   className="flex items-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50 font-semibold">

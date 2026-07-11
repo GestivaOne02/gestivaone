@@ -74,8 +74,8 @@ export default function Store() {
         .eq('id', user.companyId)
         .single()
       const token = company?.store_settings?.integrations?.dropi_token || ''
-      setDropiToken(token)
-      setDropiTokenSaved(token)
+      setDropiTokenSaved(!!token)
+      setDropiToken('') // Do not store token value in frontend state
     }
     loadIntegrations()
   }, [user?.companyId])
@@ -223,7 +223,7 @@ export default function Store() {
         .update({ store_settings: updated })
         .eq('id', user.companyId)
       if (error) throw error
-      setDropiTokenSaved(dropiToken.trim())
+      setDropiTokenSaved(true)
       setDropiTestStatus(null)
       toast.success('Token de Dropi guardado correctamente.')
     } catch (err) {
@@ -239,23 +239,17 @@ export default function Store() {
     setDropiTestStatus('loading')
     setDropiTestMsg('')
     try {
-      const res = await fetch('https://dropi.co/api/external/v1/orders?page=1&per_page=1', {
-        headers: {
-          Authorization: `Bearer ${dropiTokenSaved}`,
-          Accept: 'application/json'
-        }
+      const { data, error } = await supabase.functions.invoke('dropi-proxy', {
+        body: { action: 'test', companyId: user.companyId }
       })
-      if (res.ok) {
-        setDropiTestStatus('ok')
-        setDropiTestMsg('Conexión exitosa con la API de Dropi ✓')
-      } else {
-        const body = await res.json().catch(() => ({}))
-        setDropiTestStatus('error')
-        setDropiTestMsg(body?.message || `Error HTTP ${res.status}`)
-      }
+      
+      if (error || data?.error) throw new Error(error?.message || data?.error)
+      
+      setDropiTestStatus('ok')
+      setDropiTestMsg('Conexión exitosa con la API de Dropi ✓')
     } catch (err) {
       setDropiTestStatus('error')
-      setDropiTestMsg('No se pudo conectar con Dropi. Verifica tu token.')
+      setDropiTestMsg(err.message || 'No se pudo conectar con Dropi. Verifica tu token.')
     }
   }
 
@@ -266,13 +260,19 @@ export default function Store() {
     setDropiCityLoading(true)
     setDropiCities([])
     try {
-      const res = await fetch(`https://dropi.co/api/external/v1/cities?search=${encodeURIComponent(dropiCityQuery)}`, {
-        headers: { Authorization: `Bearer ${dropiTokenSaved}`, Accept: 'application/json' }
+      const { data, error } = await supabase.functions.invoke('dropi-proxy', {
+        body: { 
+          action: 'search_cities', 
+          companyId: user.companyId,
+          payload: { search: dropiCityQuery }
+        }
       })
-      const json = await res.json()
-      setDropiCities(json?.data || json?.cities || [])
-    } catch {
-      toast.error('Error al consultar ciudades en Dropi.')
+      
+      if (error || data?.error) throw new Error(error?.message || data?.error)
+      
+      setDropiCities(data?.data || data?.cities || [])
+    } catch (err) {
+      toast.error('Error al consultar ciudades en Dropi: ' + err.message)
     } finally {
       setDropiCityLoading(false)
     }
@@ -295,19 +295,17 @@ export default function Store() {
           price: it.price
         }))
       }
-      const res = await fetch('https://dropi.co/api/external/v1/orders', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${dropiTokenSaved}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        },
-        body: JSON.stringify(payload)
+      
+      const { data, error } = await supabase.functions.invoke('dropi-proxy', {
+        body: { 
+          action: 'push_order', 
+          companyId: user.companyId,
+          payload 
+        }
       })
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body?.message || `Error HTTP ${res.status}`)
-      }
+      
+      if (error || data?.error) throw new Error(error?.message || data?.error)
+      
       toast.success(`Pedido enviado a Dropi correctamente ✓`)
     } catch (err) {
       toast.error('Error al enviar a Dropi: ' + err.message)
@@ -1178,7 +1176,8 @@ export default function Store() {
                         type="password"
                         value={dropiToken}
                         onChange={e => setDropiToken(e.target.value)}
-                        placeholder="Pega aquí tu Bearer Token de Dropi…"
+                        placeholder={dropiTokenSaved ? "✅ Token configurado de forma segura" : "Pega aquí tu Bearer Token de Dropi…"}
+                        disabled={dropiTokenSaved && !dropiToken}
                         className="input w-full pr-10 font-mono text-xs"
                       />
                       {dropiToken && (
