@@ -512,41 +512,25 @@ export default function Products() {
 
     const bookingName = `${selectedHourlyProduct.name} - Reserva: ${selectedGanttDate} (${rangeStart} - ${rangeEnd})`
 
-    const currentOccupied = hourlySettings.occupiedSlots || []
-    const newOccupied = [
-      ...currentOccupied,
-      { date: selectedGanttDate, time: rangeStart, duration: hoursCount }
-    ]
-    const updatedDescription = JSON.stringify({
-      ...hourlySettings,
-      occupiedSlots: newOccupied
-    })
+    // We do NOT save the occupied slot to the product here.
+    // The slot will only be marked as occupied in the DB once the invoice is PAID.
+    
+    addItem({
+      ...selectedHourlyProduct,
+      name: bookingName,
+      price: selectedHourlyProduct.price,
+      qty: hoursCount,
+      unit: 'HORA',
+      hourly_booking: {
+        date: selectedGanttDate,
+        start: rangeStart,
+        end: rangeEnd,
+        hours: hoursCount
+      }
+    }, hoursCount)
 
-    try {
-      await useProductStore.getState().updateProduct(selectedHourlyProduct.id, {
-        description: updatedDescription
-      })
-      
-      addItem({
-        ...selectedHourlyProduct,
-        name: bookingName,
-        price: selectedHourlyProduct.price,
-        qty: hoursCount,
-        unit: 'HORA',
-        hourly_booking: {
-          date: selectedGanttDate,
-          start: rangeStart,
-          end: rangeEnd,
-          hours: hoursCount
-        }
-      }, hoursCount)
-
-      toast.success('Reserva añadida al carrito ✓')
-      setSelectedHourlyProduct(null)
-    } catch (e) {
-      console.error(e)
-      toast.error('Error al guardar la reserva')
-    }
+    toast.success('Reserva añadida al carrito ✓')
+    setSelectedHourlyProduct(null)
   }
 
   const products      = useProductStore((s) => s.products)

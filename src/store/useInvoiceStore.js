@@ -10,6 +10,36 @@ import { es } from 'date-fns/locale'
 
 const STALE_TIME = 1000 * 60 * 60 // 1 hora
 
+const bookHourlySlots = async (invoice) => {
+  try {
+    const { products, updateProduct } = useProductStore.getState()
+    for (const item of (invoice.items || [])) {
+      if (item.hourly_booking) {
+        const product = products.find(p => p.id === item.id)
+        if (product) {
+          const hourlySettings = JSON.parse(product.description || '{}')
+          const currentOccupied = hourlySettings.occupiedSlots || []
+          
+          const isAlreadyBooked = currentOccupied.some(s => s.date === item.hourly_booking.date && s.time === item.hourly_booking.start)
+          if (!isAlreadyBooked) {
+            const newOccupied = [
+              ...currentOccupied,
+              { date: item.hourly_booking.date, time: item.hourly_booking.start, duration: item.hourly_booking.hours }
+            ]
+            const updatedDescription = JSON.stringify({
+              ...hourlySettings,
+              occupiedSlots: newOccupied
+            })
+            await updateProduct(product.id, { description: updatedDescription })
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error booking hourly slots:', err)
+  }
+}
+
 export const useInvoiceStore = create(
   persist(
     (set, get) => ({
@@ -146,6 +176,10 @@ export const useInvoiceStore = create(
       return null
     }
 
+    if (saved.payment_status === 'paid') {
+      await bookHourlySlots(saved)
+    }
+
     let notesText = ''
     let parsedPocketId = pocketId || 'general'
     let customCharges = []
@@ -272,6 +306,8 @@ export const useInvoiceStore = create(
       // Trigger "Factura Hecha" notification
       const inv = get().invoices.find(i => i.id === id)
       if (inv) {
+        await bookHourlySlots(inv)
+        
         const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(inv.total)
         try {
           const { useNotificationStore } = await import('./useNotificationStore')
@@ -396,6 +432,11 @@ export const useInvoiceStore = create(
 
     // Trigger "Factura Hecha" notification if transition to paid
     if (newStatus === 'paid' && !wasPaid) {
+      const inv = get().invoices.find(i => i.id === invoiceId)
+      if (inv) {
+        await bookHourlySlots(inv)
+      }
+      
       const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(inv.total)
       try {
         const { useNotificationStore } = await import('./useNotificationStore')

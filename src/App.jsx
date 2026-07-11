@@ -244,12 +244,12 @@ export default function App() {
       }
 
       if (shouldSend) {
-        console.log('📊 Generando reporte semanal automático...')
+        console.log('Generando reporte semanal automático...')
         useInvoiceStore.getState().sendWeeklyReport().then((res) => {
           if (res.success) {
-            console.log('📊 Reporte semanal enviado con éxito en segundo plano')
+            console.log('Reporte semanal enviado con éxito en segundo plano')
           } else if (!res.error?.includes('desactivado')) {
-            console.warn('❌ Error al enviar reporte semanal automático:', res.error)
+            console.warn('Error al enviar reporte semanal automático:', res.error)
           }
         }).catch(err => console.warn('Error invoking sendWeeklyReport:', err))
       }
@@ -344,8 +344,12 @@ export default function App() {
 
       <ConsentBanner />
       <CountrySelectorModal />
-      <Analytics />
-      <SpeedInsights />
+      {import.meta.env.PROD && (
+        <>
+          <Analytics />
+          <SpeedInsights />
+        </>
+      )}
     </>
   )
 }
