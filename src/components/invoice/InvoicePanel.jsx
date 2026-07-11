@@ -489,12 +489,7 @@ export default function InvoicePanel({ isMobile }) {
                   </div>
                   <div className="flex items-center gap-2 px-5 py-3 border-b border-subtle">
                     {mobileViewMode === 'history' ? (
-                      <button
-                        onClick={() => setMobileViewMode('cart')}
-                        className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors"
-                      >
-                        <ArrowLeft size={16} />
-                      </button>
+                      <History size={16} className="text-brand-400" />
                     ) : (
                       <FileText size={16} className="text-brand-400" />
                     )}
@@ -510,6 +505,15 @@ export default function InvoicePanel({ isMobile }) {
                         title="Historial de Facturas"
                       >
                         <History size={15} />
+                      </button>
+                    )}
+                    {mobileViewMode === 'history' && (
+                      <button
+                        onClick={() => setMobileViewMode('cart')}
+                        className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors"
+                        title="Factura en Tiempo Real"
+                      >
+                        <FileText size={15} />
                       </button>
                     )}
                     {items.length > 0 && mobileViewMode === 'cart' && (
