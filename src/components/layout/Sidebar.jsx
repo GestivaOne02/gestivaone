@@ -97,10 +97,7 @@ export default function Sidebar({ isMobile }) {
         title: 'Gestión y Finanzas',
         items: [
           { to: '/',                icon: LayoutDashboard, label: 'Dashboard', perm: 'dashboard', feature: 'dashboard' },
-          { to: '/crm',             icon: Contact,         label: 'CRM',       perm: 'dashboard', feature: 'crm' },
-          { to: '/pockets',         icon: FolderClosed,    label: 'Bolsillos', perm: 'dashboard', feature: 'pockets' },
-          { to: '/personal-finance',icon: Wallet,          label: 'Mi Gestión',perm: 'account',   feature: 'personal-finance' },
-          { to: '/emails',          icon: Mail,            label: 'Emails',    perm: 'dashboard', feature: 'emails' },
+          { to: '/finances',        icon: FolderClosed,    label: 'Bolsillos', perm: 'dashboard', feature: 'pockets' },
           { to: '/employees',       icon: Users,           label: 'Empleados', perm: 'employees', feature: 'employees' },
         ]
       },
@@ -108,7 +105,6 @@ export default function Sidebar({ isMobile }) {
         title: 'Herramientas',
         items: [
           { to: '/facturero', icon: Printer,    label: 'Facturero',     perm: 'dashboard', feature: 'facturero' },
-          { to: '/dian',      icon: Calculator, label: 'Asistente DIAN',perm: 'dashboard', feature: 'dian' },
           { to: '/seguridad', icon: Lock,       label: 'GestiToken',    perm: 'dashboard', feature: 'seguridad' },
         ]
       }

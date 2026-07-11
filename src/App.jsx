@@ -15,6 +15,7 @@ import Facturero from '@/pages/Facturero'
 import DianAssistant from '@/pages/DianAssistant'
 import Pockets from '@/pages/Pockets'
 import PersonalFinance from '@/pages/PersonalFinance'
+import Finances from '@/pages/Finances'
 import GestiToken from '@/pages/GestiToken'
 import CRM from '@/pages/CRM'
 import Emails from '@/pages/Emails'
@@ -328,8 +329,9 @@ export default function App() {
           <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
           <Route path="/account" element={<Account />} />
           <Route path="/upgrade" element={<Upgrade />} />
-          <Route path="/pockets" element={<RequirePermission perm="dashboard"><RequireFeature feature="pockets"><Pockets /></RequireFeature></RequirePermission>} />
-          <Route path="/personal-finance" element={<RequireFeature feature="personal-finance"><PersonalFinance /></RequireFeature>} />
+          <Route path="/finances" element={<RequirePermission perm="dashboard"><RequireFeature feature="pockets"><Finances /></RequireFeature></RequirePermission>} />
+          <Route path="/pockets" element={<Navigate to="/finances" replace />} />
+          <Route path="/personal-finance" element={<Navigate to="/finances" replace />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/facturero" element={<RequirePermission perm="dashboard"><RequireFeature feature="facturero"><Facturero /></RequireFeature></RequirePermission>} />
           <Route path="/dian" element={<RequirePermission perm="dashboard"><RequireFeature feature="dian"><DianAssistant /></RequireFeature></RequirePermission>} />
