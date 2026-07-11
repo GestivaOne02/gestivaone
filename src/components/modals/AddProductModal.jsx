@@ -844,11 +844,6 @@ export default function AddProductModal({ open }) {
                         const isTodayOff = nonWorkingDays.includes(new Date().getDay())
                         const hourVal = parseInt(h.split(':')[0])
                         
-                        // Mock 11 and 12 occupied for continuous visual styling
-                        const isMockOccupied = hourVal === 11 || hourVal === 12
-                        const isStartMock = hourVal === 11
-                        const isEndMock = hourVal === 12
-                        
                         return (
                           <div
                             key={h}
@@ -856,18 +851,12 @@ export default function AddProductModal({ open }) {
                               "p-2 text-center border text-[10px] font-bold transition-all shadow-sm",
                               isTodayOff
                                 ? "bg-purple-500/10 border-purple-500/30 text-purple-400 rounded-xl"
-                                : isMockOccupied
-                                  ? clsx(
-                                      "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400",
-                                      isStartMock && "rounded-l-xl rounded-r-none border-r-0",
-                                      isEndMock && "rounded-r-xl rounded-l-none border-l-0"
-                                    )
-                                  : "bg-teal-500/10 border-teal-500/30 text-teal-500 rounded-xl"
+                                : "bg-teal-500/10 border-teal-500/30 text-teal-500 rounded-xl"
                             )}
                           >
                             <div>{h}</div>
                             <div className="text-[7.5px] opacity-80 font-normal mt-0.5">
-                              {isTodayOff ? 'No trabaja' : isMockOccupied ? 'Ocupado' : 'Libre'}
+                              {isTodayOff ? 'No trabaja' : 'Libre'}
                             </div>
                           </div>
                         )
