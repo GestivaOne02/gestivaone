@@ -625,15 +625,19 @@ export const useInvoiceStore = create(
     }
 
     const { sendWeeklyReportEmail } = await import('../services/emailService')
+    console.log('Generando PDF...')
     let pdfBase64 = null
     try {
       const { generateWeeklyReportPDF } = await import('../utils/pdfGenerator')
       pdfBase64 = generateWeeklyReportPDF(stats, company)
+      console.log('PDF generado exitosamente. Llamando a sendWeeklyReportEmail...')
     } catch (e) {
       console.error('Error generating PDF report:', e)
     }
 
     const res = await sendWeeklyReportEmail(stats, user.email, company, pdfBase64)
+
+    console.log('Respuesta de sendWeeklyReportEmail:', res)
 
     if (res.success) {
       const updatedSettings = {
