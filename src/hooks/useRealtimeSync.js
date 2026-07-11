@@ -16,8 +16,6 @@ export function useRealtimeSync() {
   useEffect(() => {
     if (!user?.companyId) return
 
-    console.log('Inicializando sincronización en tiempo real para el POS...')
-
     const channel = supabase.channel(`company_realtime_${user.companyId}`)
 
     channel
@@ -25,7 +23,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'products', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (products):', payload)
           useProductStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -33,7 +30,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'clients', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (clients):', payload)
           useClientStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -41,7 +37,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'invoices', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (invoices):', payload)
           useInvoiceStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -49,7 +44,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'expenses', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (expenses):', payload)
           useExpenseStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -57,7 +51,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'profiles', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (profiles):', payload)
           // Profile updates could be new employees or setting changes
           if (useEmployeeStore.getState().applyRealtimeUpdate) {
              useEmployeeStore.getState().applyRealtimeUpdate(payload)
@@ -77,7 +70,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'hr_employees', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (hr_employees):', payload)
           useHRStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -85,7 +77,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'hr_recruitment_candidates', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (hr_recruitment_candidates):', payload)
           useHRStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -93,7 +84,6 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'hr_vacations', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (hr_vacations):', payload)
           useHRStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -101,18 +91,16 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'payroll_runs', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
-          console.log('Realtime Update (payroll_runs):', payload)
           usePayrollStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-           console.log('Conectado al canal en tiempo real del POS.')
+           // connected
         }
       })
 
     return () => {
-      console.log('Desconectando canal en tiempo real...')
       supabase.removeChannel(channel)
     }
   }, [user?.companyId, user?.id])

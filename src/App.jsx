@@ -106,8 +106,6 @@ export default function App() {
 
     // If version changed, perform a full purge of all non-essential data
     if (hasVersionChanged) {
-      console.log(`New version detected (${CURRENT_VERSION})! Purging old persisted caches...`)
-
       // Clear active keys too to force a complete reset of store states to avoid mismatches
       const keysToForceClear = [
         'gestiva-auth-v2.2',
@@ -126,7 +124,6 @@ export default function App() {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
         if (key && key.startsWith('gestiva-') && !ACTIVE_KEYS.includes(key)) {
-          console.log(`Purging legacy cache key: ${key}`)
           localStorage.removeItem(key)
           i--
         }
@@ -139,7 +136,6 @@ export default function App() {
     if (window.caches) {
       caches.keys().then((keys) => {
         keys.forEach((key) => {
-          console.log(`Deleting browser cache bucket: ${key}`)
           caches.delete(key)
         })
       }).catch(err => console.error('Error clearing CacheStorage:', err))
@@ -149,7 +145,6 @@ export default function App() {
     if (navigator.serviceWorker) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => {
-          console.log(`Unregistering Service Worker:`, registration)
           registration.unregister()
         })
       }).catch(err => console.error('Error unregistering ServiceWorkers:', err))
@@ -244,10 +239,9 @@ export default function App() {
       }
 
       if (shouldSend) {
-        console.log('Generando reporte semanal automático...')
         useInvoiceStore.getState().sendWeeklyReport().then((res) => {
           if (res.success) {
-            console.log('Reporte semanal enviado con éxito en segundo plano')
+            // Report sent successfully
           } else if (!res.error?.includes('desactivado')) {
             console.warn('Error al enviar reporte semanal automático:', res.error)
           }

@@ -1127,7 +1127,6 @@ export const useAuthStore = create(
       name: 'gestiva-auth-v2.2', // Bumped version to force a clean state
       onRehydrateStorage: () => (state) => {
         // Auto-refresh logic if needed or version check
-        console.log('Auth storage rehydrated')
       }
     }
   )
