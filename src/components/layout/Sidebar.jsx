@@ -7,6 +7,9 @@ import {
 import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
 import { useNotificationStore } from '@/store/useNotificationStore'
+import { useInvoiceStore } from '@/store/useInvoiceStore'
+import { useClientStore } from '@/store/useClientStore'
+import { useProductStore } from '@/store/useProductStore'
 import { supabase } from '@/lib/supabase'
 import { useEffect, useState, useRef, useMemo, startTransition } from 'react'
 import clsx from 'clsx'
@@ -23,6 +26,35 @@ export default function Sidebar({ isMobile }) {
 
   const unreadCount        = useNotificationStore((s) => s.getUnreadCount())
   const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)
+
+  const invoices = useInvoiceStore(s => s.invoices || [])
+  const clients = useClientStore(s => s.clients || [])
+  const products = useProductStore(s => s.products || [])
+
+  const storageData = useMemo(() => {
+    const invoiceMB = invoices.length * 0.15
+    const clientMB = clients.length * 0.05
+    const productMB = products.length * 0.05
+    const otherMB = 12.5 
+
+    const totalUsedMB = invoiceMB + clientMB + productMB + otherMB
+    
+    let maxStorageMB = 1024 
+    if (user?.plan === 'empresarial') maxStorageMB = 10240 
+    else if (user?.plan === 'PRO') maxStorageMB = 5120 
+
+    const usedFormatted = totalUsedMB >= 1024 ? `${(totalUsedMB / 1024).toFixed(2)} GB` : `${totalUsedMB.toFixed(1)} MB`
+    const maxFormatted = maxStorageMB >= 1024 ? `${maxStorageMB / 1024} GB` : `${maxStorageMB} MB`
+
+    return {
+      used: usedFormatted,
+      max: maxFormatted,
+      pctInvoice: (invoiceMB / maxStorageMB) * 100,
+      pctClient: (clientMB / maxStorageMB) * 100,
+      pctProduct: (productMB / maxStorageMB) * 100,
+      pctOther: (otherMB / maxStorageMB) * 100
+    }
+  }, [invoices.length, clients.length, products.length, user?.plan])
 
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [hasScrollBelow, setHasScrollBelow]   = useState(false)
@@ -490,6 +522,29 @@ export default function Sidebar({ isMobile }) {
             </div>
           )}
         </div>
+
+        {/* Storage usage bar */}
+        {!collapsed && (
+          <div className="px-3.5 py-3 mx-3 mb-2 bg-surface-950/40 rounded-xl border border-surface-600/30">
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-[9px] font-bold text-muted-400 uppercase tracking-widest">Almacenamiento</span>
+              <span className="text-[10px] font-semibold text-brand-300/80">{storageData.used} <span className="text-muted-500 font-medium">de {storageData.max}</span></span>
+            </div>
+            
+            <div className="w-full h-1.5 flex rounded-full overflow-hidden bg-surface-900 gap-0.5">
+              <div style={{ width: `${Math.max(storageData.pctInvoice, 2)}%` }} className="bg-brand-500 hover:brightness-110 transition-all cursor-help" title="Facturas y PDFs" />
+              <div style={{ width: `${Math.max(storageData.pctClient, 1.5)}%` }} className="bg-emerald-400 hover:brightness-110 transition-all cursor-help" title="Clientes" />
+              <div style={{ width: `${Math.max(storageData.pctProduct, 1.5)}%` }} className="bg-amber-400 hover:brightness-110 transition-all cursor-help" title="Productos" />
+              <div style={{ width: `${Math.max(storageData.pctOther, 1)}%` }} className="bg-slate-500 hover:brightness-110 transition-all cursor-help" title="Sistema" />
+            </div>
+
+            <div className="flex justify-between items-center mt-2.5 px-0.5">
+              <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-[0_0_5px_rgba(139,92,246,0.6)]"></div><span className="text-[9px] text-muted-400 font-medium">Facturas</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.6)]"></div><span className="text-[9px] text-muted-400 font-medium">Clientes</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_5px_rgba(251,191,36,0.6)]"></div><span className="text-[9px] text-muted-400 font-medium">Productos</span></div>
+            </div>
+          </div>
+        )}
 
         {/* Collapse toggle */}
         <div className="p-2">
