@@ -311,6 +311,21 @@ export default function Sidebar({ isMobile }) {
                 </div>
               )}
             </div>
+
+            {/* Storage usage bar */}
+            <div className="px-3.5 py-3 mx-3 mb-4 bg-surface-950/40 rounded-xl border border-muted-600/20">
+              <div className="flex justify-between items-end mb-2">
+                <span className="text-[9px] font-bold text-muted-400 uppercase tracking-widest">Almacenamiento</span>
+                <span className="text-[10px] font-semibold text-brand-300/80">{storageData.used} <span className="text-muted-500 font-medium">de {storageData.max}</span></span>
+              </div>
+              
+              <div className="w-full h-1.5 flex rounded-full overflow-hidden bg-surface-900 gap-0.5">
+                <div style={{ width: `${Math.max(storageData.pctInvoice, 2)}%` }} className="bg-brand-500 hover:brightness-110 transition-all cursor-help" title="Facturas y PDFs" />
+                <div style={{ width: `${Math.max(storageData.pctClient, 1.5)}%` }} className="bg-emerald-400 hover:brightness-110 transition-all cursor-help" title="Clientes" />
+                <div style={{ width: `${Math.max(storageData.pctProduct, 1.5)}%` }} className="bg-amber-400 hover:brightness-110 transition-all cursor-help" title="Productos" />
+                <div style={{ width: `${Math.max(storageData.pctOther, 1)}%` }} className="bg-slate-500 hover:brightness-110 transition-all cursor-help" title="Sistema" />
+              </div>
+            </div>
           </div>
         </aside>
       </>
