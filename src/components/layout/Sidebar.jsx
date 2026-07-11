@@ -525,7 +525,7 @@ export default function Sidebar({ isMobile }) {
 
         {/* Storage usage bar */}
         {!collapsed && (
-          <div className="px-3.5 py-3 mx-3 mb-2 bg-surface-950/40 rounded-xl border border-surface-600/30">
+          <div className="px-3.5 py-3 mx-3 mb-2 bg-surface-950/40 rounded-xl border border-muted-600/20">
             <div className="flex justify-between items-end mb-2">
               <span className="text-[9px] font-bold text-muted-400 uppercase tracking-widest">Almacenamiento</span>
               <span className="text-[10px] font-semibold text-brand-300/80">{storageData.used} <span className="text-muted-500 font-medium">de {storageData.max}</span></span>
