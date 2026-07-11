@@ -330,7 +330,6 @@ export default function Sidebar({ isMobile }) {
               className="w-full flex items-center justify-center gap-2 py-4 mt-2 border-t border-subtle text-muted-400 hover:text-white hover:bg-surface-600/60 transition-colors"
             >
               <ChevronLeft size={20} />
-              <span className="text-sm font-semibold">Ocultar</span>
             </button>
           </div>
         </aside>
