@@ -204,9 +204,6 @@ export default function Sidebar({ isMobile }) {
               </span>
               <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">GestivaOne</span>
             </div>
-            <button onClick={closeMobile} className="p-1.5 rounded-lg text-muted-400 hover:text-white hover:bg-surface-600 transition-colors">
-              <X size={16} />
-            </button>
           </div>
 
           {/* Scroll nav */}
@@ -313,7 +310,7 @@ export default function Sidebar({ isMobile }) {
             </div>
 
             {/* Storage usage bar */}
-            <div className="px-3.5 py-3 mx-3 mb-4 bg-surface-950/40 rounded-xl border border-muted-600/20">
+            <div className="px-3.5 py-3 mx-3 mb-2 bg-surface-950/40 rounded-xl border border-muted-600/20">
               <div className="flex justify-between items-end mb-2">
                 <span className="text-[9px] font-bold text-muted-400 uppercase tracking-widest">Almacenamiento</span>
                 <span className="text-[10px] font-semibold text-brand-300/80">{storageData.used} <span className="text-muted-500 font-medium">de {storageData.max}</span></span>
@@ -326,6 +323,15 @@ export default function Sidebar({ isMobile }) {
                 <div style={{ width: `${Math.max(storageData.pctOther, 1)}%` }} className="bg-slate-500 hover:brightness-110 transition-all cursor-help" title="Sistema" />
               </div>
             </div>
+
+            {/* Hide menu button */}
+            <button 
+              onClick={closeMobile} 
+              className="w-full flex items-center justify-center gap-2 py-4 mt-2 border-t border-subtle text-muted-400 hover:text-white hover:bg-surface-600/60 transition-colors"
+            >
+              <ChevronLeft size={20} />
+              <span className="text-sm font-semibold">Ocultar</span>
+            </button>
           </div>
         </aside>
       </>
