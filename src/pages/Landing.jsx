@@ -228,7 +228,7 @@ export default function Landing() {
                     className="pt-6 flex flex-col items-center lg:items-start gap-3"
                   >
                     <span className="text-white font-semibold text-sm tracking-wide">Pagos con</span>
-                    <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi" className="h-6 object-contain" />
+                    <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi" className="h-10 object-contain" />
                   </motion.div>
                 </div>
 
