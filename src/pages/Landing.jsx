@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Zap, Layers, TrendingUp, Printer, MessageSquare, Mail, Phone, MapPin, Check,
@@ -7,15 +7,23 @@ import {
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
+import ReactPlayer from 'react-player'
 
 export default function Landing() {
   const navigate = useNavigate()
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [showVideo, setShowVideo] = useState(false)
 
   useEffect(() => {
     // Check current theme
     const isDark = document.documentElement.classList.contains('dark')
     setIsDarkMode(isDark)
+
+    // Video transition timer
+    const timer = setTimeout(() => {
+      setShowVideo(true)
+    }, 5000)
+    return () => clearTimeout(timer)
   }, [])
 
   const toggleTheme = () => {
@@ -191,58 +199,99 @@ export default function Landing() {
 
                   {/* App card — solid background */}
                   <div className="relative rounded-2xl overflow-hidden border border-white/10 ring-1 ring-brand-500/20">
-                    {/* Browser chrome bar */}
-                    <div className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-900 border-b border-white/5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-danger-500/70" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-warning-500/70" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-success-500/70" />
-                      <span className="ml-4 flex-1 bg-surface-700 rounded-md h-4 text-[9px] text-muted-400 flex items-center px-2 font-mono">app.gestivaone.com</span>
-                    </div>
-                    {/* Dashboard content — solid bg */}
-                    <div className="bg-surface-800 p-4 space-y-3">
-                      {/* Widgets row */}
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
-                          <span className="text-[9px] text-muted-400 font-bold uppercase">Ventas Hoy</span>
-                          <p className="text-sm font-bold text-foreground">$1,245,000</p>
-                          <span className="text-[8px] text-success-400 font-bold">+12.5% vs ayer</span>
-                        </div>
-                        <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
-                          <span className="text-[9px] text-muted-400 font-bold uppercase">Deudas</span>
-                          <p className="text-sm font-bold text-danger-400">$340,000</p>
-                          <span className="text-[8px] text-muted-400">4 pendientes</span>
-                        </div>
-                        <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
-                          <span className="text-[9px] text-muted-400 font-bold uppercase">Stock</span>
-                          <p className="text-sm font-bold text-warning-400">2 Bajos</p>
-                          <span className="text-[8px] text-warning-400 font-bold">Revisar</span>
-                        </div>
-                      </div>
-                      {/* Activity list */}
-                      <div className="space-y-2">
-                        <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Últimas Actividades</span>
-                        <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
-                            <div>
-                              <p className="font-bold text-foreground">Venta Realizada</p>
-                              <span className="text-[9px] text-muted-400">Cliente Express • Hace 3 min</span>
+                  {/* Browser chrome bar */}
+                  <div className="relative flex items-center gap-1.5 px-4 py-2.5 bg-surface-900 border-b border-white/5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-danger-500/70" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-warning-500/70" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-success-500/70" />
+                    <span className="ml-4 flex-1 bg-surface-700 rounded-md h-4 text-[9px] text-muted-400 flex items-center px-2 font-mono">app.gestivaone.com</span>
+                    
+                    {/* Loading progress bar */}
+                    <AnimatePresence>
+                      {!showVideo && (
+                        <motion.div 
+                          className="absolute bottom-0 left-0 h-[2px] bg-brand-500"
+                          initial={{ width: '0%' }}
+                          animate={{ width: '100%' }}
+                          transition={{ duration: 5, ease: "linear" }}
+                          exit={{ opacity: 0 }}
+                        />
+                      )}
+                    </AnimatePresence>
+                  </div>
+                  {/* Dashboard content / Video wrapper */}
+                  <div className="relative bg-surface-800" style={{ minHeight: '300px' }}>
+                    <AnimatePresence mode="wait">
+                      {!showVideo ? (
+                        <motion.div
+                          key="mockup"
+                          initial={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className="p-4 space-y-3"
+                        >
+                          {/* Widgets row */}
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
+                              <span className="text-[9px] text-muted-400 font-bold uppercase">Ventas Hoy</span>
+                              <p className="text-sm font-bold text-foreground">$1,245,000</p>
+                              <span className="text-[8px] text-success-400 font-bold">+12.5% vs ayer</span>
+                            </div>
+                            <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
+                              <span className="text-[9px] text-muted-400 font-bold uppercase">Deudas</span>
+                              <p className="text-sm font-bold text-danger-400">$340,000</p>
+                              <span className="text-[8px] text-muted-400">4 pendientes</span>
+                            </div>
+                            <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
+                              <span className="text-[9px] text-muted-400 font-bold uppercase">Stock</span>
+                              <p className="text-sm font-bold text-warning-400">2 Bajos</p>
+                              <span className="text-[8px] text-warning-400 font-bold">Revisar</span>
                             </div>
                           </div>
-                          <span className="font-extrabold text-success-400">+$215,390</span>
-                        </div>
-                        <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
-                            <div>
-                              <p className="font-bold text-foreground">Egreso Registrado</p>
-                              <span className="text-[9px] text-muted-400">Alquiler/Servicios • Hace 1h</span>
+                          {/* Activity list */}
+                          <div className="space-y-2">
+                            <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Últimas Actividades</span>
+                            <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
+                                <div>
+                                  <p className="font-bold text-foreground">Venta Realizada</p>
+                                  <span className="text-[9px] text-muted-400">Cliente Express • Hace 3 min</span>
+                                </div>
+                              </div>
+                              <span className="font-extrabold text-success-400">+$215,390</span>
+                            </div>
+                            <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
+                                <div>
+                                  <p className="font-bold text-foreground">Egreso Registrado</p>
+                                  <span className="text-[9px] text-muted-400">Alquiler/Servicios • Hace 1h</span>
+                                </div>
+                              </div>
+                              <span className="font-extrabold text-danger-400">-$150,000</span>
                             </div>
                           </div>
-                          <span className="font-extrabold text-danger-400">-$150,000</span>
-                        </div>
-                      </div>
-                    </div>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="video"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.5 }}
+                          className="aspect-video w-full"
+                        >
+                          <ReactPlayer
+                            url="https://www.youtube.com/watch?v=0XhKFxjnsh8"
+                            width="100%"
+                            height="100%"
+                            controls
+                            playing
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                   </div>
                 </motion.div>
 
