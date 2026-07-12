@@ -101,7 +101,7 @@ export default function Landing() {
 
               <Link
                 to="/auth?mode=login"
-                className="w-8 h-8 rounded-full bg-surface-700 border border-subtle flex items-center justify-center text-muted-400 hover:text-foreground hover:border-brand-500/50 transition-all overflow-hidden"
+                className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 transition-all overflow-hidden"
                 title="Ingresar"
               >
                 <User size={16} />
