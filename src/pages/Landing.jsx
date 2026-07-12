@@ -112,14 +112,14 @@ export default function Landing() {
       </nav>
 
       {/* ─── HERO SECTION ─── */}
-      <header className="relative overflow-hidden pb-0 pt-16 lg:pt-24">
-        {/* ── Background: app preview image ── */}
+      <header className="relative overflow-hidden py-16 lg:py-24">
+        {/* ── Background: app preview image (full, no zoom) ── */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-contain bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/gestivaOnePreview.png')" }}
         />
-        {/* Dark overlay so text stays readable */}
-        <div className="absolute inset-0 bg-surface-900/80 backdrop-blur-[2px]" />
+        {/* Stronger dark overlay for text legibility */}
+        <div className="absolute inset-0 bg-surface-900/88" />
 
         {/* Subtle purple glow on top */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none" />
@@ -129,10 +129,10 @@ export default function Landing() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
           >
             {/* Hero text content — left column */}
-            <div className="lg:col-span-5 space-y-6 text-center lg:text-left pb-12 lg:pb-20">
+            <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
               <motion.div
                 variants={itemVariants}
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider"
@@ -178,13 +178,13 @@ export default function Landing() {
             {/* Dashboard mockup — right column, floats in front of the background */}
             <motion.div
               variants={itemVariants}
-              className="lg:col-span-7 relative flex items-end justify-center lg:justify-end"
+              className="lg:col-span-7 relative flex items-center justify-center lg:justify-end"
             >
               {/* Glow behind card */}
               <div className="absolute bottom-0 right-0 w-3/4 h-3/4 bg-brand-500/25 rounded-full blur-[80px] pointer-events-none" />
 
-              {/* App card — overflows into next section */}
-              <div className="relative w-full max-w-[620px] lg:max-w-none -mb-12 lg:-mb-20">
+              {/* App card */}
+              <div className="relative w-full max-w-[620px] lg:max-w-none">
                 <div className="rounded-t-2xl overflow-hidden border-t border-l border-r border-white/10 ring-1 ring-brand-500/20 backdrop-blur-sm">
                   {/* Browser chrome bar */}
                   <div className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-900/90 border-b border-white/5">
@@ -246,7 +246,7 @@ export default function Landing() {
       </header>
 
       {/* ─── FEATURES SECTION ─── */}
-      <section id="caracteristicas" className="pt-32 pb-20 bg-surface-800 border-t border-b border-subtle">
+      <section id="caracteristicas" className="py-20 bg-surface-800 border-t border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
             <h2 className="text-brand-400 text-xs font-bold uppercase tracking-widest">Todo en una sola herramienta</h2>
