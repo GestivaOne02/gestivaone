@@ -2,7 +2,8 @@ import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Zap, Layers, TrendingUp, Printer, MessageSquare, Mail, Phone, MapPin, Check,
-  ChevronRight, ArrowRight, ShieldCheck, ShoppingCart, BarChart3, Users2, Moon, Sun
+  ChevronRight, ArrowRight, ShieldCheck, ShoppingCart, BarChart3, Users2, Moon, Sun,
+  LayoutGrid, Gem, User
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
@@ -48,13 +49,19 @@ export default function Landing() {
       <nav className="sticky top-0 z-50 bg-surface-900/80 backdrop-blur-md border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Logo */}
-            <div className="flex items-center">
-              <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-10 w-auto" />
+            {/* Left: App Launcher & Logo */}
+            <div className="flex items-center gap-3">
+              <button className="text-muted-400 hover:text-foreground transition-colors p-2 -ml-2 rounded-xl hover:bg-surface-800">
+                <LayoutGrid size={20} />
+              </button>
+              <div className="flex items-center gap-2">
+                <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
+                <span className="font-bold text-foreground text-lg hidden sm:block">GestivaOne</span>
+              </div>
             </div>
 
-            {/* Navigation links */}
-            <div className="hidden md:flex items-center gap-8">
+            {/* Center: Navigation links */}
+            <div className="hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
               <a href="#caracteristicas" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Características</a>
               <a href="#nosotros" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Nosotros</a>
               <a href="#precios" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Precios</a>
@@ -72,21 +79,31 @@ export default function Landing() {
               </a>
             </div>
 
-            {/* CTA / Auth Actions */}
-            <div className="flex items-center gap-4">
-              <Link
-                to="/auth?mode=login"
-                className="hidden sm:inline-block text-sm font-semibold text-muted-400 hover:text-foreground transition-colors px-4 py-2"
-              >
-                Ingresar
-              </Link>
-
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 to="/auth?mode=register"
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold transition-all duration-300 flex items-center gap-1.5"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-brand-500/30 text-brand-400 hover:bg-brand-500/10 text-xs font-bold transition-all duration-300"
               >
-                Empieza Tu Gestión
-                <ChevronRight size={14} />
+                <Gem size={14} />
+                <span className="hidden md:inline">Empieza Tu Gestión</span>
+                <span className="md:hidden">Empezar</span>
+              </Link>
+              
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                aria-label="Toggle Theme"
+              >
+                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+
+              <Link
+                to="/auth?mode=login"
+                className="w-8 h-8 rounded-full bg-surface-700 border border-subtle flex items-center justify-center text-muted-400 hover:text-foreground hover:border-brand-500/50 transition-all overflow-hidden"
+                title="Ingresar"
+              >
+                <User size={16} />
               </Link>
             </div>
           </div>
@@ -588,14 +605,7 @@ export default function Landing() {
         </div>
       </footer>
 
-      {/* Floating Theme Toggle */}
-      <button
-        onClick={toggleTheme}
-        className="fixed bottom-6 right-6 p-3 rounded-full bg-surface-800 border border-subtle hover:bg-surface-700 hover:text-brand-400 transition-colors text-muted-400 shadow-lg z-50 flex items-center justify-center"
-        aria-label="Toggle Theme"
-      >
-        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-      </button>
+
 
     </div>
   )
