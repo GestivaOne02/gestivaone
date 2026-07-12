@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   Zap, Layers, TrendingUp, Printer, MessageSquare, Mail, Phone, MapPin, Check,
   ChevronRight, ArrowRight, ShieldCheck, ShoppingCart, BarChart3, Users2, Moon, Sun,
-  LayoutGrid, Gem, User
+  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
@@ -197,15 +197,29 @@ export default function Landing() {
                   {/* Glow behind card */}
                   <div className="absolute -inset-2 bg-brand-500/15 rounded-3xl blur-xl pointer-events-none" />
 
-                  {/* App card — solid background */}
-                  <div className="relative rounded-2xl overflow-hidden border border-white/10 ring-1 ring-brand-500/20">
+                  {/* App card — solid background, no border */}
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                   {/* Browser chrome bar */}
-                  <div className="relative flex items-center gap-1.5 px-4 py-2.5 bg-surface-900 border-b border-white/5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-danger-500/70" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-warning-500/70" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-success-500/70" />
-                    <span className="ml-4 flex-1 bg-surface-700 rounded-md h-4 text-[9px] text-muted-400 flex items-center px-2 font-mono">app.gestivaone.com</span>
-                    
+                  <div className="relative flex items-center gap-3 px-3 py-2 bg-[#1a2321]">
+                    {/* Navigation icons */}
+                    <div className="flex items-center gap-2 text-[#7c8b87]">
+                      <button className="p-1 hover:text-white transition-colors"><ArrowLeft size={16} strokeWidth={2.5} /></button>
+                      <button className="p-1 hover:text-white transition-colors opacity-50"><ArrowRight size={16} strokeWidth={2.5} /></button>
+                      <button className="p-1 hover:text-white transition-colors"><RotateCw size={14} strokeWidth={2.5} /></button>
+                      <button className="p-1 hover:text-white transition-colors ml-1"><Home size={16} strokeWidth={2} /></button>
+                    </div>
+
+                    {/* Address bar */}
+                    <div className="flex-1 flex items-center justify-between bg-[#111816] rounded-full h-8 px-3 mx-2 border border-white/5">
+                      <div className="flex items-center gap-2 text-[#7c8b87]">
+                        <SlidersHorizontal size={14} strokeWidth={2} />
+                        <span className="text-xs text-[#d1d5db] font-medium tracking-wide">gestivaone.com</span>
+                      </div>
+                      <button className="text-[#7c8b87] hover:text-white transition-colors">
+                        <Star size={14} strokeWidth={2} />
+                      </button>
+                    </div>
+
                     {/* Loading progress bar */}
                     <AnimatePresence>
                       {!showVideo && (
