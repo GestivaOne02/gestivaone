@@ -287,6 +287,7 @@ export default function Landing() {
                             height="100%"
                             controls
                             playing
+                            muted
                           />
                         </motion.div>
                       )}
