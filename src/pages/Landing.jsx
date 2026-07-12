@@ -234,7 +234,7 @@ export default function Landing() {
                     </AnimatePresence>
                   </div>
                   {/* Dashboard content / Video wrapper */}
-                  <div className="relative bg-surface-800" style={{ minHeight: '300px' }}>
+                  <div className="relative bg-[#0e0e17] w-full aspect-video overflow-hidden">
                     <AnimatePresence mode="wait">
                       {!showVideo ? (
                         <motion.div
@@ -242,45 +242,45 @@ export default function Landing() {
                           initial={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.5 }}
-                          className="p-4 space-y-3"
+                          className="absolute inset-0 p-4 sm:p-6 space-y-4 flex flex-col justify-center bg-surface-800"
                         >
                           {/* Widgets row */}
                           <div className="grid grid-cols-3 gap-3">
                             <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
                               <span className="text-[9px] text-muted-400 font-bold uppercase">Ventas Hoy</span>
-                              <p className="text-sm font-bold text-foreground">$1,245,000</p>
-                              <span className="text-[8px] text-success-400 font-bold">+12.5% vs ayer</span>
+                              <p className="text-sm sm:text-base font-bold text-foreground">$1,245,000</p>
+                              <span className="text-[8px] sm:text-[9px] text-success-400 font-bold">+12.5% vs ayer</span>
                             </div>
                             <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
                               <span className="text-[9px] text-muted-400 font-bold uppercase">Deudas</span>
-                              <p className="text-sm font-bold text-danger-400">$340,000</p>
-                              <span className="text-[8px] text-muted-400">4 pendientes</span>
+                              <p className="text-sm sm:text-base font-bold text-danger-400">$340,000</p>
+                              <span className="text-[8px] sm:text-[9px] text-muted-400">4 pendientes</span>
                             </div>
                             <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
                               <span className="text-[9px] text-muted-400 font-bold uppercase">Stock</span>
-                              <p className="text-sm font-bold text-warning-400">2 Bajos</p>
-                              <span className="text-[8px] text-warning-400 font-bold">Revisar</span>
+                              <p className="text-sm sm:text-base font-bold text-warning-400">2 Bajos</p>
+                              <span className="text-[8px] sm:text-[9px] text-warning-400 font-bold">Revisar</span>
                             </div>
                           </div>
                           {/* Activity list */}
                           <div className="space-y-2">
                             <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Últimas Actividades</span>
-                            <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
+                            <div className="flex items-center justify-between p-2.5 sm:p-3 bg-surface-750 border border-subtle rounded-xl text-xs">
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-7 h-7 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
                                 <div>
                                   <p className="font-bold text-foreground">Venta Realizada</p>
-                                  <span className="text-[9px] text-muted-400">Cliente Express • Hace 3 min</span>
+                                  <span className="text-[9px] sm:text-[10px] text-muted-400">Cliente Express • Hace 3 min</span>
                                 </div>
                               </div>
                               <span className="font-extrabold text-success-400">+$215,390</span>
                             </div>
-                            <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
+                            <div className="flex items-center justify-between p-2.5 sm:p-3 bg-surface-750 border border-subtle rounded-xl text-xs">
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-7 h-7 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
                                 <div>
                                   <p className="font-bold text-foreground">Egreso Registrado</p>
-                                  <span className="text-[9px] text-muted-400">Alquiler/Servicios • Hace 1h</span>
+                                  <span className="text-[9px] sm:text-[10px] text-muted-400">Alquiler/Servicios • Hace 1h</span>
                                 </div>
                               </div>
                               <span className="font-extrabold text-danger-400">-$150,000</span>
@@ -293,15 +293,15 @@ export default function Landing() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.5 }}
-                          className="aspect-video w-full"
+                          className="absolute inset-0"
                         >
                           <ReactPlayer
                             url="https://www.youtube.com/watch?v=0XhKFxjnsh8"
                             width="100%"
                             height="100%"
-                            controls
-                            playing
-                            muted
+                            playing={true}
+                            muted={true}
+                            controls={true}
                           />
                         </motion.div>
                       )}
