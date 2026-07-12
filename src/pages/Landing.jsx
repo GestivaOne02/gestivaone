@@ -112,7 +112,7 @@ export default function Landing() {
       </nav>
 
       {/* ─── HERO SECTION ─── */}
-      <header className="relative overflow-hidden py-20 lg:py-32">
+      <header className="relative overflow-hidden pb-0 pt-16 lg:pt-24">
         {/* Background glow effects */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] bg-success-500/5 rounded-full blur-[100px] pointer-events-none" />
@@ -122,10 +122,10 @@ export default function Landing() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end"
           >
-            {/* Hero text content */}
-            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+            {/* Hero text content — left column */}
+            <div className="lg:col-span-5 space-y-6 text-center lg:text-left pb-12 lg:pb-20">
               <motion.div
                 variants={itemVariants}
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider"
@@ -168,68 +168,32 @@ export default function Landing() {
               </motion.div>
             </div>
 
-            {/* Hero mockup/preview */}
+            {/* Hero preview image — right column, overflows into next section */}
             <motion.div
               variants={itemVariants}
-              className="lg:col-span-6 relative"
+              className="lg:col-span-7 relative flex items-end justify-center lg:justify-end"
             >
-              <div className="relative mx-auto max-w-[500px] lg:max-w-none rounded-3xl bg-gradient-to-br from-brand-500/20 to-indigo-500/5 p-1 border border-white/10">
-                {/* Mockup layout */}
-                <div className="bg-surface-800 rounded-[22px] overflow-hidden p-4 space-y-4">
-                  {/* Mock Navbar */}
-                  <div className="flex items-center justify-between pb-3 border-b border-subtle">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-danger-500" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-warning-500" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-success-500" />
-                      <span className="text-[10px] text-muted-400 ml-2 font-mono">app.gestivaone.com/dashboard</span>
-                    </div>
-                    <span className="text-[10px] bg-brand-600/20 text-brand-400 px-2 py-0.5 rounded-full font-bold">Modo Demo</span>
-                  </div>
+              {/* Glow behind image */}
+              <div className="absolute bottom-0 right-0 w-3/4 h-3/4 bg-brand-500/20 rounded-full blur-[80px] pointer-events-none" />
 
-                  {/* Mock Widgets Grid */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-surface-700/40 border border-subtle rounded-xl p-3 space-y-1">
-                      <span className="text-[9px] text-muted-400 font-bold uppercase">Ventas Hoy</span>
-                      <p className="text-sm font-bold text-foreground">$1,245,000</p>
-                      <span className="text-[8px] text-success-400 font-bold">+12.5% vs ayer</span>
-                    </div>
-                    <div className="bg-surface-700/40 border border-subtle rounded-xl p-3 space-y-1">
-                      <span className="text-[9px] text-muted-400 font-bold uppercase">Deudas Clientes</span>
-                      <p className="text-sm font-bold text-danger-400">$340,000</p>
-                      <span className="text-[8px] text-muted-400">4 deudas pendientes</span>
-                    </div>
-                    <div className="bg-surface-700/40 border border-subtle rounded-xl p-3 space-y-1">
-                      <span className="text-[9px] text-muted-400 font-bold uppercase">Stock Alertas</span>
-                      <p className="text-sm font-bold text-warning-400">2 Bajos</p>
-                      <span className="text-[8px] text-warning-400 font-bold">Revisar stock</span>
-                    </div>
+              {/* App screenshot — overflows below the hero */}
+              <div className="relative w-full max-w-[680px] lg:max-w-none -mb-12 lg:-mb-20">
+                {/* Frame border + glow */}
+                <div className="rounded-t-2xl overflow-hidden border-t border-l border-r border-white/10 ring-1 ring-brand-500/20">
+                  {/* Fake browser chrome bar */}
+                  <div className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-800 border-b border-white/5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-danger-500/70" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-warning-500/70" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-success-500/70" />
+                    <span className="ml-4 flex-1 bg-surface-700 rounded-md h-4 text-[9px] text-muted-400 flex items-center px-2 font-mono">app.gestivaone.com</span>
                   </div>
-
-                  {/* Mock Invoice list item */}
-                  <div className="space-y-2">
-                    <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Últimas Actividades</span>
-                    <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
-                        <div>
-                          <p className="font-bold text-foreground">Venta Realizada</p>
-                          <span className="text-[9px] text-muted-400">Cliente Express • Hace 3 min</span>
-                        </div>
-                      </div>
-                      <span className="font-extrabold text-success-400">+$215,390</span>
-                    </div>
-                    <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
-                        <div>
-                          <p className="font-bold text-foreground">Egreso Registrado</p>
-                          <span className="text-[9px] text-muted-400">Alquiler/Servicios • Hace 1 hora</span>
-                        </div>
-                      </div>
-                      <span className="font-extrabold text-danger-400">-$150,000</span>
-                    </div>
-                  </div>
+                  {/* The actual preview screenshot */}
+                  <img
+                    src="/images/gestivaOnePreview.png"
+                    alt="Vista previa de GestivaOne"
+                    className="w-full block"
+                    loading="eager"
+                  />
                 </div>
               </div>
             </motion.div>
@@ -238,7 +202,7 @@ export default function Landing() {
       </header>
 
       {/* ─── FEATURES SECTION ─── */}
-      <section id="caracteristicas" className="py-20 bg-surface-800 border-t border-b border-subtle">
+      <section id="caracteristicas" className="pt-32 pb-20 bg-surface-800 border-t border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
             <h2 className="text-brand-400 text-xs font-bold uppercase tracking-widest">Todo en una sola herramienta</h2>
