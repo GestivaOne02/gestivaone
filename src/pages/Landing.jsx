@@ -87,7 +87,6 @@ export default function Landing() {
                 to="/auth?mode=register"
                 className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-brand-500/30 text-brand-400 hover:bg-brand-500/10 text-xs font-bold transition-all duration-300"
               >
-                <Gem size={14} />
                 <span className="hidden md:inline">Empieza Tu Gestión</span>
                 <span className="md:hidden">Empezar</span>
               </Link>
