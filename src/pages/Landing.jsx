@@ -295,13 +295,12 @@ export default function Landing() {
                           transition={{ duration: 0.5 }}
                           className="absolute inset-0"
                         >
-                          <ReactPlayer
-                            url="https://www.youtube.com/watch?v=0XhKFxjnsh8"
-                            width="100%"
-                            height="100%"
-                            playing={true}
-                            muted={true}
-                            controls={true}
+                          <iframe
+                            src="https://www.youtube.com/embed/0XhKFxjnsh8?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1"
+                            title="GestivaOne Demo"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full border-0"
                           />
                         </motion.div>
                       )}
