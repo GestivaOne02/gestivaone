@@ -115,7 +115,7 @@ export default function Landing() {
       <header className="relative overflow-hidden py-16 lg:py-24">
         {/* ── Background: app preview image (full, no zoom) ── */}
         <div
-          className="absolute inset-0 bg-contain bg-center bg-no-repeat"
+          className="absolute inset-0 bg-contain bg-top bg-no-repeat"
           style={{ backgroundImage: "url('/images/gestivaOnePreview.png')" }}
         />
         {/* Stronger dark overlay for text legibility */}
