@@ -112,7 +112,7 @@ export default function Landing() {
       </nav>
 
       {/* ─── HERO SECTION ─── */}
-      <header className="relative overflow-hidden py-16 lg:py-24">
+      <header className="relative overflow-hidden py-12 lg:py-16">
         {/* ── Background: app preview image (full, no zoom) ── */}
         <div
           className="absolute inset-0 bg-contain bg-top bg-no-repeat"
@@ -129,116 +129,123 @@ export default function Landing() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
           >
-            {/* Hero text content — left column */}
-            <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
-              <motion.div
-                variants={itemVariants}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider"
-              >
-                <ShieldCheck size={14} />
-                Gestión Inteligente y Automatizada
-              </motion.div>
-
-              <motion.h1
-                variants={itemVariants}
-                className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-foreground"
-              >
-                Toma el Control de tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Negocio</span> en Tiempo Real
-              </motion.h1>
-
-              <motion.p
-                variants={itemVariants}
-                className="text-base sm:text-lg text-muted-400 max-w-xl mx-auto lg:mx-0 leading-relaxed"
-              >
-                La plataforma moderna que necesitas para automatizar inventarios, facturación, cuentas de cobro, reportes financieros y más, diseñada para optimizar cada proceso en tu empresa.
-              </motion.p>
-
-              <motion.div
-                variants={itemVariants}
-                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
-              >
-                <Link
-                  to="/auth?mode=register"
-                  className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  Empieza Tu Gestión Gratis
-                  <ArrowRight size={16} />
-                </Link>
-                <a
-                  href="#caracteristicas"
-                  className="w-full sm:w-auto text-center px-6 py-4 rounded-xl bg-surface-800/60 border border-subtle hover:bg-surface-700 hover:text-white text-muted-400 text-sm font-semibold transition-colors backdrop-blur-sm"
-                >
-                  Ver Características
-                </a>
-              </motion.div>
-            </div>
-
-            {/* Dashboard mockup — right column, floats in front of the background */}
+            {/* ── Glass card wrapping everything ── */}
             <motion.div
               variants={itemVariants}
-              className="lg:col-span-7 relative flex items-center justify-center lg:justify-end"
+              className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 lg:p-10"
             >
-              {/* Glow behind card */}
-              <div className="absolute bottom-0 right-0 w-3/4 h-3/4 bg-brand-500/25 rounded-full blur-[80px] pointer-events-none" />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
-              {/* App card */}
-              <div className="relative w-full max-w-[620px] lg:max-w-none">
-                <div className="rounded-t-2xl overflow-hidden border-t border-l border-r border-white/10 ring-1 ring-brand-500/20 backdrop-blur-sm">
-                  {/* Browser chrome bar */}
-                  <div className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-900/90 border-b border-white/5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-danger-500/70" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-warning-500/70" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-success-500/70" />
-                    <span className="ml-4 flex-1 bg-surface-700 rounded-md h-4 text-[9px] text-muted-400 flex items-center px-2 font-mono">app.gestivaone.com</span>
-                  </div>
-                  {/* Dashboard mockup content */}
-                  <div className="bg-surface-800/95 p-4 space-y-3">
-                    {/* Widgets row */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-surface-700/60 border border-subtle rounded-xl p-3 space-y-1">
-                        <span className="text-[9px] text-muted-400 font-bold uppercase">Ventas Hoy</span>
-                        <p className="text-sm font-bold text-foreground">$1,245,000</p>
-                        <span className="text-[8px] text-success-400 font-bold">+12.5% vs ayer</span>
-                      </div>
-                      <div className="bg-surface-700/60 border border-subtle rounded-xl p-3 space-y-1">
-                        <span className="text-[9px] text-muted-400 font-bold uppercase">Deudas</span>
-                        <p className="text-sm font-bold text-danger-400">$340,000</p>
-                        <span className="text-[8px] text-muted-400">4 pendientes</span>
-                      </div>
-                      <div className="bg-surface-700/60 border border-subtle rounded-xl p-3 space-y-1">
-                        <span className="text-[9px] text-muted-400 font-bold uppercase">Stock</span>
-                        <p className="text-sm font-bold text-warning-400">2 Bajos</p>
-                        <span className="text-[8px] text-warning-400 font-bold">Revisar</span>
-                      </div>
-                    </div>
-                    {/* Activity list */}
-                    <div className="space-y-2">
-                      <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Últimas Actividades</span>
-                      <div className="flex items-center justify-between p-2.5 bg-surface-750/80 border border-subtle rounded-xl text-xs">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
-                          <div>
-                            <p className="font-bold text-foreground">Venta Realizada</p>
-                            <span className="text-[9px] text-muted-400">Cliente Express • Hace 3 min</span>
-                          </div>
-                        </div>
-                        <span className="font-extrabold text-success-400">+$215,390</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2.5 bg-surface-750/80 border border-subtle rounded-xl text-xs">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
-                          <div>
-                            <p className="font-bold text-foreground">Egreso Registrado</p>
-                            <span className="text-[9px] text-muted-400">Alquiler/Servicios • Hace 1h</span>
-                          </div>
-                        </div>
-                        <span className="font-extrabold text-danger-400">-$150,000</span>
-                      </div>
-                    </div>
-                  </div>
+                {/* Hero text content — left column */}
+                <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
+                  <motion.div
+                    variants={itemVariants}
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider"
+                  >
+                    <ShieldCheck size={14} />
+                    Gestión Inteligente y Automatizada
+                  </motion.div>
+
+                  <motion.h1
+                    variants={itemVariants}
+                    className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-foreground"
+                  >
+                    Toma el Control de tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Negocio</span> en Tiempo Real
+                  </motion.h1>
+
+                  <motion.p
+                    variants={itemVariants}
+                    className="text-base sm:text-lg text-muted-400 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+                  >
+                    La plataforma moderna que necesitas para automatizar inventarios, facturación, cuentas de cobro, reportes financieros y más, diseñada para optimizar cada proceso en tu empresa.
+                  </motion.p>
+
+                  <motion.div
+                    variants={itemVariants}
+                    className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
+                  >
+                    <Link
+                      to="/auth?mode=register"
+                      className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      Empieza Tu Gestión Gratis
+                      <ArrowRight size={16} />
+                    </Link>
+                    <a
+                      href="#caracteristicas"
+                      className="w-full sm:w-auto text-center px-6 py-4 rounded-xl bg-white/10 border border-white/10 hover:bg-white/15 text-muted-400 hover:text-white text-sm font-semibold transition-colors backdrop-blur-sm"
+                    >
+                      Ver Características
+                    </a>
+                  </motion.div>
                 </div>
+
+                {/* Dashboard mockup — right column, solid bg */}
+                <motion.div
+                  variants={itemVariants}
+                  className="lg:col-span-7 relative"
+                >
+                  {/* Glow behind card */}
+                  <div className="absolute -inset-2 bg-brand-500/15 rounded-3xl blur-xl pointer-events-none" />
+
+                  {/* App card — solid background */}
+                  <div className="relative rounded-2xl overflow-hidden border border-white/10 ring-1 ring-brand-500/20">
+                    {/* Browser chrome bar */}
+                    <div className="flex items-center gap-1.5 px-4 py-2.5 bg-surface-900 border-b border-white/5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-danger-500/70" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-warning-500/70" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-success-500/70" />
+                      <span className="ml-4 flex-1 bg-surface-700 rounded-md h-4 text-[9px] text-muted-400 flex items-center px-2 font-mono">app.gestivaone.com</span>
+                    </div>
+                    {/* Dashboard content — solid bg */}
+                    <div className="bg-surface-800 p-4 space-y-3">
+                      {/* Widgets row */}
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
+                          <span className="text-[9px] text-muted-400 font-bold uppercase">Ventas Hoy</span>
+                          <p className="text-sm font-bold text-foreground">$1,245,000</p>
+                          <span className="text-[8px] text-success-400 font-bold">+12.5% vs ayer</span>
+                        </div>
+                        <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
+                          <span className="text-[9px] text-muted-400 font-bold uppercase">Deudas</span>
+                          <p className="text-sm font-bold text-danger-400">$340,000</p>
+                          <span className="text-[8px] text-muted-400">4 pendientes</span>
+                        </div>
+                        <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
+                          <span className="text-[9px] text-muted-400 font-bold uppercase">Stock</span>
+                          <p className="text-sm font-bold text-warning-400">2 Bajos</p>
+                          <span className="text-[8px] text-warning-400 font-bold">Revisar</span>
+                        </div>
+                      </div>
+                      {/* Activity list */}
+                      <div className="space-y-2">
+                        <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Últimas Actividades</span>
+                        <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
+                            <div>
+                              <p className="font-bold text-foreground">Venta Realizada</p>
+                              <span className="text-[9px] text-muted-400">Cliente Express • Hace 3 min</span>
+                            </div>
+                          </div>
+                          <span className="font-extrabold text-success-400">+$215,390</span>
+                        </div>
+                        <div className="flex items-center justify-between p-2.5 bg-surface-750 border border-subtle rounded-xl text-xs">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
+                            <div>
+                              <p className="font-bold text-foreground">Egreso Registrado</p>
+                              <span className="text-[9px] text-muted-400">Alquiler/Servicios • Hace 1h</span>
+                            </div>
+                          </div>
+                          <span className="font-extrabold text-danger-400">-$150,000</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
               </div>
             </motion.div>
           </motion.div>
