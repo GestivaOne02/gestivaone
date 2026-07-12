@@ -49,13 +49,8 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-600/10 border border-brand-500/30 text-brand-400">
-                <Zap size={20} className="animate-pulse" />
-              </div>
-              <span className="text-lg font-black tracking-wider uppercase text-foreground">
-                GESTIVA <span className="text-brand-400">ONE</span>
-              </span>
+            <div className="flex items-center">
+              <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-10 w-auto" />
             </div>
 
             {/* Navigation links */}
@@ -65,15 +60,15 @@ export default function Landing() {
               <a href="#precios" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Precios</a>
               <a href="#contacto" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Contacto</a>
 
-              {/* Shop link — abre la tienda pública de Gestiva */}
+              {/* Market link */}
               <a
                 href="https://gestivaone-store.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-400 hover:text-brand-300 transition-colors border-b-2 border-brand-500/40 hover:border-brand-400 pb-0.5"
+                className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-400 hover:text-brand-300 transition-colors"
               >
                 <ShoppingCart size={14} />
-                Shop
+                Market
               </a>
             </div>
 
