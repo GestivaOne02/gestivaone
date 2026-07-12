@@ -149,7 +149,7 @@ export default function Landing() {
                 <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
                   <motion.div
                     variants={itemVariants}
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider"
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-brand-400 text-xs font-bold uppercase tracking-wider"
                   >
                     <ShieldCheck size={14} />
                     Gestión Inteligente y Automatizada
@@ -157,14 +157,14 @@ export default function Landing() {
 
                   <motion.h1
                     variants={itemVariants}
-                    className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-foreground"
+                    className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-white"
                   >
                     Toma el Control de tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Negocio</span> en Tiempo Real
                   </motion.h1>
 
                   <motion.p
                     variants={itemVariants}
-                    className="text-base sm:text-lg text-muted-400 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+                    className="text-base sm:text-lg text-white/70 max-w-xl mx-auto lg:mx-0 leading-relaxed"
                   >
                     La plataforma moderna que necesitas para automatizar inventarios, facturación, cuentas de cobro, reportes financieros y más, diseñada para optimizar cada proceso en tu empresa.
                   </motion.p>
