@@ -200,9 +200,9 @@ export default function Landing() {
                   {/* App card — solid background, no border */}
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                   {/* Browser chrome bar */}
-                  <div className="relative flex items-center gap-3 px-3 py-2 bg-[#1a2321]">
+                  <div className="relative flex items-center gap-3 px-3 py-2 bg-[#0e0e17]">
                     {/* Navigation icons */}
-                    <div className="flex items-center gap-2 text-[#7c8b87]">
+                    <div className="flex items-center gap-2 text-white/60">
                       <button className="p-1 hover:text-white transition-colors"><ArrowLeft size={16} strokeWidth={2.5} /></button>
                       <button className="p-1 hover:text-white transition-colors opacity-50"><ArrowRight size={16} strokeWidth={2.5} /></button>
                       <button className="p-1 hover:text-white transition-colors"><RotateCw size={14} strokeWidth={2.5} /></button>
@@ -210,12 +210,12 @@ export default function Landing() {
                     </div>
 
                     {/* Address bar */}
-                    <div className="flex-1 flex items-center justify-between bg-[#111816] rounded-full h-8 px-3 mx-2 border border-white/5">
-                      <div className="flex items-center gap-2 text-[#7c8b87]">
+                    <div className="flex-1 flex items-center justify-between bg-white/10 rounded-full h-8 px-3 mx-2 border border-white/5">
+                      <div className="flex items-center gap-2 text-white/60">
                         <SlidersHorizontal size={14} strokeWidth={2} />
-                        <span className="text-xs text-[#d1d5db] font-medium tracking-wide">gestivaone.com</span>
+                        <span className="text-xs text-white font-medium tracking-wide">gestivaone.com</span>
                       </div>
-                      <button className="text-[#7c8b87] hover:text-white transition-colors">
+                      <button className="text-white/60 hover:text-white transition-colors">
                         <Star size={14} strokeWidth={2} />
                       </button>
                     </div>
