@@ -43,10 +43,10 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-900 text-foreground selection:bg-brand-500/30 selection:text-brand-300">
+    <div className="min-h-screen bg-[#0e0e17] text-foreground selection:bg-brand-500/30 selection:text-brand-300">
 
       {/* ─── NAVBAR ─── */}
-      <nav className="sticky top-0 z-50 bg-surface-900/80 backdrop-blur-md border-b border-subtle">
+      <nav className="sticky top-0 z-50 bg-[#0e0e17]/80 backdrop-blur-md border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Left: App Launcher & Logo */}
@@ -112,14 +112,14 @@ export default function Landing() {
       </nav>
 
       {/* ─── HERO SECTION ─── */}
-      <header className="relative overflow-hidden py-12 lg:py-16">
+      <header className="relative overflow-hidden py-12 lg:py-16 bg-[#0e0e17]">
         {/* ── Background: app preview image (full, no zoom) ── */}
         <div
           className="absolute inset-0 bg-contain bg-top bg-no-repeat"
           style={{ backgroundImage: "url('/images/gestivaOnePreview.png')" }}
         />
-        {/* Stronger dark overlay for text legibility */}
-        <div className="absolute inset-0 bg-surface-900/88" />
+        {/* Dark overlay using brand dark color */}
+        <div className="absolute inset-0 bg-[#0e0e17]/85" />
 
         {/* Subtle purple glow on top */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none" />
