@@ -10,7 +10,7 @@ import clsx from 'clsx'
 
 export default function Landing() {
   const navigate = useNavigate()
-  const [isDarkMode, setIsDarkMode] = useState(true)
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
     // Check current theme
