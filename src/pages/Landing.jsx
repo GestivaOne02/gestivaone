@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   Zap, Layers, TrendingUp, Printer, MessageSquare, Mail, Phone, MapPin, Check,
   ChevronRight, ArrowRight, ShieldCheck, ShoppingCart, BarChart3, Users2, Moon, Sun,
-  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star
+  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star, PartyPopper
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
@@ -13,6 +13,7 @@ export default function Landing() {
   const navigate = useNavigate()
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
+  const [showAppsMenu, setShowAppsMenu] = useState(false)
 
   useEffect(() => {
     // Check current theme
@@ -59,9 +60,44 @@ export default function Landing() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Left: App Launcher & Logo */}
             <div className="flex items-center gap-3">
-              <button className="text-muted-400 hover:text-foreground transition-colors p-2 -ml-2 rounded-xl hover:bg-surface-800">
-                <LayoutGrid size={20} />
-              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => setShowAppsMenu(!showAppsMenu)}
+                  onBlur={() => setTimeout(() => setShowAppsMenu(false), 200)}
+                  className="text-muted-400 hover:text-foreground transition-colors p-2 -ml-2 rounded-xl hover:bg-surface-800"
+                >
+                  <LayoutGrid size={20} />
+                </button>
+                {/* Apps Menu Dropdown */}
+                <AnimatePresence>
+                  {showAppsMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-full left-0 mt-2 w-64 bg-surface-900 border border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
+                    >
+                      <div className="px-3 py-2 text-[10px] font-bold text-muted-400 uppercase tracking-wider">
+                        Más productos de Gestiva
+                      </div>
+                      <a
+                        href="https://festa.gestivaone.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
+                          <PartyPopper size={16} />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-foreground">Festa</span>
+                          <span className="text-xs text-muted-400">Plataforma de eventos</span>
+                        </div>
+                      </a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               <div className="flex items-center gap-2">
                 <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
                 <span className="font-bold text-foreground text-lg hidden sm:block">
@@ -82,10 +118,9 @@ export default function Landing() {
                 href="https://gestivaone-store.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-400 hover:text-brand-300 transition-colors"
+                className="inline-flex items-center text-sm font-bold text-brand-400 hover:text-brand-300 transition-colors"
               >
-                <ShoppingCart size={14} />
-                Market
+                Marketplace
               </a>
             </div>
 
@@ -185,6 +220,15 @@ export default function Landing() {
                     >
                       Ver Características
                     </a>
+                  </motion.div>
+
+                  {/* Wompi integration */}
+                  <motion.div
+                    variants={itemVariants}
+                    className="pt-6 flex flex-col items-center lg:items-start gap-3"
+                  >
+                    <span className="text-white font-semibold text-sm tracking-wide">Pagos con</span>
+                    <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi" className="h-6 object-contain" />
                   </motion.div>
                 </div>
 
