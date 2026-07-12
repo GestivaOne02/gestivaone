@@ -83,7 +83,7 @@ export default function Landing() {
 
               <Link
                 to="/auth?mode=register"
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold shadow-glow-sm transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-1.5"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold transition-all duration-300 flex items-center gap-1.5"
               >
                 Empieza Tu Gestión
                 <ChevronRight size={14} />
@@ -136,7 +136,7 @@ export default function Landing() {
               >
                 <Link
                   to="/auth?mode=register"
-                  className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold shadow-glow hover:shadow-brand-500/30 transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all duration-300 flex items-center justify-center gap-2"
                 >
                   Empieza Tu Gestión Gratis
                   <ArrowRight size={16} />
@@ -155,7 +155,7 @@ export default function Landing() {
               variants={itemVariants}
               className="lg:col-span-6 relative"
             >
-              <div className="relative mx-auto max-w-[500px] lg:max-w-none rounded-3xl bg-gradient-to-br from-brand-500/20 to-indigo-500/5 p-1 border border-white/10 shadow-[0_0_50px_rgba(139,92,246,0.15)]">
+              <div className="relative mx-auto max-w-[500px] lg:max-w-none rounded-3xl bg-gradient-to-br from-brand-500/20 to-indigo-500/5 p-1 border border-white/10">
                 {/* Mockup layout */}
                 <div className="bg-surface-800 rounded-[22px] overflow-hidden p-4 space-y-4">
                   {/* Mock Navbar */}
@@ -392,7 +392,7 @@ export default function Landing() {
             </div>
 
             {/* Plan 2: Pro */}
-            <div className="bg-surface-750 border-2 border-brand-500 p-8 rounded-3xl space-y-6 flex flex-col justify-between relative shadow-[0_0_30px_rgba(139,92,246,0.15)]">
+            <div className="bg-surface-750 border-2 border-brand-500 p-8 rounded-3xl space-y-6 flex flex-col justify-between relative">
               <div className="absolute top-4 right-4 bg-brand-600 text-white font-extrabold text-[9px] uppercase px-2 py-0.5 rounded-full tracking-widest">
                 MÁS POPULAR
               </div>
@@ -422,7 +422,7 @@ export default function Landing() {
 
               <Link
                 to="/auth?mode=register&plan=pro"
-                className="w-full text-center py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-glow transition-all block"
+                className="w-full text-center py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all block"
               >
                 Obtener Plan Pro
               </Link>
@@ -556,7 +556,7 @@ export default function Landing() {
               <button
                 type="button"
                 onClick={() => alert('¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.')}
-                className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-glow-sm transition-all"
+                className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all"
               >
                 Enviar Mensaje
               </button>
