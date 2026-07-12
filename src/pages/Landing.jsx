@@ -56,7 +56,9 @@ export default function Landing() {
               </button>
               <div className="flex items-center gap-2">
                 <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
-                <span className="font-bold text-foreground text-lg hidden sm:block">GestivaOne</span>
+                <span className="font-bold text-foreground text-lg hidden sm:block">
+                  Gestiva<span className="text-brand-500">One</span>
+                </span>
               </div>
             </div>
 
