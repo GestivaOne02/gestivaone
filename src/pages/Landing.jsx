@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   Zap, Layers, TrendingUp, Printer, MessageSquare, Mail, Phone, MapPin, Check,
   ChevronRight, ArrowRight, ShieldCheck, ShoppingCart, BarChart3, Users2, Moon, Sun,
-  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star, PartyPopper
+  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star, Palette
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
@@ -81,17 +81,17 @@ export default function Landing() {
                         Más productos de Gestiva
                       </div>
                       <a
-                        href="https://festa.gestivaone.com/"
+                        href="https://gestivapost.vercel.app/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
-                          <PartyPopper size={16} />
+                        <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
+                          <Palette size={16} />
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-foreground">Festa</span>
-                          <span className="text-xs text-muted-400">Plataforma de eventos</span>
+                          <span className="text-sm font-bold text-foreground">GestivaPost</span>
+                          <span className="text-xs text-muted-400">Software de Diseño</span>
                         </div>
                       </a>
                     </motion.div>
