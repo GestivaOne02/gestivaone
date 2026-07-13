@@ -358,11 +358,11 @@ export default function Landing() {
         </div>
 
         {/* Client Logos Marquee */}
-        <div className="mt-10 sm:mt-12 border-t border-white/5 pt-8 pb-10 overflow-hidden relative">
-          <h3 className="text-center text-2xl sm:text-3xl font-extrabold text-white mb-2">
+        <div className="mt-4 pt-4 pb-4 overflow-hidden relative">
+          <h3 className="text-center text-xl sm:text-2xl font-extrabold text-white mb-1">
             Familia Gestiva<span className="text-brand-400">One</span>
           </h3>
-          <p className="text-center text-white/50 text-sm mb-8">
+          <p className="text-center text-white/50 text-sm mb-4">
             <a href="mailto:support@gestivaone.com" className="text-brand-400 hover:text-brand-300 font-semibold transition-colors">
               ¿Quieres ser parte?
             </a>
@@ -373,10 +373,10 @@ export default function Landing() {
           
           <div className="flex overflow-hidden">
             <div className="flex min-w-full animate-marquee items-center justify-center px-8">
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-14 sm:h-16 object-contain opacity-80 hover:opacity-100 transition-opacity" />
             </div>
             <div className="flex min-w-full animate-marquee items-center justify-center px-8">
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-14 sm:h-16 object-contain opacity-80 hover:opacity-100 transition-opacity" />
             </div>
           </div>
         </div>
