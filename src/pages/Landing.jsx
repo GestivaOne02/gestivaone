@@ -365,30 +365,25 @@ export default function Landing() {
         </div>
 
         {/* Client Logos Marquee */}
-        <div className="mt-20 sm:mt-24 border-t border-white/5 pt-10 pb-10 overflow-hidden relative">
-          <p className="text-center text-white/60 text-sm font-semibold mb-8 tracking-wide">
-            Familia GestivaOne. ¿Quieres hacer parte?
+        <div className="mt-10 sm:mt-12 border-t border-white/5 pt-8 pb-10 overflow-hidden relative">
+          <h3 className="text-center text-2xl sm:text-3xl font-extrabold text-white mb-2">
+            Familia Gestiva<span className="text-brand-400">One</span>
+          </h3>
+          <p className="text-center text-white/50 text-sm mb-8">
+            <a href="mailto:support@gestivaone.com" className="text-brand-400 hover:text-brand-300 font-semibold transition-colors underline underline-offset-4">
+              ¿Quieres ser parte?
+            </a>
           </p>
 
           <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#0e0e17] to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#0e0e17] to-transparent z-10 pointer-events-none" />
           
           <div className="flex overflow-hidden">
-            <div className="flex min-w-full animate-marquee items-center justify-around gap-16 px-8">
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
+            <div className="flex min-w-full animate-marquee items-center justify-center px-8">
+              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
             </div>
-            <div className="flex min-w-full animate-marquee items-center justify-around gap-16 px-8">
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
+            <div className="flex min-w-full animate-marquee items-center justify-center px-8">
+              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
             </div>
           </div>
         </div>
