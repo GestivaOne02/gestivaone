@@ -373,10 +373,14 @@ export default function Landing() {
           
           <div className="flex overflow-hidden">
             <div className="flex min-w-full animate-marquee items-center justify-center px-8">
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-14 sm:h-16 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              <a href="https://festa.gestivaone.com/" target="_blank" rel="noopener noreferrer">
+                <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              </a>
             </div>
             <div className="flex min-w-full animate-marquee items-center justify-center px-8">
-              <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-14 sm:h-16 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              <a href="https://festa.gestivaone.com/" target="_blank" rel="noopener noreferrer">
+                <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+              </a>
             </div>
           </div>
         </div>
