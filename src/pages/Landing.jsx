@@ -184,7 +184,7 @@ export default function Landing() {
                 <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
                   <motion.div
                     variants={itemVariants}
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-brand-400 text-xs font-bold uppercase tracking-wider"
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider"
                   >
                     <ShieldCheck size={14} />
                     Gestión Inteligente y Automatizada
