@@ -156,13 +156,7 @@ export default function Landing() {
 
       {/* ─── HERO SECTION ─── */}
       <header className="relative overflow-hidden py-12 lg:py-16 bg-[#0e0e17]">
-        {/* ── Background: app preview image (full, no zoom) ── */}
-        <div
-          className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/gestivaOneFullPreview.png')" }}
-        />
-        {/* Light overlay so image is clearly visible but text is still readable */}
-        <div className="absolute inset-0 bg-[#0e0e17]/50" />
+
 
         {/* Subtle purple glow on top */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none" />
