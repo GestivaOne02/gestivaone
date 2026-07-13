@@ -363,6 +363,31 @@ export default function Landing() {
             </motion.div>
           </motion.div>
         </div>
+
+        {/* Client Logos Marquee */}
+        <div className="mt-20 sm:mt-24 border-t border-white/5 pt-10 overflow-hidden relative">
+          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#0e0e17] to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#0e0e17] to-transparent z-10 pointer-events-none" />
+          
+          <div className="flex flex-nowrap w-[200%] sm:w-[150%] md:w-[120%] lg:w-full min-w-max gap-8 overflow-hidden">
+            <div className="flex min-w-full justify-around animate-marquee gap-8 items-center opacity-50 grayscale px-4">
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+            </div>
+            <div className="flex min-w-full justify-around animate-marquee gap-8 items-center opacity-50 grayscale px-4">
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+              <div className="h-10 w-32 bg-white/10 rounded-md"></div>
+            </div>
+          </div>
+        </div>
       </header>
 
       {/* ─── FEATURES SECTION ─── */}
