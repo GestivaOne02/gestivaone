@@ -336,14 +336,21 @@ export default function Landing() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.5 }}
-                            className="absolute inset-0"
+                            className="absolute inset-0 w-full h-full"
                           >
-                            <iframe
-                              src="https://www.youtube.com/embed/0XhKFxjnsh8?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1"
-                              title="GestivaOne Demo"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              className="w-full h-full border-0"
+                            <ReactPlayer
+                              url="https://www.youtube.com/watch?v=0XhKFxjnsh8"
+                              playing={true}
+                              muted={true}
+                              controls={true}
+                              width="100%"
+                              height="100%"
+                              style={{ position: 'absolute', top: 0, left: 0 }}
+                              config={{
+                                youtube: {
+                                  playerVars: { showinfo: 0, rel: 0, modestbranding: 1 }
+                                }
+                              }}
                             />
                           </motion.div>
                         )}
