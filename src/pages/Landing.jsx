@@ -338,19 +338,12 @@ export default function Landing() {
                             transition={{ duration: 0.5 }}
                             className="absolute inset-0 w-full h-full"
                           >
-                            <ReactPlayer
-                              url="https://www.youtube.com/watch?v=0XhKFxjnsh8"
-                              playing={true}
-                              muted={true}
-                              controls={true}
-                              width="100%"
-                              height="100%"
-                              style={{ position: 'absolute', top: 0, left: 0 }}
-                              config={{
-                                youtube: {
-                                  playerVars: { showinfo: 0, rel: 0, modestbranding: 1 }
-                                }
-                              }}
+                            <iframe
+                              src="https://www.youtube.com/embed/0XhKFxjnsh8?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1"
+                              title="GestivaOne Demo"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                              className="absolute inset-0 w-full h-full border-0"
                             />
                           </motion.div>
                         )}
@@ -370,7 +363,7 @@ export default function Landing() {
             Familia Gestiva<span className="text-brand-400">One</span>
           </h3>
           <p className="text-center text-white/50 text-sm mb-8">
-            <a href="mailto:support@gestivaone.com" className="text-brand-400 hover:text-brand-300 font-semibold transition-colors underline underline-offset-4">
+            <a href="mailto:support@gestivaone.com" className="text-brand-400 hover:text-brand-300 font-semibold transition-colors">
               ¿Quieres ser parte?
             </a>
           </p>
