@@ -110,7 +110,7 @@ export default function InvoicePanel({ isMobile }) {
   const saveBarcode = useScannerCacheStore((s) => s.saveBarcode)
   const products = useProductStore((s) => s.products)
 
-  const handleScanCode = (barcode) => {
+  const handleScanCode = async (barcode) => {
     // 1. Check main inventory by barcode field or name match
     const inventoryMatch = products.find(
       (p) => p.barcode === barcode || p.sku === barcode
@@ -132,8 +132,21 @@ export default function InvoicePanel({ isMobile }) {
       toast.success(`✓ ${cached.name} añadido`)
       return
     }
-    // 3. Unknown code — show price modal
-    setPendingScan({ barcode })
+    
+    // 3. Unknown code — try to fetch name from Open Food Facts API
+    let suggestedName = ''
+    try {
+      const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
+      const data = await res.json()
+      if (data.status === 1 && data.product) {
+        suggestedName = data.product.product_name_es || data.product.product_name || data.product.brands || ''
+      }
+    } catch (e) {
+      console.error("Error fetching product data from API:", e)
+    }
+
+    // 4. Show price modal
+    setPendingScan({ barcode, suggestedName })
   }
 
   const handleModalConfirm = ({ barcode, name, price, saveToCache }) => {
@@ -938,6 +951,7 @@ export default function InvoicePanel({ isMobile }) {
           <ScannerPriceModal
             key="price-modal"
             barcode={pendingScan.barcode}
+            suggestedName={pendingScan.suggestedName}
             onConfirm={handleModalConfirm}
             onCancel={() => setPendingScan(null)}
           />

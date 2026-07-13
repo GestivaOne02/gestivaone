@@ -1,9 +1,9 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ScanLine, Package, DollarSign, Save } from 'lucide-react'
 
-export default function ScannerPriceModal({ barcode, onConfirm, onCancel }) {
-  const [name, setName] = useState('')
+export default function ScannerPriceModal({ barcode, suggestedName = '', onConfirm, onCancel }) {
+  const [name, setName] = useState(suggestedName)
   const [price, setPrice] = useState('')
   const [saveToCache, setSaveToCache] = useState(true)
   const [nameError, setNameError] = useState(false)
