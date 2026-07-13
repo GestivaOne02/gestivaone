@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download, ScanLine } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -11,6 +11,10 @@ import { exportSingleInvoicePDF } from '@/services/exportService'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
 import InvoiceHistoryModal from '@/components/modals/InvoiceHistoryModal'
+import BarcodeScanner from '@/components/invoice/BarcodeScanner'
+import ScannerPriceModal from '@/components/invoice/ScannerPriceModal'
+import { useScannerCacheStore } from '@/store/useScannerCacheStore'
+import { useProductStore } from '@/store/useProductStore'
 
 const TAX_RATES = {
   COP: 0.19,
@@ -64,6 +68,7 @@ export default function InvoicePanel({ isMobile }) {
   const subtotal = useCartStore(selectSubtotal)
   const includeTax = useCartStore((s) => s.includeTax)
   const toggleTax = useCartStore((s) => s.toggleTax)
+  const addScannedItem = useCartStore((s) => s.addScannedItem)
 
   const customCharges = useCartStore((s) => s.customCharges)
   const addCustomCharge = useCartStore((s) => s.addCustomCharge)
@@ -98,6 +103,46 @@ export default function InvoicePanel({ isMobile }) {
   const [isResizing, setIsResizing] = useState(false)
   const [showHistoryModal, setShowHistoryModal] = useState(false)
   
+  // Scanner state
+  const [scannerActive, setScannerActive] = useState(false)
+  const [pendingScan, setPendingScan] = useState(null) // { barcode } waiting for price modal
+  const getByBarcode = useScannerCacheStore((s) => s.getByBarcode)
+  const saveBarcode = useScannerCacheStore((s) => s.saveBarcode)
+  const products = useProductStore((s) => s.products)
+
+  const handleScanCode = (barcode) => {
+    // 1. Check main inventory by barcode field or name match
+    const inventoryMatch = products.find(
+      (p) => p.barcode === barcode || p.sku === barcode
+    )
+    if (inventoryMatch) {
+      addScannedItem({
+        barcode,
+        name: inventoryMatch.name,
+        price: inventoryMatch.price,
+        unit: inventoryMatch.unit ?? 'UND',
+      })
+      toast.success(`✓ ${inventoryMatch.name} añadido`)
+      return
+    }
+    // 2. Check scanned products cache
+    const cached = getByBarcode(barcode)
+    if (cached) {
+      addScannedItem({ barcode, name: cached.name, price: cached.price, unit: cached.unit })
+      toast.success(`✓ ${cached.name} añadido`)
+      return
+    }
+    // 3. Unknown code — show price modal
+    setPendingScan({ barcode })
+  }
+
+  const handleModalConfirm = ({ barcode, name, price, saveToCache }) => {
+    if (saveToCache) saveBarcode(barcode, { name, price })
+    addScannedItem({ barcode, name, price })
+    setPendingScan(null)
+    toast.success(`✓ ${name} añadido a la factura`)
+  }
+
   // Mobile History toggle
   const [mobileViewMode, setMobileViewMode] = useState('cart') // 'cart' | 'history'
   const invoices = useInvoiceStore((s) => s.invoices)
@@ -499,13 +544,22 @@ export default function InvoicePanel({ isMobile }) {
                     </span>
                     
                     {mobileViewMode === 'cart' && (
-                      <button
-                        onClick={() => setMobileViewMode('history')}
-                        className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors"
-                        title="Historial de Facturas"
-                      >
-                        <History size={15} />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => setScannerActive(!scannerActive)}
+                          className={`p-1.5 rounded-lg transition-colors ${scannerActive ? 'bg-brand-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+                          title={scannerActive ? 'Apagar Escáner' : 'Escáner Express'}
+                        >
+                          <ScanLine size={15} />
+                        </button>
+                        <button
+                          onClick={() => setMobileViewMode('history')}
+                          className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors"
+                          title="Historial de Facturas"
+                        >
+                          <History size={15} />
+                        </button>
+                      </>
                     )}
                     {mobileViewMode === 'history' && (
                       <button
@@ -724,6 +778,17 @@ export default function InvoicePanel({ isMobile }) {
             <FileText size={16} className="text-brand-400" />
             <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
             <button
+              onClick={() => setScannerActive(!scannerActive)}
+              className={`p-1.5 rounded-lg transition-colors shrink-0 ${
+                scannerActive
+                  ? 'bg-brand-600 text-white'
+                  : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'
+              }`}
+              title={scannerActive ? 'Apagar Escáner' : 'Activar Escáner Express'}
+            >
+              <ScanLine size={15} />
+            </button>
+            <button
               onClick={() => setShowHistoryModal(true)}
               className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
               title="Historial de Facturas"
@@ -761,6 +826,18 @@ export default function InvoicePanel({ isMobile }) {
               <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
             )}
           </div>
+
+          {/* ─── Desktop Scanner ─── */}
+          <AnimatePresence>
+            {scannerActive && (
+              <BarcodeScanner
+                key="desktop-scanner"
+                onScan={handleScanCode}
+                onClose={() => setScannerActive(false)}
+                isMobile={false}
+              />
+            )}
+          </AnimatePresence>
 
           {/* Items */}
           <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
@@ -842,6 +919,30 @@ export default function InvoicePanel({ isMobile }) {
         open={showHistoryModal} 
         onClose={() => setShowHistoryModal(false)} 
       />
+
+      {/* Mobile fullscreen scanner */}
+      <AnimatePresence>
+        {isMobile && scannerActive && (
+          <BarcodeScanner
+            key="mobile-scanner"
+            onScan={handleScanCode}
+            onClose={() => setScannerActive(false)}
+            isMobile
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Price modal for unknown barcodes */}
+      <AnimatePresence>
+        {pendingScan && (
+          <ScannerPriceModal
+            key="price-modal"
+            barcode={pendingScan.barcode}
+            onConfirm={handleModalConfirm}
+            onCancel={() => setPendingScan(null)}
+          />
+        )}
+      </AnimatePresence>
     </>
   )
 }

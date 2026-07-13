@@ -134,6 +134,25 @@ export const useCartStore = create((set, get) => {
       }))
     },
 
+    addScannedItem: ({ barcode, name, price, unit = 'UND' }) => {
+      setAndRecalc((s) => ({
+        items: [
+          ...s.items,
+          {
+            id: `scan-${Date.now()}-${Math.random()}`,
+            productId: null,
+            name: name || `Artículo [${barcode?.slice(-6) ?? '?'}]`,
+            price: Number(price) || 0,
+            qty: 1,
+            unit,
+            isCustom: true,
+            isScanned: true,
+            barcode: barcode ?? null,
+          },
+        ],
+      }))
+    },
+
     removeItem: (id) =>
       setAndRecalc((s) => ({ items: s.items.filter((i) => i.id !== id) })),
 
