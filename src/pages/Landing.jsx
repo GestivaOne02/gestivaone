@@ -159,7 +159,7 @@ export default function Landing() {
         {/* ── Background: app preview image (full, no zoom) ── */}
         <div
           className="absolute inset-0 bg-contain bg-top bg-no-repeat"
-          style={{ backgroundImage: "url('/images/gestivaOnePreview.png')" }}
+          style={{ backgroundImage: "url('/images/gestivaOneFullPreview.png')" }}
         />
         {/* Light overlay so image is clearly visible but text is still readable */}
         <div className="absolute inset-0 bg-[#0e0e17]/50" />
