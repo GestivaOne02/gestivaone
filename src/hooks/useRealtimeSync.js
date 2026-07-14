@@ -23,6 +23,7 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'products', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
+          console.log('🟢 Realtime Payload (products):', payload)
           useProductStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -30,6 +31,7 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'clients', filter: `company_id=eq.${user.companyId}` },
         (payload) => {
+          console.log('🟢 Realtime Payload (clients):', payload)
           useClientStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -94,9 +96,13 @@ export function useRealtimeSync() {
           usePayrollStore.getState().applyRealtimeUpdate(payload)
         }
       )
-      .subscribe((status) => {
+      .subscribe((status, err) => {
+        console.log('🔵 Realtime Sync Status:', status, err || '')
         if (status === 'SUBSCRIBED') {
-           // connected
+           console.log('✅ Listening to Realtime changes for company:', user.companyId)
+        }
+        if (status === 'CHANNEL_ERROR') {
+           console.error('❌ Realtime Channel Error:', err)
         }
       })
 
