@@ -207,10 +207,10 @@ export default function Notifications() {
                     }
                   }}
                   className={clsx(
-                    "group relative overflow-hidden flex gap-4 p-4 rounded-2xl border transition-all duration-300 cursor-pointer select-none active:scale-[0.99]",
+                    "group relative overflow-hidden flex gap-4 p-4 rounded-2xl transition-all duration-300 cursor-pointer select-none active:scale-[0.99]",
                     notif.read 
-                      ? "bg-transparent border-transparent opacity-60 scale-[0.99] hover:opacity-80 hover:scale-[0.995]" 
-                      : clsx("bg-white dark:bg-surface-800 border-subtle hover:border-brand-500/30 hover:scale-[1.01] shadow-sm", style.border)
+                      ? "bg-transparent opacity-60 scale-[0.99] hover:opacity-80 hover:scale-[0.995]" 
+                      : "bg-white dark:bg-surface-800 hover:scale-[1.01] shadow-sm"
                   )}
                 >
                   {/* Left indicator strip for unread notifications */}
@@ -233,7 +233,7 @@ export default function Notifications() {
                   {/* Message body */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className={clsx("text-sm font-bold truncate transition-colors duration-300", notif.read ? "text-muted-500/60 font-medium" : "text-foreground")}>
+                      <h4 className={clsx("text-sm truncate transition-colors duration-300", notif.read ? "text-muted-500/60 font-medium" : "text-black dark:text-white font-bold")}>
                         {notif.title}
                       </h4>
                       <div className={clsx(
@@ -244,7 +244,7 @@ export default function Notifications() {
                         <span>{notif.category}</span>
                       </div>
                     </div>
-                    <p className={clsx("text-xs mt-1.5 leading-relaxed transition-colors duration-300", notif.read ? "text-muted-500/50" : "text-muted-400")}>
+                    <p className={clsx("text-xs mt-1.5 leading-relaxed transition-colors duration-300", notif.read ? "text-muted-500/50" : "text-black dark:text-neutral-200 font-medium")}>
                       {notif.message}
                     </p>
                   </div>
@@ -267,10 +267,10 @@ export default function Notifications() {
                         deleteNotification(notif.id)
                         toast.success('Notificación eliminada', { id: `del-${notif.id}`, duration: 1500 })
                       }}
-                      className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-surface-750 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 focus:outline-none"
+                      className="p-1.5 rounded-lg bg-danger-500/10 text-danger-500 hover:bg-danger-500/20 transition-colors opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 focus:outline-none"
                       title="Eliminar"
                     >
-                      <X size={14} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </motion.div>
