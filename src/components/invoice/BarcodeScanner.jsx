@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Volume2, VolumeX, Camera, ZapOff, Zap, RotateCcw, ScanLine } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -211,18 +211,16 @@ export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
     )
   }
 
-  // ───── DESKTOP: floating panel ─────
+  // ───── DESKTOP: flex container ─────
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 12, scale: 0.97 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-      className="absolute bottom-4 left-4 right-4 z-30 bg-surface-900 border border-subtle rounded-2xl shadow-2xl overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col bg-surface-900 overflow-hidden relative"
     >
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-subtle bg-surface-800">
-        <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-subtle bg-surface-800 shrink-0">
         <ScanLine size={14} className="text-brand-400" />
         <span className="text-xs font-bold text-brand-400 flex-1">Escáner Activo</span>
         <span className="text-[10px] text-muted-400 mr-1">Escaneados: {scanCount}</span>
@@ -243,10 +241,10 @@ export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
       </div>
 
       {/* Camera preview */}
-      <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
+      <div className="relative bg-black flex-1 w-full h-full">
         <video
           ref={videoRef}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
           playsInline
           muted
         />
@@ -293,9 +291,11 @@ export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
         )}
       </div>
 
-      <p className="text-center text-[10px] text-muted-400 py-2">
-        Apunta el código al recuadro morado para escanear
-      </p>
+      <div className="bg-surface-800 border-t border-subtle shrink-0">
+        <p className="text-center text-[10px] text-muted-400 py-2">
+          Apunta el código al recuadro morado para escanear
+        </p>
+      </div>
     </motion.div>
   )
 }

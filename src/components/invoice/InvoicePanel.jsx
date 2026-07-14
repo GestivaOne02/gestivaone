@@ -841,76 +841,85 @@ export default function InvoicePanel({ isMobile }) {
           </div>
 
           {/* ─── Desktop Scanner ─── */}
-          <AnimatePresence>
-            {scannerActive && (
+          <AnimatePresence mode="wait">
+            {scannerActive ? (
               <BarcodeScanner
                 key="desktop-scanner"
                 onScan={handleScanCode}
                 onClose={() => setScannerActive(false)}
                 isMobile={false}
               />
+            ) : (
+              /* Items */
+              <motion.div
+                key="items-list"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex-1 overflow-y-auto p-3 flex flex-col gap-2"
+              >
+                <AnimatePresence initial={false}>
+                  {items.length === 0 ? (
+                    <motion.div
+                      key="empty"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex flex-col items-center justify-center h-full gap-3 text-center"
+                    >
+                      <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center shrink-0">
+                        <ShoppingCart size={20} className="text-muted-400" />
+                      </div>
+                      <div className="text-sm text-muted-400 max-w-[200px]">
+                        El carrito está vacío.<br />
+                        Añade productos desde el panel.
+                      </div>
+                    </motion.div>
+                  ) : (
+                    items.map((item) => (
+                      <motion.div
+                        key={item.id}
+                        layout
+                        initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 20, scale: 0.9 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        className="bg-surface-700 border border-subtle rounded-xl p-3 shrink-0"
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
+                            <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
+                          </div>
+                          <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5 shrink-0">
+                            <X size={11} />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-1.5">
+                            <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
+                              <Minus size={9} />
+                            </button>
+                            <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
+                            <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
+                              <Plus size={9} />
+                            </button>
+                          </div>
+                          <motion.span
+                            key={`${item.id}-${item.qty}-${item.price}`}
+                            initial={{ scale: 1.1, color: '#a78bfa' }}
+                            animate={{ scale: 1, color: 'var(--text-foreground)' }}
+                            className="text-xs font-bold shrink-0"
+                          >
+                            {format(item.price * item.qty)}
+                          </motion.span>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
+                </AnimatePresence>
+              </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Items */}
-          <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
-            <AnimatePresence initial={false}>
-              {items.length === 0 ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex flex-col items-center justify-center h-full gap-3 text-center"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center shrink-0">
-                    <ShoppingCart size={20} className="text-muted-400" />
-                  </div>
-                  <p className="text-xs text-muted-400">El carrito está vacío.<br />Añade productos desde el panel.</p>
-                </motion.div>
-              ) : (
-                items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    initial={{ opacity: 0, x: 20, scale: 0.95 }}
-                    animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: 20, scale: 0.9 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    className="bg-surface-700 border border-subtle rounded-xl p-3 shrink-0"
-                  >
-                    <div className="flex items-start gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
-                        <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
-                      </div>
-                      <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5 shrink-0">
-                        <X size={11} />
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center gap-1.5">
-                        <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
-                          <Minus size={9} />
-                        </button>
-                        <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
-                        <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
-                          <Plus size={9} />
-                        </button>
-                      </div>
-                      <motion.span
-                        key={`${item.id}-${item.qty}-${item.price}`}
-                        initial={{ scale: 1.1, color: '#a78bfa' }}
-                        animate={{ scale: 1, color: 'var(--text-foreground)' }}
-                        className="text-xs font-bold shrink-0"
-                      >
-                        {format(item.price * item.qty)}
-                      </motion.span>
-                    </div>
-                  </motion.div>
-                ))
-              )}
-            </AnimatePresence>
-          </div>
 
           {/* Footer */}
           <div className="p-4 border-t border-subtle shrink-0 space-y-4">
