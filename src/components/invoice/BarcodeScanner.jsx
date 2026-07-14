@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState, useCallback, useId } from 'react'
+import { createPortal } from 'react-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { X, Volume2, VolumeX, ZapOff, Zap, RotateCcw, ScanLine } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-const SCANNER_ELEMENT_ID = 'html5-qr-scanner-region'
 const SCAN_COOLDOWN_MS = 1500
 
 function playBeep() {
@@ -22,321 +22,372 @@ function playBeep() {
   } catch (_) {}
 }
 
-// Detect iOS Safari
-function isIOS() {
-  return /iPhone|iPad|iPod/i.test(navigator.userAgent)
-}
-
-export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
+// ─────────────────────────────────────────────
+// Desktop inline scanner (inside InvoicePanel)
+// ─────────────────────────────────────────────
+function DesktopScanner({ onScan, onClose }) {
+  const elementId = 'gestiva-scanner-desktop'
   const scannerRef = useRef(null)
   const lastScannedRef = useRef({ code: null, time: 0 })
+  const mountedRef = useRef(false)
 
   const [soundOn, setSoundOn] = useState(true)
-  const [flashOn, setFlashOn] = useState(false)
-  const [facingMode, setFacingMode] = useState('environment')
   const [scanCount, setScanCount] = useState(0)
   const [scanFlash, setScanFlash] = useState(false)
-  const [cameraReady, setCameraReady] = useState(false)
-  const [cameraError, setCameraError] = useState(null)
+  const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'error'
+  const [errorMsg, setErrorMsg] = useState('')
 
   const stopScanner = useCallback(async () => {
     if (scannerRef.current) {
       try {
-        const state = scannerRef.current.getState()
-        // state 2 = SCANNING, state 3 = PAUSED
-        if (state === 2 || state === 3) {
-          await scannerRef.current.stop()
-        }
-        scannerRef.current.clear()
+        const state = scannerRef.current.getState?.()
+        if (state === 2 || state === 3) await scannerRef.current.stop()
+        scannerRef.current.clear?.()
       } catch (_) {}
       scannerRef.current = null
     }
-    setCameraReady(false)
   }, [])
 
   const startScanner = useCallback(async () => {
+    if (!mountedRef.current) return
     await stopScanner()
-    setCameraError(null)
+    setStatus('loading')
+    setErrorMsg('')
 
     try {
       const { Html5Qrcode } = await import('html5-qrcode')
-
-      // Ensure element exists before initializing
-      const el = document.getElementById(SCANNER_ELEMENT_ID)
-      if (!el) {
-        setTimeout(() => startScanner(), 100)
-        return
-      }
-
-      const scanner = new Html5Qrcode(SCANNER_ELEMENT_ID)
+      if (!mountedRef.current) return
+      const scanner = new Html5Qrcode(elementId)
       scannerRef.current = scanner
 
-      const config = {
-        fps: 12,
-        qrbox: isIOS()
-          ? { width: 280, height: 180 }
-          : { width: 250, height: 160 },
-        aspectRatio: isMobile ? 1.0 : 1.777,
-        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-      }
-
-      const cameraConfig = { facingMode }
-
       await scanner.start(
-        cameraConfig,
-        config,
-        (decodedText) => {
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 200, height: 130 }, disableFlip: false },
+        (text) => {
           const now = Date.now()
-          if (
-            decodedText === lastScannedRef.current.code &&
-            now - lastScannedRef.current.time < SCAN_COOLDOWN_MS
-          ) return
-
-          lastScannedRef.current = { code: decodedText, time: now }
+          if (text === lastScannedRef.current.code && now - lastScannedRef.current.time < SCAN_COOLDOWN_MS) return
+          lastScannedRef.current = { code: text, time: now }
           if (soundOn) playBeep()
           setScanFlash(true)
           setTimeout(() => setScanFlash(false), 400)
-          setScanCount((c) => c + 1)
-          onScan(decodedText)
+          setScanCount(c => c + 1)
+          onScan(text)
         },
-        () => {} // ignore decode errors (frames without a barcode)
+        () => {}
       )
-
-      setCameraReady(true)
+      if (mountedRef.current) setStatus('ready')
     } catch (err) {
-      let msg = 'No se pudo acceder a la cámara.'
-      if (err?.name === 'NotAllowedError' || err?.message?.includes('Permission')) {
-        msg = 'Permiso de cámara denegado. Ve a Ajustes > Safari > Cámara y permite el acceso.'
-      } else if (err?.name === 'NotFoundError' || err?.message?.includes('camera')) {
-        msg = 'No se encontró ninguna cámara disponible en este dispositivo.'
-      } else if (err?.message?.includes('NotReadable') || err?.name === 'NotReadableError') {
-        msg = 'La cámara está siendo usada por otra app. Ciérrala e intenta de nuevo.'
-      } else {
-        msg = `Error de cámara: ${err?.message || err?.name || 'desconocido'}`
-      }
-      setCameraError(msg)
-      toast.error(msg, { duration: 5000 })
+      if (!mountedRef.current) return
+      setStatus('error')
+      setErrorMsg(buildErrorMsg(err))
     }
-  }, [facingMode, soundOn, onScan, stopScanner, isMobile])
+  }, [soundOn, onScan, stopScanner])
 
   useEffect(() => {
-    startScanner()
-    return () => { stopScanner() }
-  }, [facingMode]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const switchCamera = () => {
-    setFacingMode((m) => (m === 'environment' ? 'user' : 'environment'))
-  }
-
-  const toggleFlash = async () => {
-    if (!scannerRef.current) return
-    try {
-      const track = scannerRef.current?.getRunningTrack?.()
-      if (track) {
-        await track.applyConstraints({ advanced: [{ torch: !flashOn }] })
-        setFlashOn(!flashOn)
-      } else {
-        toast('Flash no disponible en este dispositivo')
-      }
-    } catch {
-      toast('Flash no disponible en este dispositivo')
+    mountedRef.current = true
+    // Small delay to ensure DOM is ready
+    const t = setTimeout(() => startScanner(), 80)
+    return () => {
+      clearTimeout(t)
+      mountedRef.current = false
+      stopScanner()
     }
-  }
+  }, []) // eslint-disable-line
 
-  // ───── MOBILE: fullscreen ─────
-  if (isMobile) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[70] bg-black flex flex-col"
-      >
-        {/* Camera region — html5-qrcode renders its own video here */}
-        <div className="relative flex-1 overflow-hidden">
-          <div
-            id={SCANNER_ELEMENT_ID}
-            className="absolute inset-0 w-full h-full"
-            style={{ minHeight: '100%' }}
-          />
-
-          {/* Reticle overlay */}
-          {cameraReady && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="relative w-64 h-40">
-                {[
-                  'top-0 left-0 border-t-4 border-l-4 rounded-tl-lg',
-                  'top-0 right-0 border-t-4 border-r-4 rounded-tr-lg',
-                  'bottom-0 left-0 border-b-4 border-l-4 rounded-bl-lg',
-                  'bottom-0 right-0 border-b-4 border-r-4 rounded-br-lg',
-                ].map((cls, i) => (
-                  <div
-                    key={i}
-                    className={`absolute w-8 h-8 transition-colors duration-200 ${cls}`}
-                    style={{ borderColor: scanFlash ? '#10b981' : '#7c3aee' }}
-                  />
-                ))}
-                <motion.div
-                  animate={{ top: ['10%', '85%', '10%'] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute left-2 right-2 h-0.5"
-                  style={{ backgroundColor: scanFlash ? '#10b981' : '#7c3aee', opacity: 0.8 }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Scan counter */}
-          <div className="absolute top-4 right-4 bg-black/60 rounded-xl px-3 py-1.5 backdrop-blur-sm z-10">
-            <p className="text-xs text-white font-bold">Escaneados: {scanCount}</p>
-          </div>
-
-          {/* Loading */}
-          {!cameraReady && !cameraError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-10 h-10 border-2 border-[#7c3aee] border-t-transparent rounded-full animate-spin" />
-                <p className="text-white text-sm">Iniciando cámara…</p>
-              </div>
-            </div>
-          )}
-
-          {/* Error */}
-          {cameraError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/90 p-6 z-10">
-              <div className="flex flex-col items-center gap-4 text-center">
-                <p className="text-red-400 text-sm">{cameraError}</p>
-                <button
-                  onClick={startScanner}
-                  className="px-4 py-2 rounded-xl bg-[#7c3aee] text-white text-xs font-bold"
-                >
-                  Intentar de nuevo
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom action bar */}
-        <div className="bg-black/90 backdrop-blur-sm px-6 py-4 flex items-center justify-between gap-4 shrink-0">
-          <button
-            onClick={onClose}
-            className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center"
-          >
-            <X size={20} className="text-white" />
-          </button>
-          <button
-            onClick={toggleFlash}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${flashOn ? 'bg-yellow-500 text-black' : 'bg-white/10 text-white'}`}
-          >
-            {flashOn ? <Zap size={20} /> : <ZapOff size={20} />}
-          </button>
-          <button
-            onClick={switchCamera}
-            className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center"
-          >
-            <RotateCcw size={18} className="text-white" />
-          </button>
-          <button
-            onClick={() => setSoundOn(!soundOn)}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${soundOn ? 'bg-[#7c3aee] text-white' : 'bg-white/10 text-white/50'}`}
-          >
-            {soundOn ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          </button>
-        </div>
-      </motion.div>
-    )
-  }
-
-  // ───── DESKTOP: inline inside InvoicePanel ─────
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex-1 flex flex-col bg-surface-900 overflow-hidden relative"
+      className="flex-1 flex flex-col bg-surface-900 overflow-hidden"
     >
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2.5 border-b border-subtle bg-surface-800 shrink-0">
         <ScanLine size={14} className="text-brand-400" />
         <span className="text-xs font-bold text-brand-400 flex-1">Escáner Activo</span>
         <span className="text-[10px] text-muted-400 mr-1">Escaneados: {scanCount}</span>
-        <button
-          onClick={() => setSoundOn(!soundOn)}
-          className={`p-1 rounded-lg transition-colors ${soundOn ? 'text-brand-400 hover:text-brand-300' : 'text-muted-500 hover:text-muted-400'}`}
-        >
+        <button onClick={() => setSoundOn(s => !s)} className={`p-1 rounded-lg transition-colors ${soundOn ? 'text-brand-400' : 'text-muted-500'}`}>
           {soundOn ? <Volume2 size={13} /> : <VolumeX size={13} />}
         </button>
-        <button
-          onClick={onClose}
-          className="p-1 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors"
-        >
+        <button onClick={onClose} className="p-1 rounded-lg text-muted-400 hover:text-danger-400 transition-colors">
           <X size={14} />
         </button>
       </div>
 
-      {/* Camera region */}
-      <div className="relative bg-black flex-1 w-full overflow-hidden">
-        <div
-          id={SCANNER_ELEMENT_ID}
-          className="absolute inset-0 w-full h-full"
-          style={{ minHeight: '100%' }}
-        />
+      {/* Camera area */}
+      <div className="relative bg-black flex-1 overflow-hidden">
+        <div id={elementId} className="w-full h-full" style={{ minHeight: '180px' }} />
 
         {/* Reticle overlay */}
-        {cameraReady && (
+        {status === 'ready' && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="relative w-40 h-24">
+            <div className="relative w-48 h-28">
+              {['top-0 left-0 border-t-2 border-l-2','top-0 right-0 border-t-2 border-r-2','bottom-0 left-0 border-b-2 border-l-2','bottom-0 right-0 border-b-2 border-r-2'].map((cls, i) => (
+                <div key={i} className={`absolute w-5 h-5 ${cls} transition-colors`} style={{ borderColor: scanFlash ? '#10b981' : '#7c3aee' }} />
+              ))}
+              <motion.div animate={{ top: ['5%','90%','5%'] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute left-1 right-1 h-px" style={{ backgroundColor: scanFlash ? '#10b981' : '#7c3aee' }} />
+            </div>
+          </div>
+        )}
+
+        {status === 'loading' && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-7 h-7 border-2 border-[#7c3aee] border-t-transparent rounded-full animate-spin" />
+              <p className="text-white text-[11px]">Iniciando cámara…</p>
+            </div>
+          </div>
+        )}
+        {status === 'error' && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/90 p-3">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <p className="text-red-400 text-xs">{errorMsg}</p>
+              <button onClick={startScanner} className="px-3 py-1.5 rounded-lg bg-[#7c3aee] text-white text-xs font-bold">Reintentar</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="bg-surface-800 border-t border-subtle shrink-0 py-1.5">
+        <p className="text-center text-[10px] text-muted-400">Apunta el código al recuadro morado</p>
+      </div>
+    </motion.div>
+  )
+}
+
+// ─────────────────────────────────────────────
+// Mobile fullscreen scanner (rendered via Portal)
+// ─────────────────────────────────────────────
+function MobileScanner({ onScan, onClose }) {
+  const elementId = 'gestiva-scanner-mobile'
+  const scannerRef = useRef(null)
+  const lastScannedRef = useRef({ code: null, time: 0 })
+  const mountedRef = useRef(false)
+
+  const [soundOn, setSoundOn] = useState(true)
+  const [flashOn, setFlashOn] = useState(false)
+  const [facingMode, setFacingMode] = useState('environment')
+  const [scanCount, setScanCount] = useState(0)
+  const [scanFlash, setScanFlash] = useState(false)
+  const [status, setStatus] = useState('loading')
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const stopScanner = useCallback(async () => {
+    if (scannerRef.current) {
+      try {
+        const state = scannerRef.current.getState?.()
+        if (state === 2 || state === 3) await scannerRef.current.stop()
+        scannerRef.current.clear?.()
+      } catch (_) {}
+      scannerRef.current = null
+    }
+  }, [])
+
+  const startScanner = useCallback(async (facing = facingMode) => {
+    if (!mountedRef.current) return
+    await stopScanner()
+    setStatus('loading')
+    setErrorMsg('')
+
+    try {
+      const { Html5Qrcode } = await import('html5-qrcode')
+      if (!mountedRef.current) return
+
+      const scanner = new Html5Qrcode(elementId)
+      scannerRef.current = scanner
+
+      // Try exact facingMode first, fall back to any camera
+      let started = false
+      const configs = [
+        { facingMode: { exact: facing } },
+        { facingMode: facing },
+        { facingMode: 'environment' },
+      ]
+
+      for (const camConfig of configs) {
+        try {
+          await scanner.start(
+            camConfig,
+            { fps: 10, qrbox: { width: 260, height: 160 }, disableFlip: false },
+            (text) => {
+              const now = Date.now()
+              if (text === lastScannedRef.current.code && now - lastScannedRef.current.time < SCAN_COOLDOWN_MS) return
+              lastScannedRef.current = { code: text, time: now }
+              if (soundOn) playBeep()
+              setScanFlash(true)
+              setTimeout(() => setScanFlash(false), 400)
+              setScanCount(c => c + 1)
+              onScan(text)
+            },
+            () => {}
+          )
+          started = true
+          break
+        } catch (_) { /* try next */ }
+      }
+
+      if (!started) throw new Error('Could not start camera with any config')
+      if (mountedRef.current) setStatus('ready')
+    } catch (err) {
+      if (!mountedRef.current) return
+      setStatus('error')
+      setErrorMsg(buildErrorMsg(err))
+    }
+  }, [facingMode, soundOn, onScan, stopScanner])
+
+  useEffect(() => {
+    mountedRef.current = true
+    // Delay to let the portal render and have real DOM dimensions
+    const t = setTimeout(() => startScanner(), 150)
+    return () => {
+      clearTimeout(t)
+      mountedRef.current = false
+      stopScanner()
+    }
+  }, []) // eslint-disable-line
+
+  const switchCamera = async () => {
+    const next = facingMode === 'environment' ? 'user' : 'environment'
+    setFacingMode(next)
+    await startScanner(next)
+  }
+
+  const toggleFlash = async () => {
+    if (!scannerRef.current) return
+    try {
+      const track = scannerRef.current.getRunningTrack?.()
+      if (track) {
+        await track.applyConstraints({ advanced: [{ torch: !flashOn }] })
+        setFlashOn(f => !f)
+      }
+    } catch (_) { toast('Flash no disponible') }
+  }
+
+  const content = (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#000', display: 'flex', flexDirection: 'column' }}
+    >
+      {/* Camera region */}
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        <div
+          id={elementId}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', minHeight: '100px' }}
+        />
+
+        {/* Reticle */}
+        {status === 'ready' && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+            <div style={{ position: 'relative', width: 260, height: 160 }}>
               {[
-                'top-0 left-0 border-t-2 border-l-2 rounded-tl',
-                'top-0 right-0 border-t-2 border-r-2 rounded-tr',
-                'bottom-0 left-0 border-b-2 border-l-2 rounded-bl',
-                'bottom-0 right-0 border-b-2 border-r-2 rounded-br',
-              ].map((cls, i) => (
-                <div
-                  key={i}
-                  className={`absolute w-5 h-5 transition-colors duration-200 ${cls}`}
-                  style={{ borderColor: scanFlash ? '#10b981' : '#7c3aee' }}
-                />
+                { top: 0, left: 0, borderTop: '4px solid', borderLeft: '4px solid', borderRadius: '4px 0 0 0' },
+                { top: 0, right: 0, borderTop: '4px solid', borderRight: '4px solid', borderRadius: '0 4px 0 0' },
+                { bottom: 0, left: 0, borderBottom: '4px solid', borderLeft: '4px solid', borderRadius: '0 0 0 4px' },
+                { bottom: 0, right: 0, borderBottom: '4px solid', borderRight: '4px solid', borderRadius: '0 0 4px 0' },
+              ].map((s, i) => (
+                <div key={i} style={{ position: 'absolute', width: 32, height: 32, borderColor: scanFlash ? '#10b981' : '#7c3aee', ...s }} />
               ))}
               <motion.div
-                animate={{ top: ['5%', '90%', '5%'] }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute left-1 right-1 h-px"
-                style={{ backgroundColor: scanFlash ? '#10b981' : '#7c3aee', opacity: 0.9 }}
+                animate={{ top: ['8%', '88%', '8%'] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ position: 'absolute', left: 8, right: 8, height: 2, background: scanFlash ? '#10b981' : '#7c3aee', opacity: 0.85 }}
               />
             </div>
           </div>
         )}
 
-        {!cameraReady && !cameraError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/80">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-7 h-7 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-white text-[11px]">Iniciando cámara…</p>
+        {/* Scan count badge */}
+        <div style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(0,0,0,0.6)', borderRadius: 12, padding: '6px 12px' }}>
+          <span style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>Escaneados: {scanCount}</span>
+        </div>
+
+        {/* Loading */}
+        {status === 'loading' && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)', zIndex: 2 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 40, height: 40, border: '3px solid #7c3aee', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <p style={{ color: '#fff', fontSize: 14 }}>Iniciando cámara…</p>
             </div>
           </div>
         )}
-        {cameraError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/90 p-3">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <p className="text-red-400 text-xs">{cameraError}</p>
+
+        {/* Error */}
+        {status === 'error' && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.9)', padding: 24, zIndex: 2 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, textAlign: 'center' }}>
+              <p style={{ color: '#f87171', fontSize: 14, lineHeight: 1.5 }}>{errorMsg}</p>
               <button
-                onClick={startScanner}
-                className="px-3 py-1.5 rounded-lg bg-brand-600 text-white text-xs font-bold"
+                onClick={() => startScanner()}
+                style={{ padding: '8px 20px', background: '#7c3aee', color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: 13, border: 'none', cursor: 'pointer' }}
               >
-                Reintentar
+                Intentar de nuevo
               </button>
             </div>
           </div>
         )}
       </div>
 
-      <div className="bg-surface-800 border-t border-subtle shrink-0">
-        <p className="text-center text-[10px] text-muted-400 py-2">
-          Apunta el código al recuadro morado para escanear
-        </p>
+      {/* Bottom bar */}
+      <div style={{ background: 'rgba(0,0,0,0.9)', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: 16, flexShrink: 0 }}>
+        {/* Close */}
+        <button onClick={onClose} style={btnStyle('#dc2626')}>
+          <X size={22} color="#fff" />
+        </button>
+        {/* Flash */}
+        <button onClick={toggleFlash} style={btnStyle(flashOn ? '#eab308' : 'rgba(255,255,255,0.12)')}>
+          {flashOn ? <Zap size={20} color="#000" /> : <ZapOff size={20} color="#fff" />}
+        </button>
+        {/* Rotate */}
+        <button onClick={switchCamera} style={btnStyle('rgba(255,255,255,0.12)')}>
+          <RotateCcw size={18} color="#fff" />
+        </button>
+        {/* Sound */}
+        <button onClick={() => setSoundOn(s => !s)} style={btnStyle(soundOn ? '#7c3aee' : 'rgba(255,255,255,0.12)')}>
+          {soundOn ? <Volume2 size={18} color="#fff" /> : <VolumeX size={18} color="rgba(255,255,255,0.4)" />}
+        </button>
       </div>
+
+      {/* Spinner animation */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </motion.div>
   )
+
+  return createPortal(content, document.body)
+}
+
+function btnStyle(bg) {
+  return {
+    width: 52, height: 52, borderRadius: '50%',
+    background: bg, border: 'none', cursor: 'pointer',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    flexShrink: 0,
+  }
+}
+
+function buildErrorMsg(err) {
+  const name = err?.name || ''
+  const msg = err?.message || ''
+  if (name === 'NotAllowedError' || msg.includes('Permission') || msg.includes('ermission')) {
+    return 'Permiso denegado. Ve a Ajustes > Safari/Chrome > Cámara y permite el acceso a este sitio.'
+  }
+  if (name === 'NotFoundError' || msg.includes('camera') || msg.includes('amera')) {
+    return 'No se encontró ninguna cámara disponible.'
+  }
+  if (name === 'NotReadableError' || msg.includes('NotReadable')) {
+    return 'La cámara está siendo usada por otra app. Ciérrala e intenta de nuevo.'
+  }
+  return `Error de cámara: ${msg || name || 'desconocido'}`
+}
+
+// ─────────────────────────────────────────────
+// Public export — routes to correct sub-component
+// ─────────────────────────────────────────────
+export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
+  if (isMobile) {
+    return <MobileScanner onScan={onScan} onClose={onClose} />
+  }
+  return <DesktopScanner onScan={onScan} onClose={onClose} />
 }
