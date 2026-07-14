@@ -868,17 +868,6 @@ export default function InvoicePanel({ isMobile }) {
             <FileText size={16} className="text-brand-400" />
             <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
             <button
-              onClick={() => setScannerActive(!scannerActive)}
-              className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                scannerActive
-                  ? 'bg-brand-600 text-white'
-                  : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'
-              }`}
-              title={scannerActive ? 'Apagar Escáner' : 'Activar Escáner Express'}
-            >
-              <ScanLine size={15} />
-            </button>
-            <button
               onClick={() => setShowHistoryModal(true)}
               className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
               title="Historial de Facturas"
@@ -917,25 +906,9 @@ export default function InvoicePanel({ isMobile }) {
             )}
           </div>
 
-          {/* ─── Desktop Scanner ─── */}
-          <AnimatePresence mode="wait">
-            {scannerActive ? (
-              <BarcodeScanner
-                key="desktop-scanner"
-                onScan={handleScanCode}
-                onClose={() => setScannerActive(false)}
-                isMobile={false}
-              />
-            ) : (
-              /* Items */
-              <motion.div
-                key="items-list"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex-1 overflow-y-auto p-3 flex flex-col gap-2"
-              >
-                <AnimatePresence initial={false}>
+          {/* Items */}
+          <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
+            <AnimatePresence initial={false}>
                   {items.length === 0 ? (
                     <motion.div
                       key="empty"
@@ -993,10 +966,8 @@ export default function InvoicePanel({ isMobile }) {
                       </motion.div>
                     ))
                   )}
-                </AnimatePresence>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
 
           {/* Footer */}
           <div className="p-4 border-t border-subtle shrink-0 space-y-4">
