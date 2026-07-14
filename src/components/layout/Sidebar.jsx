@@ -202,7 +202,6 @@ export default function Sidebar({ isMobile }) {
               <span className="text-[16px] font-black text-white uppercase tracking-wide truncate max-w-[180px]" title={user?.companyName || 'Mi Empresa'}>
                 {user?.companyName || 'Mi Empresa'}
               </span>
-              <img src="/images/gestivaOneIcon.svg" alt="GestivaOne" className="h-3.5 mt-1 object-left object-contain" />
             </div>
           </div>
 
@@ -367,11 +366,10 @@ export default function Sidebar({ isMobile }) {
 
         {/* Company name — hidden when collapsed */}
         {!collapsed && (
-          <div className="flex flex-col leading-tight overflow-hidden whitespace-nowrap min-w-0">
+          <div className="flex flex-col leading-tight justify-center overflow-hidden whitespace-nowrap min-w-0">
             <span className="text-[15px] font-black text-foreground uppercase tracking-wide truncate max-w-[130px]" title={user?.companyName || 'Mi Empresa'}>
               {user?.companyName || 'Mi Empresa'}
             </span>
-            <img src="/images/gestivaOneIcon.svg" alt="GestivaOne" className="h-3 mt-1 object-left object-contain" />
           </div>
         )}
       </div>
