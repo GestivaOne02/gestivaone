@@ -576,7 +576,7 @@ export default function Products() {
     if (activeCat) list = list.filter((p) => p.category === activeCat)
     if (search) {
       const q = search.toLowerCase()
-      list = list.filter((p) => p.name.toLowerCase().includes(q) || (p.code && p.code.toLowerCase().includes(q)))
+      list = list.filter((p) => p.name.toLowerCase().includes(q) || (p.barcode && p.barcode.toLowerCase().includes(q)) || (p.code && p.code.toLowerCase().includes(q)))
     }
 
     // 2. Letter filter
