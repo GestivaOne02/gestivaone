@@ -36,7 +36,6 @@ export function useRealtimeSync() {
         'broadcast',
         { event: 'manual_sync_event' },
         async ({ payload }) => {
-          console.log('📡 Broadcast received:', payload)
           if (payload.table === 'products') useProductStore.getState().applyRealtimeUpdate(payload)
           if (payload.table === 'clients') useClientStore.getState().applyRealtimeUpdate(payload)
           if (payload.table === 'notifications') {
@@ -50,7 +49,6 @@ export function useRealtimeSync() {
         { event: '*', schema: 'public', table: 'products' },
         (payload) => {
           if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
-          console.log('🟢 Realtime Payload (products):', payload)
           useProductStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -59,7 +57,6 @@ export function useRealtimeSync() {
         { event: '*', schema: 'public', table: 'clients' },
         (payload) => {
           if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
-          console.log('🟢 Realtime Payload (clients):', payload)
           useClientStore.getState().applyRealtimeUpdate(payload)
         }
       )
@@ -141,10 +138,6 @@ export function useRealtimeSync() {
         }
       )
       .subscribe((status, err) => {
-        console.log('🔵 Realtime Sync Status:', status, err || '')
-        if (status === 'SUBSCRIBED') {
-           console.log('✅ Listening to Realtime changes for company:', user.companyId)
-        }
         if (status === 'CHANNEL_ERROR') {
            console.error('❌ Realtime Channel Error:', err)
         }
