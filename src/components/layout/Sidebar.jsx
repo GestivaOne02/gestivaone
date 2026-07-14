@@ -308,7 +308,7 @@ export default function Sidebar({ isMobile }) {
               )}
             </div>
 
-            {/* Storage usage bar */}
+            {/* Storage usage bar - HIDDEN FOR NOW
             <div className="px-3.5 py-3 mx-3 mb-2 bg-surface-950/40 rounded-xl">
               <div className="flex justify-between items-end mb-2">
                 <span className="text-[9px] font-bold text-muted-400 uppercase tracking-widest">Almacenamiento</span>
@@ -322,6 +322,7 @@ export default function Sidebar({ isMobile }) {
                 <div style={{ width: `${Math.max(storageData.pctOther, 1)}%` }} className="bg-slate-500 hover:brightness-110 transition-all cursor-help" title="Sistema" />
               </div>
             </div>
+            */}
 
             {/* Hide menu button */}
             <button 
@@ -541,7 +542,7 @@ export default function Sidebar({ isMobile }) {
           )}
         </div>
 
-        {/* Storage usage bar */}
+        {/* Storage usage bar - HIDDEN FOR NOW
         {!collapsed && (
           <div className="px-3.5 py-3 mx-3 mb-2 bg-surface-950/40 rounded-xl">
             <div className="flex justify-between items-end mb-2">
@@ -563,6 +564,7 @@ export default function Sidebar({ isMobile }) {
             </div>
           </div>
         )}
+        */}
 
         {/* Collapse toggle */}
         <div className="p-2">
