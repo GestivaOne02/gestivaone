@@ -35,10 +35,14 @@ export function useRealtimeSync() {
       .on(
         'broadcast',
         { event: 'manual_sync_event' },
-        ({ payload }) => {
+        async ({ payload }) => {
           console.log('📡 Broadcast received:', payload)
           if (payload.table === 'products') useProductStore.getState().applyRealtimeUpdate(payload)
           if (payload.table === 'clients') useClientStore.getState().applyRealtimeUpdate(payload)
+          if (payload.table === 'notifications') {
+             const ns = await import('@/store/useNotificationStore')
+             ns.useNotificationStore.getState().applyRealtimeUpdate(payload)
+          }
         }
       )
       .on(
@@ -57,6 +61,15 @@ export function useRealtimeSync() {
           if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           console.log('🟢 Realtime Payload (clients):', payload)
           useClientStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'notifications' },
+        async (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
+          const ns = await import('@/store/useNotificationStore')
+          ns.useNotificationStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(

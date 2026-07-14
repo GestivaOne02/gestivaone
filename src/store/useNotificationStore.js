@@ -7,6 +7,7 @@ import { useInvoiceStore } from './useInvoiceStore'
 import { idbStorage } from '@/lib/idbStorage'
 import { parseISO, format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { broadcastSyncEvent } from '@/hooks/useRealtimeSync'
 
 const STALE_TIME = 1000 * 60 * 5 // 5 minutos
 
@@ -71,6 +72,7 @@ export const useNotificationStore = create(
       set((state) => ({
         notifications: [data, ...state.notifications]
       }))
+      broadcastSyncEvent('notifications', 'INSERT', data, null)
       
       // Native desktop notification trigger
       try {
@@ -106,6 +108,8 @@ export const useNotificationStore = create(
       console.error('❌ Error marking notification as read:', error)
       // Rollback
       get().fetchNotifications()
+    } else {
+      broadcastSyncEvent('notifications', 'UPDATE', { id, read: true }, null)
     }
   },
 
@@ -126,6 +130,8 @@ export const useNotificationStore = create(
     if (error) {
       console.error('❌ Error marking all notifications as read:', error)
       get().fetchNotifications()
+    } else {
+      broadcastSyncEvent('notifications', 'BULK_UPDATE', { ids, read: true }, null)
     }
   },
 
@@ -144,6 +150,8 @@ export const useNotificationStore = create(
     if (error) {
       console.error('❌ Error deleting notification:', error)
       get().fetchNotifications()
+    } else {
+      broadcastSyncEvent('notifications', 'DELETE', null, { id })
     }
   },
 
@@ -161,6 +169,8 @@ export const useNotificationStore = create(
 
     if (error) {
       console.error('❌ Error clearing read notifications:', error)
+    } else {
+      broadcastSyncEvent('notifications', 'BULK_DELETE_READ', null, null)
     }
     await get().fetchNotifications()
   },
@@ -171,6 +181,27 @@ export const useNotificationStore = create(
 
   getUnreadCount: () => {
     return get().notifications.filter(n => !n.read).length
+  },
+
+  applyRealtimeUpdate: (payload) => {
+    const { eventType, new: newRecord, old: oldRecord } = payload
+    set((s) => {
+      let updated = [...s.notifications]
+      if (eventType === 'INSERT') {
+        if (!updated.some(n => n.id === newRecord.id)) {
+          updated = [newRecord, ...updated]
+        }
+      } else if (eventType === 'UPDATE') {
+        updated = updated.map(n => n.id === newRecord.id ? { ...n, ...newRecord } : n)
+      } else if (eventType === 'DELETE') {
+        updated = updated.filter(n => n.id !== oldRecord.id)
+      } else if (eventType === 'BULK_UPDATE') {
+        updated = updated.map(n => newRecord.ids.includes(n.id) ? { ...n, ...newRecord } : n)
+      } else if (eventType === 'BULK_DELETE_READ') {
+        updated = updated.filter(n => !n.read)
+      }
+      return { notifications: updated }
+    })
   }
     }),
     {
