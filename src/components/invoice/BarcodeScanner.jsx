@@ -51,13 +51,26 @@ export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
     stopCamera()
     setCameraError(null)
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('NO_HTTPS')
+      }
+
       const { BrowserMultiFormatReader } = await import('@zxing/library')
       const reader = new BrowserMultiFormatReader()
       readerRef.current = reader
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
-      })
+      let stream
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+        })
+      } catch (err) {
+        // Fallback si falla por constraints
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' } // o solo true si esto falla
+        }).catch(() => navigator.mediaDevices.getUserMedia({ video: true }))
+      }
+
       streamRef.current = stream
 
       if (videoRef.current) {
@@ -84,9 +97,16 @@ export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
         }
       })
     } catch (err) {
-      const msg = err?.name === 'NotAllowedError'
-        ? 'Permiso de cámara denegado. Habilítalo en la configuración del navegador.'
-        : 'No se pudo acceder a la cámara.'
+      let msg = 'No se pudo acceder a la cámara.'
+      if (err?.message === 'NO_HTTPS') {
+        msg = 'El navegador bloqueó la cámara. Se requiere conexión segura (HTTPS) o localhost.'
+      } else if (err?.name === 'NotAllowedError') {
+        msg = 'Permiso denegado. Habilita la cámara en los ajustes de tu navegador.'
+      } else if (err?.name === 'NotFoundError') {
+        msg = 'No se detectó ninguna cámara en este dispositivo.'
+      } else if (err?.name === 'NotReadableError') {
+        msg = 'La cámara está siendo usada por otra aplicación.'
+      }
       setCameraError(msg)
       toast.error(msg)
     }
