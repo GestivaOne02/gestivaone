@@ -473,3 +473,4 @@ textarea,
 .app-layout [title] {
   cursor: help !important;
 }
+body { overflow: hidden; height: 100dvh; width: 100vw; position: fixed; inset: 0; overscroll-behavior: none; }

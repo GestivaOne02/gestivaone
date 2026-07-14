@@ -202,7 +202,7 @@ export default function Sidebar({ isMobile }) {
               <span className="text-[16px] font-black text-white uppercase tracking-wide truncate max-w-[180px]" title={user?.companyName || 'Mi Empresa'}>
                 {user?.companyName || 'Mi Empresa'}
               </span>
-              <span className="text-[10.5px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">GestivaOne</span>
+              <img src="/images/gestivaOneIcon.svg" alt="GestivaOne" className="h-3.5 mt-1 object-left object-contain" />
             </div>
           </div>
 
@@ -371,7 +371,7 @@ export default function Sidebar({ isMobile }) {
             <span className="text-[15px] font-black text-foreground uppercase tracking-wide truncate max-w-[130px]" title={user?.companyName || 'Mi Empresa'}>
               {user?.companyName || 'Mi Empresa'}
             </span>
-            <span className="text-[10px] text-brand-400 font-bold tracking-widest uppercase mt-0.5">GestivaOne</span>
+            <img src="/images/gestivaOneIcon.svg" alt="GestivaOne" className="h-3 mt-1 object-left object-contain" />
           </div>
         )}
       </div>
