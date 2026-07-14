@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import { X, ScanLine } from 'lucide-react'
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode'
@@ -86,9 +87,9 @@ function BaseScanner({ onScan, onClose, isMobile, containerId }) {
     }
   }, [containerId, isMobile, onScan])
 
-  return (
+  const ui = (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className={isMobile ? "flex-1 flex flex-col bg-surface-900 overflow-hidden" : "w-full max-w-sm mx-auto bg-surface-900 border border-subtle overflow-hidden flex flex-col"}
+      className={isMobile ? "fixed inset-0 z-[99999] flex flex-col bg-surface-900 overflow-hidden" : "w-full max-w-sm mx-auto bg-surface-900 border border-subtle overflow-hidden flex flex-col"}
       style={!isMobile ? { borderRadius: 16, height: 400 } : {}}
     >
       <div className="flex items-center gap-2 px-3 py-2.5 border-b border-subtle bg-surface-800 shrink-0">
@@ -123,11 +124,16 @@ function BaseScanner({ onScan, onClose, isMobile, containerId }) {
         )}
       </div>
 
-      <div className="bg-surface-800 border-t border-subtle py-1.5 shrink-0 z-20">
+      <div className="bg-surface-800 border-t border-subtle py-1.5 shrink-0 z-20 pb-safe">
         <p className="text-center text-[10px] text-muted-400">Apunta al recuadro para escanear</p>
       </div>
     </motion.div>
   )
+
+  if (isMobile && typeof document !== 'undefined') {
+    return createPortal(ui, document.body)
+  }
+  return ui
 }
 
 export default function BarcodeScanner({ onScan, onClose, isMobile = false }) {
