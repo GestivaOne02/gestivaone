@@ -15,7 +15,7 @@ import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
 const schema = z.object({
-  name: z.string().min(2, 'Mínimo 2 caracteres'),
+  name: z.string().min(2, 'Mínimo 2 caracteres').max(50, 'Máximo 50 caracteres'),
   price: z.coerce.number().positive('Precio inválido'),
   cost: z.coerce.number().min(0, 'Costo inválido').optional().or(z.literal('')),
   unit: z.enum(['KG', 'LB', 'UND', 'L', 'M', 'HORA']),
@@ -447,6 +447,7 @@ export default function AddProductModal({ open }) {
               icon={<Package size={14} />}
               error={errors.name?.message}
               placeholder="Ej: Arroz blanco"
+              maxLength={50}
               {...register('name')}
             />
 
