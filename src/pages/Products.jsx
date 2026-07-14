@@ -767,7 +767,7 @@ export default function Products() {
 
       {/* Product grid */}
       <div className="flex-1">
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {(prdLoading && products.length === 0) ? (
             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
               {Array.from({ length: 10 }).map((_, i) => (
@@ -790,7 +790,14 @@ export default function Products() {
               )}
             </motion.div>
           ) : viewMode === 'grouped' ? (
-            <div className="space-y-8 pb-10">
+            <motion.div 
+              key="grouped"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-8 pb-10"
+            >
               {Object.entries(groupedProducts).map(([category, items]) => (
                 <div key={category} className="space-y-4">
                   <h3 className="text-sm font-bold text-foreground border-b border-subtle pb-2 flex items-center gap-2">
@@ -822,9 +829,16 @@ export default function Products() {
                   </div>
                 </div>
               ))}
-            </div>
+            </motion.div>
           ) : viewMode === 'masonry' ? (
-            <Masonry
+            <motion.div
+              key="masonry"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Masonry
               items={displayedProducts}
               getItemId={(p) => p.id}
               gap={16}
@@ -857,8 +871,16 @@ export default function Products() {
                 />
               )}
             />
+            </motion.div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 items-start">
+            <motion.div 
+              key="grid"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 items-start"
+            >
               {displayedProducts.map((p) => (
                 <ProductCard
                   key={p.id}
@@ -880,7 +902,7 @@ export default function Products() {
                   }}
                 />
               ))}
-            </div>
+            </motion.div>
           )}
         </AnimatePresence>
         
