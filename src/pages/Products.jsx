@@ -282,7 +282,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           {/* Barcode Visual Display */}
           {product.barcode && (
             <div className={clsx(
-              "bg-white p-1.5 rounded-md shadow-sm flex items-center justify-center border border-neutral-200 overflow-hidden",
+              "bg-white p-1.5 rounded-md flex items-center justify-center overflow-hidden",
               product.barcode.length > 8 ? "w-full mt-2" : "shrink-0 mt-0.5"
             )}>
               <div className={product.barcode.length > 12 ? "scale-[0.80] origin-center" : "scale-[0.90] origin-center"}>
