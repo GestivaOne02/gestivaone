@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { idbStorage } from '@/lib/idbStorage'
+import { broadcastSyncEvent } from '@/hooks/useRealtimeSync'
 
 const STALE_TIME = 1000 * 60 * 60 * 24 // 24 horas
 
@@ -59,6 +60,7 @@ export const useClientStore = create(
     }
 
     set((s) => ({ clients: [saved, ...s.clients] }))
+    broadcastSyncEvent('clients', 'INSERT', saved, null)
 
     // Notify admin via email asynchronously
     import('../services/emailService').then(({ sendNewClientEmail }) => {
@@ -87,6 +89,8 @@ export const useClientStore = create(
       set((s) => ({
         clients: s.clients.map((c) => (c.id === id ? { ...c, ...cleanData } : c)),
       }))
+      const updatedRecord = { ...get().clients.find(c => c.id === id), ...cleanData }
+      broadcastSyncEvent('clients', 'UPDATE', updatedRecord, null)
     }
   },
 
@@ -101,6 +105,7 @@ export const useClientStore = create(
         clients: s.clients.filter((c) => c.id !== id),
         selectedClientId: s.selectedClientId === id ? null : s.selectedClientId,
       }))
+      broadcastSyncEvent('clients', 'DELETE', null, { id })
     }
   },
 

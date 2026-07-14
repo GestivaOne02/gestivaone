@@ -10,6 +10,18 @@ import { usePocketStore } from '@/store/usePocketStore'
 import { useHRStore } from '@/store/useHRStore'
 import { usePayrollStore } from '@/store/usePayrollStore'
 
+export let globalChannel = null;
+
+export const broadcastSyncEvent = (table, eventType, newRecord, oldRecord) => {
+  if (globalChannel) {
+    globalChannel.send({
+      type: 'broadcast',
+      event: 'manual_sync_event',
+      payload: { table, eventType, new: newRecord, old: oldRecord }
+    }).catch(err => console.error('Broadcast error:', err))
+  }
+}
+
 export function useRealtimeSync() {
   const user = useAuthStore((s) => s.user)
 
@@ -17,8 +29,18 @@ export function useRealtimeSync() {
     if (!user?.companyId) return
 
     const channel = supabase.channel(`company_realtime_${user.companyId}`)
+    globalChannel = channel
 
     channel
+      .on(
+        'broadcast',
+        { event: 'manual_sync_event' },
+        ({ payload }) => {
+          console.log('📡 Broadcast received:', payload)
+          if (payload.table === 'products') useProductStore.getState().applyRealtimeUpdate(payload)
+          if (payload.table === 'clients') useClientStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'products' },

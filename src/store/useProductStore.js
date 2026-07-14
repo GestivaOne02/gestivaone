@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { idbStorage } from '@/lib/idbStorage'
+import { broadcastSyncEvent } from '@/hooks/useRealtimeSync'
 
 const CATEGORIES = ['Alimentos', 'Bebidas', 'Limpieza', 'Electrónica', 'Ropa', 'Servicios', 'Otros']
 export { CATEGORIES }
@@ -93,6 +94,7 @@ export const useProductStore = create(
     }
 
     set((s) => ({ products: [...s.products, saved] }))
+    broadcastSyncEvent('products', 'INSERT', saved, null)
     return saved
   },
 
@@ -106,6 +108,9 @@ export const useProductStore = create(
       set((s) => ({
         products: s.products.map((p) => (p.id === id ? { ...p, ...data } : p)),
       }))
+
+      const updatedRecord = { ...get().products.find(p => p.id === id), ...data }
+      broadcastSyncEvent('products', 'UPDATE', updatedRecord, null)
 
       // Low stock alert: fire when stock drops to 5 or below
       if (typeof data.stock === 'number' && data.stock <= 5) {
@@ -131,6 +136,7 @@ export const useProductStore = create(
 
     if (!error) {
       set((s) => ({ products: s.products.filter((p) => p.id !== id) }))
+      broadcastSyncEvent('products', 'DELETE', null, { id })
     }
   },
 
