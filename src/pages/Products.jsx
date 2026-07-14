@@ -278,12 +278,12 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
 
           {/* Barcode Visual Display (Right side) */}
           {product.barcode && (
-            <div className="shrink-0 bg-white p-1 rounded-sm shadow-sm flex items-center justify-center mt-1 border border-neutral-200">
+            <div className="shrink-0 bg-white p-1.5 rounded-md shadow-sm flex items-center justify-center mt-0.5 border border-neutral-200">
               <Barcode
                 value={product.barcode}
-                width={1}
-                height={28}
-                fontSize={10}
+                width={1.2}
+                height={34}
+                fontSize={11}
                 margin={0}
                 displayValue={true}
                 background="#ffffff"
