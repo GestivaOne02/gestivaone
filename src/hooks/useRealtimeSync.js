@@ -21,38 +21,43 @@ export function useRealtimeSync() {
     channel
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'products', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'products' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           console.log('🟢 Realtime Payload (products):', payload)
           useProductStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'clients', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'clients' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           console.log('🟢 Realtime Payload (clients):', payload)
           useClientStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'invoices', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'invoices' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useInvoiceStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'expenses', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'expenses' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useExpenseStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'profiles', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'profiles' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           // Profile updates could be new employees or setting changes
           if (useEmployeeStore.getState().applyRealtimeUpdate) {
              useEmployeeStore.getState().applyRealtimeUpdate(payload)
@@ -70,29 +75,33 @@ export function useRealtimeSync() {
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'hr_employees', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'hr_employees' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useHRStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'hr_recruitment_candidates', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'hr_recruitment_candidates' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useHRStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'hr_vacations', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'hr_vacations' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useHRStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'payroll_runs', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'payroll_runs' },
         (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           usePayrollStore.getState().applyRealtimeUpdate(payload)
         }
       )
