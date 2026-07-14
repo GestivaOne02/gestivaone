@@ -259,10 +259,12 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           </div>
         )}
 
-        <div className="flex justify-between items-start gap-2 mt-1">
-          <div className="flex-1 min-w-0">
+        <div className={clsx("flex justify-between gap-2 mt-1", (product.barcode && product.barcode.length > 8) ? "items-start flex-col" : "items-start")}>
+          <div className="flex-1 min-w-0 w-full">
             {/* Product name */}
-            <p className="text-sm font-bold text-foreground truncate pr-16 leading-tight">{product.name}</p>
+            <p className="text-sm font-bold text-foreground truncate pr-6 leading-tight" title={product.name}>
+              {product.name.length > 35 ? product.name.substring(0, 35) + '...' : product.name}
+            </p>
 
             {/* Category + Unit row */}
             <div className="flex items-center gap-1.5 mt-1.5">
@@ -277,19 +279,24 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
             </div>
           </div>
 
-          {/* Barcode Visual Display (Right side) */}
+          {/* Barcode Visual Display */}
           {product.barcode && (
-            <div className="shrink-0 bg-white p-1.5 rounded-md shadow-sm flex items-center justify-center mt-0.5 border border-neutral-200">
-              <Barcode
-                value={product.barcode}
-                width={1.2}
-                height={34}
-                fontSize={11}
-                margin={0}
-                displayValue={true}
-                background="#ffffff"
-                lineColor="#000000"
-              />
+            <div className={clsx(
+              "bg-white p-1.5 rounded-md shadow-sm flex items-center justify-center border border-neutral-200 overflow-hidden",
+              product.barcode.length > 8 ? "w-full mt-2" : "shrink-0 mt-0.5"
+            )}>
+              <div className={product.barcode.length > 12 ? "scale-[0.80] origin-center" : "scale-[0.90] origin-center"}>
+                <Barcode
+                  value={product.barcode}
+                  width={1.2}
+                  height={34}
+                  fontSize={11}
+                  margin={0}
+                  displayValue={true}
+                  background="#ffffff"
+                  lineColor="#000000"
+                />
+              </div>
             </div>
           )}
         </div>
