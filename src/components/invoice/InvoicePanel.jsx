@@ -738,6 +738,31 @@ export default function InvoicePanel({ isMobile }) {
             </>
           )}
         </AnimatePresence>
+
+        {/* Mobile fullscreen scanner */}
+        <AnimatePresence>
+          {scannerActive && (
+            <BarcodeScanner
+              key="mobile-scanner"
+              onScan={handleScanCode}
+              onClose={() => setScannerActive(false)}
+              isMobile
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Price modal for unknown barcodes */}
+        <AnimatePresence>
+          {pendingScan && (
+            <ScannerPriceModal
+              key="price-modal-mobile"
+              barcode={pendingScan.barcode}
+              suggestedName={pendingScan.suggestedName}
+              onConfirm={handleModalConfirm}
+              onCancel={() => setPendingScan(null)}
+            />
+          )}
+        </AnimatePresence>
       </>
     )
   }
@@ -941,18 +966,6 @@ export default function InvoicePanel({ isMobile }) {
         open={showHistoryModal} 
         onClose={() => setShowHistoryModal(false)} 
       />
-
-      {/* Mobile fullscreen scanner */}
-      <AnimatePresence>
-        {isMobile && scannerActive && (
-          <BarcodeScanner
-            key="mobile-scanner"
-            onScan={handleScanCode}
-            onClose={() => setScannerActive(false)}
-            isMobile
-          />
-        )}
-      </AnimatePresence>
 
       {/* Price modal for unknown barcodes */}
       <AnimatePresence>
