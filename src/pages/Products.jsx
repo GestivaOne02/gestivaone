@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Percent, CalendarDays } from 'lucide-react'
+import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Columns, Percent, CalendarDays } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import SearchBar from '@/components/ui/SearchBar'
 import SortFilterBar from '@/components/ui/SortFilterBar'
@@ -14,6 +14,7 @@ import { useClientStore } from '@/store/useClientStore'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import Barcode from 'react-barcode'
+import Masonry from '@/components/ui/Masonry'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -442,7 +443,7 @@ export default function Products() {
   const [freePrice, setFreePrice] = useState('')
   const [freeName, setFreeName]   = useState('')
   const [showFree, setShowFree]   = useState(false)
-  const [isGrouped, setIsGrouped] = useState(false)
+  const [viewMode, setViewMode] = useState('masonry') // 'masonry' | 'grid' | 'grouped'
   // Sort & Filter state
   const [sortMode, setSortMode] = useState('recent')
   const [activeLetter, setActiveLetter] = useState(null)
@@ -611,7 +612,7 @@ export default function Products() {
   const { visibleItems: displayedProducts, observerTarget, hasMore } = useInfiniteScroll(filtered)
 
   const groupedProducts = useMemo(() => {
-    if (!isGrouped) return {}
+    if (viewMode !== 'grouped') return {}
     const groups = {}
     displayedProducts.forEach(p => {
       const cat = p.category || 'Otros'
@@ -619,7 +620,7 @@ export default function Products() {
       groups[cat].push(p)
     })
     return groups
-  }, [displayedProducts, isGrouped])
+  }, [displayedProducts, viewMode])
 
   const handleAdd = (product, qty) => {
     const success = addItem(product, qty)
@@ -718,15 +719,22 @@ export default function Products() {
               />
               <div className="flex bg-surface-800 border border-subtle rounded-lg p-0.5 shrink-0 h-10 items-center">
                 <button
-                  onClick={() => setIsGrouped(false)}
-                  className={clsx('p-1.5 rounded-md transition-colors', !isGrouped ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
+                  onClick={() => setViewMode('masonry')}
+                  className={clsx('p-1.5 rounded-md transition-colors', viewMode === 'masonry' ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
+                  title="Vista Masonry (Estilo Pinterest)"
+                >
+                  <Columns size={14} />
+                </button>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={clsx('p-1.5 rounded-md transition-colors', viewMode === 'grid' ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
                   title="Vista tradicional"
                 >
                   <LayoutGrid size={14} />
                 </button>
                 <button
-                  onClick={() => setIsGrouped(true)}
-                  className={clsx('p-1.5 rounded-md transition-colors', isGrouped ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
+                  onClick={() => setViewMode('grouped')}
+                  className={clsx('p-1.5 rounded-md transition-colors', viewMode === 'grouped' ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
                   title="Agrupar por categoría"
                 >
                   <Layers size={14} />
@@ -781,11 +789,11 @@ export default function Products() {
                 <Button variant="outline" size="sm" icon={<Plus size={14} />} onClick={() => openModal('addProduct')}>Crear producto</Button>
               )}
             </motion.div>
-          ) : isGrouped ? (
-            <div className="flex flex-col gap-6">
+          ) : viewMode === 'grouped' ? (
+            <div className="space-y-8 pb-10">
               {Object.entries(groupedProducts).map(([category, items]) => (
-                <div key={category} className="space-y-3">
-                  <h3 className="text-sm font-black text-brand-400 uppercase tracking-widest px-1 flex items-center gap-2">
+                <div key={category} className="space-y-4">
+                  <h3 className="text-sm font-bold text-foreground border-b border-subtle pb-2 flex items-center gap-2">
                     {category}
                     <span className="text-[10px] bg-surface-700 text-muted-400 px-2 py-0.5 rounded-full">{items.length}</span>
                   </h3>
@@ -815,6 +823,40 @@ export default function Products() {
                 </div>
               ))}
             </div>
+          ) : viewMode === 'masonry' ? (
+            <Masonry
+              items={displayedProducts}
+              getItemId={(p) => p.id}
+              gap={16}
+              breakpoints={{
+                1600: 6,
+                1400: 5,
+                1100: 4,
+                768: 3,
+                480: 2,
+                0: 1
+              }}
+              renderItem={(p) => (
+                <ProductCard
+                  product={p}
+                  onEdit={(prod) => openModal('addProduct', { product: prod })}
+                  onDuplicate={(prod) => {
+                    const { id, created_at, updated_at, ...duplicateData } = prod
+                    openDuplicate('addProduct', duplicateData)
+                  }}
+                  onDelete={handleDelete}
+                  onAdd={handleAdd}
+                  format$={format$}
+                  onSelectHourlyProduct={(prod) => {
+                    setSelectedHourlyProduct(prod)
+                    setSelectedGanttDate(new Date().toISOString().split('T')[0])
+                    setRangeStart(null)
+                    setRangeEnd(null)
+                    setHoveredHour(null)
+                  }}
+                />
+              )}
+            />
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 items-start">
               {displayedProducts.map((p) => (
