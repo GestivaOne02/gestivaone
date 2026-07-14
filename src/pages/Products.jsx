@@ -258,35 +258,40 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           </div>
         )}
 
-        {/* Product name */}
-        <p className="text-sm font-bold text-foreground truncate pr-16 leading-tight">{product.name}</p>
+        <div className="flex justify-between items-start gap-2 mt-1">
+          <div className="flex-1 min-w-0">
+            {/* Product name */}
+            <p className="text-sm font-bold text-foreground truncate pr-16 leading-tight">{product.name}</p>
 
-        {/* Category + Unit row */}
-        <div className="flex items-center gap-1.5 mt-1.5">
-          <span className="text-[10px] font-semibold text-muted-500 bg-neutral-100 dark:bg-surface-700/60 px-2 py-0.5 rounded-md truncate border border-neutral-200/50 dark:border-transparent">
-            {product.category}
-          </span>
-          {product.unit !== 'ILIMITADO' && (
-            <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0', unitColor)}>
-              {UNIT_LABELS[product.unit] || product.unit}
-            </span>
+            {/* Category + Unit row */}
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <span className="text-[10px] font-semibold text-muted-500 bg-neutral-100 dark:bg-surface-700/60 px-2 py-0.5 rounded-md truncate border border-neutral-200/50 dark:border-transparent">
+                {product.category}
+              </span>
+              {product.unit !== 'ILIMITADO' && (
+                <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0', unitColor)}>
+                  {UNIT_LABELS[product.unit] || product.unit}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Barcode Visual Display (Right side) */}
+          {product.barcode && (
+            <div className="shrink-0 bg-white p-1 rounded-sm shadow-sm flex items-center justify-center mt-1 border border-neutral-200">
+              <Barcode
+                value={product.barcode}
+                width={1}
+                height={28}
+                fontSize={10}
+                margin={0}
+                displayValue={true}
+                background="#ffffff"
+                lineColor="#000000"
+              />
+            </div>
           )}
         </div>
-
-        {/* Barcode Visual Display */}
-        {product.barcode && (
-          <div className="mt-2.5 overflow-hidden flex items-center justify-start pointer-events-none opacity-90 mix-blend-multiply dark:mix-blend-screen dark:brightness-150">
-            <Barcode
-              value={product.barcode}
-              width={1.2}
-              height={30}
-              fontSize={10}
-              margin={0}
-              displayValue={true}
-              background="transparent"
-            />
-          </div>
-        )}
       </div>
 
       {/* ── Zone 2: Price Hero ── */}

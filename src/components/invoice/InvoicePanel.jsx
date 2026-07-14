@@ -188,6 +188,38 @@ export default function InvoicePanel({ isMobile }) {
     }
   }, [mobileViewMode, fetchInvoices])
 
+  // Physical Barcode Scanner (Keyboard Emulation) Listener
+  useEffect(() => {
+    let barcodeBuffer = ''
+    let lastKeyTime = 0
+    
+    const handleGlobalKeyDown = (e) => {
+      // Ignore if user is typing in an input (except if it's the price modal, which has its own handlers)
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+      
+      const now = Date.now()
+      // Scanner guns type very fast (usually < 30ms per character)
+      if (now - lastKeyTime > 50) {
+        barcodeBuffer = ''
+      }
+      lastKeyTime = now
+      
+      if (e.key === 'Enter' && barcodeBuffer.length > 3) {
+        handleScanCode(barcodeBuffer)
+        barcodeBuffer = ''
+        e.preventDefault()
+        return
+      }
+      
+      if (e.key.length === 1) {
+        barcodeBuffer += e.key
+      }
+    }
+    
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [handleScanCode])
+
   useEffect(() => {
     loadPinnedCharges()
   }, [])
