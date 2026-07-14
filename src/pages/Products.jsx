@@ -13,6 +13,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useClientStore } from '@/store/useClientStore'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Barcode from 'react-barcode'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -271,6 +272,21 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
             </span>
           )}
         </div>
+
+        {/* Barcode Visual Display */}
+        {product.barcode && (
+          <div className="mt-2.5 overflow-hidden flex items-center justify-start pointer-events-none opacity-90 mix-blend-multiply dark:mix-blend-screen dark:brightness-150">
+            <Barcode
+              value={product.barcode}
+              width={1.2}
+              height={30}
+              fontSize={10}
+              margin={0}
+              displayValue={true}
+              background="transparent"
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Zone 2: Price Hero ── */}

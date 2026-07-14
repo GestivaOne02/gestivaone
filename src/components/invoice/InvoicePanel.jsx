@@ -109,6 +109,7 @@ export default function InvoicePanel({ isMobile }) {
   const getByBarcode = useScannerCacheStore((s) => s.getByBarcode)
   const saveBarcode = useScannerCacheStore((s) => s.saveBarcode)
   const products = useProductStore((s) => s.products)
+  const addProduct = useProductStore((s) => s.addProduct)
 
   const handleScanCode = async (barcode) => {
     // 1. Check main inventory by barcode field or name match
@@ -149,9 +150,28 @@ export default function InvoicePanel({ isMobile }) {
     setPendingScan({ barcode, suggestedName })
   }
 
-  const handleModalConfirm = ({ barcode, name, price, saveToCache }) => {
-    if (saveToCache) saveBarcode(barcode, { name, price })
-    addScannedItem({ barcode, name, price })
+  const handleModalConfirm = async ({ barcode, name, price, saveToCache }) => {
+    if (saveToCache) {
+      try {
+        await addProduct({
+          name,
+          price,
+          barcode,
+          category: 'Otros',
+          unit: 'UND',
+          stock: 0,
+          cost: 0,
+          show_in_store: false,
+          featured: false
+        })
+        toast.success(`✓ ${name} guardado en el catálogo`)
+      } catch (e) {
+        console.error('Error saving to DB, falling back to cache', e)
+        saveBarcode(barcode, { name, price })
+      }
+    }
+    
+    addScannedItem({ barcode, name, price, unit: 'UND' })
     setPendingScan(null)
     toast.success(`✓ ${name} añadido a la factura`)
   }

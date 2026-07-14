@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus } from 'lucide-react'
+import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus, Barcode } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -21,6 +21,7 @@ const schema = z.object({
   unit: z.enum(['KG', 'LB', 'UND', 'L', 'M', 'HORA']),
   category: z.string().optional(),
   stock: z.coerce.number().min(0).optional(),
+  barcode: z.string().optional(),
   attachment_url: z.string().optional(),
   attachment_name: z.string().optional(),
   discount_type: z.string().optional().nullable(),
@@ -32,6 +33,16 @@ const schema = z.object({
   featured: z.boolean().optional(),
   description: z.string().optional(),
 })
+
+/** Generates a unique GO-XXXXXXXX barcode for GestivaOne products */
+const generateGOBarcode = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = 'GO-'
+  for (let i = 0; i < 8; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return code
+}
 
 const UNITS = ['KG', 'LB', 'UND', 'L', 'M', 'HORA']
 const UNIT_LABELS = { HORA: 'H' }
@@ -67,7 +78,7 @@ export default function AddProductModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' },
+    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0, barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' },
   })
 
   const unit = watch('unit')
@@ -184,6 +195,7 @@ export default function AddProductModal({ open }) {
         unit: duplicating.unit === 'ILIMITADO' ? 'UND' : duplicating.unit,
         stock: isEditingUnlimited ? 0 : (duplicating.stock ?? 0),
         cost: duplicating.cost ?? 0,
+        barcode: '',
         attachment_url: duplicating.attachment_url ?? '',
         attachment_name: duplicating.attachment_name ?? '',
         discount_type: duplicating.discount_type || 'percentage',
@@ -230,6 +242,7 @@ export default function AddProductModal({ open }) {
         unit: editing.unit === 'ILIMITADO' ? 'UND' : editing.unit,
         stock: isEditingUnlimited ? 0 : (editing.stock ?? 0),
         cost: editing.cost ?? 0,
+        barcode: editing.barcode ?? '',
         attachment_url: editing.attachment_url ?? '',
         attachment_name: editing.attachment_name ?? '',
         discount_type: editing.discount_type || 'percentage',
@@ -257,7 +270,7 @@ export default function AddProductModal({ open }) {
         store: false,
         attachments: false
       })
-      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
+      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
     }
   }, [open, editing, duplicating, reset])
@@ -309,6 +322,11 @@ export default function AddProductModal({ open }) {
 
     const finalUnit = isActuallyHourly ? 'HORA' : (isUnlimited ? 'ILIMITADO' : data.unit)
 
+    // Auto-generate barcode if not provided
+    const finalBarcode = (data.barcode && data.barcode.trim())
+      ? data.barcode.trim()
+      : (editing?.barcode || generateGOBarcode())
+
     const finalData = {
       name: data.name,
       price: data.price,
@@ -316,6 +334,7 @@ export default function AddProductModal({ open }) {
       unit: finalUnit,
       stock: (finalUnit === 'HORA' || isUnlimited) ? 999999999 : Number(data.stock || 0),
       category: finalCategory,
+      barcode: finalBarcode,
       attachment_url: activeSections.attachments ? data.attachment_url : '',
       attachment_name: activeSections.attachments ? data.attachment_name : '',
       discount_type: hasDiscount ? data.discount_type : null,
@@ -430,6 +449,14 @@ export default function AddProductModal({ open }) {
               placeholder="Ej: Arroz blanco"
               {...register('name')}
             />
+
+            <Input
+              label="Código de Barras (Opcional)"
+              icon={<Barcode size={14} />}
+              placeholder="Se generará GO-XXXXXXXX si se deja vacío"
+              {...register('barcode')}
+            />
+            <p className="-mt-4 text-[10px] text-muted-400">Si ya tienes un código de barras físico, ingrésalo aquí. De lo contrario se generará uno automáticamente.</p>
 
             <div className="grid grid-cols-2 gap-3">
               <Input
