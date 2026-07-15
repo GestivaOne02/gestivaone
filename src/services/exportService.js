@@ -17,7 +17,7 @@ export async function exportInvoicesPDF(invoices, companyName = 'Mi Empresa') {
   doc.setTextColor(167, 139, 250)
   doc.setFontSize(18)
   doc.setFont('helvetica', 'bold')
-  doc.setFont('Inter', 'bold')
+  doc.setFont('helvetica', 'bold')
 doc.text('Gestiva', MARGIN, 12)
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(10)
@@ -280,7 +280,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     doc.rect(0, 0, pageWidth, 40, 'F')
     
     doc.setTextColor(...rgbColors.light)
-    doc.setFont('Inter', 'bold')
+    doc.setFont('helvetica', 'bold')
     doc.setFontSize(26)
     doc.text(companyName.toUpperCase(), MARGIN, 18)
     
@@ -299,7 +299,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     doc.rect(pageWidth - MARGIN - 50, 10, 50, 20, 'F')
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(9)
-    doc.setFont('Inter', 'bold')
+    doc.setFont('helvetica', 'bold')
     doc.text(`FACTURA N°`, pageWidth - MARGIN - 48, 16)
     doc.setFontSize(11)
     doc.text(`#${invoiceIdStr}`, pageWidth - MARGIN - 48, 24)
@@ -323,7 +323,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(10)
     doc.text(`N° FACTURA: #${invoiceIdStr}`, pageWidth - MARGIN, 18, { align: 'right' })
-    doc.setFont('Inter', 'normal')
+    doc.setFont('helvetica', 'normal')
     doc.setTextColor(100, 116, 139)
     doc.text(`Fecha de Emisión: ${dateStr}`, pageWidth - MARGIN, 24, { align: 'right' })
   }
@@ -355,7 +355,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     doc.setTextColor(...rgbColors.primary)
     doc.text('FACTURAR A:', MARGIN + 4, startY + 5)
     
-    doc.setFont('Inter', 'normal')
+    doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(51, 65, 85)
     doc.text(`Nombre: ${clientName}`, MARGIN + 4, startY + 10)
@@ -370,7 +370,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
     doc.setTextColor(...rgbColors.primary)
     doc.text('DETALLES DE FACTURA:', pageWidth - MARGIN - 86, startY + 5)
     
-    doc.setFont('Inter', 'normal')
+    doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(51, 65, 85)
     doc.text(`Fecha: ${dateStr}`, pageWidth - MARGIN - 86, startY + 10)
@@ -461,7 +461,7 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
 
     doc.setFontSize(9)
     doc.setTextColor(71, 85, 105)
-    doc.setFont('Inter', 'normal')
+    doc.setFont('helvetica', 'normal')
     
     let currentY = finalY + 2
     if (taxVal > 0) {
