@@ -72,15 +72,7 @@ export default function RegisterExpenseTab({ onClose }) {
     <>
       <div className="flex-1 overflow-y-auto p-6 bg-surface-800">
         <div className="max-w-md mx-auto space-y-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center shrink-0">
-              <Wallet className="text-brand-500" size={20} />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-foreground">Registrar Egreso</h2>
-            <p className="text-xs text-muted-400">Registro rápido de gastos y compras</p>
-          </div>
-        </div>
+
 
         <form id="expense-form" onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -172,12 +164,13 @@ export default function RegisterExpenseTab({ onClose }) {
     </div>
       
       {/* Footer */}
-      <div className="p-4 border-t border-subtle shrink-0">
+      <div className="p-4 border-t border-subtle shrink-0 space-y-4">
         <Button
           form="expense-form"
           type="submit"
           variant="primary"
-          className="w-full py-3"
+          size="md"
+          className="w-full border-none"
           loading={loading}
           icon={<Save size={18} />}
         >
