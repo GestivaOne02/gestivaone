@@ -162,14 +162,31 @@ export default function Dashboard() {
   const pending = invoices.filter((i) => i.payment_status === 'pending')
   const overdue = invoices.filter((i) => i.payment_status === 'overdue')
 
-  // Express Invoices metrics
   const expressInvoices = invoices.filter((i) => !i.client_id || i.client_name === 'Cliente Express')
   const expressCount = expressInvoices.length
   const expressRevenue = expressInvoices.reduce((s, i) => s + (i.total || 0), 0)
 
+  const getInvoiceCOGS = (inv) => {
+    if (!inv.items || !Array.isArray(inv.items)) return 0;
+    return inv.items.reduce((sum, item) => {
+      let c = Number(item.cost || 0);
+      if (c === 0 && item.productId) {
+        const p = products.find(prod => prod.id === item.productId);
+        if (p && p.cost) c = Number(p.cost);
+      }
+      return sum + (c * item.qty);
+    }, 0);
+  }
+
   const totalRevenue = paid.reduce((s, i) => s + i.total, 0) + [...pending, ...overdue].reduce((s, i) => {
     const { paidAmount } = parseInvoiceNoteLocal(i.note)
     return s + paidAmount
+  }, 0)
+
+  const totalCOGS = paid.reduce((s, i) => s + getInvoiceCOGS(i), 0) + [...pending, ...overdue].reduce((s, i) => {
+    const { paidAmount } = parseInvoiceNoteLocal(i.note)
+    const ratio = i.total > 0 ? (paidAmount / i.total) : 0
+    return s + (getInvoiceCOGS(i) * ratio)
   }, 0)
 
   const pendingRevenue = [...pending, ...overdue].reduce((s, i) => {
@@ -220,12 +237,26 @@ export default function Dashboard() {
         .filter((e) => e.created_at && e.created_at.startsWith(key))
         .reduce((s, e) => s + (e.amount || 0), 0)
 
+      const cogsAmtPaid = filteredPaid
+        .filter((i) => i.created_at && i.created_at.startsWith(key))
+        .reduce((s, i) => s + getInvoiceCOGS(i), 0)
+
+      const cogsAmtPending = filteredPending
+        .filter((i) => i.created_at && i.created_at.startsWith(key))
+        .reduce((s, i) => {
+          const { paidAmount } = parseInvoiceNoteLocal(i.note)
+          const ratio = i.total > 0 ? (paidAmount / i.total) : 0
+          return s + (getInvoiceCOGS(i) * ratio)
+        }, 0)
+
+      const cogsAmt = cogsAmtPaid + cogsAmtPending
+
       return {
         month: format(date, 'MMM', { locale: es }).toUpperCase(),
         revenue: revenueAmt,
         pending: pendingAmt,
         expenses: expenseAmt,
-        netProfit: revenueAmt - expenseAmt
+        netProfit: revenueAmt - cogsAmt - expenseAmt
       }
     })
   }, [paid, pending, overdue, expenses, revenueYearFilter])
@@ -880,11 +911,11 @@ export default function Dashboard() {
           },
           {
             title: "Utilidad Neta Real",
-            value: format$(totalRevenue - totalExpenses),
+            value: format$(totalRevenue - totalCOGS - totalExpenses),
             icon: <Wallet size={18} />,
             color: "success",
-            subtitle: "Total Ingresos - Gastos",
-            tooltip: "Utilidad calculada restando los gastos de los ingresos recaudados"
+            subtitle: "Ingresos - Costos - Gastos",
+            tooltip: "Utilidad calculada restando los costos de mercancía y gastos operativos de los ingresos"
           },
           {
             title: "Clientes Frecuentes",
@@ -943,11 +974,11 @@ export default function Dashboard() {
           },
           {
             title: "Utilidad Neta Real",
-            value: format$(totalRevenue - totalExpenses),
+            value: format$(totalRevenue - totalCOGS - totalExpenses),
             icon: <Wallet size={18} />,
             color: "success",
-            subtitle: "Total Ingresos - Gastos",
-            tooltip: "Utilidad calculada restando los gastos de los ingresos recaudados"
+            subtitle: "Ingresos - Costos - Gastos",
+            tooltip: "Utilidad calculada restando los costos de mercancía y gastos operativos de los ingresos"
           },
           {
             title: "Clientes Frecuentes",

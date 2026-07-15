@@ -117,6 +117,7 @@ export const useCartStore = create((set, get) => {
               productId: latestProduct.id,
               name: finalName,
               price: effectivePrice,
+              cost: Number(latestProduct.cost || 0),
               qty,
               unit: latestProduct.unit ?? 'UND',
               isCustom: latestProduct.isCustom ?? false,
