@@ -482,7 +482,7 @@ export default function Sidebar({ isMobile }) {
             startTransition(() => navigate('/notifications'))
           }}
           className={clsx(
-            'relative flex items-center transition-colors duration-150 cursor-pointer select-none',
+            'relative flex items-center transition-colors duration-150 cursor-pointer select-none overflow-hidden',
             collapsed ? 'justify-center py-3 mx-2 my-1 rounded-lg' : 'px-5 py-3',
             !notifAllowed && 'opacity-50 cursor-not-allowed',
             isNotifActive && notifAllowed
