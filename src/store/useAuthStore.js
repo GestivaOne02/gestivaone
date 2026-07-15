@@ -181,7 +181,7 @@ export const useAuthStore = create(
           
           if (error) {
             console.error('Session validation error:', error)
-            await supabase.auth.signOut()
+            await supabase.auth.signOut({ scope: 'local' })
             set({ isAuthenticated: false, user: null })
           } else if (session) {
             await get().syncProfile(session.user.id)
@@ -190,7 +190,7 @@ export const useAuthStore = create(
           }
         } catch (e) {
           console.error('Session init error:', e)
-          await supabase.auth.signOut()
+          await supabase.auth.signOut({ scope: 'local' })
           set({ isAuthenticated: false, user: null })
         } finally {
           set({ initialized: true })
