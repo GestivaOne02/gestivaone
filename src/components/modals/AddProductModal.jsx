@@ -71,7 +71,7 @@ export default function AddProductModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: 0, barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' },
+    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: '', barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' },
   })
 
   const unit = watch('unit')
@@ -220,7 +220,7 @@ export default function AddProductModal({ open }) {
         name: `${duplicating.name} (Copia)`,
         unit: duplicating.unit === 'ILIMITADO' ? 'UND' : duplicating.unit,
         stock: isEditingUnlimited ? 0 : (duplicating.stock ?? 0),
-        cost: duplicating.cost ?? 0,
+        cost: duplicating.cost ?? '',
         barcode: '',
         attachment_url: duplicating.attachment_url ?? '',
         attachment_name: duplicating.attachment_name ?? '',
@@ -268,7 +268,7 @@ export default function AddProductModal({ open }) {
         ...editing,
         unit: editing.unit === 'ILIMITADO' ? 'UND' : editing.unit,
         stock: isEditingUnlimited ? 0 : (editing.stock ?? 0),
-        cost: editing.cost ?? 0,
+        cost: editing.cost ?? '',
         barcode: editing.barcode ?? '',
         attachment_url: editing.attachment_url ?? '',
         attachment_name: editing.attachment_name ?? '',
@@ -298,7 +298,7 @@ export default function AddProductModal({ open }) {
         attachments: false,
         barcode: false
       })
-      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
+      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: '', barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
     }
   }, [open, editing, duplicating, reset])
