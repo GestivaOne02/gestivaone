@@ -852,7 +852,7 @@ export default function Dashboard() {
 
       {/* KPIs: 2 col mobile → 3 col tablet → 5 col desktop (Accordion-expanding hover effect!) */}
       {/* Mobile & Tablet view */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:hidden gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:hidden gap-3 md:gap-4">
         {[
           {
             title: "Ingresos (Recaudado)",
