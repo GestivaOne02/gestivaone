@@ -62,6 +62,13 @@ export const useCartStore = create((set, get) => {
 
   return {
     isExpenseMode: false,
+    expenseDetails: {
+      category: 'Inventario/Mercancía',
+      description: '',
+      provider_name: '',
+      provider_doc_type: '31',
+      provider_doc_id: ''
+    },
     items: [],   // { id, productId, name, price, qty, unit, isCustom }
     note: '',
     includeTax: false,
@@ -78,6 +85,10 @@ export const useCartStore = create((set, get) => {
         setAndRecalc(payload.new, true)
       }
     },
+
+    updateExpenseDetails: (details) => setAndRecalc((s) => ({
+      expenseDetails: { ...s.expenseDetails, ...details }
+    })),
 
     toggleExpenseMode: () => setAndRecalc((s) => ({ isExpenseMode: !s.isExpenseMode })),
 

@@ -88,6 +88,7 @@ export default function OrderConfirmModal({ open }) {
     
     try {
       if (isExpenseMode) {
+        const { expenseDetails } = useCartStore.getState()
         const { useExpenseStore } = await import('@/store/useExpenseStore')
         const { useProductStore } = await import('@/store/useProductStore')
         const addExpense = useExpenseStore.getState().addExpense
@@ -96,11 +97,11 @@ export default function OrderConfirmModal({ open }) {
 
         const res = await addExpense({
           amount: total,
-          category: 'Inventario/Mercancía',
-          description: 'Compra de inventario (POS)',
-          provider_name: client?.name || 'Proveedor Varios',
-          provider_doc_type: client?.document_type || '31',
-          provider_doc_id: client?.document_id || '999999999',
+          category: expenseDetails?.category || 'Inventario/Mercancía',
+          description: expenseDetails?.description || 'Compra de inventario (POS)',
+          provider_name: expenseDetails?.provider_name || 'Proveedor Varios',
+          provider_doc_type: expenseDetails?.provider_doc_type || '31',
+          provider_doc_id: expenseDetails?.provider_doc_id || '999999999',
           iva_paid: taxAmount,
           pocketId: destinationPocketId === 'general' ? null : destinationPocketId
         })

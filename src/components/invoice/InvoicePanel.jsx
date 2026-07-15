@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download, ScanLine, Wallet } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download, ScanLine, Wallet, Search, UserPlus, Menu, LogOut, Settings } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -622,10 +622,17 @@ export default function InvoicePanel({ isMobile }) {
                       <>
                         <button
                           onClick={toggleExpenseMode}
-                          className={`p-1.5 rounded-lg transition-colors ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
-                          title={isExpenseMode ? 'Cambiar a Venta' : 'Cambiar a Egreso'}
+                          className={`flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+                          title={isExpenseMode ? 'Volver a Ventas' : 'Cambiar a Egreso'}
                         >
-                          <Wallet size={15} />
+                          {isExpenseMode ? (
+                            <>
+                              <ArrowLeft size={14} />
+                              <span className="text-[10px] font-bold">Ventas</span>
+                            </>
+                          ) : (
+                            <Wallet size={15} />
+                          )}
                         </button>
                         <button
                           onClick={() => setScannerActive(!scannerActive)}
@@ -888,10 +895,17 @@ export default function InvoicePanel({ isMobile }) {
             </span>
             <button
               onClick={toggleExpenseMode}
-              className={`p-1.5 rounded-lg transition-colors shrink-0 ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
-              title={isExpenseMode ? 'Cambiar a Venta' : 'Cambiar a Egreso'}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors shrink-0 ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+              title={isExpenseMode ? 'Volver a Ventas' : 'Cambiar a Egreso'}
             >
-              <Wallet size={15} />
+              {isExpenseMode ? (
+                <>
+                  <ArrowLeft size={14} />
+                  <span className="text-[10px] font-bold">Ventas</span>
+                </>
+              ) : (
+                <Wallet size={15} />
+              )}
             </button>
             <button
               onClick={() => setShowHistoryModal(true)}
@@ -907,30 +921,34 @@ export default function InvoicePanel({ isMobile }) {
             )}
           </div>
 
-          {/* Client */}
-          <div className="px-4 py-3 border-b border-subtle shrink-0">
-            {selectedClient ? (
-              <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
-                <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
-                  {getClientIcon(selectedClient.document_type)}
+          {/* Client / Expense Details */}
+          {isExpenseMode ? (
+            <ExpenseFormWidget />
+          ) : (
+            <div className="px-4 py-3 border-b border-subtle shrink-0">
+              {selectedClient ? (
+                <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
+                  <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
+                    {getClientIcon(selectedClient.document_type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
+                    {selectedClient.document_id && (
+                      <p className="text-[9px] text-muted-400 truncate">Doc: {selectedClient.document_id}</p>
+                    )}
+                    <p className="text-[10px] text-muted-400 truncate">
+                      {selectedClient.email || selectedClient.phone || 'Sin datos de contacto'}
+                    </p>
+                  </div>
+                  <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground shrink-0">
+                    <X size={12} />
+                  </button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
-                  {selectedClient.document_id && (
-                    <p className="text-[9px] text-muted-400 truncate">Doc: {selectedClient.document_id}</p>
-                  )}
-                  <p className="text-[10px] text-muted-400 truncate">
-                    {selectedClient.email || selectedClient.phone || 'Sin datos de contacto'}
-                  </p>
-                </div>
-                <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground shrink-0">
-                  <X size={12} />
-                </button>
-              </div>
-            ) : (
-              <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
-            )}
-          </div>
+              ) : (
+                <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
+              )}
+            </div>
+          )}
 
           {/* Items */}
           <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
