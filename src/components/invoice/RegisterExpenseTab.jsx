@@ -172,7 +172,7 @@ export default function RegisterExpenseTab({ onClose }) {
               variant="danger"
               className="w-full py-3"
               loading={loading}
-              icon={Save}
+              icon={<Save size={18} />}
             >
               Registrar Egreso
             </Button>
