@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -96,7 +97,36 @@ export default function AddProductModal({ open }) {
   const [hasDiscount, setHasDiscount] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [isCategoryOpen, setIsCategoryOpen] = useState(false)
+  const [categoryCoords, setCategoryCoords] = useState(null)
+  const categoryRef = useRef(null)
+
   const [isDiscountTypeOpen, setIsDiscountTypeOpen] = useState(false)
+  const [discountTypeCoords, setDiscountTypeCoords] = useState(null)
+  const discountTypeRef = useRef(null)
+
+  const handleOpenCategory = () => {
+    if (categoryRef.current) {
+      const rect = categoryRef.current.getBoundingClientRect()
+      setCategoryCoords({
+        top: rect.bottom + 6,
+        left: rect.left,
+        width: rect.width
+      })
+      setIsCategoryOpen(true)
+    }
+  }
+
+  const handleOpenDiscountType = () => {
+    if (discountTypeRef.current) {
+      const rect = discountTypeRef.current.getBoundingClientRect()
+      setDiscountTypeCoords({
+        top: rect.bottom + 6,
+        left: rect.left,
+        width: rect.width
+      })
+      setIsDiscountTypeOpen(true)
+    }
+  }
 
   const handleToggleBarcode = () => {
     setActiveSections(prev => ({ ...prev, barcode: !prev.barcode }))
@@ -481,7 +511,13 @@ export default function AddProductModal({ open }) {
         {/* Contenedor del Formulario (Scrollable Body + Footer) */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           {/* Scrollable body */}
-          <div ref={scrollRef} className={clsx(
+          <div 
+            ref={scrollRef} 
+            onScroll={() => {
+              if (isCategoryOpen) setIsCategoryOpen(false)
+              if (isDiscountTypeOpen) setIsDiscountTypeOpen(false)
+            }}
+            className={clsx(
             "flex-1 p-5 sm:p-6 no-scrollbar overflow-y-auto max-h-[65vh] lg:max-h-[66vh]",
             isHourly && "lg:grid lg:grid-cols-12 lg:gap-6 lg:overflow-hidden"
           )}>
@@ -579,14 +615,17 @@ export default function AddProductModal({ open }) {
               
               {hasDiscount && (
                 <div className="grid grid-cols-2 gap-3 mt-3 p-3 bg-brand-500/5 rounded-xl border border-brand-500/20">
-                  <div className="flex flex-col gap-1.5 relative z-10">
+                  <div className="flex flex-col gap-1.5 relative z-10" ref={discountTypeRef}>
                     <span className="text-[11px] text-muted-400 uppercase font-medium">Tipo de descuento</span>
                     <div 
                       className={clsx(
                         "w-full bg-surface-700 border rounded-xl px-3 py-2.5 text-sm text-foreground flex items-center justify-between cursor-pointer focus:outline-none transition-all",
                         isDiscountTypeOpen ? "border-brand-500 ring-2 ring-brand-500/20" : "border-subtle hover:border-brand-500/50"
                       )}
-                      onClick={() => setIsDiscountTypeOpen(!isDiscountTypeOpen)}
+                      onClick={() => {
+                        if (isDiscountTypeOpen) setIsDiscountTypeOpen(false)
+                        else handleOpenDiscountType()
+                      }}
                       tabIndex={0}
                       onBlur={() => setIsDiscountTypeOpen(false)}
                     >
@@ -594,29 +633,34 @@ export default function AddProductModal({ open }) {
                       <ChevronDown size={16} className={clsx("text-muted-400 transition-transform", isDiscountTypeOpen && "rotate-180")} />
                     </div>
 
-                    {isDiscountTypeOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-800 border border-subtle rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    {isDiscountTypeOpen && discountTypeCoords && createPortal(
+                      <div 
+                        className="fixed bg-white dark:bg-surface-800 border border-neutral-200 dark:border-surface-700 rounded-xl shadow-xl z-[9999] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                        style={{ top: discountTypeCoords.top, left: discountTypeCoords.left, width: discountTypeCoords.width }}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
                         <div
                           className={clsx(
                             "px-3 py-2.5 text-sm cursor-pointer transition-colors flex items-center justify-between",
                             watch('discount_type') === 'percentage' ? "bg-brand-500/10 text-brand-500 font-medium" : "text-foreground hover:bg-surface-700"
                           )}
-                          onMouseDown={(e) => { e.preventDefault(); setValue('discount_type', 'percentage'); setIsDiscountTypeOpen(false) }}
+                          onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setValue('discount_type', 'percentage'); setIsDiscountTypeOpen(false) }}
                         >
                           <span>Porcentaje (%)</span>
-                          {watch('discount_type') === 'percentage' && <Check size={14} />}
+                          {watch('discount_type') === 'percentage' && <Check size={14} className="text-brand-500" />}
                         </div>
                         <div
                           className={clsx(
                             "px-3 py-2.5 text-sm cursor-pointer transition-colors flex items-center justify-between",
                             watch('discount_type') === 'fixed' ? "bg-brand-500/10 text-brand-500 font-medium" : "text-foreground hover:bg-surface-700"
                           )}
-                          onMouseDown={(e) => { e.preventDefault(); setValue('discount_type', 'fixed'); setIsDiscountTypeOpen(false) }}
+                          onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setValue('discount_type', 'fixed'); setIsDiscountTypeOpen(false) }}
                         >
                           <span>Valor Fijo ($)</span>
-                          {watch('discount_type') === 'fixed' && <Check size={14} />}
+                          {watch('discount_type') === 'fixed' && <Check size={14} className="text-brand-500" />}
                         </div>
-                      </div>
+                      </div>,
+                      document.body
                     )}
                   </div>
                   <Input
@@ -659,7 +703,7 @@ export default function AddProductModal({ open }) {
             </div>
 
             {/* Category */}
-            <div className="flex flex-col gap-1.5 relative z-20">
+            <div className="flex flex-col gap-1.5 relative z-20" ref={categoryRef}>
               <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Categoría</label>
               
               <div 
@@ -667,7 +711,10 @@ export default function AddProductModal({ open }) {
                   "w-full bg-surface-700 border rounded-xl px-3 py-2.5 text-sm text-foreground flex items-center justify-between cursor-pointer focus:outline-none transition-all",
                   isCategoryOpen ? "border-brand-500 ring-2 ring-brand-500/20" : "border-subtle hover:border-brand-500/50"
                 )}
-                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                onClick={() => {
+                  if (isCategoryOpen) setIsCategoryOpen(false)
+                  else handleOpenCategory()
+                }}
                 tabIndex={0}
                 onBlur={() => setIsCategoryOpen(false)}
               >
@@ -675,8 +722,12 @@ export default function AddProductModal({ open }) {
                 <ChevronDown size={16} className={clsx("text-muted-400 transition-transform", isCategoryOpen && "rotate-180")} />
               </div>
 
-              {isCategoryOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-white dark:bg-surface-800 border border-neutral-200 dark:border-surface-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
+              {isCategoryOpen && categoryCoords && createPortal(
+                <div 
+                  className="fixed bg-white dark:bg-surface-800 border border-neutral-200 dark:border-surface-700 rounded-xl shadow-xl z-[9999] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto"
+                  style={{ top: categoryCoords.top, left: categoryCoords.left, width: categoryCoords.width }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
                   {dynamicCategories.map((c) => (
                     <div
                       key={c}
@@ -688,6 +739,7 @@ export default function AddProductModal({ open }) {
                       )}
                       onMouseDown={(e) => {
                         e.preventDefault()
+                        e.stopPropagation()
                         setValue('category', c)
                         setIsCategoryOpen(false)
                       }}
@@ -713,7 +765,8 @@ export default function AddProductModal({ open }) {
                       </div>
                     </div>
                   ))}
-                </div>
+                </div>,
+                document.body
               )}
             </div>
 
