@@ -680,7 +680,7 @@ export default function DianAssistant() {
 
               {showSalesIvaDetail && (
                 <div className="mt-4 border-t border-subtle/50 pt-4 overflow-x-auto max-h-64 overflow-y-auto no-scrollbar">
-                  <table className="w-full text-left text-xs text-muted-400">
+                  <table className="w-full min-w-[500px] text-left text-xs text-muted-400">
                     <thead>
                       <tr className="border-b border-subtle/40 text-[10px] uppercase font-bold text-muted-500">
                         <th className="pb-2">Factura</th>
@@ -739,7 +739,7 @@ export default function DianAssistant() {
 
               {showExpensesIvaDetail && (
                 <div className="mt-4 border-t border-subtle/50 pt-4 overflow-x-auto max-h-64 overflow-y-auto no-scrollbar">
-                  <table className="w-full text-left text-xs text-muted-400">
+                  <table className="w-full min-w-[500px] text-left text-xs text-muted-400">
                     <thead>
                       <tr className="border-b border-subtle/40 text-[10px] uppercase font-bold text-muted-500">
                         <th className="pb-2">Proveedor</th>

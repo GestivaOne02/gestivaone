@@ -175,7 +175,7 @@ export default function Settings() {
             placeholder="Buscar divisa..."
             className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
           />
-          <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
             {filteredCurrencies.map((currency) => (
               <button
                 key={currency.code}
@@ -219,7 +219,7 @@ export default function Settings() {
           desc="Elige entre modo oscuro, claro, o deja que el sistema decida automáticamente"
         />
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             {
               value: 'dark',
@@ -807,7 +807,7 @@ function ExportBlock() {
   return (
     <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-4 shadow-glow-sm">
       <SectionTitle icon={Download} title="Exportar a PDF / Excel" desc="Descarga reportes de facturas, clientes e inventario" />
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
         {exports.map(({ key, label, icon: Icon, fn }) => (
           <button key={key} onClick={() => run(key, fn)} disabled={loading[key]}
             className={clsx(

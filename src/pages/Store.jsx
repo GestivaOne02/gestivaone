@@ -730,7 +730,7 @@ export default function Store() {
 
               {/* Table List */}
               <div className="overflow-x-auto border border-subtle/50 rounded-2xl">
-                <table className="w-full text-left text-xs border-collapse">
+                <table className="w-full min-w-[700px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-subtle bg-surface-800/60 text-muted-400 font-bold uppercase tracking-wider text-[10px]">
                       <th className="py-3 px-4">Producto</th>
