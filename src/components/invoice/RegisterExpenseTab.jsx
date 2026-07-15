@@ -69,11 +69,12 @@ export default function RegisterExpenseTab({ onClose }) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 bg-surface-800">
-      <div className="max-w-md mx-auto space-y-6 pb-20">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-danger-500/10 flex items-center justify-center shrink-0">
-            <Wallet className="text-danger-500" size={20} />
+    <>
+      <div className="flex-1 overflow-y-auto p-6 bg-surface-800">
+        <div className="max-w-md mx-auto space-y-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center shrink-0">
+              <Wallet className="text-brand-500" size={20} />
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground">Registrar Egreso</h2>
@@ -81,7 +82,7 @@ export default function RegisterExpenseTab({ onClose }) {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form id="expense-form" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-xs text-muted-400 mb-1.5 block">Monto Total *</label>
             <div className="relative">
@@ -93,7 +94,7 @@ export default function RegisterExpenseTab({ onClose }) {
                 step="any"
                 value={form.amount}
                 onChange={e => setForm({ ...form, amount: e.target.value })}
-                className="w-full bg-surface-700 border border-subtle rounded-xl pl-7 pr-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-danger-500"
+                className="w-full bg-surface-700 border border-subtle rounded-xl pl-7 pr-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-brand-500"
                 placeholder="0.00"
               />
             </div>
@@ -104,7 +105,7 @@ export default function RegisterExpenseTab({ onClose }) {
             <select
               value={form.category}
               onChange={e => setForm({ ...form, category: e.target.value })}
-              className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-danger-500 cursor-pointer"
+              className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-brand-500 cursor-pointer"
             >
               <option value="Inventario/Mercancía">Inventario/Mercancía</option>
               <option value="Alquiler/Servicios">Alquiler/Servicios</option>
@@ -119,7 +120,7 @@ export default function RegisterExpenseTab({ onClose }) {
             <textarea
               value={form.description}
               onChange={e => setForm({ ...form, description: e.target.value })}
-              className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-danger-500 min-h-[80px] resize-none"
+              className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-brand-500 min-h-[80px] resize-none"
               placeholder="Ej: Pago de recibo de luz..."
             />
           </div>
@@ -134,7 +135,7 @@ export default function RegisterExpenseTab({ onClose }) {
                   type="text"
                   value={form.provider_name}
                   onChange={e => setForm({ ...form, provider_name: e.target.value })}
-                  className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-danger-500"
+                  className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-brand-500"
                   placeholder="Ej: Distribuidora S.A.S"
                 />
               </div>
@@ -145,7 +146,7 @@ export default function RegisterExpenseTab({ onClose }) {
                   <select
                     value={form.provider_doc_type}
                     onChange={e => setForm({ ...form, provider_doc_type: e.target.value })}
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-danger-500 cursor-pointer"
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-brand-500 cursor-pointer"
                   >
                     <option value="31">NIT</option>
                     <option value="13">Cédula</option>
@@ -158,7 +159,7 @@ export default function RegisterExpenseTab({ onClose }) {
                     type="text"
                     value={form.provider_doc_id}
                     onChange={e => setForm({ ...form, provider_doc_id: e.target.value })}
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-danger-500"
+                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:border-brand-500"
                     placeholder="Ej: 900123456"
                   />
                 </div>
@@ -166,19 +167,23 @@ export default function RegisterExpenseTab({ onClose }) {
             </div>
           </div>
 
-          <div className="pt-6">
-            <Button
-              type="submit"
-              variant="danger"
-              className="w-full py-3"
-              loading={loading}
-              icon={<Save size={18} />}
-            >
-              Registrar Egreso
-            </Button>
-          </div>
         </form>
       </div>
     </div>
+      
+      {/* Footer */}
+      <div className="p-4 border-t border-subtle shrink-0">
+        <Button
+          form="expense-form"
+          type="submit"
+          variant="primary"
+          className="w-full py-3"
+          loading={loading}
+          icon={<Save size={18} />}
+        >
+          Registrar Egreso
+        </Button>
+      </div>
+    </>
   )
 }

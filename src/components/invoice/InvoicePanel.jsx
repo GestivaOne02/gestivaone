@@ -612,11 +612,13 @@ export default function InvoicePanel({ isMobile }) {
                   <div className="flex items-center gap-2 px-5 py-3 border-b border-subtle">
                     {mobileViewMode === 'history' ? (
                       <History size={16} className="text-brand-400" />
+                    ) : isExpenseMode ? (
+                      <Wallet size={16} className="text-brand-400" />
                     ) : (
                       <FileText size={16} className="text-brand-400" />
                     )}
                     
-                    <span className={clsx("text-sm font-bold flex-1", isExpenseMode ? "text-danger-500" : "text-brand-600 dark:text-brand-400")}>
+                    <span className="text-sm font-bold flex-1 text-brand-600 dark:text-brand-400">
                       {mobileViewMode === 'history' ? 'Historial de Facturas' : (isExpenseMode ? 'Registro de Egreso' : 'Factura en Tiempo Real')}
                     </span>
                     
@@ -624,28 +626,21 @@ export default function InvoicePanel({ isMobile }) {
                       <>
                         <button
                           onClick={toggleExpenseMode}
-                          className={`flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
-                          title={isExpenseMode ? 'Volver a Ventas' : 'Cambiar a Egreso'}
+                          className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
+                          title={isExpenseMode ? 'Volver a Ventas' : 'Registrar Egreso'}
                         >
-                          {isExpenseMode ? (
-                            <>
-                              <ArrowLeft size={14} />
-                              <span className="text-[10px] font-bold">Ventas</span>
-                            </>
-                          ) : (
-                            <Wallet size={15} />
-                          )}
+                          {isExpenseMode ? <FileText size={15} /> : <Wallet size={15} />}
                         </button>
                         <button
                           onClick={() => setScannerActive(!scannerActive)}
-                          className={`p-1.5 rounded-lg transition-colors ${scannerActive ? (isExpenseMode ? 'bg-danger-600 text-white' : 'bg-brand-600 text-white') : (isExpenseMode ? 'text-danger-500 bg-danger-500/10 hover:bg-danger-500 hover:text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white')}`}
+                          className={`p-1.5 rounded-lg transition-colors shrink-0 ${scannerActive ? 'bg-brand-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
                           title={scannerActive ? 'Apagar Escáner' : 'Escáner Express'}
                         >
                           <ScanLine size={15} />
                         </button>
                         <button
                           onClick={() => setMobileViewMode('history')}
-                          className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors"
+                          className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
                           title="Historial de Facturas"
                         >
                           <History size={15} />
@@ -891,27 +886,20 @@ export default function InvoicePanel({ isMobile }) {
         <div style={{ width: panelWidth }} className="h-full flex flex-col shrink-0">
           {/* Header */}
           <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
-            {isExpenseMode ? <Wallet size={16} className="text-danger-500" /> : <FileText size={16} className="text-brand-400" />}
-            <span className={clsx("text-sm font-bold flex-1 whitespace-nowrap", isExpenseMode ? "text-danger-500" : "text-brand-600 dark:text-brand-400")}>
+            {isExpenseMode ? <Wallet size={16} className="text-brand-400" /> : <FileText size={16} className="text-brand-400" />}
+            <span className="text-sm font-bold flex-1 whitespace-nowrap text-brand-600 dark:text-brand-400">
               {isExpenseMode ? 'Registro de Egreso' : 'Factura en Tiempo Real'}
             </span>
             <button
               onClick={toggleExpenseMode}
-              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors shrink-0 ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
-              title={isExpenseMode ? 'Volver a Ventas' : 'Cambiar a Egreso'}
+              className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
+              title={isExpenseMode ? 'Volver a Ventas' : 'Registrar Egreso'}
             >
-              {isExpenseMode ? (
-                <>
-                  <ArrowLeft size={14} />
-                  <span className="text-[10px] font-bold">Ventas</span>
-                </>
-              ) : (
-                <Wallet size={15} />
-              )}
+              {isExpenseMode ? <FileText size={15} /> : <Wallet size={15} />}
             </button>
             <button
               onClick={() => setShowHistoryModal(true)}
-              className={`p-1.5 rounded-lg transition-colors shrink-0 ${isExpenseMode ? 'text-danger-500 bg-danger-500/10 hover:bg-danger-500 hover:text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+              className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
               title="Historial de Facturas"
             >
               <History size={15} />
