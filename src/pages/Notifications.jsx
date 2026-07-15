@@ -220,8 +220,8 @@ export default function Notifications() {
 
                   {/* Left Icon with color scheme */}
                   <div className={clsx(
-                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-all duration-300 group-hover:scale-105",
-                    notif.read ? "bg-success-50/50 border-success-100 text-success-500/60 opacity-60" : "bg-success-50 border-success-200 text-success-500"
+                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105",
+                    notif.read ? "bg-success-50/50 text-success-500/60 opacity-60" : "bg-success-50 text-success-500"
                   )}>
                     <IconComp size={20} />
                   </div>
