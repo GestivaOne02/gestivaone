@@ -952,8 +952,6 @@ export default function InvoicePanel({ isMobile }) {
                 <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
               )}
             </div>
-          )}
-
           {/* Items */}
           <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
             <AnimatePresence initial={false}>
@@ -1027,9 +1025,10 @@ export default function InvoicePanel({ isMobile }) {
               disabled={!canOrder}
               onClick={() => openModal('orderConfirm')}
             >
-                {isExpenseMode ? 'Registrar Egreso' : 'Realizar Pedido'}
-              </Button>
+              {isExpenseMode ? 'Registrar Egreso' : 'Realizar Pedido'}
+            </Button>
             </div>
+            </>
           )}
         </div>
       </motion.aside>
