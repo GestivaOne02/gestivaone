@@ -101,9 +101,9 @@ export default function InvoicePanel({ isMobile }) {
   const [globalDiscountInputType, setGlobalDiscountInputType] = useState('percent')
 
   // Resizing state
-  const MIN_WIDTH = 288
-  const MAX_WIDTH = MIN_WIDTH + 150 // Allowing ~150px expansion
-  const [panelWidth, setPanelWidth] = useState(MIN_WIDTH)
+  const MIN_WIDTH = 300
+  const MAX_WIDTH = MIN_WIDTH + 300 // Allow 300px expansion
+  const [panelWidth, setPanelWidth] = useState((MIN_WIDTH + MAX_WIDTH) / 2)
   const [isResizing, setIsResizing] = useState(false)
   const [showHistoryModal, setShowHistoryModal] = useState(false)
   
