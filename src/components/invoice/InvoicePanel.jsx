@@ -15,6 +15,8 @@ import BarcodeScanner from '@/components/invoice/BarcodeScanner'
 import ScannerPriceModal from '@/components/invoice/ScannerPriceModal'
 import { useScannerCacheStore } from '@/store/useScannerCacheStore'
 import { useProductStore } from '@/store/useProductStore'
+import ExpenseFormWidget from './ExpenseFormWidget'
+import OrderConfirmModal from '@/components/modals/OrderConfirmModal'
 
 const TAX_RATES = {
   COP: 0.19,
