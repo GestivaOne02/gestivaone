@@ -20,7 +20,7 @@ const schema = z.object({
   cost: z.coerce.number().min(0, 'Costo inválido').optional().or(z.literal('')),
   unit: z.enum(['KG', 'LB', 'UND', 'L', 'M', 'HORA']),
   category: z.string().optional(),
-  stock: z.coerce.number().min(0).optional(),
+  stock: z.coerce.number().min(0, 'Stock inválido').optional().or(z.literal('')),
   barcode: z.string().optional(),
   attachment_url: z.string().optional(),
   attachment_name: z.string().optional(),
@@ -71,7 +71,7 @@ export default function AddProductModal({ open }) {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { unit: 'UND', stock: 0, category: 'Otros', cost: '', barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' },
+    defaultValues: { unit: 'UND', stock: '', category: 'Otros', cost: '', barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' },
   })
 
   const unit = watch('unit')
@@ -219,7 +219,7 @@ export default function AddProductModal({ open }) {
         ...duplicating,
         name: `${duplicating.name} (Copia)`,
         unit: duplicating.unit === 'ILIMITADO' ? 'UND' : duplicating.unit,
-        stock: isEditingUnlimited ? 0 : (duplicating.stock ?? 0),
+        stock: isEditingUnlimited ? '' : (duplicating.stock ?? ''),
         cost: duplicating.cost ?? '',
         barcode: '',
         attachment_url: duplicating.attachment_url ?? '',
@@ -267,7 +267,7 @@ export default function AddProductModal({ open }) {
       reset({
         ...editing,
         unit: editing.unit === 'ILIMITADO' ? 'UND' : editing.unit,
-        stock: isEditingUnlimited ? 0 : (editing.stock ?? 0),
+        stock: isEditingUnlimited ? '' : (editing.stock ?? ''),
         cost: editing.cost ?? '',
         barcode: editing.barcode ?? '',
         attachment_url: editing.attachment_url ?? '',
@@ -298,7 +298,7 @@ export default function AddProductModal({ open }) {
         attachments: false,
         barcode: false
       })
-      reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: '', barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
+      reset({ unit: 'UND', stock: '', category: 'Otros', name: '', price: '', cost: '', barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
     }
   }, [open, editing, duplicating, reset])
@@ -548,7 +548,7 @@ export default function AddProductModal({ open }) {
                     type="button"
                     onClick={() => {
                       setIsUnlimited(!isUnlimited)
-                      if (!isUnlimited) setValue('stock', 0)
+                      if (!isUnlimited) setValue('stock', '')
                     }}
                     className={clsx(
                       'px-4 text-xs font-semibold transition-colors border-l border-brand-600',
