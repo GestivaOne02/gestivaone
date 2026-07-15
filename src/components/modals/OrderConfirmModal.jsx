@@ -13,7 +13,7 @@ import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
-import { printInvoice } from '@/services/printService'
+import { printInvoice, printExpense } from '@/services/printService'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { format as dateFormat } from 'date-fns'
@@ -60,6 +60,7 @@ export default function OrderConfirmModal({ open }) {
   const taxAmount = useCartStore((s) => s.taxAmount)
   const total = useCartStore((s) => s.total)
   const customCharges = useCartStore((s) => s.customCharges)
+  const isExpenseMode = useCartStore((s) => s.isExpenseMode)
 
   const user = useAuthStore((s) => s.user)
 
@@ -86,6 +87,62 @@ export default function OrderConfirmModal({ open }) {
     setLoading(true)
     
     try {
+      if (isExpenseMode) {
+        const { useExpenseStore } = await import('@/store/useExpenseStore')
+        const { useProductStore } = await import('@/store/useProductStore')
+        const addExpense = useExpenseStore.getState().addExpense
+        const updateProduct = useProductStore.getState().updateProduct
+        const products = useProductStore.getState().products
+
+        const res = await addExpense({
+          amount: total,
+          category: 'Inventario/Mercancía',
+          description: 'Compra de inventario (POS)',
+          provider_name: client?.name || 'Proveedor Varios',
+          provider_doc_type: client?.document_type || '31',
+          provider_doc_id: client?.document_id || '999999999',
+          iva_paid: taxAmount,
+          pocketId: destinationPocketId === 'general' ? null : destinationPocketId
+        })
+
+        if (!res || res.success === false) {
+          setLoading(false)
+          return toast.error(res?.error || 'Error al registrar egreso')
+        }
+
+        // Add stock to products
+        for (const item of items) {
+          if (item.productId) {
+            const p = products.find(prod => prod.id === item.productId)
+            if (p && typeof p.stock === 'number' && p.unit !== 'ILIMITADO') {
+              await updateProduct(p.id, { stock: p.stock + item.qty })
+            }
+          }
+        }
+
+        // Trigger integrations and automatic printing for Expense
+        const { printer } = useSettingsStore.getState()
+        if (printer?.autoPrint) {
+          printExpense(res.data, items, client, {
+            ...printer,
+            companyName: user?.companyName || 'GestivaOne',
+            companyLogo: user?.companyLogo || null
+          })
+        }
+        setConfirmed(true)
+        setTimeout(() => {
+          clearCart()
+          setConfirmed(false)
+          setPaymentType('immediate')
+          setScheduledDate('')
+          closeModal()
+          toast.success('Egreso y compra de inventario registrados')
+          setLoading(false)
+        }, 2000)
+        
+        return
+      }
+
       const invoice = await createInvoice({
         client,
         items,
@@ -163,7 +220,7 @@ export default function OrderConfirmModal({ open }) {
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title="Confirmar Pedido" size="md">
+    <Modal open={open} onClose={handleClose} title={isExpenseMode ? "Confirmar Compra / Egreso" : "Confirmar Pedido"} size="md">
       <AnimatePresence mode="wait">
         {confirmed ? (
           <motion.div
@@ -182,8 +239,8 @@ export default function OrderConfirmModal({ open }) {
               <PartyPopper size={28} className="text-success-400" />
             </motion.div>
             <div>
-              <p className="text-lg font-bold text-foreground">¡Pedido Confirmado!</p>
-              <p className="text-sm text-muted-400 mt-1">Factura generada exitosamente</p>
+              <p className="text-lg font-bold text-foreground">{isExpenseMode ? '¡Egreso Confirmado!' : '¡Pedido Confirmado!'}</p>
+              <p className="text-sm text-muted-400 mt-1">{isExpenseMode ? 'Stock actualizado exitosamente' : 'Factura generada exitosamente'}</p>
             </div>
             <div className="text-2xl font-bold text-gradient">{format(total)}</div>
           </motion.div>
@@ -295,9 +352,9 @@ export default function OrderConfirmModal({ open }) {
                 />
                 <div className="flex flex-col">
                   <span className="text-sm font-semibold text-foreground group-hover:text-brand-300 transition-colors">
-                    Enviar factura por correo electrónico
+                    {isExpenseMode ? 'Enviar comprobante por correo electrónico' : 'Enviar factura por correo electrónico'}
                   </span>
-                  <span className="text-xs text-muted-400">Envía el PDF de la factura con un mensaje de agradecimiento</span>
+                  <span className="text-xs text-muted-400">{isExpenseMode ? 'Envía el detalle del egreso' : 'Envía el PDF de la factura con un mensaje de agradecimiento'}</span>
                 </div>
               </label>
               <AnimatePresence>
@@ -328,7 +385,7 @@ export default function OrderConfirmModal({ open }) {
             <div className="flex gap-3 pt-1">
               <Button variant="ghost" size="md" className="flex-1" onClick={handleClose}>Cancelar</Button>
               <Button variant="primary" size="md" className="flex-1" onClick={handleConfirm} loading={loading}>
-                Confirmar Pedido
+                {isExpenseMode ? 'Confirmar Compra' : 'Confirmar Pedido'}
               </Button>
             </div>
           </motion.div>

@@ -55,12 +55,13 @@ export const useCartStore = create((set, get) => {
     
     if (!skipBroadcast) {
       // Avoid broadcasting non-syncable fields like functions (zustand stores functions inside the state by default)
-      const { items, note, includeTax, customCharges, globalDiscount } = finalState
-      broadcastSyncEvent('cart', 'UPDATE', { items, note, includeTax, customCharges, globalDiscount }, null)
+      const { items, note, includeTax, customCharges, globalDiscount, isExpenseMode } = finalState
+      broadcastSyncEvent('cart', 'UPDATE', { items, note, includeTax, customCharges, globalDiscount, isExpenseMode }, null)
     }
   }
 
   return {
+    isExpenseMode: false,
     items: [],   // { id, productId, name, price, qty, unit, isCustom }
     note: '',
     includeTax: false,
@@ -77,6 +78,8 @@ export const useCartStore = create((set, get) => {
         setAndRecalc(payload.new, true)
       }
     },
+
+    toggleExpenseMode: () => setAndRecalc((s) => ({ isExpenseMode: !s.isExpenseMode })),
 
     toggleTax: () => setAndRecalc((s) => ({ includeTax: !s.includeTax })),
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download, ScanLine } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download, ScanLine, Wallet } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -69,6 +69,8 @@ export default function InvoicePanel({ isMobile }) {
   const includeTax = useCartStore((s) => s.includeTax)
   const toggleTax = useCartStore((s) => s.toggleTax)
   const addScannedItem = useCartStore((s) => s.addScannedItem)
+  const isExpenseMode = useCartStore((s) => s.isExpenseMode)
+  const toggleExpenseMode = useCartStore((s) => s.toggleExpenseMode)
 
   const customCharges = useCartStore((s) => s.customCharges)
   const addCustomCharge = useCartStore((s) => s.addCustomCharge)
@@ -612,15 +614,22 @@ export default function InvoicePanel({ isMobile }) {
                       <FileText size={16} className="text-brand-400" />
                     )}
                     
-                    <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1">
-                      {mobileViewMode === 'history' ? 'Historial de Facturas' : 'Factura en Tiempo Real'}
+                    <span className={clsx("text-sm font-bold flex-1", isExpenseMode ? "text-danger-500" : "text-brand-600 dark:text-brand-400")}>
+                      {mobileViewMode === 'history' ? 'Historial de Facturas' : (isExpenseMode ? 'Registro de Egreso' : 'Factura en Tiempo Real')}
                     </span>
                     
                     {mobileViewMode === 'cart' && (
                       <>
                         <button
+                          onClick={toggleExpenseMode}
+                          className={`p-1.5 rounded-lg transition-colors ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+                          title={isExpenseMode ? 'Cambiar a Venta' : 'Cambiar a Egreso'}
+                        >
+                          <Wallet size={15} />
+                        </button>
+                        <button
                           onClick={() => setScannerActive(!scannerActive)}
-                          className={`p-1.5 rounded-lg transition-colors ${scannerActive ? 'bg-brand-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+                          className={`p-1.5 rounded-lg transition-colors ${scannerActive ? (isExpenseMode ? 'bg-danger-600 text-white' : 'bg-brand-600 text-white') : (isExpenseMode ? 'text-danger-500 bg-danger-500/10 hover:bg-danger-500 hover:text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white')}`}
                           title={scannerActive ? 'Apagar Escáner' : 'Escáner Express'}
                         >
                           <ScanLine size={15} />
@@ -873,11 +882,20 @@ export default function InvoicePanel({ isMobile }) {
         <div style={{ width: panelWidth }} className="h-full flex flex-col shrink-0">
           {/* Header */}
           <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
-            <FileText size={16} className="text-brand-400" />
-            <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
+            {isExpenseMode ? <Wallet size={16} className="text-danger-500" /> : <FileText size={16} className="text-brand-400" />}
+            <span className={clsx("text-sm font-bold flex-1 whitespace-nowrap", isExpenseMode ? "text-danger-500" : "text-brand-600 dark:text-brand-400")}>
+              {isExpenseMode ? 'Registro de Egreso' : 'Factura en Tiempo Real'}
+            </span>
+            <button
+              onClick={toggleExpenseMode}
+              className={`p-1.5 rounded-lg transition-colors shrink-0 ${isExpenseMode ? 'bg-danger-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+              title={isExpenseMode ? 'Cambiar a Venta' : 'Cambiar a Egreso'}
+            >
+              <Wallet size={15} />
+            </button>
             <button
               onClick={() => setShowHistoryModal(true)}
-              className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
+              className={`p-1.5 rounded-lg transition-colors shrink-0 ${isExpenseMode ? 'text-danger-500 bg-danger-500/10 hover:bg-danger-500 hover:text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
               title="Historial de Facturas"
             >
               <History size={15} />
@@ -983,11 +1001,11 @@ export default function InvoicePanel({ isMobile }) {
             <Button
               variant="primary"
               size="md"
-              className="w-full"
+              className={clsx("w-full border-none", isExpenseMode ? "bg-danger-600 hover:bg-danger-700 text-white shadow-glow-sm shadow-danger-500/20" : "")}
               disabled={!canOrder}
               onClick={() => openModal('orderConfirm')}
             >
-              Realizar Pedido
+              {isExpenseMode ? 'Registrar Egreso' : 'Realizar Pedido'}
             </Button>
           </div>
         </div>
