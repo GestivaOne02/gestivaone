@@ -34,15 +34,7 @@ const schema = z.object({
   description: z.string().optional(),
 })
 
-/** Generates a unique GO-XXXXXXXX barcode for GestivaOne products */
-const generateGOBarcode = () => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  let code = 'GO-'
-  for (let i = 0; i < 8; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return code
-}
+
 
 const UNITS = ['KG', 'LB', 'UND', 'L', 'M', 'HORA']
 const UNIT_LABELS = { HORA: 'H' }
@@ -102,6 +94,28 @@ export default function AddProductModal({ open }) {
   const [isUnlimited, setIsUnlimited] = useState(false)
   const [hasDiscount, setHasDiscount] = useState(false)
   const [uploading, setUploading] = useState(false)
+
+  const handleGenerateBarcode = () => {
+    const companyName = userSettings?.business_name || userSettings?.company_name || 'U'
+    const productName = watch('name') || 'P'
+    const price = watch('price') || '0'
+    
+    const companyInitial = (companyName.trim()[0] || 'U').toUpperCase()
+    const productInitials = (productName.trim().substring(0, 2) || 'XX').toUpperCase().replace(/[^A-Z0-9]/g, 'X')
+    
+    const priceStr = String(price).replace(/[^0-9]/g, '')
+    const priceChar = priceStr.length > 0 ? priceStr[0] : '0'
+
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+    let randomStr = ''
+    for (let i = 0; i < 4; i++) {
+      randomStr += chars[Math.floor(Math.random() * chars.length)]
+    }
+
+    const code = `GO-${companyInitial}${productInitials}${priceChar}-${randomStr}`
+    setValue('barcode', code, { shouldValidate: true })
+    toast.success('Código único generado')
+  }
 
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0]
@@ -322,10 +336,10 @@ export default function AddProductModal({ open }) {
 
     const finalUnit = isActuallyHourly ? 'HORA' : (isUnlimited ? 'ILIMITADO' : data.unit)
 
-    // Auto-generate barcode if not provided
+    // Use provided barcode, or keep editing barcode, or leave empty
     const finalBarcode = (data.barcode && data.barcode.trim())
       ? data.barcode.trim()
-      : (editing?.barcode || generateGOBarcode())
+      : (editing?.barcode || '')
 
     const finalData = {
       name: data.name,
@@ -431,6 +445,16 @@ export default function AddProductModal({ open }) {
           >
             <FilePlus size={20} />
           </button>
+
+          {/* Barcode Generate Button */}
+          <button
+            type="button"
+            onClick={handleGenerateBarcode}
+            className="p-3 rounded-xl border border-subtle bg-surface-700 text-muted-400 hover:text-brand-500 hover:bg-surface-600 transition-all active:scale-95 mt-auto mb-2"
+            title="Generar Código de Barras"
+          >
+            <Barcode size={20} />
+          </button>
         </div>
 
         {/* Contenedor del Formulario (Scrollable Body + Footer) */}
@@ -454,10 +478,10 @@ export default function AddProductModal({ open }) {
             <Input
               label="Código de Barras (Opcional)"
               icon={<Barcode size={14} />}
-              placeholder="Se generará GO-XXXXXXXX si se deja vacío"
+              placeholder="Ej: 75010080"
               {...register('barcode')}
             />
-            <p className="-mt-4 text-[10px] text-muted-400">Si ya tienes un código de barras físico, ingrésalo aquí. De lo contrario se generará uno automáticamente.</p>
+            <p className="-mt-4 text-[10px] text-muted-400">Si ya tienes un código de barras físico, ingrésalo aquí. O usa el botón del menú lateral para generar uno único.</p>
 
             <div className="grid grid-cols-2 gap-3">
               <Input
