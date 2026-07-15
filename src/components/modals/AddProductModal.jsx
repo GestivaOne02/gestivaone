@@ -65,7 +65,8 @@ export default function AddProductModal({ open }) {
   const [activeSections, setActiveSections] = useState({
     image: false,
     store: false,
-    attachments: false
+    attachments: false,
+    barcode: false
   })
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
@@ -94,6 +95,16 @@ export default function AddProductModal({ open }) {
   const [isUnlimited, setIsUnlimited] = useState(false)
   const [hasDiscount, setHasDiscount] = useState(false)
   const [uploading, setUploading] = useState(false)
+
+  const handleToggleBarcode = () => {
+    setActiveSections(prev => ({ ...prev, barcode: !prev.barcode }))
+    
+    // We execute the generation outside the state setter if it's becoming active and empty
+    const currentBarcode = watch('barcode')
+    if (!activeSections.barcode && (!currentBarcode || currentBarcode.trim() === '')) {
+      handleGenerateBarcode()
+    }
+  }
 
   const handleGenerateBarcode = () => {
     const companyName = userSettings?.business_name || userSettings?.company_name || 'U'
@@ -200,7 +211,8 @@ export default function AddProductModal({ open }) {
       setActiveSections({
         image: !!hasImg,
         store: !!hasStr,
-        attachments: !!hasAtt
+        attachments: !!hasAtt,
+        barcode: false
       })
 
       reset({
@@ -248,7 +260,8 @@ export default function AddProductModal({ open }) {
       setActiveSections({
         image: !!hasImg,
         store: !!hasStr,
-        attachments: !!hasAtt
+        attachments: !!hasAtt,
+        barcode: !!(editing.barcode && editing.barcode.trim() !== '')
       })
 
       reset({
@@ -282,7 +295,8 @@ export default function AddProductModal({ open }) {
       setActiveSections({
         image: false,
         store: false,
-        attachments: false
+        attachments: false,
+        barcode: false
       })
       reset({ unit: 'UND', stock: 0, category: 'Otros', name: '', price: '', cost: 0, barcode: '', attachment_url: '', attachment_name: '', discount_type: 'percentage', discount_value: 0, discount_ends_at: '', show_image: true, image_url: '', show_in_store: false, featured: false, description: '' })
       setCustomCategoryName('')
@@ -446,12 +460,17 @@ export default function AddProductModal({ open }) {
             <FilePlus size={20} />
           </button>
 
-          {/* Barcode Generate Button */}
+          {/* Barcode Toggle Button */}
           <button
             type="button"
-            onClick={handleGenerateBarcode}
-            className="p-3 rounded-xl border border-subtle bg-surface-700 text-muted-400 hover:text-brand-500 hover:bg-surface-600 transition-all active:scale-95 mt-auto mb-2"
-            title="Generar Código de Barras"
+            onClick={handleToggleBarcode}
+            className={clsx(
+              "p-3 rounded-xl border transition-all active:scale-95",
+              activeSections.barcode
+                ? "bg-brand-500/20 border-brand-500/30 text-brand-500 dark:text-brand-300"
+                : "border-subtle bg-surface-700 text-muted-400 hover:text-foreground hover:bg-surface-600"
+            )}
+            title="Código de Barras"
           >
             <Barcode size={20} />
           </button>
@@ -475,13 +494,17 @@ export default function AddProductModal({ open }) {
               {...register('name')}
             />
 
-            <Input
-              label="Código de Barras (Opcional)"
-              icon={<Barcode size={14} />}
-              placeholder="Ej: 75010080"
-              {...register('barcode')}
-            />
-            <p className="-mt-4 text-[10px] text-muted-400">Si ya tienes un código de barras físico, ingrésalo aquí. O usa el botón del menú lateral para generar uno único.</p>
+            {activeSections.barcode && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                <Input
+                  label="Código de Barras"
+                  icon={<Barcode size={14} />}
+                  placeholder="Ej: 75010080"
+                  {...register('barcode')}
+                />
+                <p className="mt-1.5 text-[10px] text-muted-400">Generado automáticamente. Puedes escanear uno físico o editarlo.</p>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <Input
