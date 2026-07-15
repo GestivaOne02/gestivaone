@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus, Barcode } from 'lucide-react'
+import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus, Barcode, ChevronDown, Check } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -95,6 +95,8 @@ export default function AddProductModal({ open }) {
   const [isUnlimited, setIsUnlimited] = useState(false)
   const [hasDiscount, setHasDiscount] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false)
+  const [isDiscountTypeOpen, setIsDiscountTypeOpen] = useState(false)
 
   const handleToggleBarcode = () => {
     setActiveSections(prev => ({ ...prev, barcode: !prev.barcode }))
@@ -577,12 +579,45 @@ export default function AddProductModal({ open }) {
               
               {hasDiscount && (
                 <div className="grid grid-cols-2 gap-3 mt-3 p-3 bg-brand-500/5 rounded-xl border border-brand-500/20">
-                  <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-1.5 relative z-10">
                     <span className="text-[11px] text-muted-400 uppercase font-medium">Tipo de descuento</span>
-                    <select {...register('discount_type')} className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:ring-2 focus:ring-brand-500/50">
-                      <option value="percentage">Porcentaje (%)</option>
-                      <option value="fixed">Valor Fijo ($)</option>
-                    </select>
+                    <div 
+                      className={clsx(
+                        "w-full bg-surface-700 border rounded-xl px-3 py-2.5 text-sm text-foreground flex items-center justify-between cursor-pointer focus:outline-none transition-all",
+                        isDiscountTypeOpen ? "border-brand-500 ring-2 ring-brand-500/20" : "border-subtle hover:border-brand-500/50"
+                      )}
+                      onClick={() => setIsDiscountTypeOpen(!isDiscountTypeOpen)}
+                      tabIndex={0}
+                      onBlur={() => setIsDiscountTypeOpen(false)}
+                    >
+                      <span>{watch('discount_type') === 'percentage' ? 'Porcentaje (%)' : 'Valor Fijo ($)'}</span>
+                      <ChevronDown size={16} className={clsx("text-muted-400 transition-transform", isDiscountTypeOpen && "rotate-180")} />
+                    </div>
+
+                    {isDiscountTypeOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-800 border border-subtle rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div
+                          className={clsx(
+                            "px-3 py-2.5 text-sm cursor-pointer transition-colors flex items-center justify-between",
+                            watch('discount_type') === 'percentage' ? "bg-brand-500/10 text-brand-500 font-medium" : "text-foreground hover:bg-surface-700"
+                          )}
+                          onMouseDown={(e) => { e.preventDefault(); setValue('discount_type', 'percentage'); setIsDiscountTypeOpen(false) }}
+                        >
+                          <span>Porcentaje (%)</span>
+                          {watch('discount_type') === 'percentage' && <Check size={14} />}
+                        </div>
+                        <div
+                          className={clsx(
+                            "px-3 py-2.5 text-sm cursor-pointer transition-colors flex items-center justify-between",
+                            watch('discount_type') === 'fixed' ? "bg-brand-500/10 text-brand-500 font-medium" : "text-foreground hover:bg-surface-700"
+                          )}
+                          onMouseDown={(e) => { e.preventDefault(); setValue('discount_type', 'fixed'); setIsDiscountTypeOpen(false) }}
+                        >
+                          <span>Valor Fijo ($)</span>
+                          {watch('discount_type') === 'fixed' && <Check size={14} />}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <Input
                     label="Valor"
@@ -624,14 +659,45 @@ export default function AddProductModal({ open }) {
             </div>
 
             {/* Category */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 relative z-20">
               <label className="text-xs font-medium text-muted-500 uppercase tracking-wide">Categoría</label>
-              <select
-                {...register('category')}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+              
+              <div 
+                className={clsx(
+                  "w-full bg-surface-700 border rounded-xl px-3 py-2.5 text-sm text-foreground flex items-center justify-between cursor-pointer focus:outline-none transition-all",
+                  isCategoryOpen ? "border-brand-500 ring-2 ring-brand-500/20" : "border-subtle hover:border-brand-500/50"
+                )}
+                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                tabIndex={0}
+                onBlur={() => setIsCategoryOpen(false)}
               >
-                {dynamicCategories.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
+                <span>{selectedCategory || 'Selecciona una categoría'}</span>
+                <ChevronDown size={16} className={clsx("text-muted-400 transition-transform", isCategoryOpen && "rotate-180")} />
+              </div>
+
+              {isCategoryOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-800 border border-subtle rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
+                  {dynamicCategories.map((c) => (
+                    <div
+                      key={c}
+                      className={clsx(
+                        "px-3 py-2.5 text-sm cursor-pointer transition-colors flex items-center justify-between",
+                        selectedCategory === c
+                          ? "bg-brand-500/10 text-brand-500 font-medium"
+                          : "text-foreground hover:bg-surface-700"
+                      )}
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        setValue('category', c)
+                        setIsCategoryOpen(false)
+                      }}
+                    >
+                      <span>{c}</span>
+                      {selectedCategory === c && <Check size={14} />}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {selectedCategory === 'Otros' && (
