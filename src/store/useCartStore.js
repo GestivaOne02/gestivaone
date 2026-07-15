@@ -3,6 +3,7 @@ import { useCurrencyStore } from './useCurrencyStore'
 import { useAuthStore } from './useAuthStore'
 import { getProductDiscount, useProductStore } from './useProductStore'
 import { getLocalizationByCurrency } from '@/services/localizationService'
+import { broadcastSyncEvent } from '@/hooks/useRealtimeSync'
 import toast from 'react-hot-toast'
 
 export const useCartStore = create((set, get) => {
@@ -42,13 +43,21 @@ export const useCartStore = create((set, get) => {
     return { subtotal, taxAmount, customChargesSum, globalDiscountAmount, total }
   }
 
-  const setAndRecalc = (updateFnOrObj) => {
+  const setAndRecalc = (updateFnOrObj, skipBroadcast = false) => {
+    let finalState = {}
     set((state) => {
       const updates = typeof updateFnOrObj === 'function' ? updateFnOrObj(state) : updateFnOrObj
       const nextState = { ...state, ...updates }
       const totals = recalculate(nextState)
-      return { ...nextState, ...totals }
+      finalState = { ...nextState, ...totals }
+      return finalState
     })
+    
+    if (!skipBroadcast) {
+      // Avoid broadcasting non-syncable fields like functions (zustand stores functions inside the state by default)
+      const { items, note, includeTax, customCharges, globalDiscount } = finalState
+      broadcastSyncEvent('cart', 'UPDATE', { items, note, includeTax, customCharges, globalDiscount }, null)
+    }
   }
 
   return {
@@ -62,6 +71,12 @@ export const useCartStore = create((set, get) => {
     customChargesSum: 0,
     globalDiscountAmount: 0,
     total: 0,
+
+    applyRealtimeUpdate: (payload) => {
+      if (payload.eventType === 'UPDATE' && payload.new) {
+        setAndRecalc(payload.new, true)
+      }
+    },
 
     toggleTax: () => setAndRecalc((s) => ({ includeTax: !s.includeTax })),
 

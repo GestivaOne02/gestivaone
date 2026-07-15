@@ -38,6 +38,10 @@ export function useRealtimeSync() {
         async ({ payload }) => {
           if (payload.table === 'products') useProductStore.getState().applyRealtimeUpdate(payload)
           if (payload.table === 'clients') useClientStore.getState().applyRealtimeUpdate(payload)
+          if (payload.table === 'cart') {
+             const cs = await import('@/store/useCartStore')
+             cs.useCartStore.getState().applyRealtimeUpdate(payload)
+          }
           if (payload.table === 'notifications') {
              const ns = await import('@/store/useNotificationStore')
              ns.useNotificationStore.getState().applyRealtimeUpdate(payload)
