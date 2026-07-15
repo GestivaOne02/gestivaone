@@ -208,7 +208,8 @@ export async function exportSingleInvoicePDF(invoice, client = null, settings = 
   const { default: autoTable } = await import('jspdf-autotable')
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-const MARGIN = 15 // 15mm margin as per design
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const MARGIN = 15 // 15mm margin as per design
   const isMinimalist = settings.pdfTemplate === 'minimalist'
 
   const companyName = settings.companyName || 'GestivaOne'
