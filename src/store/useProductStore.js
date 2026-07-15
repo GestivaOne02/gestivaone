@@ -53,6 +53,20 @@ export const useProductStore = create(
     await auth.updateProfile({ settings: updatedSettings })
   },
 
+  deleteCustomCategory: async (catToDelete) => {
+    const auth = useAuthStore.getState()
+    if (!auth.isAuthenticated || !auth.user?.companyId) return
+    const currentSettings = auth.user.settings || {}
+    const customCats = currentSettings.custom_categories || []
+    if (!customCats.includes(catToDelete)) return
+
+    const updatedSettings = {
+      ...currentSettings,
+      custom_categories: customCats.filter(c => c !== catToDelete)
+    }
+    await auth.updateProfile({ settings: updatedSettings })
+  },
+
   fetchProducts: async (force = false) => {
     const { lastFetch } = get()
     const { user } = useAuthStore.getState()

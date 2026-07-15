@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus, Barcode, ChevronDown, Check } from 'lucide-react'
+import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus, Barcode, ChevronDown, Check, Trash2 } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -676,7 +676,7 @@ export default function AddProductModal({ open }) {
               </div>
 
               {isCategoryOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-surface-800 border border-subtle rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-white dark:bg-surface-800 border border-neutral-200 dark:border-surface-700 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 max-h-60 overflow-y-auto">
                   {dynamicCategories.map((c) => (
                     <div
                       key={c}
@@ -693,7 +693,24 @@ export default function AddProductModal({ open }) {
                       }}
                     >
                       <span>{c}</span>
-                      {selectedCategory === c && <Check size={14} />}
+                      <div className="flex items-center gap-2">
+                        {selectedCategory === c && <Check size={14} className="text-brand-500" />}
+                        {!CATEGORIES.includes(c) && (
+                          <button
+                            type="button"
+                            onMouseDown={async (e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              await useProductStore.getState().deleteCustomCategory(c)
+                              if (selectedCategory === c) setValue('category', 'Otros')
+                            }}
+                            className="p-1.5 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-500 hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors"
+                            title="Eliminar categoría"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
