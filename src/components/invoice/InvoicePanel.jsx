@@ -188,6 +188,13 @@ export default function InvoicePanel({ isMobile }) {
     }
   }, [mobileViewMode, fetchInvoices])
 
+  // Use a ref to ensure the scanner listener always has the latest handler 
+  // without re-running the effect and losing the buffer midway through a scan.
+  const handleScanCodeRef = useRef(handleScanCode)
+  useEffect(() => {
+    handleScanCodeRef.current = handleScanCode
+  })
+
   // Physical Barcode Scanner (Keyboard Emulation) Listener
   useEffect(() => {
     let barcodeBuffer = ''
@@ -198,14 +205,15 @@ export default function InvoicePanel({ isMobile }) {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
       
       const now = Date.now()
-      // Scanner guns type very fast (usually < 30ms per character)
-      if (now - lastKeyTime > 50) {
+      // Scanner guns type very fast. Some wireless models take up to 70-100ms. 
+      // Using 150ms as a safe threshold for the scanner typing speed.
+      if (now - lastKeyTime > 150) {
         barcodeBuffer = ''
       }
       lastKeyTime = now
       
       if (e.key === 'Enter' && barcodeBuffer.length > 3) {
-        handleScanCode(barcodeBuffer)
+        handleScanCodeRef.current(barcodeBuffer)
         barcodeBuffer = ''
         e.preventDefault()
         return
@@ -218,7 +226,7 @@ export default function InvoicePanel({ isMobile }) {
     
     window.addEventListener('keydown', handleGlobalKeyDown)
     return () => window.removeEventListener('keydown', handleGlobalKeyDown)
-  }, [handleScanCode])
+  }, []) // Empty deps so it mounts once and never drops the buffer
 
   useEffect(() => {
     loadPinnedCharges()
