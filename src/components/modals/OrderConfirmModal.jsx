@@ -13,7 +13,7 @@ import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
-import { printInvoice, printExpense } from '@/services/printService'
+import { printInvoice } from '@/services/printService'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { format as dateFormat } from 'date-fns'
@@ -87,63 +87,6 @@ export default function OrderConfirmModal({ open }) {
     setLoading(true)
     
     try {
-      if (isExpenseMode) {
-        const { expenseDetails } = useCartStore.getState()
-        const { useExpenseStore } = await import('@/store/useExpenseStore')
-        const { useProductStore } = await import('@/store/useProductStore')
-        const addExpense = useExpenseStore.getState().addExpense
-        const updateProduct = useProductStore.getState().updateProduct
-        const products = useProductStore.getState().products
-
-        const res = await addExpense({
-          amount: total,
-          category: expenseDetails?.category || 'Inventario/Mercancía',
-          description: expenseDetails?.description || 'Compra de inventario (POS)',
-          provider_name: expenseDetails?.provider_name || 'Proveedor Varios',
-          provider_doc_type: expenseDetails?.provider_doc_type || '31',
-          provider_doc_id: expenseDetails?.provider_doc_id || '999999999',
-          iva_paid: taxAmount,
-          pocketId: destinationPocketId === 'general' ? null : destinationPocketId
-        })
-
-        if (!res || res.success === false) {
-          setLoading(false)
-          return toast.error(res?.error || 'Error al registrar egreso')
-        }
-
-        // Add stock to products
-        for (const item of items) {
-          if (item.productId) {
-            const p = products.find(prod => prod.id === item.productId)
-            if (p && typeof p.stock === 'number' && p.unit !== 'ILIMITADO') {
-              await updateProduct(p.id, { stock: p.stock + item.qty })
-            }
-          }
-        }
-
-        // Trigger integrations and automatic printing for Expense
-        const { printer } = useSettingsStore.getState()
-        if (printer?.autoPrint) {
-          printExpense(res.data, items, client, {
-            ...printer,
-            companyName: user?.companyName || 'GestivaOne',
-            companyLogo: user?.companyLogo || null
-          })
-        }
-        setConfirmed(true)
-        setTimeout(() => {
-          clearCart()
-          setConfirmed(false)
-          setPaymentType('immediate')
-          setScheduledDate('')
-          closeModal()
-          toast.success('Egreso y compra de inventario registrados')
-          setLoading(false)
-        }, 2000)
-        
-        return
-      }
-
       const invoice = await createInvoice({
         client,
         items,

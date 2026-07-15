@@ -15,7 +15,7 @@ import BarcodeScanner from '@/components/invoice/BarcodeScanner'
 import ScannerPriceModal from '@/components/invoice/ScannerPriceModal'
 import { useScannerCacheStore } from '@/store/useScannerCacheStore'
 import { useProductStore } from '@/store/useProductStore'
-import ExpenseFormWidget from './ExpenseFormWidget'
+import RegisterExpenseTab from './RegisterExpenseTab'
 import OrderConfirmModal from '@/components/modals/OrderConfirmModal'
 
 const TAX_RATES = {
@@ -923,11 +923,13 @@ export default function InvoicePanel({ isMobile }) {
             )}
           </div>
 
-          {/* Client / Expense Details */}
+          {/* Main Content Area */}
           {isExpenseMode ? (
-            <ExpenseFormWidget />
+            <RegisterExpenseTab onClose={toggleExpenseMode} />
           ) : (
-            <div className="px-4 py-3 border-b border-subtle shrink-0">
+            <>
+              {/* Client Selector */}
+              <div className="px-4 py-3 border-b border-subtle shrink-0">
               {selectedClient ? (
                 <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
                   <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
@@ -1025,9 +1027,10 @@ export default function InvoicePanel({ isMobile }) {
               disabled={!canOrder}
               onClick={() => openModal('orderConfirm')}
             >
-              {isExpenseMode ? 'Registrar Egreso' : 'Realizar Pedido'}
-            </Button>
-          </div>
+                {isExpenseMode ? 'Registrar Egreso' : 'Realizar Pedido'}
+              </Button>
+            </div>
+          )}
         </div>
       </motion.aside>
 
