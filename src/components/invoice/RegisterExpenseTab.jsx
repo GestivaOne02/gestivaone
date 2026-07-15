@@ -3,7 +3,7 @@ import { useExpenseStore } from '@/store/useExpenseStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { printExpense } from '@/services/printService'
-import { Wallet, Save } from 'lucide-react'
+import { Wallet } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
 
@@ -172,7 +172,6 @@ export default function RegisterExpenseTab({ onClose }) {
           size="md"
           className="w-full border-none"
           loading={loading}
-          icon={<Save size={18} />}
         >
           Registrar Egreso
         </Button>
