@@ -57,6 +57,7 @@ export function printInvoice(invoice, client = null, settings = {}) {
     <head>
       <meta charset="utf-8">
       <title>Factura ${invoiceIdStr}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
       <style>
         /* General page layout for thermal paper */
         @page {
@@ -64,7 +65,7 @@ export function printInvoice(invoice, client = null, settings = {}) {
           margin: 0;
         }
         body {
-          font-family: 'Courier New', Courier, monospace;
+          font-family: 'Inter', sans-serif;
           font-size: 12px;
           line-height: 1.4;
           color: #000;
@@ -79,7 +80,7 @@ export function printInvoice(invoice, client = null, settings = {}) {
         /* Template: Modern styling */
         ${isModern ? `
           body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 11px;
             padding: 12px;
             background: #fff;
@@ -328,10 +329,11 @@ export function printExpense(expense, itemsList = [], client = null, settings = 
     <head>
       <meta charset="utf-8">
       <title>Egreso ${expenseIdStr}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
       <style>
         @page { size: auto; margin: 0; }
         body {
-          font-family: 'Courier New', Courier, monospace;
+          font-family: 'Inter', sans-serif;
           font-size: 12px;
           line-height: 1.4;
           color: #000;
@@ -343,7 +345,7 @@ export function printExpense(expense, itemsList = [], client = null, settings = 
           -webkit-print-color-adjust: exact;
         }
         ${isModern ? `
-          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; padding: 12px; background: #fff; }
+          body { font-family: 'Inter', sans-serif; font-size: 11px; padding: 12px; background: #fff; }
           .modern-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; }
           .header-title { font-weight: 800; font-size: 16px; letter-spacing: -0.5px; text-transform: uppercase; }
           .divider { border-top: 1px dashed #cbd5e1 !important; margin: 8px 0; }
