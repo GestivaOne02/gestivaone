@@ -259,11 +259,11 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           </div>
         )}
 
-        <div className={clsx("flex justify-between gap-2 mt-1", (product.barcode && product.barcode.length > 8) ? "items-start flex-col" : "items-start")}>
+        <div className="flex flex-col gap-2 mt-1">
           <div className="flex-1 min-w-0 w-full">
             {/* Product name */}
-            <p className="text-sm font-bold text-foreground truncate pr-6 leading-tight" title={product.name}>
-              {product.name.length > 35 ? product.name.substring(0, 35) + '...' : product.name}
+            <p className="text-sm font-bold text-foreground truncate pr-2 leading-tight" title={product.name}>
+              {product.name.length > 25 ? product.name.substring(0, 25) + '...' : product.name}
             </p>
 
             {/* Category + Unit row */}
@@ -281,17 +281,14 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
 
           {/* Barcode Visual Display */}
           {product.barcode && (
-            <div className={clsx(
-              "bg-white p-1.5 rounded-md flex items-center justify-center overflow-hidden",
-              product.barcode.length > 8 ? "w-full mt-2" : "shrink-0 mt-0.5"
-            )}>
-              <div className={product.barcode.length > 12 ? "scale-[0.80] origin-center" : "scale-[0.90] origin-center"}>
+            <div className="bg-white rounded-md flex items-center justify-start overflow-hidden w-full">
+              <div className="scale-[0.85] origin-left -ml-2">
                 <Barcode
                   value={product.barcode}
                   width={1.2}
-                  height={34}
+                  height={30}
                   fontSize={11}
-                  margin={0}
+                  margin={5}
                   displayValue={true}
                   background="#ffffff"
                   lineColor="#000000"
