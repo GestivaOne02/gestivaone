@@ -303,23 +303,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           <span className="text-base sm:text-lg font-extrabold text-foreground leading-none">{format$(product.price)}</span>
         )}
 
-        {/* Barcode Visual Display */}
-        {product.barcode && (
-          <div className="mt-3 bg-white rounded-md flex items-center justify-center overflow-hidden w-full py-1">
-            <div className="scale-[0.85] origin-center">
-              <Barcode
-                value={product.barcode}
-                width={1.2}
-                height={30}
-                fontSize={11}
-                margin={5}
-                displayValue={true}
-                background="#ffffff"
-                lineColor="#000000"
-              />
-            </div>
-          </div>
-        )}
+
       </div>
 
       {/* ── Zone 3: Stock + Cart ── */}
@@ -431,6 +415,26 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           )}
         </AnimatePresence>
       </div>
+
+      {/* Barcode Visual Display */}
+      {product.barcode && (
+        <div className="px-3.5 pb-3 bg-transparent">
+          <div className="bg-white rounded-md flex items-center justify-center overflow-hidden w-full py-1 shadow-sm border border-neutral-200 dark:border-surface-600">
+            <div className="scale-[0.85] origin-center">
+              <Barcode
+                value={product.barcode}
+                width={1.2}
+                height={30}
+                fontSize={11}
+                margin={5}
+                displayValue={true}
+                background="#ffffff"
+                lineColor="#000000"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
