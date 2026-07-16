@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
