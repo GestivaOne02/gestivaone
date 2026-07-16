@@ -382,11 +382,10 @@ export default function AddProductModal({ open }) {
 
     const finalUnit = isActuallyHourly ? 'HORA' : (isUnlimited ? 'ILIMITADO' : data.unit)
 
-    // Use provided barcode, or keep editing barcode, or leave empty
-    const finalBarcode = (data.barcode && data.barcode.trim())
-      ? data.barcode.trim()
-      : (editing?.barcode || '')
-
+    // Use provided barcode, or leave empty if the barcode section is inactive
+    const finalBarcode = activeSections.barcode 
+      ? (data.barcode && data.barcode.trim() ? data.barcode.trim() : '')
+      : ''
     const finalData = {
       name: data.name,
       price: data.price,

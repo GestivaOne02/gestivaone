@@ -279,23 +279,6 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
             </div>
           </div>
 
-          {/* Barcode Visual Display */}
-          {product.barcode && (
-            <div className="bg-white rounded-md flex items-center justify-start overflow-hidden w-full">
-              <div className="scale-[0.85] origin-left -ml-2">
-                <Barcode
-                  value={product.barcode}
-                  width={1.2}
-                  height={30}
-                  fontSize={11}
-                  margin={5}
-                  displayValue={true}
-                  background="#ffffff"
-                  lineColor="#000000"
-                />
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -318,6 +301,24 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           </div>
         ) : (
           <span className="text-base sm:text-lg font-extrabold text-foreground leading-none">{format$(product.price)}</span>
+        )}
+
+        {/* Barcode Visual Display */}
+        {product.barcode && (
+          <div className="mt-3 bg-white rounded-md flex items-center justify-center overflow-hidden w-full py-1">
+            <div className="scale-[0.85] origin-center">
+              <Barcode
+                value={product.barcode}
+                width={1.2}
+                height={30}
+                fontSize={11}
+                margin={5}
+                displayValue={true}
+                background="#ffffff"
+                lineColor="#000000"
+              />
+            </div>
+          </div>
         )}
       </div>
 

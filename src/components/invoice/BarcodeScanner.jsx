@@ -36,9 +36,10 @@ function BaseScanner({ onScan, onClose, isMobile, containerId }) {
       html5QrCodeRef.current = html5QrCode
 
       const config = {
-        fps: 15,
-        qrbox: isMobile ? { width: 280, height: 180 } : { width: 300, height: 200 },
-        aspectRatio: isMobile ? window.innerHeight / window.innerWidth : 1.333334,
+        fps: 20,
+        qrbox: isMobile ? { width: 260, height: 180 } : { width: 300, height: 200 },
+        // Omitting aspectRatio on mobile allows the native camera to choose its best stream dimension
+        ...(isMobile ? {} : { aspectRatio: 1.333334 }),
         formatsToSupport: [
           Html5QrcodeSupportedFormats.CODE_128,
           Html5QrcodeSupportedFormats.EAN_13,
