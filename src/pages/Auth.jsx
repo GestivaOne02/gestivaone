@@ -640,7 +640,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
 
   return (
     <div className="space-y-4">
-      <form onSubmit={submit} className="space-y-3 sm:space-y-4">
+      <form action="#" onSubmit={submit} className="space-y-3 sm:space-y-4">
         <div>
           <label htmlFor="login-email" className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
           <input
@@ -723,6 +723,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
 
         <button
           type="submit"
+          onClick={submit}
           disabled={loading}
           className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm"
         >
