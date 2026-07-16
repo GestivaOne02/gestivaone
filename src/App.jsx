@@ -15,15 +15,18 @@ import Facturero from '@/pages/Facturero'
 import DianAssistant from '@/pages/DianAssistant'
 import Pockets from '@/pages/Pockets'
 import PersonalFinance from '@/pages/PersonalFinance'
+import Finances from '@/pages/Finances'
 import GestiToken from '@/pages/GestiToken'
 import CRM from '@/pages/CRM'
 import Emails from '@/pages/Emails'
 import Upgrade from '@/pages/Upgrade'
+import Store from '@/pages/Store'
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
-import CookieBanner from '@/components/ui/CookieBanner'
+import { useSettingsStore } from '@/store/useSettingsStore'
+import ConsentBanner from '@/components/ui/ConsentBanner'
 import CountrySelectorModal from '@/components/modals/CountrySelectorModal'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
@@ -81,7 +84,7 @@ export default function App() {
   const location = useLocation()
 
   useEffect(() => {
-    const CURRENT_VERSION = '2.3'
+    const CURRENT_VERSION = '2.4'
     const lastVersion = localStorage.getItem('gestiva-app-version')
     const hasVersionChanged = lastVersion !== CURRENT_VERSION
 
@@ -103,8 +106,6 @@ export default function App() {
 
     // If version changed, perform a full purge of all non-essential data
     if (hasVersionChanged) {
-      console.log(`New version detected (${CURRENT_VERSION})! Purging old persisted caches...`)
-
       // Clear active keys too to force a complete reset of store states to avoid mismatches
       const keysToForceClear = [
         'gestiva-auth-v2.2',
@@ -123,7 +124,6 @@ export default function App() {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
         if (key && key.startsWith('gestiva-') && !ACTIVE_KEYS.includes(key)) {
-          console.log(`Purging legacy cache key: ${key}`)
           localStorage.removeItem(key)
           i--
         }
@@ -136,7 +136,6 @@ export default function App() {
     if (window.caches) {
       caches.keys().then((keys) => {
         keys.forEach((key) => {
-          console.log(`Deleting browser cache bucket: ${key}`)
           caches.delete(key)
         })
       }).catch(err => console.error('Error clearing CacheStorage:', err))
@@ -146,7 +145,6 @@ export default function App() {
     if (navigator.serviceWorker) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => {
-          console.log(`Unregistering Service Worker:`, registration)
           registration.unregister()
         })
       }).catch(err => console.error('Error unregistering ServiceWorkers:', err))
@@ -173,7 +171,8 @@ export default function App() {
     '/dian': 'Asistente DIAN',
     '/seguridad': 'GestiToken',
     '/crm': 'CRM',
-    '/emails': 'Campañas'
+    '/emails': 'Campañas',
+    '/store': 'Mi Tienda'
   }
 
   useEffect(() => {
@@ -218,6 +217,38 @@ export default function App() {
   useEffect(() => { initAuth() }, [])
   useEffect(() => { if (isStale()) fetchRates() }, [])
   useEffect(() => { checkOverdue() }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) return
+
+    const notifications = useSettingsStore.getState().notifications
+    if (notifications?.weeklyReport) {
+      const lastSentStr = user.settings?.lastWeeklyReportSent
+      const now = new Date()
+      let shouldSend = false
+
+      if (!lastSentStr) {
+        shouldSend = true
+      } else {
+        const lastSent = new Date(lastSentStr)
+        const diffMs = now.getTime() - lastSent.getTime()
+        const diffDays = diffMs / (1000 * 60 * 60 * 24)
+        if (diffDays >= 7) {
+          shouldSend = true
+        }
+      }
+
+      if (shouldSend) {
+        useInvoiceStore.getState().sendWeeklyReport().then((res) => {
+          if (res.success) {
+            // Report sent successfully
+          } else if (!res.error?.includes('desactivado')) {
+            console.warn('Error al enviar reporte semanal automático:', res.error)
+          }
+        }).catch(err => console.warn('Error invoking sendWeeklyReport:', err))
+      }
+    }
+  }, [isAuthenticated, user?.id])
 
   useEffect(() => {
     // Egress fix: Polling and focus listeners removed to achieve 0 egress in idle.
@@ -287,12 +318,14 @@ export default function App() {
         >
           <Route path="/menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
           <Route path="/products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
+          <Route path="/store" element={<RequirePermission perm="products"><Store /></RequirePermission>} />
           <Route path="/employees" element={<RequirePermission perm="employees"><RequireFeature feature="employees"><Employees /></RequireFeature></RequirePermission>} />
           <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
           <Route path="/account" element={<Account />} />
           <Route path="/upgrade" element={<Upgrade />} />
-          <Route path="/pockets" element={<RequirePermission perm="dashboard"><RequireFeature feature="pockets"><Pockets /></RequireFeature></RequirePermission>} />
-          <Route path="/personal-finance" element={<RequireFeature feature="personal-finance"><PersonalFinance /></RequireFeature>} />
+          <Route path="/finances" element={<RequirePermission perm="dashboard"><RequireFeature feature="pockets"><Finances /></RequireFeature></RequirePermission>} />
+          <Route path="/pockets" element={<Navigate to="/finances" replace />} />
+          <Route path="/personal-finance" element={<Navigate to="/finances" replace />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/facturero" element={<RequirePermission perm="dashboard"><RequireFeature feature="facturero"><Facturero /></RequireFeature></RequirePermission>} />
           <Route path="/dian" element={<RequirePermission perm="dashboard"><RequireFeature feature="dian"><DianAssistant /></RequireFeature></RequirePermission>} />
@@ -303,10 +336,14 @@ export default function App() {
         </Route>
       </Routes>
 
-      <CookieBanner />
+      <ConsentBanner />
       <CountrySelectorModal />
-      <Analytics />
-      <SpeedInsights />
+      {import.meta.env.PROD && (
+        <>
+          <Analytics />
+          <SpeedInsights />
+        </>
+      )}
     </>
   )
 }

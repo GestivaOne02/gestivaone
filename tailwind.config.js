@@ -12,16 +12,16 @@ export default {
       },
       colors: {
         brand: {
-          50:  '#e0e7ff',
-          100: '#c7d2fe',
-          200: '#a5b4fc',
-          300: '#818cf8',
-          400: '#6366f1',
-          500: '#4f46e5',
-          600: '#4338ca',
-          700: '#3730a3',
-          800: '#1e1b4b',
-          900: '#312e81',
+          50:  '#f2ebfd',
+          100: '#e3d5fa',
+          200: '#cbb1f6',
+          300: '#ac82f0',
+          400: '#8f55e9',
+          500: '#7b39ed', // OFICIAL DE GESTIVAONE
+          600: '#6825d1',
+          700: '#561ea8',
+          800: '#481c88',
+          900: '#3c186d',
         },
         subtle: 'var(--border-subtle)',
         // ─── Surface: CSS-variable-driven so dark/light mode works ───
@@ -74,8 +74,15 @@ export default {
         'foreground':       'var(--text-foreground)',
         'foreground-muted': 'var(--text-muted)',
       },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        }
+      },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'marquee': 'marquee 30s linear infinite',
       }
     },
   },

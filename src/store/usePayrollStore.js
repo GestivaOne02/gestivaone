@@ -328,6 +328,11 @@ export const usePayrollStore = create(
           toast.error('Error al eliminar: ' + e.message)
           return false
         }
+      },
+
+      applyRealtimeUpdate: (payload) => {
+        // Since payroll_runs has a relation with payroll_results, refetching is the cleanest way to sync
+        get().fetchPayrollData()
       }
     }),
     {

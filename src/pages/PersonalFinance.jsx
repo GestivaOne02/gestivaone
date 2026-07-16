@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Coins, ArrowUpRight, ArrowDownRight, Trash2, Wallet, FileText, CalendarDays, Check, Calendar } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -25,7 +26,7 @@ const itemVariants = {
 
 const PERSONAL_CATEGORIES = ['Alimentación', 'Transporte', 'Entretenimiento', 'Suscripciones', 'Salud/Bienestar', 'Educación', 'Otros']
 
-export default function PersonalFinance() {
+export default function PersonalFinance({ isNested = false }) {
   const user = useAuthStore((s) => s.user)
   const updateProfile = useAuthStore((s) => s.updateProfile)
   const format = useCurrencyStore((s) => s.format)
@@ -419,61 +420,119 @@ export default function PersonalFinance() {
   return (
     <motion.div initial="hidden" animate="visible" variants={containerVariants} className="page-container flex flex-col gap-6">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
-        <div className="flex flex-wrap items-center gap-3">
-          <div>
-            <h1 className="text-lg md:text-xl font-bold text-foreground">Mi Gestión Personal</h1>
-            <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Control privado de tus ingresos, egresos y préstamos</p>
+      {!isNested && (
+        <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+          <div className="flex flex-wrap items-center gap-3">
+            <div>
+              <h1 className="text-lg md:text-xl font-bold text-foreground">Mi Gestión Personal</h1>
+              <p className="hidden sm:block text-xs md:text-sm text-muted-400 mt-0.5">Control privado de tus ingresos, egresos y préstamos</p>
+            </div>
           </div>
-        </div>
-        <div className="flex gap-2">
-          {activeTab === 'expenses' ? (
-            <>
-              <Button
-                variant="secondary"
-                size="sm"
-                pill
-                icon={<ArrowUpRight size={14} />}
-                onClick={() => setShowAddModal(true)}
-                title="Ingresar saldo desde utilidad del negocio o bolsillos de ahorro"
-              >
-                Ingresar Dinero
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                pill
-                icon={<ArrowDownRight size={14} />}
-                onClick={() => setShowWithdrawModal(true)}
-                title="Retirar saldo y enviarlo a la utilidad del negocio o a un bolsillo"
-              >
-                Retirar Dinero
-              </Button>
+          <div className="flex gap-2">
+            {activeTab === 'expenses' ? (
+              <>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  pill
+                  icon={<ArrowUpRight size={14} />}
+                  onClick={() => setShowAddModal(true)}
+                  title="Ingresar saldo desde utilidad del negocio o bolsillos de ahorro"
+                >
+                  Ingresar Dinero
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  pill
+                  icon={<ArrowDownRight size={14} />}
+                  onClick={() => setShowWithdrawModal(true)}
+                  title="Retirar saldo y enviarlo a la utilidad del negocio o a un bolsillo"
+                >
+                  Retirar Dinero
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  pill
+                  icon={<Plus size={14} />}
+                  onClick={() => setShowExpenseModal(true)}
+                  title="Registrar un gasto personal restándolo del bolsillo"
+                >
+                  Registrar Egreso
+                </Button>
+              </>
+            ) : (
               <Button
                 variant="primary"
                 size="sm"
                 pill
                 icon={<Plus size={14} />}
-                onClick={() => setShowExpenseModal(true)}
-                title="Registrar un gasto personal restándolo del bolsillo"
+                onClick={() => setShowLoanModal(true)}
+                title="Registrar una nueva deuda o un préstamo por cobrar"
               >
-                Registrar Egreso
+                Registrar Préstamo
               </Button>
-            </>
-          ) : (
-            <Button
-              variant="primary"
-              size="sm"
-              pill
-              icon={<Plus size={14} />}
-              onClick={() => setShowLoanModal(true)}
-              title="Registrar una nueva deuda o un préstamo por cobrar"
-            >
-              Registrar Préstamo
-            </Button>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
+      {isNested && typeof document !== 'undefined' && document.getElementById('finances-header-actions') &&
+        createPortal(
+          <>
+            {activeTab === 'expenses' ? (
+              <>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  pill
+                  icon={<ArrowUpRight size={14} />}
+                  onClick={() => setShowAddModal(true)}
+                  title="Ingresar saldo"
+                >
+                  <span className="hidden sm:inline">Ingresar Dinero</span>
+                  <span className="inline sm:hidden">Ingresar</span>
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  pill
+                  icon={<ArrowDownRight size={14} />}
+                  onClick={() => setShowWithdrawModal(true)}
+                  title="Retirar saldo"
+                >
+                  <span className="hidden sm:inline">Retirar Dinero</span>
+                  <span className="inline sm:hidden">Retirar</span>
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  pill
+                  icon={<Plus size={14} />}
+                  onClick={() => setShowExpenseModal(true)}
+                  title="Registrar un gasto personal"
+                >
+                  <span className="hidden sm:inline">Registrar Egreso</span>
+                  <span className="inline sm:hidden">Egreso</span>
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="primary"
+                size="sm"
+                pill
+                icon={<Plus size={14} />}
+                onClick={() => setShowLoanModal(true)}
+                title="Registrar préstamo"
+              >
+                <span className="hidden sm:inline">Registrar Préstamo</span>
+                <span className="inline sm:hidden">Préstamo</span>
+              </Button>
+            )}
+          </>,
+          document.getElementById('finances-header-actions')
+        )
+      }
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Wallet & Summary Column */}
@@ -490,7 +549,7 @@ export default function PersonalFinance() {
                 <span className="text-xs tracking-[0.2em] text-white/70 font-mono font-medium">•••• •••• •••• 5678</span>
               </div>
               <div className="flex justify-between items-end text-[10px] text-white/50 font-medium">
-                <span>GESTIVA ONE</span>
+                <span>GESTIVAONE</span>
                 <span>Vence: 12/29</span>
               </div>
             </div>

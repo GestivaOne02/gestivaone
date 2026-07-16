@@ -345,3 +345,8 @@ Cuando una IA agregue o modifique funcionalidades relevantes, debe actualizar es
 - Si cambia roles, planes, datos, reportes o reglas del negocio.
 
 Mantenerlo breve. No convertirlo en changelog tecnico extenso.
+
+## Registro de Funcionalidades Agregadas (Changelog)
+
+*Aquí se documentarán todas las nuevas funcionalidades que vayamos agregando, manteniendo el contexto actualizado para futuras iteraciones.*
+

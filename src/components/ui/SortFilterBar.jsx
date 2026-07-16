@@ -32,10 +32,9 @@ export default function SortFilterBar({
         {MODES.map(({ key, icon: Icon, label }) => {
           const active = sortMode === key
           return (
-            <motion.button
+            <button
               key={key}
               onClick={() => onSortChange(key)}
-              whileTap={{ scale: 0.95 }}
               className={clsx(
                 'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors shrink-0 border',
                 active
@@ -46,14 +45,12 @@ export default function SortFilterBar({
               <Icon size={12} />
               {label}
               {active && (
-                <motion.span
-                  layoutId="sort-pill"
+                <div
                   className="absolute inset-0 rounded-lg bg-brand-600"
                   style={{ zIndex: -1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
-            </motion.button>
+            </button>
           )
         })}
       </div>

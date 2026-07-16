@@ -1,13 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe } from 'lucide-react'
+import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download, ScanLine, Wallet, Search, UserPlus, Menu, LogOut, Settings } from 'lucide-react'
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useInvoiceStore } from '@/store/useInvoiceStore'
+import { exportSingleInvoicePDF } from '@/services/exportService'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
+import InvoiceHistoryModal from '@/components/modals/InvoiceHistoryModal'
+import BarcodeScanner from '@/components/invoice/BarcodeScanner'
+import ScannerPriceModal from '@/components/invoice/ScannerPriceModal'
+import { useScannerCacheStore } from '@/store/useScannerCacheStore'
+import { useProductStore } from '@/store/useProductStore'
+import RegisterExpenseTab from './RegisterExpenseTab'
+import OrderConfirmModal from '@/components/modals/OrderConfirmModal'
 
 const TAX_RATES = {
   COP: 0.19,
@@ -61,6 +70,9 @@ export default function InvoicePanel({ isMobile }) {
   const subtotal = useCartStore(selectSubtotal)
   const includeTax = useCartStore((s) => s.includeTax)
   const toggleTax = useCartStore((s) => s.toggleTax)
+  const addScannedItem = useCartStore((s) => s.addScannedItem)
+  const isExpenseMode = useCartStore((s) => s.isExpenseMode)
+  const toggleExpenseMode = useCartStore((s) => s.toggleExpenseMode)
 
   const customCharges = useCartStore((s) => s.customCharges)
   const addCustomCharge = useCartStore((s) => s.addCustomCharge)
@@ -89,10 +101,136 @@ export default function InvoicePanel({ isMobile }) {
   const [globalDiscountInputType, setGlobalDiscountInputType] = useState('percent')
 
   // Resizing state
-  const MIN_WIDTH = 288
-  const MAX_WIDTH = MIN_WIDTH + 150 // Allowing ~150px expansion
-  const [panelWidth, setPanelWidth] = useState(MIN_WIDTH)
+  const MIN_WIDTH = 300
+  const MAX_WIDTH = MIN_WIDTH + 300 // Allow 300px expansion
+  const [panelWidth, setPanelWidth] = useState((MIN_WIDTH + MAX_WIDTH) / 2)
   const [isResizing, setIsResizing] = useState(false)
+  const [showHistoryModal, setShowHistoryModal] = useState(false)
+  
+  // Scanner state
+  const [scannerActive, setScannerActive] = useState(false)
+  const [pendingScan, setPendingScan] = useState(null) // { barcode } waiting for price modal
+  const getByBarcode = useScannerCacheStore((s) => s.getByBarcode)
+  const saveBarcode = useScannerCacheStore((s) => s.saveBarcode)
+  const products = useProductStore((s) => s.products)
+  const addProduct = useProductStore((s) => s.addProduct)
+
+  const handleScanCode = async (barcode) => {
+    // 1. Check main inventory by barcode field or name match
+    const inventoryMatch = products.find(
+      (p) => p.barcode === barcode || p.sku === barcode
+    )
+    if (inventoryMatch) {
+      addScannedItem({
+        barcode,
+        name: inventoryMatch.name,
+        price: inventoryMatch.price,
+        unit: inventoryMatch.unit ?? 'UND',
+      })
+      toast.success(`✓ ${inventoryMatch.name} añadido`)
+      return
+    }
+    // 2. Check scanned products cache
+    const cached = getByBarcode(barcode)
+    if (cached) {
+      addScannedItem({ barcode, name: cached.name, price: cached.price, unit: cached.unit })
+      toast.success(`✓ ${cached.name} añadido`)
+      return
+    }
+    
+    // 3. Unknown code — try to fetch name from Open Food Facts API
+    let suggestedName = ''
+    try {
+      const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
+      const data = await res.json()
+      if (data.status === 1 && data.product) {
+        suggestedName = data.product.product_name_es || data.product.product_name || data.product.brands || ''
+      }
+    } catch (e) {
+      console.error("Error fetching product data from API:", e)
+    }
+
+    // 4. Show price modal
+    setPendingScan({ barcode, suggestedName })
+  }
+
+  const handleModalConfirm = async ({ barcode, name, price, saveToCache }) => {
+    if (saveToCache) {
+      try {
+        await addProduct({
+          name,
+          price,
+          barcode,
+          category: 'Otros',
+          unit: 'UND',
+          stock: 0,
+          cost: 0,
+          show_in_store: false,
+          featured: false
+        })
+        toast.success(`✓ ${name} guardado en el catálogo`)
+      } catch (e) {
+        console.error('Error saving to DB, falling back to cache', e)
+        saveBarcode(barcode, { name, price })
+      }
+    }
+    
+    addScannedItem({ barcode, name, price, unit: 'UND' })
+    setPendingScan(null)
+    toast.success(`✓ ${name} añadido a la factura`)
+  }
+
+  // Mobile History toggle
+  const [mobileViewMode, setMobileViewMode] = useState('cart') // 'cart' | 'history'
+  const invoices = useInvoiceStore((s) => s.invoices)
+  const fetchInvoices = useInvoiceStore((s) => s.fetchInvoices)
+  const user = useAuthStore((s) => s.user)
+
+  useEffect(() => {
+    if (mobileViewMode === 'history') {
+      fetchInvoices()
+    }
+  }, [mobileViewMode, fetchInvoices])
+
+  // Use a ref to ensure the scanner listener always has the latest handler 
+  // without re-running the effect and losing the buffer midway through a scan.
+  const handleScanCodeRef = useRef(handleScanCode)
+  useEffect(() => {
+    handleScanCodeRef.current = handleScanCode
+  })
+
+  // Physical Barcode Scanner (Keyboard Emulation) Listener
+  useEffect(() => {
+    let barcodeBuffer = ''
+    let lastKeyTime = 0
+    
+    const handleGlobalKeyDown = (e) => {
+      // Ignore if user is typing in an input (except if it's the price modal, which has its own handlers)
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+      
+      const now = Date.now()
+      // Scanner guns type very fast. Some wireless models take up to 70-100ms. 
+      // Using 150ms as a safe threshold for the scanner typing speed.
+      if (now - lastKeyTime > 150) {
+        barcodeBuffer = ''
+      }
+      lastKeyTime = now
+      
+      if (e.key === 'Enter' && barcodeBuffer.length > 3) {
+        handleScanCodeRef.current(barcodeBuffer)
+        barcodeBuffer = ''
+        e.preventDefault()
+        return
+      }
+      
+      if (e.key.length === 1) {
+        barcodeBuffer += e.key
+      }
+    }
+    
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, []) // Empty deps so it mounts once and never drops the buffer
 
   useEffect(() => {
     loadPinnedCharges()
@@ -413,6 +551,34 @@ export default function InvoicePanel({ isMobile }) {
   // ─────────────────────────────────────────
   // MOBILE: Bottom sheet drawer
   // ─────────────────────────────────────────
+  
+  const handleDownloadInvoice = async (invoice) => {
+    try {
+      toast.loading('Generando PDF...', { id: 'pdf-mob' })
+      const clientObj = {
+        name: invoice.client_name,
+        document_id: invoice.client_document_id,
+        phone: invoice.client_phone,
+        email: invoice.client_email,
+        address: invoice.client_address
+      }
+      
+      const settings = {
+        companyName: user?.companyName || 'GestivaOne',
+        companyPhone: user?.phone || '',
+        companyEmail: user?.email || '',
+        themeColor: 'indigo',
+        pdfTemplate: 'corporate'
+      }
+
+      await exportSingleInvoicePDF(invoice, clientObj, settings)
+      toast.success('Factura PDF generada', { id: 'pdf-mob' })
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al generar PDF', { id: 'pdf-mob' })
+    }
+  }
+  
   if (isMobile) {
     return (
       <>
@@ -444,9 +610,53 @@ export default function InvoicePanel({ isMobile }) {
                     <div className="w-10 h-1 rounded-full bg-surface-500" />
                   </div>
                   <div className="flex items-center gap-2 px-5 py-3 border-b border-subtle">
-                    <FileText size={16} className="text-brand-400" />
-                    <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1">Factura en Tiempo Real</span>
-                    {items.length > 0 && (
+                    {mobileViewMode === 'history' ? (
+                      <History size={16} className="text-brand-400" />
+                    ) : isExpenseMode ? (
+                      <Wallet size={16} className="text-brand-400" />
+                    ) : (
+                      <FileText size={16} className="text-brand-400" />
+                    )}
+                    
+                    <span className="text-sm font-bold flex-1 text-brand-600 dark:text-brand-400">
+                      {mobileViewMode === 'history' ? 'Historial de Facturas' : (isExpenseMode ? 'Registro de Egreso' : 'Factura en Tiempo Real')}
+                    </span>
+                    
+                    {mobileViewMode === 'cart' && (
+                      <>
+                        <button
+                          onClick={toggleExpenseMode}
+                          className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
+                          title={isExpenseMode ? 'Volver a Ventas' : 'Registrar Egreso'}
+                        >
+                          {isExpenseMode ? <FileText size={15} /> : <Wallet size={15} />}
+                        </button>
+                        <button
+                          onClick={() => setScannerActive(!scannerActive)}
+                          className={`p-1.5 rounded-lg transition-colors shrink-0 ${scannerActive ? 'bg-brand-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
+                          title={scannerActive ? 'Apagar Escáner' : 'Escáner Express'}
+                        >
+                          <ScanLine size={15} />
+                        </button>
+                        <button
+                          onClick={() => setMobileViewMode('history')}
+                          className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
+                          title="Historial de Facturas"
+                        >
+                          <History size={15} />
+                        </button>
+                      </>
+                    )}
+                    {mobileViewMode === 'history' && (
+                      <button
+                        onClick={() => setMobileViewMode('cart')}
+                        className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors"
+                        title="Factura en Tiempo Real"
+                      >
+                        <FileText size={15} />
+                      </button>
+                    )}
+                    {items.length > 0 && mobileViewMode === 'cart' && (
                       <button
                         onClick={clearCart}
                         className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors"
@@ -464,93 +674,166 @@ export default function InvoicePanel({ isMobile }) {
                   </div>
                 </div>
 
-                {/* Client */}
-                <div className="px-5 py-3 border-b border-subtle shrink-0">
-                  {selectedClient ? (
-                    <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
-                      <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
-                        {getClientIcon(selectedClient.document_type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
-                        {selectedClient.document_id && (
-                          <p className="text-[9px] text-muted-400 truncate">Doc: {selectedClient.document_id}</p>
-                        )}
-                        <p className="text-[10px] text-muted-400 truncate">
-                          {selectedClient.email || selectedClient.phone || 'Sin datos de contacto'}
-                        </p>
-                      </div>
-                      <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground">
-                        <X size={12} />
-                      </button>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
-                  )}
-                </div>
-
-                {/* Items */}
-                <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
-                  <AnimatePresence initial={false}>
-                    {items.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-32 gap-3 text-center">
-                        <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center">
-                          <ShoppingCart size={20} className="text-muted-400" />
+                {mobileViewMode === 'cart' ? (
+                  <>
+                    {/* Client */}
+                    <div className="px-5 py-3 border-b border-subtle shrink-0">
+                      {selectedClient ? (
+                        <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
+                          <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
+                            {getClientIcon(selectedClient.document_type)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
+                            {selectedClient.document_id && (
+                              <p className="text-[9px] text-muted-400 truncate">Doc: {selectedClient.document_id}</p>
+                            )}
+                            <p className="text-[10px] text-muted-400 truncate">
+                              {selectedClient.email || selectedClient.phone || 'Sin datos de contacto'}
+                            </p>
+                          </div>
+                          <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground">
+                            <X size={12} />
+                          </button>
                         </div>
-                        <p className="text-xs text-muted-400">El carrito está vacío.</p>
+                      ) : (
+                        <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
+                      )}
+                    </div>
+
+                    {/* Items */}
+                    <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+                      <AnimatePresence initial={false}>
+                        {items.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center h-32 gap-3 text-center">
+                            <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center">
+                              <ShoppingCart size={20} className="text-muted-400" />
+                            </div>
+                            <p className="text-xs text-muted-400">El carrito está vacío.</p>
+                          </div>
+                        ) : (
+                          items.map((item) => (
+                            <motion.div
+                              key={item.id}
+                              layout
+                              initial={{ opacity: 0, y: 12 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 12 }}
+                              className="bg-surface-700 border border-subtle rounded-xl p-3"
+                            >
+                              <div className="flex items-start gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
+                                  <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
+                                </div>
+                                <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 p-0.5">
+                                  <X size={11} />
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-between mt-2">
+                                <div className="flex items-center gap-2">
+                                  <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
+                                    <Minus size={10} />
+                                  </button>
+                                  <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
+                                  <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
+                                    <Plus size={10} />
+                                  </button>
+                                </div>
+                                <span className="text-xs font-bold text-foreground">{format(item.price * item.qty)}</span>
+                              </div>
+                            </motion.div>
+                          ))
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="p-5 border-t border-subtle shrink-0 space-y-4 pb-safe">
+                      {renderTotalsSection()}
+                      <Button
+                        variant="primary"
+                        size="md"
+                        className="w-full"
+                        disabled={!canOrder}
+                        onClick={() => openModal('orderConfirm')}
+                      >
+                        Realizar Pedido
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  /* History View Mobile */
+                  <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 pb-safe">
+                    {invoices.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-full text-muted-400 py-10">
+                        <FileText size={40} className="mb-3 opacity-20" />
+                        <p className="text-sm">No hay facturas registradas aún.</p>
                       </div>
                     ) : (
-                      items.map((item) => (
-                        <motion.div
-                          key={item.id}
-                          layout
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 12 }}
-                          className="bg-surface-700 border border-subtle rounded-xl p-3"
-                        >
-                          <div className="flex items-start gap-2">
+                      invoices.map(inv => (
+                        <div key={inv.id} className="flex flex-col bg-surface-700 border border-subtle rounded-xl p-3 gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-brand-500/10 flex items-center justify-center shrink-0">
+                              <FileText size={16} className="text-brand-400" />
+                            </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
-                              <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
+                              <h3 className="text-xs font-bold text-foreground truncate">
+                                Factura #{inv.id?.slice(-8).toUpperCase()}
+                              </h3>
+                              <p className="text-[10px] text-muted-400 truncate mt-0.5">
+                                {inv.client_name || 'Cliente Express'}
+                              </p>
                             </div>
-                            <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 p-0.5">
-                              <X size={11} />
-                            </button>
-                          </div>
-                          <div className="flex items-center justify-between mt-2">
-                            <div className="flex items-center gap-2">
-                              <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
-                                <Minus size={10} />
-                              </button>
-                              <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
-                              <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
-                                <Plus size={10} />
-                              </button>
+                            <div className="text-right shrink-0">
+                              <p className="text-xs font-bold text-foreground">
+                                {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(inv.total)}
+                              </p>
+                              <p className="text-[9px] text-muted-500 mt-0.5">
+                                {new Date(inv.created_at).toLocaleDateString('es-CO', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </p>
                             </div>
-                            <span className="text-xs font-bold text-foreground">{format(item.price * item.qty)}</span>
                           </div>
-                        </motion.div>
+                          
+                          <button
+                            onClick={() => handleDownloadInvoice(inv)}
+                            className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-surface-600 hover:bg-brand-600 hover:text-white text-brand-400 transition-colors text-[11px] font-semibold"
+                          >
+                            <Download size={12} />
+                            <span>Descargar PDF</span>
+                          </button>
+                        </div>
                       ))
                     )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Footer */}
-                <div className="p-5 border-t border-subtle shrink-0 space-y-4 pb-safe">
-                  {renderTotalsSection()}
-                  <Button
-                    variant="primary"
-                    size="md"
-                    className="w-full"
-                    disabled={!canOrder}
-                    onClick={() => openModal('orderConfirm')}
-                  >
-                    Realizar Pedido
-                  </Button>
-                </div>
+                  </div>
+                )}
               </motion.aside>
             </>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile fullscreen scanner */}
+        <AnimatePresence>
+          {scannerActive && (
+            <BarcodeScanner
+              key="mobile-scanner"
+              onScan={handleScanCode}
+              onClose={() => setScannerActive(false)}
+              isMobile
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Price modal for unknown barcodes */}
+        <AnimatePresence>
+          {pendingScan && (
+            <ScannerPriceModal
+              key="price-modal-mobile"
+              barcode={pendingScan.barcode}
+              suggestedName={pendingScan.suggestedName}
+              onConfirm={handleModalConfirm}
+              onCancel={() => setPendingScan(null)}
+            />
           )}
         </AnimatePresence>
       </>
@@ -603,8 +886,24 @@ export default function InvoicePanel({ isMobile }) {
         <div style={{ width: panelWidth }} className="h-full flex flex-col shrink-0">
           {/* Header */}
           <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
-            <FileText size={16} className="text-brand-400" />
-            <span className="text-sm font-bold text-brand-600 dark:text-brand-400 flex-1 whitespace-nowrap">Factura en Tiempo Real</span>
+            {isExpenseMode ? <Wallet size={16} className="text-brand-400" /> : <FileText size={16} className="text-brand-400" />}
+            <span className="text-sm font-bold flex-1 whitespace-nowrap text-brand-600 dark:text-brand-400">
+              {isExpenseMode ? 'Registro de Egreso' : 'Factura en Tiempo Real'}
+            </span>
+            <button
+              onClick={toggleExpenseMode}
+              className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
+              title={isExpenseMode ? 'Volver a Ventas' : 'Registrar Egreso'}
+            >
+              {isExpenseMode ? <FileText size={15} /> : <Wallet size={15} />}
+            </button>
+            <button
+              onClick={() => setShowHistoryModal(true)}
+              className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
+              title="Historial de Facturas"
+            >
+              <History size={15} />
+            </button>
             {items.length > 0 && (
               <button onClick={clearCart} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors shrink-0" title="Limpiar carrito">
                 <Trash2 size={13} />
@@ -612,88 +911,95 @@ export default function InvoicePanel({ isMobile }) {
             )}
           </div>
 
-          {/* Client */}
-          <div className="px-4 py-3 border-b border-subtle shrink-0">
-            {selectedClient ? (
-              <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
-                <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
-                  {getClientIcon(selectedClient.document_type)}
+          {/* Main Content Area */}
+          {isExpenseMode ? (
+            <RegisterExpenseTab onClose={toggleExpenseMode} />
+          ) : (
+            <>
+              {/* Client Selector */}
+              <div className="px-4 py-3 border-b border-subtle shrink-0">
+              {selectedClient ? (
+                <div className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-3 py-2">
+                  <div className="w-7 h-7 rounded-full bg-brand-500/15 flex items-center justify-center shrink-0">
+                    {getClientIcon(selectedClient.document_type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
+                    {selectedClient.document_id && (
+                      <p className="text-[9px] text-muted-400 truncate">Doc: {selectedClient.document_id}</p>
+                    )}
+                    <p className="text-[10px] text-muted-400 truncate">
+                      {selectedClient.email || selectedClient.phone || 'Sin datos de contacto'}
+                    </p>
+                  </div>
+                  <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground shrink-0">
+                    <X size={12} />
+                  </button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-foreground truncate">{selectedClient.name}</p>
-                  {selectedClient.document_id && (
-                    <p className="text-[9px] text-muted-400 truncate">Doc: {selectedClient.document_id}</p>
-                  )}
-                  <p className="text-[10px] text-muted-400 truncate">
-                    {selectedClient.email || selectedClient.phone || 'Sin datos de contacto'}
-                  </p>
-                </div>
-                <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground shrink-0">
-                  <X size={12} />
-                </button>
-              </div>
-            ) : (
-              <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
-            )}
-          </div>
-
+              ) : (
+                <p className="text-xs text-muted-400 text-center py-1">Sin cliente seleccionado</p>
+              )}
+            </div>
           {/* Items */}
           <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
             <AnimatePresence initial={false}>
-              {items.length === 0 ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex flex-col items-center justify-center h-full gap-3 text-center"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center shrink-0">
-                    <ShoppingCart size={20} className="text-muted-400" />
-                  </div>
-                  <p className="text-xs text-muted-400">El carrito está vacío.<br />Añade productos desde el panel.</p>
-                </motion.div>
-              ) : (
-                items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    initial={{ opacity: 0, x: 20, scale: 0.95 }}
-                    animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: 20, scale: 0.9 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    className="bg-surface-700 border border-subtle rounded-xl p-3 shrink-0"
-                  >
-                    <div className="flex items-start gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
-                        <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
+                  {items.length === 0 ? (
+                    <motion.div
+                      key="empty"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex flex-col items-center justify-center h-full gap-3 text-center"
+                    >
+                      <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center shrink-0">
+                        <ShoppingCart size={20} className="text-muted-400" />
                       </div>
-                      <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5 shrink-0">
-                        <X size={11} />
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center gap-1.5">
-                        <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
-                          <Minus size={9} />
-                        </button>
-                        <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
-                        <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
-                          <Plus size={9} />
-                        </button>
+                      <div className="text-sm text-muted-400 max-w-[200px]">
+                        El carrito está vacío.<br />
+                        Añade productos desde el panel.
                       </div>
-                      <motion.span
-                        key={`${item.id}-${item.qty}-${item.price}`}
-                        initial={{ scale: 1.1, color: '#a78bfa' }}
-                        animate={{ scale: 1, color: 'var(--text-foreground)' }}
-                        className="text-xs font-bold shrink-0"
+                    </motion.div>
+                  ) : (
+                    items.map((item) => (
+                      <motion.div
+                        key={item.id}
+                        layout
+                        initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 20, scale: 0.9 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        className="bg-surface-700 border border-subtle rounded-xl p-3 shrink-0"
                       >
-                        {format(item.price * item.qty)}
-                      </motion.span>
-                    </div>
-                  </motion.div>
-                ))
-              )}
+                        <div className="flex items-start gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-foreground truncate">{item.name}</p>
+                            <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
+                          </div>
+                          <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5 shrink-0">
+                            <X size={11} />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-1.5">
+                            <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
+                              <Minus size={9} />
+                            </button>
+                            <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
+                            <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
+                              <Plus size={9} />
+                            </button>
+                          </div>
+                          <motion.span
+                            key={`${item.id}-${item.qty}-${item.price}`}
+                            initial={{ scale: 1.1, color: '#a78bfa' }}
+                            animate={{ scale: 1, color: 'var(--text-foreground)' }}
+                            className="text-xs font-bold shrink-0"
+                          >
+                            {format(item.price * item.qty)}
+                          </motion.span>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
             </AnimatePresence>
           </div>
 
@@ -703,15 +1009,35 @@ export default function InvoicePanel({ isMobile }) {
             <Button
               variant="primary"
               size="md"
-              className="w-full"
+              className={clsx("w-full border-none", isExpenseMode ? "bg-danger-600 hover:bg-danger-700 text-white shadow-glow-sm shadow-danger-500/20" : "")}
               disabled={!canOrder}
               onClick={() => openModal('orderConfirm')}
             >
-              Realizar Pedido
+              {isExpenseMode ? 'Registrar Egreso' : 'Realizar Pedido'}
             </Button>
-          </div>
+            </div>
+            </>
+          )}
         </div>
       </motion.aside>
+
+      <InvoiceHistoryModal 
+        open={showHistoryModal} 
+        onClose={() => setShowHistoryModal(false)} 
+      />
+
+      {/* Price modal for unknown barcodes */}
+      <AnimatePresence>
+        {pendingScan && (
+          <ScannerPriceModal
+            key="price-modal"
+            barcode={pendingScan.barcode}
+            suggestedName={pendingScan.suggestedName}
+            onConfirm={handleModalConfirm}
+            onCancel={() => setPendingScan(null)}
+          />
+        )}
+      </AnimatePresence>
     </>
   )
 }

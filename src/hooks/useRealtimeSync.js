@@ -7,6 +7,20 @@ import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { usePocketStore } from '@/store/usePocketStore'
+import { useHRStore } from '@/store/useHRStore'
+import { usePayrollStore } from '@/store/usePayrollStore'
+
+export let globalChannel = null;
+
+export const broadcastSyncEvent = (table, eventType, newRecord, oldRecord) => {
+  if (globalChannel) {
+    globalChannel.send({
+      type: 'broadcast',
+      event: 'manual_sync_event',
+      payload: { table, eventType, new: newRecord, old: oldRecord }
+    }).catch(err => console.error('Broadcast error:', err))
+  }
+}
 
 export function useRealtimeSync() {
   const user = useAuthStore((s) => s.user)
@@ -14,48 +28,72 @@ export function useRealtimeSync() {
   useEffect(() => {
     if (!user?.companyId) return
 
-    console.log('Inicializando sincronización en tiempo real para el POS...')
-
     const channel = supabase.channel(`company_realtime_${user.companyId}`)
+    globalChannel = channel
 
     channel
       .on(
+        'broadcast',
+        { event: 'manual_sync_event' },
+        async ({ payload }) => {
+          if (payload.table === 'products') useProductStore.getState().applyRealtimeUpdate(payload)
+          if (payload.table === 'clients') useClientStore.getState().applyRealtimeUpdate(payload)
+          if (payload.table === 'cart') {
+             const cs = await import('@/store/useCartStore')
+             cs.useCartStore.getState().applyRealtimeUpdate(payload)
+          }
+          if (payload.table === 'notifications') {
+             const ns = await import('@/store/useNotificationStore')
+             ns.useNotificationStore.getState().applyRealtimeUpdate(payload)
+          }
+        }
+      )
+      .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'products', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'products' },
         (payload) => {
-          console.log('Realtime Update (products):', payload)
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useProductStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'clients', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'clients' },
         (payload) => {
-          console.log('Realtime Update (clients):', payload)
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useClientStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'invoices', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'notifications' },
+        async (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
+          const ns = await import('@/store/useNotificationStore')
+          ns.useNotificationStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'invoices' },
         (payload) => {
-          console.log('Realtime Update (invoices):', payload)
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useInvoiceStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'expenses', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'expenses' },
         (payload) => {
-          console.log('Realtime Update (expenses):', payload)
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           useExpenseStore.getState().applyRealtimeUpdate(payload)
         }
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'profiles', filter: `company_id=eq.${user.companyId}` },
+        { event: '*', schema: 'public', table: 'profiles' },
         (payload) => {
-          console.log('Realtime Update (profiles):', payload)
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
           // Profile updates could be new employees or setting changes
           if (useEmployeeStore.getState().applyRealtimeUpdate) {
              useEmployeeStore.getState().applyRealtimeUpdate(payload)
@@ -71,14 +109,45 @@ export function useRealtimeSync() {
           }
         }
       )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-           console.log('Conectado al canal en tiempo real del POS.')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'hr_employees' },
+        (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
+          useHRStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'hr_recruitment_candidates' },
+        (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
+          useHRStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'hr_vacations' },
+        (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
+          useHRStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'payroll_runs' },
+        (payload) => {
+          if (payload.new && payload.new.company_id && payload.new.company_id !== user.companyId) return;
+          usePayrollStore.getState().applyRealtimeUpdate(payload)
+        }
+      )
+      .subscribe((status, err) => {
+        if (status === 'CHANNEL_ERROR') {
+           console.error('❌ Realtime Channel Error:', err)
         }
       })
 
     return () => {
-      console.log('Desconectando canal en tiempo real...')
       supabase.removeChannel(channel)
     }
   }, [user?.companyId, user?.id])

@@ -22,9 +22,8 @@ export default function TopBar() {
         >
           <Menu size={18} />
         </button>
-        <div className="flex flex-col leading-tight">
-          <span className="text-sm font-bold text-foreground uppercase tracking-wider animate-pulse-slow">Gestiva</span>
-          <span className="text-[10px] text-brand-500 dark:text-brand-400 font-semibold tracking-widest uppercase">One</span>
+        <div className="flex items-center">
+          <img src="/images/gestivaOneIcon.svg" alt="GestivaOne" className="h-6 object-contain" />
         </div>
       </div>
 

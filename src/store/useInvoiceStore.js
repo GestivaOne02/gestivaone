@@ -10,6 +10,36 @@ import { es } from 'date-fns/locale'
 
 const STALE_TIME = 1000 * 60 * 60 // 1 hora
 
+const bookHourlySlots = async (invoice) => {
+  try {
+    const { products, updateProduct } = useProductStore.getState()
+    for (const item of (invoice.items || [])) {
+      if (item.hourly_booking) {
+        const product = products.find(p => p.id === item.id)
+        if (product) {
+          const hourlySettings = JSON.parse(product.description || '{}')
+          const currentOccupied = hourlySettings.occupiedSlots || []
+          
+          const isAlreadyBooked = currentOccupied.some(s => s.date === item.hourly_booking.date && s.time === item.hourly_booking.start)
+          if (!isAlreadyBooked) {
+            const newOccupied = [
+              ...currentOccupied,
+              { date: item.hourly_booking.date, time: item.hourly_booking.start, duration: item.hourly_booking.hours }
+            ]
+            const updatedDescription = JSON.stringify({
+              ...hourlySettings,
+              occupiedSlots: newOccupied
+            })
+            await updateProduct(product.id, { description: updatedDescription })
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error booking hourly slots:', err)
+  }
+}
+
 export const useInvoiceStore = create(
   persist(
     (set, get) => ({
@@ -146,6 +176,10 @@ export const useInvoiceStore = create(
       return null
     }
 
+    if (saved.payment_status === 'paid') {
+      await bookHourlySlots(saved)
+    }
+
     let notesText = ''
     let parsedPocketId = pocketId || 'general'
     let customCharges = []
@@ -272,6 +306,8 @@ export const useInvoiceStore = create(
       // Trigger "Factura Hecha" notification
       const inv = get().invoices.find(i => i.id === id)
       if (inv) {
+        await bookHourlySlots(inv)
+        
         const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(inv.total)
         try {
           const { useNotificationStore } = await import('./useNotificationStore')
@@ -288,17 +324,23 @@ export const useInvoiceStore = create(
         // Trigger payment confirmation email asynchronously
         import('./useClientStore').then(({ useClientStore }) => {
           const client = useClientStore.getState().clients.find(c => c.id === inv.client_id)
-          if (client?.email) {
-            const company = {
-              companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
-              companyLogo: useAuthStore.getState().user?.companyLogo || null,
-              companyEmail: useAuthStore.getState().user?.email || '',
-              companyPhone: useAuthStore.getState().user?.phone || ''
-            }
-            import('../services/emailService').then(({ sendPaymentConfirmEmail }) => {
-              sendPaymentConfirmEmail(inv, client.email, company)
-            }).catch(err => console.warn('Failed to send payment confirm email:', err))
+          const company = {
+            companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
+            companyLogo: useAuthStore.getState().user?.companyLogo || null,
+            companyEmail: useAuthStore.getState().user?.email || '',
+            companyPhone: useAuthStore.getState().user?.phone || ''
           }
+          import('../services/emailService').then(({ sendPaymentConfirmEmail }) => {
+            // Send to client
+            if (client?.email && client.email !== 'correo-cliente@express.com') {
+              sendPaymentConfirmEmail(inv, client.email, company).catch(() => {})
+            }
+            // Send to registered admin as internal report
+            const adminEmail = useAuthStore.getState().user?.email
+            if (adminEmail) {
+              sendPaymentConfirmEmail(inv, adminEmail, company).catch(() => {})
+            }
+          }).catch(err => console.warn('Failed to send payment confirm email:', err))
         }).catch(err => console.warn('Failed to import useClientStore:', err))
         
         let targetPocketId = 'general'
@@ -390,6 +432,11 @@ export const useInvoiceStore = create(
 
     // Trigger "Factura Hecha" notification if transition to paid
     if (newStatus === 'paid' && !wasPaid) {
+      const inv = get().invoices.find(i => i.id === invoiceId)
+      if (inv) {
+        await bookHourlySlots(inv)
+      }
+      
       const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(inv.total)
       try {
         const { useNotificationStore } = await import('./useNotificationStore')
@@ -406,17 +453,24 @@ export const useInvoiceStore = create(
       // Trigger payment confirmation email asynchronously
       import('./useClientStore').then(({ useClientStore }) => {
         const client = useClientStore.getState().clients.find(c => c.id === inv.client_id)
-        if (client?.email) {
-          const company = {
-            companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
-            companyLogo: useAuthStore.getState().user?.companyLogo || null,
-            companyEmail: useAuthStore.getState().user?.email || '',
-            companyPhone: useAuthStore.getState().user?.phone || ''
-          }
-          import('../services/emailService').then(({ sendPaymentConfirmEmail }) => {
-            sendPaymentConfirmEmail({ ...inv, payment_status: 'paid', paid_at: paidAt }, client.email, company)
-          }).catch(err => console.warn('Failed to send payment confirm email:', err))
+        const company = {
+          companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
+          companyLogo: useAuthStore.getState().user?.companyLogo || null,
+          companyEmail: useAuthStore.getState().user?.email || '',
+          companyPhone: useAuthStore.getState().user?.phone || ''
         }
+        import('../services/emailService').then(({ sendPaymentConfirmEmail }) => {
+          const updatedInv = { ...inv, payment_status: 'paid', paid_at: paidAt }
+          // Send to client
+          if (client?.email && client.email !== 'correo-cliente@express.com') {
+            sendPaymentConfirmEmail(updatedInv, client.email, company).catch(() => {})
+          }
+          // Send to registered admin as internal report
+          const adminEmail = useAuthStore.getState().user?.email
+          if (adminEmail) {
+            sendPaymentConfirmEmail(updatedInv, adminEmail, company).catch(() => {})
+          }
+        }).catch(err => console.warn('Failed to send payment confirm email:', err))
       }).catch(err => console.warn('Failed to import useClientStore:', err))
     }
 
@@ -515,17 +569,23 @@ export const useInvoiceStore = create(
         // Trigger overdue email asynchronously
         import('./useClientStore').then(({ useClientStore }) => {
           const client = useClientStore.getState().clients.find(c => c.id === inv.client_id)
-          if (client?.email) {
-            const company = {
-              companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
-              companyLogo: useAuthStore.getState().user?.companyLogo || null,
-              companyEmail: useAuthStore.getState().user?.email || '',
-              companyPhone: useAuthStore.getState().user?.phone || ''
-            }
-            import('../services/emailService').then(({ sendOverdueEmail }) => {
-              sendOverdueEmail(inv, client.email, company)
-            }).catch(err => console.warn('Failed to send overdue email:', err))
+          const company = {
+            companyName: useAuthStore.getState().user?.companyName || 'GestivaOne',
+            companyLogo: useAuthStore.getState().user?.companyLogo || null,
+            companyEmail: useAuthStore.getState().user?.email || '',
+            companyPhone: useAuthStore.getState().user?.phone || ''
           }
+          import('../services/emailService').then(({ sendOverdueEmail }) => {
+            // Send to client
+            if (client?.email && client.email !== 'correo-cliente@express.com') {
+              sendOverdueEmail(inv, client.email, company).catch(() => {})
+            }
+            // Send to registered admin as internal report
+            const adminEmail = useAuthStore.getState().user?.email
+            if (adminEmail) {
+              sendOverdueEmail(inv, adminEmail, company).catch(() => {})
+            }
+          }).catch(err => console.warn('Failed to send overdue email:', err))
         }).catch(err => console.warn('Failed to import useClientStore:', err))
       }
     }
@@ -561,8 +621,72 @@ export const useInvoiceStore = create(
         const key = inv.created_at.slice(0, 7) // "YYYY-MM"
         months[key] = (months[key] ?? 0) + (inv.total || 0)
       })
-    return months
+      return months
   },
+
+  sendWeeklyReport: async (force = false) => {
+    const { user } = useAuthStore.getState()
+    if (!user?.email) return { success: false, error: 'Usuario no autenticado o sin email' }
+
+    const now = new Date()
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+    const { invoices } = get()
+    const { useClientStore } = await import('./useClientStore')
+    const clients = useClientStore.getState().clients
+
+    const lastWeekInvoices = invoices.filter(inv => inv.created_at && new Date(inv.created_at) >= sevenDaysAgo)
+    const totalInvoices = lastWeekInvoices.length
+    const paidInvoices = lastWeekInvoices.filter(inv => inv.payment_status === 'paid').length
+    const pendingInvoices = lastWeekInvoices.filter(inv => inv.payment_status === 'pending').length
+    const overdueInvoices = lastWeekInvoices.filter(inv => inv.payment_status === 'overdue').length
+    const totalRevenue = lastWeekInvoices.filter(inv => inv.payment_status === 'paid').reduce((sum, inv) => sum + (inv.total || 0), 0)
+
+    const newClients = clients.filter(c => c.created_at && new Date(c.created_at) >= sevenDaysAgo).length
+
+    const startLabel = format(sevenDaysAgo, "dd MMM", { locale: es })
+    const endLabel = format(now, "dd MMM", { locale: es })
+    const periodLabel = `del ${startLabel} al ${endLabel}`
+
+    const stats = {
+      totalRevenue,
+      totalInvoices,
+      paidInvoices,
+      pendingInvoices,
+      overdueInvoices,
+      newClients,
+      periodLabel
+    }
+
+    const company = {
+      companyName: user.companyName || 'GestivaOne',
+      companyLogo: user.companyLogo || null,
+      companyEmail: user.email || '',
+      companyPhone: user.phone || ''
+    }
+
+    const { sendWeeklyReportEmail } = await import('../services/emailService')
+    let pdfBase64 = null
+    try {
+      const { generateWeeklyReportPDF } = await import('../utils/pdfGenerator')
+      pdfBase64 = generateWeeklyReportPDF(stats, company)
+    } catch (e) {
+      console.error('Error generating PDF report:', e)
+    }
+
+    const res = await sendWeeklyReportEmail(stats, user.email, company, pdfBase64)
+
+    if (res.success) {
+      const updatedSettings = {
+        ...(user.settings || {}),
+        lastWeeklyReportSent: now.toISOString()
+      }
+      await useAuthStore.getState().updateProfile({ settings: updatedSettings })
+      return { success: true }
+    }
+
+    return { success: false, error: res.error || 'Error al enviar correo' }
+  }
     }),
     {
       name: 'gestiva-invoices-storage',

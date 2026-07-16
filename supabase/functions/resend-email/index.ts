@@ -40,6 +40,7 @@ Deno.serve(async (req: Request) => {
     html: string
     from?: string
     reply_to?: string
+    attachments?: Array<{ filename: string; content: string }>
   }
 
   try {
@@ -51,7 +52,7 @@ Deno.serve(async (req: Request) => {
     })
   }
 
-  const { to, subject, html, from, reply_to } = body
+  const { to, subject, html, from, reply_to, attachments } = body
 
   if (!to || !subject || !html) {
     return new Response(JSON.stringify({ error: "Faltan campos requeridos: to, subject, html" }), {
@@ -68,6 +69,7 @@ Deno.serve(async (req: Request) => {
   }
 
   if (reply_to) payload.reply_to = reply_to
+  if (attachments && attachments.length > 0) payload.attachments = attachments
 
   try {
     const response = await fetch("https://api.resend.com/emails", {

@@ -60,6 +60,7 @@ export default function OrderConfirmModal({ open }) {
   const taxAmount = useCartStore((s) => s.taxAmount)
   const total = useCartStore((s) => s.total)
   const customCharges = useCartStore((s) => s.customCharges)
+  const isExpenseMode = useCartStore((s) => s.isExpenseMode)
 
   const user = useAuthStore((s) => s.user)
 
@@ -163,7 +164,7 @@ export default function OrderConfirmModal({ open }) {
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title="Confirmar Pedido" size="md">
+    <Modal open={open} onClose={handleClose} title={isExpenseMode ? "Confirmar Compra / Egreso" : "Confirmar Pedido"} size="md">
       <AnimatePresence mode="wait">
         {confirmed ? (
           <motion.div
@@ -182,8 +183,8 @@ export default function OrderConfirmModal({ open }) {
               <PartyPopper size={28} className="text-success-400" />
             </motion.div>
             <div>
-              <p className="text-lg font-bold text-foreground">¡Pedido Confirmado!</p>
-              <p className="text-sm text-muted-400 mt-1">Factura generada exitosamente</p>
+              <p className="text-lg font-bold text-foreground">{isExpenseMode ? '¡Egreso Confirmado!' : '¡Pedido Confirmado!'}</p>
+              <p className="text-sm text-muted-400 mt-1">{isExpenseMode ? 'Stock actualizado exitosamente' : 'Factura generada exitosamente'}</p>
             </div>
             <div className="text-2xl font-bold text-gradient">{format(total)}</div>
           </motion.div>
@@ -295,9 +296,9 @@ export default function OrderConfirmModal({ open }) {
                 />
                 <div className="flex flex-col">
                   <span className="text-sm font-semibold text-foreground group-hover:text-brand-300 transition-colors">
-                    Enviar factura por correo electrónico
+                    {isExpenseMode ? 'Enviar comprobante por correo electrónico' : 'Enviar factura por correo electrónico'}
                   </span>
-                  <span className="text-xs text-muted-400">Envía el PDF de la factura con un mensaje de agradecimiento</span>
+                  <span className="text-xs text-muted-400">{isExpenseMode ? 'Envía el detalle del egreso' : 'Envía el PDF de la factura con un mensaje de agradecimiento'}</span>
                 </div>
               </label>
               <AnimatePresence>
@@ -328,7 +329,7 @@ export default function OrderConfirmModal({ open }) {
             <div className="flex gap-3 pt-1">
               <Button variant="ghost" size="md" className="flex-1" onClick={handleClose}>Cancelar</Button>
               <Button variant="primary" size="md" className="flex-1" onClick={handleConfirm} loading={loading}>
-                Confirmar Pedido
+                {isExpenseMode ? 'Confirmar Compra' : 'Confirmar Pedido'}
               </Button>
             </div>
           </motion.div>

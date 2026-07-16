@@ -57,6 +57,7 @@ export function printInvoice(invoice, client = null, settings = {}) {
     <head>
       <meta charset="utf-8">
       <title>Factura ${invoiceIdStr}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
       <style>
         /* General page layout for thermal paper */
         @page {
@@ -64,7 +65,7 @@ export function printInvoice(invoice, client = null, settings = {}) {
           margin: 0;
         }
         body {
-          font-family: 'Courier New', Courier, monospace;
+          font-family: 'Inter', sans-serif;
           font-size: 12px;
           line-height: 1.4;
           color: #000;
@@ -79,7 +80,7 @@ export function printInvoice(invoice, client = null, settings = {}) {
         /* Template: Modern styling */
         ${isModern ? `
           body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 11px;
             padding: 12px;
             background: #fff;
@@ -282,6 +283,192 @@ export function printInvoice(invoice, client = null, settings = {}) {
   doc.close()
 
   // Wait for resources (like logo images) to load if present, then print
+  setTimeout(() => {
+    iframe.contentWindow.focus()
+    iframe.contentWindow.print()
+  }, 350)
+}
+
+export function printExpense(expense, itemsList = [], client = null, settings = {}) {
+  // 1. Default settings fallback
+  const printSettings = {
+    template: settings.template || 'classic',
+    showLogo: settings.showLogo !== false,
+    showCompanyName: settings.showCompanyName !== false,
+    showProducts: settings.showProducts !== false,
+    showContact: settings.showContact !== false,
+    showTax: settings.showTax === true,
+    footerText: settings.footerText || 'GestivaOne - Registro de Egreso',
+    companyName: settings.companyName || 'GestivaOne',
+    companyLogo: settings.companyLogo || null,
+    companyPhone: settings.companyPhone || '',
+    companyEmail: settings.companyEmail || ''
+  }
+
+  // 3. Build HTML ticket based on template
+  const isModern = printSettings.template === 'modern'
+  
+  const totalVal = expense.amount || 0
+  const taxVal = expense.iva_paid || 0
+  const subtotalVal = totalVal - taxVal
+
+  const formatCurrency = (val) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0
+    }).format(val)
+  }
+
+  const expenseIdStr = (expense.id?.slice(-8) || expense.id || 'N/A').toUpperCase()
+  const dateStr = expense.created_at ? new Date(expense.created_at).toLocaleString('es-CO') : new Date().toLocaleString('es-CO')
+
+  let ticketHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Egreso ${expenseIdStr}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+      <style>
+        @page { size: auto; margin: 0; }
+        body {
+          font-family: 'Inter', sans-serif;
+          font-size: 12px;
+          line-height: 1.4;
+          color: #000;
+          background-color: #fff;
+          margin: 0;
+          padding: 10px 15px;
+          width: 76mm;
+          box-sizing: border-box;
+          -webkit-print-color-adjust: exact;
+        }
+        ${isModern ? `
+          body { font-family: 'Inter', sans-serif; font-size: 11px; padding: 12px; background: #fff; }
+          .modern-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; }
+          .header-title { font-weight: 800; font-size: 16px; letter-spacing: -0.5px; text-transform: uppercase; }
+          .divider { border-top: 1px dashed #cbd5e1 !important; margin: 8px 0; }
+          .total-row { background-color: #f8fafc; font-weight: 800; padding: 4px; border-radius: 4px; }
+        ` : `
+          .header-title { font-weight: bold; font-size: 15px; }
+          .divider { border-top: 1px dashed #000; margin: 6px 0; }
+          .total-row { font-weight: bold; }
+        `}
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+        .logo-img { max-width: 50px; max-height: 50px; border-radius: 50%; margin: 0 auto 5px auto; display: block; }
+        .items-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+        .items-table th { text-align: left; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px; }
+        ${isModern ? `.items-table th { border-bottom: 1.5px solid #0f172a; }` : ''}
+        .items-table td { padding: 3px 0; vertical-align: top; }
+        .footer-note { font-size: 10px; margin-top: 15px; }
+      </style>
+    </head>
+    <body>
+      <div class="${isModern ? 'modern-card' : ''}">
+        
+        <div class="text-center">
+          ${printSettings.showLogo && printSettings.companyLogo ? `<img class="logo-img" src="${printSettings.companyLogo}" alt="Logo" />` : ''}
+          ${printSettings.showCompanyName ? `<div class="header-title">${printSettings.companyName}</div>` : `<div class="header-title">COMPROBANTE DE EGRESO</div>`}
+          <div style="font-size: 10px; margin-top: 2px;">
+            ${printSettings.companyPhone ? `Tel: ${printSettings.companyPhone}<br/>` : ''}
+            ${printSettings.companyEmail ? `${printSettings.companyEmail}<br/>` : ''}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="font-size: 10px;">
+          <div style="text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 4px;">EGRESO / COMPRA</div>
+          <div><span class="font-bold">COMPROBANTE:</span> #${expenseIdStr}</div>
+          <div><span class="font-bold">FECHA:</span> ${dateStr}</div>
+          <div><span class="font-bold">CATEGORÍA:</span> ${expense.category || 'Inventario'}</div>
+        </div>
+
+        <div class="divider"></div>
+        <div style="font-size: 10px;">
+          <div class="font-bold">PROVEEDOR:</div>
+          <div>${expense.provider_name || 'Varios'}</div>
+          ${expense.provider_doc_id ? `<div>Doc: ${expense.provider_doc_id}</div>` : ''}
+        </div>
+
+        <div class="divider"></div>
+
+        ${printSettings.showProducts && itemsList.length > 0 ? `
+          <div class="font-bold" style="font-size: 10px; margin-bottom: 2px;">PRODUCTOS INGRESADOS:</div>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th style="width: 10%">Cant</th>
+                <th style="width: 50%">Detalle</th>
+                <th style="width: 40%; text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsList.map(item => `
+                <tr>
+                  <td>${item.qty || 1}</td>
+                  <td>
+                    ${item.name || 'Producto'}
+                    ${item.price ? `<br/><span style="font-size: 9px; color: #555;">${formatCurrency(item.price)}</span>` : ''}
+                  </td>
+                  <td class="text-right">${formatCurrency((item.price || 0) * (item.qty || 1))}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div class="divider"></div>
+        ` : ''}
+
+        <div style="font-size: 11px; space-y: 2px;">
+          ${taxVal > 0 ? `
+            <div class="flex justify-between">
+              <span>SUBTOTAL:</span>
+              <span>${formatCurrency(subtotalVal)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>IVA PAGADO:</span>
+              <span>${formatCurrency(taxVal)}</span>
+            </div>
+          ` : ''}
+          <div class="flex justify-between total-row" style="font-size: 12px; margin-top: 4px;">
+            <span>TOTAL EGRESO:</span>
+            <span>${formatCurrency(totalVal)}</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="text-center footer-note">
+          <p>${printSettings.footerText}</p>
+        </div>
+
+      </div>
+    </body>
+    </html>
+  `
+
+  const iframeId = 'gestiva-print-iframe-expense'
+  let iframe = document.getElementById(iframeId)
+  if (!iframe) {
+    iframe = document.createElement('iframe')
+    iframe.id = iframeId
+    iframe.style.position = 'fixed'
+    iframe.style.right = '0'
+    iframe.style.bottom = '0'
+    iframe.style.width = '0'
+    iframe.style.height = '0'
+    iframe.style.border = '0'
+    document.body.appendChild(iframe)
+  }
+
+  const doc = iframe.contentWindow.document
+  doc.open()
+  doc.write(ticketHtml)
+  doc.close()
+
   setTimeout(() => {
     iframe.contentWindow.focus()
     iframe.contentWindow.print()

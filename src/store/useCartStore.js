@@ -2,19 +2,9 @@ import { create } from 'zustand'
 import { useCurrencyStore } from './useCurrencyStore'
 import { useAuthStore } from './useAuthStore'
 import { getProductDiscount, useProductStore } from './useProductStore'
+import { getLocalizationByCurrency } from '@/services/localizationService'
+import { broadcastSyncEvent } from '@/hooks/useRealtimeSync'
 import toast from 'react-hot-toast'
-
-const TAX_RATES = {
-  COP: 0.19,
-  MXN: 0.16,
-  USD: 0.0,
-  EUR: 0.21,
-  ARS: 0.21,
-  CLP: 0.19,
-  PEN: 0.18,
-  CRC: 0.13,
-  DOP: 0.18,
-}
 
 export const useCartStore = create((set, get) => {
   const recalculate = (state) => {
@@ -25,7 +15,8 @@ export const useCartStore = create((set, get) => {
     
     const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0)
     const baseCurrency = useCurrencyStore.getState().baseCurrency
-    const taxRate = TAX_RATES[baseCurrency] ?? 0.0
+    const locConfig = getLocalizationByCurrency(baseCurrency)
+    const taxRate = locConfig?.defaultTaxRate ?? 0.0
     const taxAmount = includeTax ? subtotal * taxRate : 0
     const customChargesSum = customCharges
       .filter(c => c.applied)
@@ -52,16 +43,32 @@ export const useCartStore = create((set, get) => {
     return { subtotal, taxAmount, customChargesSum, globalDiscountAmount, total }
   }
 
-  const setAndRecalc = (updateFnOrObj) => {
+  const setAndRecalc = (updateFnOrObj, skipBroadcast = false) => {
+    let finalState = {}
     set((state) => {
       const updates = typeof updateFnOrObj === 'function' ? updateFnOrObj(state) : updateFnOrObj
       const nextState = { ...state, ...updates }
       const totals = recalculate(nextState)
-      return { ...nextState, ...totals }
+      finalState = { ...nextState, ...totals }
+      return finalState
     })
+    
+    if (!skipBroadcast) {
+      // Avoid broadcasting non-syncable fields like functions (zustand stores functions inside the state by default)
+      const { items, note, includeTax, customCharges, globalDiscount, isExpenseMode } = finalState
+      broadcastSyncEvent('cart', 'UPDATE', { items, note, includeTax, customCharges, globalDiscount, isExpenseMode }, null)
+    }
   }
 
   return {
+    isExpenseMode: false,
+    expenseDetails: {
+      category: 'Inventario/Mercancía',
+      description: '',
+      provider_name: '',
+      provider_doc_type: '31',
+      provider_doc_id: ''
+    },
     items: [],   // { id, productId, name, price, qty, unit, isCustom }
     note: '',
     includeTax: false,
@@ -73,18 +80,31 @@ export const useCartStore = create((set, get) => {
     globalDiscountAmount: 0,
     total: 0,
 
+    applyRealtimeUpdate: (payload) => {
+      if (payload.eventType === 'UPDATE' && payload.new) {
+        setAndRecalc(payload.new, true)
+      }
+    },
+
+    updateExpenseDetails: (details) => setAndRecalc((s) => ({
+      expenseDetails: { ...s.expenseDetails, ...details }
+    })),
+
+    toggleExpenseMode: () => setAndRecalc((s) => ({ isExpenseMode: !s.isExpenseMode })),
+
     toggleTax: () => setAndRecalc((s) => ({ includeTax: !s.includeTax })),
 
     addItem: (product, qty = 1) => {
       const latestProduct = useProductStore.getState().products.find((p) => p.id === product.id) || product
-      const isUnlimited = latestProduct.unit === 'ILIMITADO' || latestProduct.stock >= 999990000
+      const isUnlimited = latestProduct.unit === 'ILIMITADO' || latestProduct.stock >= 999990000 || latestProduct.unit === 'HORA'
 
       let success = true
       setAndRecalc((s) => {
         const discountInfo = getProductDiscount(latestProduct)
         const effectivePrice = discountInfo ? discountInfo.finalPrice : Number(latestProduct.price)
 
-        const existing = s.items.find((i) => i.productId === latestProduct.id)
+        const finalName = product.name || latestProduct.name
+        const existing = s.items.find((i) => i.productId === latestProduct.id && i.name === finalName)
         const currentCartQty = existing ? existing.qty : 0
         const targetQty = currentCartQty + qty
 
@@ -99,7 +119,7 @@ export const useCartStore = create((set, get) => {
         if (existing) {
           return {
             items: s.items.map((i) =>
-               i.productId === latestProduct.id ? { ...i, qty: targetQty, price: effectivePrice } : i
+               (i.productId === latestProduct.id && i.name === finalName) ? { ...i, qty: targetQty, price: effectivePrice } : i
             ),
           }
         }
@@ -109,14 +129,16 @@ export const useCartStore = create((set, get) => {
             {
               id: `cart-${Date.now()}-${Math.random()}`,
               productId: latestProduct.id,
-              name: latestProduct.name,
+              name: finalName,
               price: effectivePrice,
+              cost: Number(latestProduct.cost || 0),
               qty,
               unit: latestProduct.unit ?? 'UND',
               isCustom: latestProduct.isCustom ?? false,
               discountApplied: discountInfo ? { amount: discountInfo.amount, type: discountInfo.type, value: discountInfo.value } : null,
               attachment_url: latestProduct.attachment_url ?? null,
               attachment_name: latestProduct.attachment_name ?? null,
+              hourly_booking: product.hourly_booking ?? null,
             },
           ],
         }
@@ -137,6 +159,25 @@ export const useCartStore = create((set, get) => {
             qty: 1,
             unit: 'UND',
             isCustom: true,
+          },
+        ],
+      }))
+    },
+
+    addScannedItem: ({ barcode, name, price, unit = 'UND' }) => {
+      setAndRecalc((s) => ({
+        items: [
+          ...s.items,
+          {
+            id: `scan-${Date.now()}-${Math.random()}`,
+            productId: null,
+            name: name || `Artículo [${barcode?.slice(-6) ?? '?'}]`,
+            price: Number(price) || 0,
+            qty: 1,
+            unit,
+            isCustom: true,
+            isScanned: true,
+            barcode: barcode ?? null,
           },
         ],
       }))

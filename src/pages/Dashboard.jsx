@@ -107,16 +107,6 @@ export default function Dashboard() {
     return rawExpenses.filter((e) => e.company_id === companyId)
   }, [rawExpenses, user?.companyId])
 
-  // Expense form state
-  const [expAmount, setExpAmount] = useState('')
-  const [expCategory, setExpCategory] = useState('Inventario/Mercancía')
-  const [expDesc, setExpDesc] = useState('')
-  const [expProviderName, setExpProviderName] = useState('')
-  const [expProviderDocType, setExpProviderDocType] = useState('31') // Default: NIT
-  const [expProviderDocId, setExpProviderDocId] = useState('')
-  const [expIvaPaid, setExpIvaPaid] = useState('0')
-  const [expRetencion, setExpRetencion] = useState('0')
-  const [expPocketId, setExpPocketId] = useState('')
 
   const pockets = usePocketStore((s) => s.pockets)
   const fetchPockets = usePocketStore((s) => s.fetchPockets)
@@ -162,14 +152,31 @@ export default function Dashboard() {
   const pending = invoices.filter((i) => i.payment_status === 'pending')
   const overdue = invoices.filter((i) => i.payment_status === 'overdue')
 
-  // Express Invoices metrics
   const expressInvoices = invoices.filter((i) => !i.client_id || i.client_name === 'Cliente Express')
   const expressCount = expressInvoices.length
   const expressRevenue = expressInvoices.reduce((s, i) => s + (i.total || 0), 0)
 
+  const getInvoiceCOGS = (inv) => {
+    if (!inv.items || !Array.isArray(inv.items)) return 0;
+    return inv.items.reduce((sum, item) => {
+      let c = Number(item.cost || 0);
+      if (c === 0 && item.productId) {
+        const p = products.find(prod => prod.id === item.productId);
+        if (p && p.cost) c = Number(p.cost);
+      }
+      return sum + (c * item.qty);
+    }, 0);
+  }
+
   const totalRevenue = paid.reduce((s, i) => s + i.total, 0) + [...pending, ...overdue].reduce((s, i) => {
     const { paidAmount } = parseInvoiceNoteLocal(i.note)
     return s + paidAmount
+  }, 0)
+
+  const totalCOGS = paid.reduce((s, i) => s + getInvoiceCOGS(i), 0) + [...pending, ...overdue].reduce((s, i) => {
+    const { paidAmount } = parseInvoiceNoteLocal(i.note)
+    const ratio = i.total > 0 ? (paidAmount / i.total) : 0
+    return s + (getInvoiceCOGS(i) * ratio)
   }, 0)
 
   const pendingRevenue = [...pending, ...overdue].reduce((s, i) => {
@@ -220,12 +227,26 @@ export default function Dashboard() {
         .filter((e) => e.created_at && e.created_at.startsWith(key))
         .reduce((s, e) => s + (e.amount || 0), 0)
 
+      const cogsAmtPaid = filteredPaid
+        .filter((i) => i.created_at && i.created_at.startsWith(key))
+        .reduce((s, i) => s + getInvoiceCOGS(i), 0)
+
+      const cogsAmtPending = filteredPending
+        .filter((i) => i.created_at && i.created_at.startsWith(key))
+        .reduce((s, i) => {
+          const { paidAmount } = parseInvoiceNoteLocal(i.note)
+          const ratio = i.total > 0 ? (paidAmount / i.total) : 0
+          return s + (getInvoiceCOGS(i) * ratio)
+        }, 0)
+
+      const cogsAmt = cogsAmtPaid + cogsAmtPending
+
       return {
         month: format(date, 'MMM', { locale: es }).toUpperCase(),
         revenue: revenueAmt,
         pending: pendingAmt,
         expenses: expenseAmt,
-        netProfit: revenueAmt - expenseAmt
+        netProfit: revenueAmt - cogsAmt - expenseAmt
       }
     })
   }, [paid, pending, overdue, expenses, revenueYearFilter])
@@ -758,39 +779,6 @@ export default function Dashboard() {
     }
   }
 
-  const handleExpenseSubmit = async (e) => {
-    e.preventDefault()
-    const amt = Number(expAmount)
-    if (!amt || amt <= 0) {
-      return toast.error('Ingresa un monto válido para el gasto')
-    }
-    const res = await addExpense({
-      amount: amt,
-      category: expCategory,
-      description: expDesc.trim(),
-      provider_name: expProviderName.trim() || 'Proveedor Varios',
-      provider_doc_type: expProviderDocType,
-      provider_doc_id: expProviderDocId.trim() || '999999999',
-      iva_paid: Number(expIvaPaid || 0),
-      retencion: Number(expRetencion || 0),
-      pocketId: expPocketId || null
-    })
-    if (res && res.success !== false) {
-      toast.success('Gasto registrado exitosamente')
-      setExpAmount('')
-      setExpDesc('')
-      setExpProviderName('')
-      setExpProviderDocId('')
-      setExpIvaPaid('0')
-      setExpRetencion('0')
-      setExpPocketId('')
-      if (expPocketId) {
-        usePocketStore.getState().fetchPockets()
-      }
-    } else if (res && res.error) {
-      toast.error(res.error)
-    }
-  }
 
   return (
     <motion.div
@@ -852,7 +840,7 @@ export default function Dashboard() {
 
       {/* KPIs: 2 col mobile → 3 col tablet → 5 col desktop (Accordion-expanding hover effect!) */}
       {/* Mobile & Tablet view */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:hidden gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:hidden gap-3 md:gap-4">
         {[
           {
             title: "Ingresos (Recaudado)",
@@ -880,11 +868,11 @@ export default function Dashboard() {
           },
           {
             title: "Utilidad Neta Real",
-            value: format$(totalRevenue - totalExpenses),
+            value: format$(totalRevenue - totalCOGS - totalExpenses),
             icon: <Wallet size={18} />,
             color: "success",
-            subtitle: "Total Ingresos - Gastos",
-            tooltip: "Utilidad calculada restando los gastos de los ingresos recaudados"
+            subtitle: "Ingresos - Costos - Gastos",
+            tooltip: "Utilidad calculada restando los costos de mercancía y gastos operativos de los ingresos"
           },
           {
             title: "Clientes Frecuentes",
@@ -915,7 +903,7 @@ export default function Dashboard() {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:grid grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-4 w-full">
+      <div className="hidden lg:grid grid-cols-3 gap-3 lg:gap-4 w-full">
         {[
           {
             title: "Ingresos (Recaudado)",
@@ -943,11 +931,11 @@ export default function Dashboard() {
           },
           {
             title: "Utilidad Neta Real",
-            value: format$(totalRevenue - totalExpenses),
+            value: format$(totalRevenue - totalCOGS - totalExpenses),
             icon: <Wallet size={18} />,
             color: "success",
-            subtitle: "Total Ingresos - Gastos",
-            tooltip: "Utilidad calculada restando los gastos de los ingresos recaudados"
+            subtitle: "Ingresos - Costos - Gastos",
+            tooltip: "Utilidad calculada restando los costos de mercancía y gastos operativos de los ingresos"
           },
           {
             title: "Clientes Frecuentes",
@@ -1453,135 +1441,7 @@ export default function Dashboard() {
       )}
 
       {/* Operating Expenses Section */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        {/* Form: Register Expense */}
-        <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4 shadow-glow-sm">
-          <div className="flex items-center gap-2 pb-3 border-b border-subtle">
-            <Coins size={18} className="text-brand-400" />
-            <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Registrar Egreso / Gasto</h3>
-          </div>
-          <form onSubmit={handleExpenseSubmit} className="space-y-4">
-            <div>
-              <label className="text-xs text-muted-400 mb-1 block">Monto del gasto ($) *</label>
-              <input 
-                type="number"
-                required
-                value={expAmount}
-                onChange={e => setExpAmount(e.target.value)}
-                placeholder="Ej: 50000"
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-muted-400 mb-1 block">Categoría *</label>
-              <select
-                value={expCategory}
-                onChange={e => setExpCategory(e.target.value)}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
-              >
-                <option value="Inventario/Mercancía">Inventario/Mercancía</option>
-                <option value="Alquiler/Servicios">Alquiler/Servicios</option>
-                <option value="Marketing/Publicidad">Marketing/Publicidad</option>
-                <option value="Salarios/Nómina">Salarios/Nómina</option>
-                <option value="Otros">Otros</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-muted-400 mb-1 block">Descontar de Bolsillo (Opcional)</label>
-              <select
-                value={expPocketId}
-                onChange={e => setExpPocketId(e.target.value)}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 cursor-pointer"
-              >
-                <option value="">Caja General (Sin bolsillo)</option>
-                {pockets.map(p => (
-                  <option key={p.id} value={p.id}>{p.name} ({format$(p.balance)})</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-muted-400 mb-1 block">Descripción / Detalle</label>
-              <textarea 
-                value={expDesc}
-                onChange={e => setExpDesc(e.target.value)}
-                placeholder="Ej: Compra de bolsas..."
-                rows={2}
-                className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 resize-none"
-              />
-            </div>
-
-            {/* DIAN & Provider Details */}
-            <div className="pt-2 border-t border-subtle space-y-3">
-              <span className="text-[11px] font-bold text-muted-400 uppercase tracking-widest block">Detalles Factura / DIAN</span>
-              
-              <div>
-                <label className="text-[10px] text-muted-400 mb-1 block">Proveedor</label>
-                <input 
-                  type="text"
-                  value={expProviderName}
-                  onChange={e => setExpProviderName(e.target.value)}
-                  placeholder="Ej: Distribuidora S.A.S. (Opcional)"
-                  className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-[10px] text-muted-400 mb-1 block">Tipo Doc</label>
-                  <select
-                    value={expProviderDocType}
-                    onChange={e => setExpProviderDocType(e.target.value)}
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-2 py-2 text-xs text-foreground focus:outline-none cursor-pointer"
-                  >
-                    <option value="31">NIT (Factura)</option>
-                    <option value="13">Cédula</option>
-                    <option value="22">C.E.</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[10px] text-muted-400 mb-1 block">N° Documento</label>
-                  <input 
-                    type="text"
-                    value={expProviderDocId}
-                    onChange={e => setExpProviderDocId(e.target.value)}
-                    placeholder="Ej: 900123456"
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-[10px] text-muted-400 mb-1 block">IVA Pagado ($)</label>
-                  <input 
-                    type="number"
-                    value={expIvaPaid}
-                    onChange={e => setExpIvaPaid(e.target.value)}
-                    placeholder="0"
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-muted-400 mb-1 block">Retención ($)</label>
-                  <input 
-                    type="number"
-                    value={expRetencion}
-                    onChange={e => setExpRetencion(e.target.value)}
-                    placeholder="0"
-                    className="w-full bg-surface-700 border border-subtle rounded-xl px-3 py-2 text-xs text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button 
-              type="submit"
-              className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-glow-sm transition-colors flex items-center justify-center gap-2"
-            >
-              <Plus size={14} /> Registrar Egreso
-            </button>
-          </form>
-        </div>
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
         {/* Pockets Capital Widget */}
         <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px] justify-between shadow-glow-sm">
