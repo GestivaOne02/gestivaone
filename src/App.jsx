@@ -1,26 +1,27 @@
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import AppLayout from '@/components/layout/AppLayout'
-import Dashboard from '@/pages/Dashboard'
-import Menu from '@/pages/Menu'
-import Products from '@/pages/Products'
-import Settings from '@/pages/Settings'
-import Account from '@/pages/Account'
-import Employees from '@/pages/Employees'
-import Auth from '@/pages/Auth'
+import { Suspense, lazy } from 'react'
+
+const AppLayout = lazy(() => import('@/components/layout/AppLayout'))
+const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const Menu = lazy(() => import('@/pages/Menu'))
+const Products = lazy(() => import('@/pages/Products'))
+const Settings = lazy(() => import('@/pages/Settings'))
+const Account = lazy(() => import('@/pages/Account'))
+const Employees = lazy(() => import('@/pages/Employees'))
+const Auth = lazy(() => import('@/pages/Auth'))
 import Landing from '@/pages/Landing'
-import Notifications from '@/pages/Notifications'
+const Notifications = lazy(() => import('@/pages/Notifications'))
 import Terms from '@/pages/Terms'
-import Facturero from '@/pages/Facturero'
-import DianAssistant from '@/pages/DianAssistant'
-import Pockets from '@/pages/Pockets'
-import PersonalFinance from '@/pages/PersonalFinance'
-import Finances from '@/pages/Finances'
-import GestiToken from '@/pages/GestiToken'
-import CRM from '@/pages/CRM'
-import Emails from '@/pages/Emails'
-import Upgrade from '@/pages/Upgrade'
-import Store from '@/pages/Store'
+const Facturero = lazy(() => import('@/pages/Facturero'))
+const DianAssistant = lazy(() => import('@/pages/DianAssistant'))
+const Pockets = lazy(() => import('@/pages/Pockets'))
+const PersonalFinance = lazy(() => import('@/pages/PersonalFinance'))
+const Finances = lazy(() => import('@/pages/Finances'))
+const GestiToken = lazy(() => import('@/pages/GestiToken'))
+const CRM = lazy(() => import('@/pages/CRM'))
+const Emails = lazy(() => import('@/pages/Emails'))
+const Upgrade = lazy(() => import('@/pages/Upgrade'))
+const Store = lazy(() => import('@/pages/Store'))
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -132,25 +133,26 @@ export default function App() {
       console.error('Error cleaning legacy localStorage:', e)
     }
 
-    // Clear CacheStorage (browser cache buckets)
-    if (window.caches) {
-      caches.keys().then((keys) => {
-        keys.forEach((key) => {
-          caches.delete(key)
-        })
-      }).catch(err => console.error('Error clearing CacheStorage:', err))
-    }
-
-    // Unregister legacy Service Workers
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        registrations.forEach((registration) => {
-          registration.unregister()
-        })
-      }).catch(err => console.error('Error unregistering ServiceWorkers:', err))
-    }
-
+    // Only clear heavy caches and workers if the version has changed
     if (hasVersionChanged) {
+      // Clear CacheStorage (browser cache buckets)
+      if (window.caches) {
+        caches.keys().then((keys) => {
+          keys.forEach((key) => {
+            caches.delete(key)
+          })
+        }).catch(err => console.error('Error clearing CacheStorage:', err))
+      }
+
+      // Unregister legacy Service Workers
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations.forEach((registration) => {
+            registration.unregister()
+          })
+        }).catch(err => console.error('Error unregistering ServiceWorkers:', err))
+      }
+
       localStorage.setItem('gestiva-app-version', CURRENT_VERSION)
       window.location.reload()
     }
@@ -294,47 +296,50 @@ export default function App() {
     )
   }
 
+
   return (
     <>
-      <Routes>
-        {/* Landing/Home Route (Conditional layout wrapper) */}
-        <Route
-          path="/"
-          element={isAuthenticated ? <AppLayout /> : <Landing />}
-        >
-          <Route index element={<Dashboard />} />
-        </Route>
+      <Suspense fallback={<div className="min-h-screen bg-[#0e0e17] flex items-center justify-center"><div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div></div>}>
+        <Routes>
+          {/* Landing/Home Route (Conditional layout wrapper) */}
+          <Route
+            path="/"
+            element={isAuthenticated ? <AppLayout /> : <Landing />}
+          >
+            <Route index element={<Dashboard />} />
+          </Route>
 
-        {/* Public Route */}
-        <Route
-          path="/auth"
-          element={isAuthenticated ? <Navigate to="/" replace /> : <Auth />}
-        />
-        <Route path="/terms" element={<Terms />} />
+          {/* Public Route */}
+          <Route
+            path="/auth"
+            element={isAuthenticated ? <Navigate to="/" replace /> : <Auth />}
+          />
+          <Route path="/terms" element={<Terms />} />
 
-        {/* Protected Routes */}
-        <Route
-          element={isAuthenticated ? <AppLayout /> : <Navigate to="/auth" replace />}
-        >
-          <Route path="/menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
-          <Route path="/products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
-          <Route path="/store" element={<RequirePermission perm="products"><Store /></RequirePermission>} />
-          <Route path="/employees" element={<RequirePermission perm="employees"><RequireFeature feature="employees"><Employees /></RequireFeature></RequirePermission>} />
-          <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/upgrade" element={<Upgrade />} />
-          <Route path="/finances" element={<RequirePermission perm="dashboard"><RequireFeature feature="pockets"><Finances /></RequireFeature></RequirePermission>} />
-          <Route path="/pockets" element={<Navigate to="/finances" replace />} />
-          <Route path="/personal-finance" element={<Navigate to="/finances" replace />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/facturero" element={<RequirePermission perm="dashboard"><RequireFeature feature="facturero"><Facturero /></RequireFeature></RequirePermission>} />
-          <Route path="/dian" element={<RequirePermission perm="dashboard"><RequireFeature feature="dian"><DianAssistant /></RequireFeature></RequirePermission>} />
-          <Route path="/seguridad" element={<RequirePermission perm="dashboard"><RequireFeature feature="seguridad"><GestiToken /></RequireFeature></RequirePermission>} />
-          <Route path="/crm" element={<RequirePermission perm="dashboard"><RequireFeature feature="crm"><CRM /></RequireFeature></RequirePermission>} />
-          <Route path="/emails" element={<RequirePermission perm="dashboard"><RequireFeature feature="emails"><Emails /></RequireFeature></RequirePermission>} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
+          {/* Protected Routes */}
+          <Route
+            element={isAuthenticated ? <AppLayout /> : <Navigate to="/auth" replace />}
+          >
+            <Route path="/menu" element={<RequirePermission perm="menu"><Menu /></RequirePermission>} />
+            <Route path="/products" element={<RequirePermission perm="products"><Products /></RequirePermission>} />
+            <Route path="/store" element={<RequirePermission perm="products"><Store /></RequirePermission>} />
+            <Route path="/employees" element={<RequirePermission perm="employees"><RequireFeature feature="employees"><Employees /></RequireFeature></RequirePermission>} />
+            <Route path="/settings" element={<RequirePermission perm="settings"><Settings /></RequirePermission>} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/upgrade" element={<Upgrade />} />
+            <Route path="/finances" element={<RequirePermission perm="dashboard"><RequireFeature feature="pockets"><Finances /></RequireFeature></RequirePermission>} />
+            <Route path="/pockets" element={<Navigate to="/finances" replace />} />
+            <Route path="/personal-finance" element={<Navigate to="/finances" replace />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/facturero" element={<RequirePermission perm="dashboard"><RequireFeature feature="facturero"><Facturero /></RequireFeature></RequirePermission>} />
+            <Route path="/dian" element={<RequirePermission perm="dashboard"><RequireFeature feature="dian"><DianAssistant /></RequireFeature></RequirePermission>} />
+            <Route path="/seguridad" element={<RequirePermission perm="dashboard"><RequireFeature feature="seguridad"><GestiToken /></RequireFeature></RequirePermission>} />
+            <Route path="/crm" element={<RequirePermission perm="dashboard"><RequireFeature feature="crm"><CRM /></RequireFeature></RequirePermission>} />
+            <Route path="/emails" element={<RequirePermission perm="dashboard"><RequireFeature feature="emails"><Emails /></RequireFeature></RequirePermission>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </Suspense>
 
       <ConsentBanner />
       <CountrySelectorModal />

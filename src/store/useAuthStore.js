@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase'
 import { useCurrencyStore } from './useCurrencyStore'
 import toast from 'react-hot-toast'
 
+let activeSyncPromise = null
+
 export const PLANS = {
   standard: {
     id: 'standard',
@@ -709,8 +711,11 @@ export const useAuthStore = create(
       },
 
       syncProfile: async (userId) => {
-        try {
-          // 1. Fetch Profile (using array instead of .single() to avoid 406 headers)
+        if (activeSyncPromise) return activeSyncPromise;
+
+        activeSyncPromise = (async () => {
+          try {
+            // 1. Fetch Profile (using array instead of .single() to avoid 406 headers)
           const { data: profileList, error: profError } = await supabase
             .from('profiles')
             .select('*')
@@ -871,7 +876,11 @@ export const useAuthStore = create(
           console.error('Sync Profile Error:', err)
           // Last resort fallback to let user in
           set({ isAuthenticated: true, user: { id: userId, email: 'user@gestivaone.com', role: 'administrador' } })
+        } finally {
+          activeSyncPromise = null
         }
+        })()
+        return activeSyncPromise
       },
 
       loginAsWorker: (workerData) => {
