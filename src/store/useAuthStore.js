@@ -359,7 +359,7 @@ export const useAuthStore = create(
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: 'https://www.gestivaone.com/auth?mode=register',
+            emailRedirectTo: 'https://www.gestivaone.com/auth?mode=login',
             data: {
               company_name: data.companyName,
               full_name: data.name || 'Usuario',
@@ -496,7 +496,7 @@ export const useAuthStore = create(
               email: data.email,
               password: data.password,
               options: {
-                emailRedirectTo: 'https://www.gestivaone.com/auth?mode=register',
+                emailRedirectTo: 'https://www.gestivaone.com/auth?mode=login',
                 data: {
                   is_worker: true,
                   company_id: company_id,
@@ -566,7 +566,7 @@ export const useAuthStore = create(
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: 'https://www.gestivaone.com/auth?mode=register',
+            emailRedirectTo: 'https://www.gestivaone.com/auth?mode=login',
             data: {
               is_worker: true,
               company_id: targetCompany.id,
@@ -766,10 +766,11 @@ export const useAuthStore = create(
             console.warn('Profile not found, attempting to auto-recover...')
             const meta = authUser?.user_metadata || {}
 
-            // 1. Create a default company (using metadata name if available)
+            // 1. Create a default company (using metadata name if available, append suffix to avoid unique constraint if needed)
+            const fallbackCompanyName = (meta.company_name || 'Mi Empresa') + ` (Recuperada ${Math.floor(Math.random() * 10000)})`
             const { data: newComp, error: autoCompErr } = await supabase
               .from('companies')
-              .insert([{ name: meta.company_name || 'Mi Empresa' }])
+              .insert([{ name: fallbackCompanyName }])
               .select()
               .single()
 

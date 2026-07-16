@@ -821,7 +821,7 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
                   <p className="text-muted-400 text-sm px-4">
                     Hemos enviado un correo de confirmación a tu bandeja de entrada. Por favor verifica tu correo electrónico para activar tu cuenta antes de ingresar.
                   </p>
-                  <button onClick={() => window.location.reload()} className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors mt-2">
+                  <button onClick={() => window.location.href = '/auth?mode=login'} className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors mt-2">
                     Ir a Iniciar Sesión →
                   </button>
                 </>
