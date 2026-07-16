@@ -139,25 +139,22 @@ export default function AddProductModal({ open }) {
   }
 
   const handleGenerateBarcode = () => {
-    const companyName = userSettings?.business_name || userSettings?.company_name || 'U'
-    const productName = watch('name') || 'P'
-    const price = watch('price') || '0'
-    
-    const companyInitial = (companyName.trim()[0] || 'U').toUpperCase()
-    const productInitials = (productName.trim().substring(0, 2) || 'XX').toUpperCase().replace(/[^A-Z0-9]/g, 'X')
-    
-    const priceStr = String(price).replace(/[^0-9]/g, '')
-    const priceChar = priceStr.length > 0 ? priceStr[0] : '0'
-
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-    let randomStr = ''
-    for (let i = 0; i < 4; i++) {
-      randomStr += chars[Math.floor(Math.random() * chars.length)]
+    // Generar prefijo de 3 dígitos (ej. 200 para uso interno) y 9 aleatorios
+    let base = '200';
+    for (let i = 0; i < 9; i++) {
+      base += Math.floor(Math.random() * 10).toString();
     }
+    
+    // Calcular Checksum EAN-13 (Módulo 10)
+    let sum = 0;
+    for (let i = 0; i < 12; i++) {
+      sum += parseInt(base[i]) * (i % 2 === 1 ? 3 : 1);
+    }
+    const checksum = (10 - (sum % 10)) % 10;
+    const code = base + checksum.toString();
 
-    const code = `GO-${companyInitial}${productInitials}${priceChar}-${randomStr}`
     setValue('barcode', code, { shouldValidate: true })
-    toast.success('Código único generado')
+    toast.success('Código numérico generado')
   }
 
   const handleFileUpload = async (e) => {
