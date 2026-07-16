@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { CameraService } from './CameraService';
 import { ScannerOrchestrator } from './ScannerOrchestrator';
 import { NativeBarcodeEngine } from './engines/NativeBarcodeEngine';
+import { QuaggaEngine } from './engines/QuaggaEngine';
 import { Html5QrcodeEngine } from './engines/Html5QrcodeEngine';
 
 export function useScanner(onResult) {
@@ -32,7 +33,10 @@ export function useScanner(onResult) {
         // Primero NativeBarcodeEngine (Latencia de ~10ms, Cero CPU overhead)
         orchestrator.addEngine(new NativeBarcodeEngine());
         
-        // Segundo Html5QrcodeEngine (WASM/JS fallback pesado)
+        // Segundo QuaggaEngine (Especializado en EAN/1D en JS puro, super rápido)
+        orchestrator.addEngine(new QuaggaEngine());
+
+        // Tercero Html5QrcodeEngine (WASM/JS fallback pesado para QRs)
         orchestrator.addEngine(new Html5QrcodeEngine()); 
 
         orchestratorRef.current = orchestrator;

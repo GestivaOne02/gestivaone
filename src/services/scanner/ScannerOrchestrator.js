@@ -34,9 +34,13 @@ export class ScannerOrchestrator {
       if (await engine.isSupported()) {
         try {
           await engine.initialize();
+          engine.isReady = true;
         } catch (e) {
           console.warn(`[Orchestrator] Error initializing engine ${engine.name}`, e);
+          engine.isReady = false;
         }
+      } else {
+        engine.isReady = false;
       }
     }
 
@@ -68,11 +72,15 @@ export class ScannerOrchestrator {
         this.metrics.framesProcessed++;
         const elapsed = Date.now() - this.metrics.startTime;
         
-        // Ejecución en Cascada (Fallback Chain)
-        for (const engine of this.engines) {
-          // Optimization: If it's a slow engine (like OCR or blob-based JS), 
-          // wait until 1.5 seconds have passed before burning CPU.
-          if (engine.name !== 'BarcodeDetectorAPI' && elapsed < 1500) {
+        // Filtramos solo los motores soportados e inicializados (con index dinámico)
+        const activeEngines = this.engines.filter(e => e.isReady);
+
+        for (let i = 0; i < activeEngines.length; i++) {
+          const engine = activeEngines[i];
+          
+          // Optimization: Only delay secondary/tertiary fallback engines
+          // The first available engine (i === 0) ALWAYS runs immediately!
+          if (i > 0 && elapsed < 1500) {
             continue; 
           }
 
