@@ -2,19 +2,16 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## 🤖 GestiBot - Agente IA con Acciones de Facturación\n\n### Nuevas Acciones Disponibles (Pruébalas en WhatsApp):\n1. **Pedir una factura en PDF**:\n   * *Ejemplo:* \"Gesti, envíame la factura F-1025 por aquí\".\n   * *Acción:* n8n te enviará un archivo PDF real directamente a tu chat de WhatsApp.\n\n2. **Registrar venta y facturar**:\n   * *Ejemplo:* \"Registra una venta a Carlos de un software por 45000 y mándame la factura\".\n   * *Acción:* El Agente registrará la venta y te enviará la factura en formato PDF por el chat.\n\n3. **Enviar factura por correo**:\n   * *Ejemplo:* \"Gesti, envíale la factura F-2000 al correo carlos@gmail.com\".\n   * *Acción:* Simulará el envío de correo y confirmará.\n\n### Configuración en n8n:\n- Selecciona tu credencial de **OpenAI API** en el nodo **🧠 GPT-4o Mini**.\n- Selecciona tu credencial de **OpenAI API** en el nodo **🎙️ Transcribir (Whisper)**.\n- Guarda (Ctrl+S) y presiona **Publish**.",
+        "content": "## 🤖 GestiBot — Agente Dual\n\n### Modo 1: Administrador / Trabajador Registrado\n- Identifica el número y lo busca en Supabase (`profiles`)\n- Si está registrado → va al **Agente Administrativo** (facturar, inventario, gastos, etc.)\n\n### Modo 2: Número Desconocido / Prospecto\n- Si NO está registrado → va al **Agente de Ventas GestivaOne**\n- El agente de ventas explica qué es GestivaOne, envía la URL, genera curiosidad y capta el lead\n\n### Configuración requerida:\n- Credencial **OpenAI API** en 🧠 GPT-4o Mini (Admin)\n- Credencial **OpenAI API** en 🧠 GPT-4o Mini (Ventas)\n- Credencial **OpenAI API** en 🎙️ Transcribir (Whisper)",
         "height": 320,
-        "width": 540,
+        "width": 580,
         "color": 4
       },
       "id": "305bf37b-6c4e-4746-bd63-1d3b358c556f",
       "name": "📋 Instrucciones de Configuración",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [
-        -736,
-        -256
-      ]
+      "position": [-736, -360]
     },
     {
       "parameters": {
@@ -26,10 +23,7 @@
       "name": "Recibir WhatsApp",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
-      "position": [
-        -880,
-        240
-      ],
+      "position": [-880, 240],
       "webhookId": "whatsapp-evolution-webhook"
     },
     {
@@ -39,7 +33,7 @@
             {
               "id": "map-messages",
               "name": "messages",
-              "value": "={{ [ { from: $json.body.data.key.remoteJid, type: $json.body.data.messageType === 'audioMessage' ? 'audio' : 'text', text: { body: $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage?.text || '' }, audio: { id: $json.body.data.messageType === 'audioMessage' ? 'audio-id' : '' } } ] }}",
+              "value": "={{ [ { from: $json.body.data.key.remoteJid, type: $json.body.data.messageType === 'audioMessage' ? 'audio' : (['imageMessage','documentMessage','imageWithCaptionMessage'].includes($json.body.data.messageType) ? 'media' : 'text'), text: { body: $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage?.text || '' }, audio: { id: $json.body.data.messageType === 'audioMessage' ? 'audio-id' : '' }, media: { mime_type: $json.body.data.message?.imageMessage?.mimetype || $json.body.data.message?.documentMessage?.mimetype || $json.body.data.message?.imageWithCaptionMessage?.mimetype || 'image/jpeg' } } ] }}",
               "type": "array"
             }
           ]
@@ -48,10 +42,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        -656,
-        240
-      ],
+      "position": [-656, 240],
       "id": "2db16cd7-ed50-44b4-bfde-4ca568af4b2c",
       "name": "📱 WhatsApp Trigger"
     },
@@ -67,7 +58,7 @@
           "conditions": [
             {
               "id": "valid-msg-check",
-              "leftValue": "={{ !!$json.messages && (!!$json.messages[0]?.text?.body || !!$json.messages[0]?.audio?.id) }}",
+              "leftValue": "={{ !!$json.messages && (!!$json.messages[0]?.text?.body || !!$json.messages[0]?.audio?.id || $json.messages[0]?.type === 'media') }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",
@@ -82,12 +73,50 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        -416,
-        240
-      ],
+      "position": [-416, 240],
       "id": "8b83cabf-16a9-42ef-8e0b-adc3f8655fda",
       "name": "✅ Mensaje válido?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const https = require('https');\nconst phone = $('📱 WhatsApp Trigger').item.json.messages[0].from;\n\n// Llamamos al Edge Function que internamente usa service_role\n// y limpia el teléfono igual que el middleware: split('@')[0].replace(/\\D/g, '')\nconst url = `https://uhbmoslwucdhwrkgdleo.supabase.co/functions/v1/crear-factura-bot/api/reports/daily?user_phone=${encodeURIComponent(phone)}`;\n\nreturn new Promise((resolve) => {\n  const req = https.request(url, {\n    method: 'GET',\n    headers: {\n      'apikey': 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll',\n      'Authorization': 'Bearer sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll'\n    }\n  }, (res) => {\n    let data = '';\n    res.on('data', (chunk) => data += chunk);\n    res.on('end', () => {\n      try {\n        const statusCode = res.statusCode;\n        // 200 = usuario registrado, 401 = no registrado / no encontrado\n        const isRegistered = statusCode === 200;\n        let parsed = {};\n        try { parsed = JSON.parse(data); } catch(_) {}\n        resolve([{ json: { isRegistered, phone, statusCode, debug: parsed } }]);\n      } catch(e) {\n        resolve([{ json: { isRegistered: false, phone, error: e.message } }]);\n      }\n    });\n  });\n  req.on('error', (e) => {\n    resolve([{ json: { isRegistered: false, phone, error: e.message } }]);\n  });\n  req.end();\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-160, 240],
+      "id": "aa11bb22-cc33-dd44-ee55-ff6677889900",
+      "name": "🔍 ¿Número Registrado?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "check-registered",
+              "leftValue": "={{ $json.isRegistered === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [80, 240],
+      "id": "bb22cc33-dd44-ee55-ff66-778899001122",
+      "name": "🔀 ¿Usuario Registrado?"
     },
     {
       "parameters": {
@@ -103,7 +132,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.messages[0]?.type }}",
+                    "leftValue": "={{ $('📱 WhatsApp Trigger').item.json.messages[0]?.type }}",
                     "rightValue": "text",
                     "operator": {
                       "type": "string",
@@ -126,7 +155,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.messages[0]?.type }}",
+                    "leftValue": "={{ $('📱 WhatsApp Trigger').item.json.messages[0]?.type }}",
                     "rightValue": "audio",
                     "operator": {
                       "type": "string",
@@ -138,6 +167,29 @@
               },
               "renameOutput": true,
               "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('📱 WhatsApp Trigger').item.json.messages[0]?.type }}",
+                    "rightValue": "media",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Media"
             }
           ]
         },
@@ -145,10 +197,7 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
-      "position": [
-        -192,
-        240
-      ],
+      "position": [320, 120],
       "id": "883d5d8c-33a5-42d4-9e39-8b1ed8f8ce6e",
       "name": "🔀 Tipo de Mensaje"
     },
@@ -174,10 +223,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        32,
-        128
-      ],
+      "position": [544, 0],
       "id": "a93d5f9b-76eb-429f-8100-65463b23e4b6",
       "name": "📝 Mensaje Texto"
     },
@@ -188,14 +234,8 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "name": "apikey",
-              "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62"
-            }
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "apikey", "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62" }
           ]
         },
         "sendBody": true,
@@ -207,10 +247,7 @@
       "name": "📥 Descargar Audio",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [
-        32,
-        368
-      ]
+      "position": [544, 240]
     },
     {
       "parameters": {
@@ -220,10 +257,7 @@
       "name": "Convertir Base64 a Binario",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        240,
-        368
-      ]
+      "position": [752, 240]
     },
     {
       "parameters": {
@@ -233,10 +267,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
-      "position": [
-        464,
-        368
-      ],
+      "position": [976, 240],
       "id": "79514ca8-9c2a-45cf-9a9e-c8765f529b74",
       "name": "🎙️ Transcribir (Whisper)",
       "credentials": {
@@ -268,10 +299,7 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [
-        688,
-        368
-      ],
+      "position": [1200, 240],
       "id": "2a3b07bc-702c-41da-90fa-4cf7636ad8dd",
       "name": "🎤 Transcripción Audio"
     },
@@ -285,10 +313,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.8,
-      "position": [
-        1136,
-        -400
-      ],
+      "position": [1648, -128],
       "id": "206d2d53-da89-414d-b0b6-79b7ad684304",
       "name": "🤖 Agente IA — Negocio"
     },
@@ -301,10 +326,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
-      "position": [
-        832,
-        576
-      ],
+      "position": [1344, 304],
       "id": "b5338976-bfcb-4e5f-a826-756812ef6f3f",
       "name": "🧠 GPT-4o Mini",
       "credentials": {
@@ -322,10 +344,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
-      "position": [
-        944,
-        448
-      ],
+      "position": [1456, 176],
       "id": "61a6903e-74ed-4a37-a24f-a18e06cc210f",
       "name": "Simple Memory"
     },
@@ -337,10 +356,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1104,
-        320
-      ],
+      "position": [1616, 448],
       "id": "98c754c8-b791-4792-820f-60417040e2b0",
       "name": "enviar_factura_email"
     },
@@ -348,14 +364,11 @@
       "parameters": {
         "name": "pedir_factura_pdf",
         "description": "Utilízala cuando el usuario solicite que le entregues, envíes o muestres una factura en PDF por el chat de WhatsApp. Requiere el parámetro 'tipo_busqueda' para decidir si buscar por ID ('por_id'), por nombre de cliente ('por_cliente') o la última factura general ('ultima_general').",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\n  const evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n  \n  let params = {};\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') params = query;\n    else if (typeof query === 'string') { try { params = JSON.parse(query); } catch(e) { params = { factura_id: query }; } }\n  } else if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') params = input;\n    else if (typeof input === 'string') { try { params = JSON.parse(input); } catch(e) {} }\n  } else {\n    if (typeof factura_id !== 'undefined') params.factura_id = factura_id;\n    if (typeof cliente_nombre !== 'undefined') params.cliente_nombre = cliente_nombre;\n    if (typeof tipo_busqueda !== 'undefined') params.tipo_busqueda = tipo_busqueda;\n  }\n  const factId = (params.factura_id || '').trim();\n  const clientName = (params.cliente_nombre || '').trim();\n  const searchType = (params.tipo_busqueda || '').trim().toLowerCase();\n\n  let searchParam = \"latest\";\n  if (searchType === \"por_id\" && factId) {\n    searchParam = factId;\n  } else if (searchType === \"por_cliente\" && clientName) {\n    searchParam = clientName;\n  } else if (factId) {\n    searchParam = factId;\n  } else if (clientName) {\n    searchParam = clientName;\n  }\n\n  try {\n    const dbRes = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/invoices/${encodeURIComponent(searchParam)}/pdf?json=true&user_phone=${encodeURIComponent(userPhone)}`, 'GET', {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey,\n      'Accept': 'application/json'\n    });\n\n    if (!dbRes.ok) {\n      const errText = await dbRes.text();\n      throw new Error(`No se encontró la factura en la base de datos. Detalles: ${errText}`);\n    }\n    const resData = await dbRes.json();\n\n    if (!resData.success) {\n      return resData.message || \"No se encontró la factura.\";\n    }\n\n    const pdfUrl = resData.pdf_url;\n    const finalFactId = resData.invoice_id;\n    const finalFactName = resData.client_name;\n\n    await request(`${evolutionUrl}/message/sendMedia/GestiBot`, 'POST', {\n      'Content-Type': 'application/json',\n      'apikey': evolutionApiKey\n    }, JSON.stringify({ \n      number: userPhone,\n      media: pdfUrl,\n      mediatype: \"document\",\n      mediaType: \"document\",\n      mimetype: \"application/pdf\",\n      fileName: `factura-${finalFactId.toUpperCase()}.pdf`,\n      caption: `Aquí tienes la factura ${finalFactId.toUpperCase()} de ${finalFactName} en formato PDF 📄`\n    }));\n    return `Factura ${finalFactId.toUpperCase()} enviada con éxito en PDF por WhatsApp.`;\n  } catch (error) {\n    return `Error al obtener la factura: ${error.message}`;\n  }\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\n  const evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n  \n  let params = {};\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') params = query;\n    else if (typeof query === 'string') { try { params = JSON.parse(query); } catch(e) { params = { factura_id: query }; } }\n  } else if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') params = input;\n    else if (typeof input === 'string') { try { params = JSON.parse(input); } catch(e) {} }\n  } else {\n    if (typeof factura_id !== 'undefined') params.factura_id = factura_id;\n    if (typeof cliente_nombre !== 'undefined') params.cliente_nombre = cliente_nombre;\n    if (typeof tipo_busqueda !== 'undefined') params.tipo_busqueda = tipo_busqueda;\n  }\n  const factId = (params.factura_id || '').trim();\n  const clientName = (params.cliente_nombre || '').trim();\n  const searchType = (params.tipo_busqueda || '').trim().toLowerCase();\n\n  let searchParam = \"latest\";\n  if (searchType === \"por_id\" && factId) {\n    searchParam = factId;\n  } else if (searchType === \"por_cliente\" && clientName) {\n    searchParam = clientName;\n  } else if (factId) {\n    searchParam = factId;\n  } else if (clientName) {\n    searchParam = clientName;\n  }\n\n  try {\n    const dbRes = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/invoices/${encodeURIComponent(searchParam)}/pdf?json=true&user_phone=${encodeURIComponent(userPhone)}`, 'GET', {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey,\n      'Accept': 'application/json'\n    });\n\n    if (!dbRes.ok) {\n      const errText = await dbRes.text();\n      throw new Error(`No se encontró la factura en la base de datos. Detalles: ${errText}`);\n    }\n    const resData = await dbRes.json();\n\n    if (!resData.success) {\n      return resData.message || \"No se encontró la factura.\";\n    }\n\n    const pdfUrl = resData.pdf_url;\n    const finalFactId = resData.invoice_id;\n    const finalFactName = resData.client_name;\n\n    await request(`${evolutionUrl}/message/sendMedia/GestiBot`, 'POST', {\n      'Content-Type': 'application/json',\n      'apikey': evolutionApiKey\n    }, JSON.stringify({ \n      number: userPhone,\n      media: pdfUrl,\n      mediatype: \"document\",\n      mediaType: \"document\",\n      mimetype: \"application/pdf\",\n      fileName: `factura-${finalFactId.toUpperCase()}.pdf`,\n      caption: `Aquí tienes la factura ${finalFactId.toUpperCase()} de ${finalFactName} en formato PDF 📄`\n    }));\n    return `Factura ${finalFactId.toUpperCase()} enviada con éxito en PDF por WhatsApp.`;\n  } catch (error) {\n    return `Error al obtener la factura: ${error.message}`;\n  }\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1232,
-        448
-      ],
+      "position": [1744, 576],
       "id": "f8c36e60-483f-4994-a511-d145fadd9754",
       "name": "pedir_factura_pdf"
     },
@@ -363,14 +376,11 @@
       "parameters": {
         "name": "crear_venta_facturar",
         "description": "Utilízala para registrar una venta y generar factura PDF. IMPORTANTE: Cuando haya MÚLTIPLES productos, pasa producto como un string descriptivo unificado (ej: 2x Arroz .000, 3x Maíz .800) y monto como el TOTAL ya calculado. NUNCA pases producto como array.",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\n  const evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof cliente_nombre !== 'undefined') params.cliente_nombre = cliente_nombre;\n  if (typeof producto !== 'undefined') params.producto = producto;\n  if (typeof monto !== 'undefined') params.monto = monto;\n  if (typeof tipo_pago !== 'undefined') params.tipo_pago = tipo_pago;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.cliente_nombre = query;\n        }\n      } catch(e) {\n        params.cliente_nombre = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n\n  const valCliente = params.cliente_nombre || 'Cliente';\n  const valProducto = params.producto || 'Servicio';\n  const valMonto = params.monto || 10000;\n  const valTipoPago = params.tipo_pago || 'inmediato';\n  const paymentType = (valTipoPago === 'credito' || valTipoPago === 'programado' || valTipoPago === 'scheduled') ? 'scheduled' : 'immediate';\n\n  try {\n    const edgeRes = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/invoices/generate`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({\n      client_name: valCliente,\n      product_name: valProducto,\n      amount: valMonto,\n      payment_type: paymentType,\n      user_phone: userPhone\n    }));\n\n    if (!edgeRes.ok) {\n      const errText = await edgeRes.text();\n      throw new Error(`Error en Edge Function: ${errText}`);\n    }\n\n    const resJson = await edgeRes.json();\n    const pdfUrl = resJson.pdf_url;\n    const facturaNo = resJson.invoice_number;\n    const tipoPagoTexto = paymentType === 'scheduled' ? 'A Crédito' : 'Contado';\n\n    if (pdfUrl) {\n      await request(`${evolutionUrl}/message/sendMedia/GestiBot`, 'POST', {\n        'Content-Type': 'application/json',\n        'apikey': evolutionApiKey\n      }, JSON.stringify({ \n        number: userPhone,\n        media: pdfUrl,\n        mediatype: \"document\",\n        mediaType: \"document\",\n        mimetype: \"application/pdf\",\n        fileName: `factura-${facturaNo}.pdf`,\n        caption: `Factura ${facturaNo} generada por venta de ${valProducto} a ${valCliente} (${valMonto}) [${tipoPagoTexto}] 📄`\n      }));\n    }\n    return resJson.message;\n  } catch (error) {\n    return `Error al registrar venta y generar factura: ${error.message}`;\n  }\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\n  const evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof cliente_nombre !== 'undefined') params.cliente_nombre = cliente_nombre;\n  if (typeof producto !== 'undefined') params.producto = producto;\n  if (typeof monto !== 'undefined') params.monto = monto;\n  if (typeof tipo_pago !== 'undefined') params.tipo_pago = tipo_pago;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') { params = { ...query, ...params }; }\n    else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } else { params.cliente_nombre = query; } } catch(e) { params.cliente_nombre = query; } }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') { params = { ...input, ...params }; }\n    else if (typeof input === 'string') { try { const parsed = JSON.parse(input); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } } catch(e) {} }\n  }\n\n  const valCliente = params.cliente_nombre || 'Cliente';\n  const valProducto = params.producto || 'Servicio';\n  const valMonto = params.monto || 10000;\n  const valTipoPago = params.tipo_pago || 'inmediato';\n  const paymentType = (valTipoPago === 'credito' || valTipoPago === 'programado' || valTipoPago === 'scheduled') ? 'scheduled' : 'immediate';\n\n  try {\n    const edgeRes = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/invoices/generate`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({\n      client_name: valCliente,\n      product_name: valProducto,\n      amount: valMonto,\n      payment_type: paymentType,\n      user_phone: userPhone\n    }));\n\n    if (!edgeRes.ok) { const errText = await edgeRes.text(); throw new Error(`Error en Edge Function: ${errText}`); }\n\n    const resJson = await edgeRes.json();\n    const pdfUrl = resJson.pdf_url;\n    const facturaNo = resJson.invoice_number;\n    const tipoPagoTexto = paymentType === 'scheduled' ? 'A Crédito' : 'Contado';\n\n    if (pdfUrl) {\n      await request(`${evolutionUrl}/message/sendMedia/GestiBot`, 'POST', {\n        'Content-Type': 'application/json',\n        'apikey': evolutionApiKey\n      }, JSON.stringify({ \n        number: userPhone,\n        media: pdfUrl,\n        mediatype: \"document\",\n        mediaType: \"document\",\n        mimetype: \"application/pdf\",\n        fileName: `factura-${facturaNo}.pdf`,\n        caption: `Factura ${facturaNo} generada por venta de ${valProducto} a ${valCliente} (${valMonto}) [${tipoPagoTexto}] 📄`\n      }));\n    }\n    return resJson.message;\n  } catch (error) {\n    return `Error al registrar venta y generar factura: ${error.message}`;\n  }\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1344,
-        320
-      ],
+      "position": [1856, 448],
       "id": "3804a2a7-8358-406a-b643-0b0849a04642",
       "name": "crear_venta_facturar"
     },
@@ -381,14 +391,8 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "name": "apikey",
-              "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62"
-            }
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "apikey", "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62" }
           ]
         },
         "sendBody": true,
@@ -400,23 +404,17 @@
       "name": "✉️ Enviar respuesta IA",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [
-        1696,
-        -336
-      ]
+      "position": [2080, -128]
     },
     {
       "parameters": {
         "name": "crear_cliente",
         "description": "Utilízala para registrar o guardar un nuevo cliente en el CRM de GestivaOne. Requiere el nombre completo del cliente (cliente_nombre) y opcionalmente su correo electrónico (correo), teléfono (telefono) y dirección física (direccion).",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof cliente_nombre !== 'undefined') params.cliente_nombre = cliente_nombre;\n  if (typeof correo !== 'undefined') params.correo = correo;\n  if (typeof telefono !== 'undefined') params.telefono = telefono;\n  if (typeof direccion !== 'undefined') params.direccion = direccion;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.cliente_nombre = query;\n        }\n      } catch(e) {\n        params.cliente_nombre = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n\n  const client_name = params.cliente_nombre || null;\n  const client_email = params.correo || null;\n  const client_phone = params.telefono || null;\n  const client_address = params.direccion || null;\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/clients`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({\n      user_phone: userPhone,\n      client_name: client_name,\n      client_email: client_email,\n      client_phone: client_phone,\n      client_address: client_address\n    }));\n\n    if (!res.ok) {\n      const errText = await res.text();\n      throw new Error(errText);\n    }\n\n    const resJson = await res.json();\n    return resJson.message;\n  } catch (error) { \n    return `Error al registrar cliente: ${error.message}`;\n  }\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({ hostname, path, method, headers }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => { resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, text: () => Promise.resolve(data), json: () => Promise.resolve(JSON.parse(data)) }); });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof cliente_nombre !== 'undefined') params.cliente_nombre = cliente_nombre;\n  if (typeof correo !== 'undefined') params.correo = correo;\n  if (typeof telefono !== 'undefined') params.telefono = telefono;\n  if (typeof direccion !== 'undefined') params.direccion = direccion;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } else { params.cliente_nombre = query; } } catch(e) { params.cliente_nombre = query; } } }\n  if (typeof input !== 'undefined' && input) { if (typeof input === 'object') { params = { ...input, ...params }; } else if (typeof input === 'string') { try { const parsed = JSON.parse(input); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } } catch(e) {} } }\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/clients`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({ user_phone: userPhone, client_name: params.cliente_nombre || null, client_email: params.correo || null, client_phone: params.telefono || null, client_address: params.direccion || null }));\n    if (!res.ok) { const errText = await res.text(); throw new Error(errText); }\n    const resJson = await res.json();\n    return resJson.message;\n  } catch (error) { return `Error al registrar cliente: ${error.message}`; }\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1472,
-        448
-      ],
+      "position": [1984, 576],
       "id": "1e1184c6-c90d-483b-909b-356fd512540b",
       "name": "crear_cliente"
     },
@@ -424,14 +422,11 @@
       "parameters": {
         "name": "crear_trabajador",
         "description": "Utilízala para registrar a un nuevo trabajador, empleado o despachador en el equipo de la empresa. Requiere el nombre completo del trabajador (nombre), su correo electrónico (correo) y opcionalmente su rol (rol, ej: despachador, administrador).",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof nombre !== 'undefined') params.nombre = nombre;\n  if (typeof correo !== 'undefined') params.correo = correo;\n  if (typeof rol !== 'undefined') params.rol = rol;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.nombre = query;\n        }\n      } catch(e) {\n        params.nombre = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n  const worker_name = params.nombre || null;\n  const worker_email = params.correo || null;\n  const worker_role = params.rol || \"despachador\";\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/workers`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({\n      user_phone: userPhone,\n      worker_name: worker_name,\n      worker_email: worker_email,\n      worker_role: worker_role\n    }));\n\n    if (!res.ok) {\n      const errText = await res.text();\n      throw new Error(errText);\n    }\n\n    const resJson = await res.json();\n    return resJson.message;\n  } catch (error) {\n    return `Error al registrar trabajador: ${error.message}`;\n  }\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({ hostname, path, method, headers }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => { resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, text: () => Promise.resolve(data), json: () => Promise.resolve(JSON.parse(data)) }); });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof nombre !== 'undefined') params.nombre = nombre;\n  if (typeof correo !== 'undefined') params.correo = correo;\n  if (typeof rol !== 'undefined') params.rol = rol;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } else { params.nombre = query; } } catch(e) { params.nombre = query; } } }\n  if (typeof input !== 'undefined' && input) { if (typeof input === 'object') { params = { ...input, ...params }; } else if (typeof input === 'string') { try { const parsed = JSON.parse(input); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } } catch(e) {} } }\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/workers`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({ user_phone: userPhone, worker_name: params.nombre || null, worker_email: params.correo || null, worker_role: params.rol || 'despachador' }));\n    if (!res.ok) { const errText = await res.text(); throw new Error(errText); }\n    const resJson = await res.json();\n    return resJson.message;\n  } catch (error) { return `Error al registrar trabajador: ${error.message}`; }\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1584,
-        352
-      ],
+      "position": [2096, 448],
       "id": "6ca3b022-69ff-4dc6-9f0d-1b4e4ad86598",
       "name": "crear_trabajador"
     },
@@ -439,14 +434,11 @@
       "parameters": {
         "name": "obtener_reporte_financiero",
         "description": "Utilízala para obtener un reporte resumido de ingresos (ventas/facturas) y egresos (gastos) de la empresa de los últimos N días. Requiere el número de días hacia atrás a consultar (dias, por defecto 3).",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\n  const evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof dias !== 'undefined') params.dias = dias;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.dias = query;\n        }\n      } catch(e) {\n        params.dias = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n  const valDias = params.dias || 3;\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/reports/dashboard?days=${encodeURIComponent(valDias)}&user_phone=${encodeURIComponent(userPhone)}`, 'GET', {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    });\n\n    if (!res.ok) {\n      const errText = await res.text();\n      throw new Error(errText);\n    }\n\n    const resJson = await res.json();\n    const pdfUrl = resJson.pdf_url;\n\n    if (pdfUrl) {\n      await request(`${evolutionUrl}/message/sendMedia/GestiBot`, 'POST', {\n        'Content-Type': 'application/json',\n        'apikey': evolutionApiKey\n      }, JSON.stringify({ \n        number: userPhone,\n        media: pdfUrl,\n        mediatype: \"document\",\n        mediaType: \"document\",\n        mimetype: \"application/pdf\",\n        fileName: `reporte-${valDias}dias.pdf`,\n        caption: `Reporte consolidado de los últimos ${valDias} días 📊`\n      }));\n    }\n\n    return resJson.message;\n  } catch (error) {\n    return `Error al generar reporte financiero: ${error.message}`;\n  }\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({ hostname, path, method, headers }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => { resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, text: () => Promise.resolve(data), json: () => Promise.resolve(JSON.parse(data)) }); });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const evolutionApiKey = 'BB6FE9B78839-47F4-8F7D-14C9AC172F62';\n  const evolutionUrl = 'https://evolution-api-6vt4.srv1720387.hstgr.cloud';\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof dias !== 'undefined') params.dias = dias;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } else { params.dias = query; } } catch(e) { params.dias = query; } } }\n  const valDias = params.dias || 3;\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/reports/dashboard?days=${encodeURIComponent(valDias)}&user_phone=${encodeURIComponent(userPhone)}`, 'GET', { 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey });\n    if (!res.ok) { const errText = await res.text(); throw new Error(errText); }\n    const resJson = await res.json();\n    const pdfUrl = resJson.pdf_url;\n    if (pdfUrl) {\n      await request(`${evolutionUrl}/message/sendMedia/GestiBot`, 'POST', { 'Content-Type': 'application/json', 'apikey': evolutionApiKey }, JSON.stringify({ number: userPhone, media: pdfUrl, mediatype: \"document\", mediaType: \"document\", mimetype: \"application/pdf\", fileName: `reporte-${valDias}dias.pdf`, caption: `Reporte consolidado de los últimos ${valDias} días 📊` }));\n    }\n    return resJson.message;\n  } catch (error) { return `Error al generar reporte financiero: ${error.message}`; }\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1712,
-        448
-      ],
+      "position": [2224, 576],
       "id": "f58d8a4a-4b1c-439b-ab63-c5e7ab164dcc",
       "name": "obtener_reporte_financiero"
     },
@@ -454,14 +446,11 @@
       "parameters": {
         "name": "validar_gestitoken",
         "description": "Utilízala cuando el usuario proporcione el GestiToken de 6 dígitos para validar su identidad, iniciar sesión, autorizar el acceso o desbloquear el bot. Requiere el código de 6 dígitos (codigo).",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof codigo !== 'undefined') params.codigo = codigo;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.codigo = query;\n        }\n      } catch(e) {\n        params.codigo = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n  const valCodigo = (params.codigo || '').toString().trim();\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/auth/validate-otp`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({\n      user_phone: userPhone,\n      otp_code: valCodigo\n    }));\n\n    const resJson = await res.json();\n    if (!res.ok) {\n      throw new Error(resJson.error || 'Código incorrecto');\n    }\n\n    return resJson.message;\n  } catch (error) { \n    return `Error al validar GestiToken: ${error.message}`; \n  }\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({ hostname, path, method, headers }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => { resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, text: () => Promise.resolve(data), json: () => Promise.resolve(JSON.parse(data)) }); });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof codigo !== 'undefined') params.codigo = codigo;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } else { params.codigo = query; } } catch(e) { params.codigo = query; } } }\n  const valCodigo = (params.codigo || '').toString().trim();\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/auth/validate-otp`, 'POST', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey }, JSON.stringify({ user_phone: userPhone, otp_code: valCodigo }));\n    const resJson = await res.json();\n    if (!res.ok) { throw new Error(resJson.error || 'Código incorrecto'); }\n    return resJson.message;\n  } catch (error) { return `Error al validar GestiToken: ${error.message}`; }\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1824,
-        336
-      ],
+      "position": [2336, 448],
       "id": "91a0158e-ea07-42d6-a242-b2496f47f671",
       "name": "validar_gestitoken"
     },
@@ -469,14 +458,11 @@
       "parameters": {
         "name": "listar_clientes",
         "description": "Utilízala para obtener la lista de clientes registrados en el CRM de GestivaOne. Requiere pasar el parámetro 'confirmar' en true.",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof confirmar !== 'undefined') params.confirmar = confirmar;\n  if (typeof filtro !== 'undefined') params.filtro = filtro;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.confirmar = query;\n        }\n      } catch(e) {\n        params.confirmar = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n  const filterVal = (params.filtro || '').trim().toLowerCase();\n\n  const options = {\n    hostname: 'doidanwuijcfyaxrgavp.supabase.co',\n    path: `/functions/v1/crear-factura-bot/api/clients?user_phone=${encodeURIComponent(userPhone)}`,\n    method: 'GET',\n    headers: {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }\n  };\n\n  const result = await new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', (chunk) => data += chunk);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          const clients = Array.isArray(parsed) ? parsed : (parsed.clients || []);\n          \n          let filtered = clients;\n          if (filterVal) {\n            filtered = filtered.filter(c => (c.name || '').toLowerCase().includes(filterVal));\n          }\n          if (filtered.length === 0) {\n            resolve(filterVal ? `No encontré ningún cliente que coincida con \"${filterVal}\".` : 'No hay clientes registrados aún.');\n          } else {\n            const lista = filtered.map((c, i) => `${i+1}. ${c.name || 'Sin nombre'} - ${c.email || 'Sin email'} - Tel: ${c.phone || 'N/A'}`).join('\\n');\n            resolve(`Clientes registrados (${filtered.length}):\\n${lista}`);\n          }\n        } catch(e) {\n          resolve(data);\n        }\n      });\n    });\n    req.on('error', (e) => reject(e));\n    req.end();\n  });\n\n  return result;\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof confirmar !== 'undefined') params.confirmar = confirmar;\n  if (typeof filtro !== 'undefined') params.filtro = filtro;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } } catch(e) {} } }\n  const filterVal = (params.filtro || '').trim().toLowerCase();\n\n  const options = { hostname: 'uhbmoslwucdhwrkgdleo.supabase.co', path: `/functions/v1/crear-factura-bot/api/clients?user_phone=${encodeURIComponent(userPhone)}`, method: 'GET', headers: { 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey } };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', (chunk) => data += chunk);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          const clients = Array.isArray(parsed) ? parsed : (parsed.clients || []);\n          let filtered = clients;\n          if (filterVal) { filtered = filtered.filter(c => (c.name || '').toLowerCase().includes(filterVal)); }\n          if (filtered.length === 0) { resolve(filterVal ? `No encontré ningún cliente que coincida con \"${filterVal}\".` : 'No hay clientes registrados aún.'); }\n          else { const lista = filtered.map((c, i) => `${i+1}. ${c.name || 'Sin nombre'} - ${c.email || 'Sin email'} - Tel: ${c.phone || 'N/A'}`).join('\\n'); resolve(`Clientes registrados (${filtered.length}):\\n${lista}`); }\n        } catch(e) { resolve(data); }\n      });\n    });\n    req.on('error', (e) => reject(e));\n    req.end();\n  });\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        1952,
-        448
-      ],
+      "position": [2464, 576],
       "id": "62945667-8f07-402f-b649-1e4f8507c845",
       "name": "listar_clientes"
     },
@@ -484,14 +470,11 @@
       "parameters": {
         "name": "consultar_deudas",
         "description": "Utilízala cuando el jefe pregunte cuánto le deben, quién debe, qué clientes tienen facturas pendientes o quién es el mayor deudor. Retorna la lista de clientes con deudas agrupadas y el total pendiente.",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof limite !== 'undefined') params.limite = limite;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.limite = query;\n        }\n      } catch(e) {\n        params.limite = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n  const valLimite = params.limite || 10;\n\n  const options = {\n    hostname: 'doidanwuijcfyaxrgavp.supabase.co',\n    path: `/functions/v1/crear-factura-bot/api/reports/debts?user_phone=${encodeURIComponent(userPhone)}`,\n    method: 'GET',\n    headers: {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }\n  };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          if (parsed.deudas && parsed.deudas.length > 0) {\n            const lista = parsed.deudas.slice(0, valLimite).map((d, i) =>\n              `${i+1}. ${d.client_name}: $${d.total_pendiente.toLocaleString('es-CO')} COP (${d.facturas} factura(s))`\n            ).join('\\n');\n            resolve(`${parsed.message}\\n\\nDetalle:\\n${lista}`);\n          } else {\n            resolve(parsed.message || '¡Sin deudas pendientes!');\n          }\n        } catch(e) { resolve(data); }\n      });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof limite !== 'undefined') params.limite = limite;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } } catch(e) {} } }\n  const valLimite = params.limite || 10;\n\n  const options = { hostname: 'uhbmoslwucdhwrkgdleo.supabase.co', path: `/functions/v1/crear-factura-bot/api/reports/debts?user_phone=${encodeURIComponent(userPhone)}`, method: 'GET', headers: { 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey } };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          if (parsed.deudas && parsed.deudas.length > 0) {\n            const lista = parsed.deudas.slice(0, valLimite).map((d, i) => `${i+1}. ${d.client_name}: $${d.total_pendiente.toLocaleString('es-CO')} COP (${d.facturas} factura(s))`).join('\\n');\n            resolve(`${parsed.message}\\n\\nDetalle:\\n${lista}`);\n          } else { resolve(parsed.message || '¡Sin deudas pendientes!'); }\n        } catch(e) { resolve(data); }\n      });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        2064,
-        336
-      ],
+      "position": [2576, 448],
       "id": "db72d7d6-9691-4665-b8a6-bae4eb892636",
       "name": "consultar_deudas"
     },
@@ -499,14 +482,11 @@
       "parameters": {
         "name": "resumen_dia",
         "description": "Utilízala cuando el jefe pregunte cómo va el día, cuánto se ha vendido hoy, el balance del día o el resumen de hoy. Retorna ventas, ingresos, gastos y balance del día actual.",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  const options = {\n    hostname: 'doidanwuijcfyaxrgavp.supabase.co',\n    path: `/functions/v1/crear-factura-bot/api/reports/daily?user_phone=${encodeURIComponent(userPhone)}`,\n    method: 'GET',\n    headers: {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }\n  };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          resolve(parsed.message || JSON.stringify(parsed));\n        } catch(e) { resolve(data); }\n      });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  const options = { hostname: 'uhbmoslwucdhwrkgdleo.supabase.co', path: `/functions/v1/crear-factura-bot/api/reports/daily?user_phone=${encodeURIComponent(userPhone)}`, method: 'GET', headers: { 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey } };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => { try { const parsed = JSON.parse(data); resolve(parsed.message || JSON.stringify(parsed)); } catch(e) { resolve(data); } });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        2192,
-        448
-      ],
+      "position": [2704, 576],
       "id": "b92bccec-d961-42b0-8fd8-01857719fec0",
       "name": "resumen_dia"
     },
@@ -514,14 +494,11 @@
       "parameters": {
         "name": "buscar_cliente",
         "description": "Utilízala para buscar un cliente específico por nombre parcial en el CRM de GestivaOne. Útil para confirmar si un cliente ya existe antes de crear una factura.",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof nombre !== 'undefined') params.nombre = nombre;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.nombre = query;\n        }\n      } catch(e) {\n        params.nombre = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n  const nombreBuscar = params.nombre || '';\n\n  const options = {\n    hostname: 'doidanwuijcfyaxrgavp.supabase.co',\n    path: `/functions/v1/crear-factura-bot/api/clients?search=${encodeURIComponent(nombreBuscar)}&user_phone=${encodeURIComponent(userPhone)}`,\n    method: 'GET',\n    headers: {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }\n  };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          const clients = Array.isArray(parsed) ? parsed : (parsed.clientes || []);\n          if (clients.length > 0) {\n            const lista = clients.map(c =>\n              `• ${c.name}${c.email ? ' - ' + c.email : ''}${c.phone ? ' - Tel: ' + c.phone : ''}`\n            ).join('\\n');\n            resolve(`Clientes encontrados (${clients.length}):\\n${lista}`);\n          } else {\n            resolve(`No se encontró ningún cliente que coincida con \"${nombreBuscar}\".`);\n          }\n        } catch(e) { resolve(data); }\n      });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof nombre !== 'undefined') params.nombre = nombre;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } else { params.nombre = query; } } catch(e) { params.nombre = query; } } }\n  const nombreBuscar = params.nombre || '';\n\n  const options = { hostname: 'uhbmoslwucdhwrkgdleo.supabase.co', path: `/functions/v1/crear-factura-bot/api/clients?search=${encodeURIComponent(nombreBuscar)}&user_phone=${encodeURIComponent(userPhone)}`, method: 'GET', headers: { 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey } };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          const clients = Array.isArray(parsed) ? parsed : (parsed.clientes || []);\n          if (clients.length > 0) { const lista = clients.map(c => `• ${c.name}${c.email ? ' - ' + c.email : ''}${c.phone ? ' - Tel: ' + c.phone : ''}`).join('\\n'); resolve(`Clientes encontrados (${clients.length}):\\n${lista}`); }\n          else { resolve(`No se encontró ningún cliente que coincida con \"${nombreBuscar}\".`); }\n        } catch(e) { resolve(data); }\n      });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        2304,
-        336
-      ],
+      "position": [2816, 448],
       "id": "f69dc24c-94e8-4394-a615-8718cb54b1a6",
       "name": "buscar_cliente"
     },
@@ -529,315 +506,265 @@
       "parameters": {
         "name": "crear_gasto",
         "description": "Utilízala para registrar un egreso o gasto de la empresa. Requiere el monto (monto) y la categoría (categoria). Opcionalmente acepta descripción (descripcion) y nombre del proveedor (proveedor).",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({\n        hostname: hostname,\n        path: path,\n        method: method,\n        headers: headers\n      }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            text: () => Promise.resolve(data),\n            json: () => Promise.resolve(JSON.parse(data))\n          });\n        });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://doidanwuijcfyaxrgavp.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof monto !== 'undefined') params.monto = monto;\n  if (typeof categoria !== 'undefined') params.categoria = categoria;\n  if (typeof descripcion !== 'undefined') params.descripcion = descripcion;\n  if (typeof proveedor !== 'undefined') params.proveedor = proveedor;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.monto = query;\n        }\n      } catch(e) {\n        params.monto = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/expenses`, 'POST', {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }, JSON.stringify({\n      user_phone: userPhone,\n      amount: Number(params.monto),\n      category: params.categoria,\n      description: params.descripcion || null,\n      provider_name: params.proveedor || null\n    }));\n\n    if (!res.ok) {\n      const errText = await res.text();\n      throw new Error(errText);\n    }\n\n    const resJson = await res.json();\n    return resJson.message;\n  } catch (error) {\n    return `Error al registrar gasto: ${error.message}`;\n  }\n})();"
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const request = (url, method, headers, body) => {\n    const parts = url.split('://')[1].split('/');\n    const hostname = parts[0];\n    const path = '/' + parts.slice(1).join('/');\n    return new Promise((resolve, reject) => {\n      const req = https.request({ hostname, path, method, headers }, (res) => {\n        let data = '';\n        res.on('data', (chunk) => data += chunk);\n        res.on('end', () => { resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, text: () => Promise.resolve(data), json: () => Promise.resolve(JSON.parse(data)) }); });\n      });\n      req.on('error', (e) => reject(e));\n      if (body) req.write(body);\n      req.end();\n    });\n  };\n\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseUrl = 'https://uhbmoslwucdhwrkgdleo.supabase.co';\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  let params = {};\n  if (typeof monto !== 'undefined') params.monto = monto;\n  if (typeof categoria !== 'undefined') params.categoria = categoria;\n  if (typeof descripcion !== 'undefined') params.descripcion = descripcion;\n  if (typeof proveedor !== 'undefined') params.proveedor = proveedor;\n  if (typeof query !== 'undefined' && query) { if (typeof query === 'object') { params = { ...query, ...params }; } else if (typeof query === 'string') { try { const parsed = JSON.parse(query); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } else { params.monto = query; } } catch(e) { params.monto = query; } } }\n  if (typeof input !== 'undefined' && input) { if (typeof input === 'object') { params = { ...input, ...params }; } else if (typeof input === 'string') { try { const parsed = JSON.parse(input); if (parsed && typeof parsed === 'object') { params = { ...parsed, ...params }; } } catch(e) {} } }\n\n  try {\n    const res = await request(`${supabaseUrl}/functions/v1/crear-factura-bot/api/expenses`, 'POST', { 'Content-Type': 'application/json', 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey }, JSON.stringify({ user_phone: userPhone, amount: Number(params.monto), category: params.categoria, description: params.descripcion || null, provider_name: params.proveedor || null }));\n    if (!res.ok) { const errText = await res.text(); throw new Error(errText); }\n    const resJson = await res.json();\n    return resJson.message;\n  } catch (error) { return `Error al registrar gasto: ${error.message}`; }\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        2432,
-        448
-      ],
+      "position": [2944, 576],
       "id": "7a1a86bc-9c8b-4692-aaa3-cb2a0d940b4d",
       "name": "crear_gasto"
     },
     {
       "parameters": {
         "name": "consultar_inventario",
-        "description": "Utilízala cuando el jefe pregunte qué hay en inventario, qué productos existen, cuánto stock hay o si hay productos con stock bajo. Puede recibir un nombre de producto para filtrar.",
-        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseAnonKey = 'sb_publishable_5zgaTIMia5OGYPOqIwkEkA_agKsP1Ox';\n\n  let params = {};\n  if (typeof busqueda !== 'undefined') params.busqueda = busqueda;\n  if (typeof limite !== 'undefined') params.limite = limite;\n\n  if (typeof query !== 'undefined' && query) {\n    if (typeof query === 'object') {\n      params = { ...query, ...params };\n    } else if (typeof query === 'string') {\n      try {\n        const parsed = JSON.parse(query);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        } else {\n          params.busqueda = query;\n        }\n      } catch(e) {\n        params.busqueda = query;\n      }\n    }\n  }\n  if (typeof input !== 'undefined' && input) {\n    if (typeof input === 'object') {\n      params = { ...input, ...params };\n    } else if (typeof input === 'string') {\n      try {\n        const parsed = JSON.parse(input);\n        if (parsed && typeof parsed === 'object') {\n          params = { ...parsed, ...params };\n        }\n      } catch(e) {}\n    }\n  }\n  const valBusqueda = params.busqueda || '';\n  const valLimite = params.limite || 15;\n\n  const options = {\n    hostname: 'doidanwuijcfyaxrgavp.supabase.co',\n    path: `/functions/v1/crear-factura-bot/api/products?search=${encodeURIComponent(valBusqueda)}&limit=${encodeURIComponent(valLimite)}&user_phone=${encodeURIComponent(userPhone)}`,\n    method: 'GET',\n    headers: {\n      'Authorization': `Bearer ${supabaseAnonKey}`,\n      'apikey': supabaseAnonKey\n    }\n  };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => {\n        try {\n          const parsed = JSON.parse(data);\n          const products = Array.isArray(parsed) ? parsed : (parsed.productos || []);\n          if (products.length > 0) {\n            const lista = products.map(p =>\n              `• ${p.name} — Stock: ${p.stock} ${p.unit || 'UND'} — Precio: $${Number(p.price).toLocaleString('es-CO')}`\n            ).join('\\n');\n            resolve(`Inventario consultado con éxito:\\n\\n${lista}`);\n          } else {\n            resolve(valBusqueda ? `No se encontraron productos que coincidan con \"${valBusqueda}\".` : 'No hay productos registrados en el inventario.');\n          }\n        } catch(e) { resolve(data); }\n      });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
+        "description": "Utilízala para consultar el inventario o stock de productos disponibles en la tienda o negocio del jefe.",
+        "jsCode": "return await (async () => {\n  const https = require('https');\n  const userPhone = $('📱 WhatsApp Trigger').first().json.messages[0].from;\n  const supabaseAnonKey = 'sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll';\n\n  const options = { hostname: 'uhbmoslwucdhwrkgdleo.supabase.co', path: `/functions/v1/crear-factura-bot/api/inventory?user_phone=${encodeURIComponent(userPhone)}`, method: 'GET', headers: { 'Authorization': `Bearer ${supabaseAnonKey}`, 'apikey': supabaseAnonKey } };\n\n  return new Promise((resolve, reject) => {\n    const req = https.request(options, (res) => {\n      let data = '';\n      res.on('data', c => data += c);\n      res.on('end', () => { try { const parsed = JSON.parse(data); resolve(parsed.message || JSON.stringify(parsed)); } catch(e) { resolve(data); } });\n    });\n    req.on('error', reject);\n    req.end();\n  });\n})();"
       },
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1,
-      "position": [
-        2528,
-        336
-      ],
-      "id": "656e798d-02b9-4334-8b21-ad148844e215",
+      "position": [3072, 448],
+      "id": "cc11dd22-ee33-ff44-aa55-bb6677889900",
       "name": "consultar_inventario"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evolution-api-6vt4.srv1720387.hstgr.cloud/chat/getBase64FromMediaMessage/GestiBot",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "apikey", "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { message: { key: $('Recibir WhatsApp').first().json.body.data.key, message: $('Recibir WhatsApp').first().json.body.data.message }, convertToMp4: true } }}",
+        "options": {}
+      },
+      "id": "dd22ee33-ff44-aa55-bb66-778899001122",
+      "name": "📷 Descargar Imagen/Doc",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [32, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://uhbmoslwucdhwrkgdleo.supabase.co/functions/v1/crear-factura-bot/api/ocr/process-image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll" },
+            { "name": "apikey", "value": "sb_publishable_KiUko3HqeUGDFYCoTDEpOw_5ERJ50Ll" },
+            { "name": "x-user-phone", "value": "={{ $('📱 WhatsApp Trigger').first().json.messages[0].from }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { base64: $json.base64, mime_type: $('📱 WhatsApp Trigger').first().json.messages[0].media?.mime_type || 'image/jpeg' } }}",
+        "options": {}
+      },
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "📸 OCR: Enviar a GestivaOne",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [240, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evolution-api-6vt4.srv1720387.hstgr.cloud/message/sendText/GestiBot",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "apikey", "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { number: $('📱 WhatsApp Trigger').first().json.messages[0].from, text: (() => { const res = $json; const msg = res.message || ''; const category = res.category || ''; const amount = res.amount ? '$' + Number(res.amount).toLocaleString('es-CO') + ' COP' : ''; let confirmLine = ''; if (amount && category) { confirmLine = `Se registró un ${category.toLowerCase()} por ${amount}.`; } else if (msg) { confirmLine = msg; } else { confirmLine = 'Los datos del documento ya están guardados en su cuenta.'; } return `✅ ¡Listo, patrón! ${confirmLine}\\n\\nTodo quedó registrado directamente en su cuenta de GestivaOne. Sus finanzas siempre al día, sin papeles ni complicaciones 💼\\n\\n¿Con qué más le puedo colaborar?`; })() } }}",
+        "options": {}
+      },
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "📤 Enviar Confirmación OCR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [448, 700]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=MENSAJE_PROSPECTO: {{ $('📱 WhatsApp Trigger').item.json.messages[0].text?.body || 'Hola' }}\nFECHA_HOY: {{$now.format('yyyy-MM-dd')}}\nHORA_ACTUAL: {{$now.format('HH:mm')}}",
+        "options": {
+          "systemMessage": "Eres Gesti, el asistente de ventas y bienvenida de GestivaOne — la plataforma de gestión empresarial más poderosa y asequible de Latinoamérica.\n\n=== TU MISIÓN ===\nEsta persona que te escribe NO está registrada como cliente de GestivaOne. Tu trabajo es:\n1. Darle una BIENVENIDA cálida y profesional.\n2. Explicarle QUÉ es GestivaOne y cómo puede transformar su negocio.\n3. Generar CURIOSIDAD y deseo de conocer más.\n4. Invitarla a registrarse de forma gratuita.\n5. Responder preguntas sobre precios, funcionalidades y planes.\n\n=== SOBRE GESTIVAONE ===\nGestivaOne es un sistema ERP inteligente todo-en-uno para negocios latinoamericanos:\n\n📄 FACTURACIÓN INTELIGENTE\n- Genera facturas PDF profesionales en segundos directamente desde WhatsApp\n- Facturación DIAN-compatible para Colombia\n- Registro de ventas con foto del producto incluida\n\n👥 CRM DE CLIENTES\n- Gestiona todos tus clientes en un solo lugar\n- Historial completo de compras y deudas por cliente\n- Alertas automáticas de pagos vencidos\n\n📦 CONTROL DE INVENTARIO\n- Stock en tiempo real de todos tus productos\n- Alertas automáticas cuando el stock está bajo\n- Fotos, precios y costos de cada producto\n\n💰 FINANZAS EN TIEMPO REAL\n- Dashboard financiero con ingresos, gastos y utilidad neta\n- Registro de gastos operativos con OCR (saca una foto al recibo y el bot lo registra solo)\n- Reportes PDF ejecutivos exportables\n\n🤖 AGENTE IA EN WHATSAPP (GestiBot)\n- Tu secretaria virtual disponible 24/7 en WhatsApp\n- Registra ventas, consulta deudas, ve el inventario... todo por WhatsApp\n- Entiende voz, texto e imágenes\n\n🏪 MARKETPLACE PROPIO\n- Tu tienda online integrada en segundos\n- Tus clientes compran directamente desde tu link personalizado\n- Sincronizado con tu inventario en tiempo real\n\n=== PLANES Y PRECIOS ===\n- **Standard (Gratis siempre)**: 1 usuario, facturación básica, CRM de clientes, inventario limitado.\n- **One Pro ($32.000/mes)**: Hasta 10 trabajadores, dashboard avanzado, reportes PDF/Excel, soporte prioritario. ⭐ Promo: primer mes por solo $7.000.\n- **One 360 ($120.000/mes)**: Hasta 30 trabajadores, multi-sucursal, API personalizada. Promo: 33% desc. primeros 3 meses.\n- **Enterprise**: Ilimitado, desarrollo a la medida, soporte 24/7.\n\n=== LINKS IMPORTANTES ===\n- 🌐 Plataforma web: https://gestivaone.com\n- 🏪 Marketplace de ejemplo: https://gestivaone.com/marketplace\n- 📝 Registro gratuito: https://gestivaone.com/register\n\n=== TONO Y PERSONALIDAD ===\n- Habla de forma cálida, entusiasta y cercana. Como un asesor comercial joven y moderno.\n- Usa emojis con moderación para hacer los mensajes más visuales y amigables.\n- NO menciones que eres una IA. Simplemente eres Gesti, el asistente de GestivaOne.\n- Responde siempre en español latinoamericano natural.\n- Si alguien hace una pregunta técnica, responde con seguridad y ofrece agendar una demo.\n- Si alguien quiere registrarse, dales el link de registro y ofrece ayudarles en el proceso.\n- Mantén los mensajes cortos y concisos. Máximo 3-4 párrafos por respuesta.\n\n=== EJEMPLOS DE RESPUESTA ===\n- Si dice 'Hola': Saluda calurosamente, preséntate como Gesti de GestivaOne y pregunta en qué tipo de negocio trabajan.\n- Si pregunta por precios: Explica los planes con sus precios y destaca la promo del primer mes en $7.000.\n- Si pregunta qué es GestivaOne: Da un resumen de 3-4 puntos clave que más impacten según el tipo de negocio mencionado.\n- Si quiere registrarse: Dale el link de registro y ofrece guiarlos.\n- Si pregunta si tienen demo: Diles que pueden crear una cuenta gratis en https://gestivaone.com/register y explorar todas las funciones sin costo.\n\n=== REGLA DE ORO ===\nNUNCA respondas preguntas sobre datos internos de otros negocios, facturas de otros clientes o información administrativa. Tú solo hablas de GestivaOne como producto y ayudas al prospecto a conocerlo y registrarse."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [320, 420],
+      "id": "ee33ff44-aa55-bb66-cc77-889900112233",
+      "name": "🛍️ Agente de Ventas GestivaOne"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [192, 608],
+      "id": "ff44aa55-bb66-cc77-dd88-990011223344",
+      "name": "🧠 GPT-4o Mini (Ventas)",
+      "credentials": {
+        "openAiApi": {
+          "id": "z5ZtXZSuJlHOXFjm",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=ventas_{{ $('📱 WhatsApp Trigger').item.json.messages[0].from }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [320, 608],
+      "id": "aa55bb66-cc77-dd88-ee99-001122334455",
+      "name": "Simple Memory (Ventas)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://evolution-api-6vt4.srv1720387.hstgr.cloud/message/sendText/GestiBot",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "apikey", "value": "BB6FE9B78839-47F4-8F7D-14C9AC172F62" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { number: $('📱 WhatsApp Trigger').item.json.messages[0].from, text: $json.output } }}",
+        "options": {}
+      },
+      "id": "bb66cc77-dd88-ee99-ff00-112233445566",
+      "name": "✉️ Enviar respuesta Ventas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [544, 420]
     }
   ],
   "connections": {
     "Recibir WhatsApp": {
-      "main": [
-        [
-          {
-            "node": "📱 WhatsApp Trigger",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "📱 WhatsApp Trigger", "type": "main", "index": 0 }]]
     },
     "📱 WhatsApp Trigger": {
-      "main": [
-        [
-          {
-            "node": "✅ Mensaje válido?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "✅ Mensaje válido?", "type": "main", "index": 0 }]]
     },
     "✅ Mensaje válido?": {
+      "main": [[{ "node": "🔍 ¿Número Registrado?", "type": "main", "index": 0 }]]
+    },
+    "🔍 ¿Número Registrado?": {
+      "main": [[{ "node": "🔀 ¿Usuario Registrado?", "type": "main", "index": 0 }]]
+    },
+    "🔀 ¿Usuario Registrado?": {
       "main": [
-        [
-          {
-            "node": "🔀 Tipo de Mensaje",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{ "node": "🔀 Tipo de Mensaje", "type": "main", "index": 0 }],
+        [{ "node": "🛍️ Agente de Ventas GestivaOne", "type": "main", "index": 0 }]
       ]
     },
     "🔀 Tipo de Mensaje": {
       "main": [
-        [
-          {
-            "node": "📝 Mensaje Texto",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "📥 Descargar Audio",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{ "node": "📝 Mensaje Texto", "type": "main", "index": 0 }],
+        [{ "node": "📥 Descargar Audio", "type": "main", "index": 0 }],
+        [{ "node": "📷 Descargar Imagen/Doc", "type": "main", "index": 0 }]
       ]
+    },
+    "📷 Descargar Imagen/Doc": {
+      "main": [[{ "node": "📸 OCR: Enviar a GestivaOne", "type": "main", "index": 0 }]]
+    },
+    "📸 OCR: Enviar a GestivaOne": {
+      "main": [[{ "node": "📤 Enviar Confirmación OCR", "type": "main", "index": 0 }]]
     },
     "📝 Mensaje Texto": {
-      "main": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "🤖 Agente IA — Negocio", "type": "main", "index": 0 }]]
     },
     "📥 Descargar Audio": {
-      "main": [
-        [
-          {
-            "node": "Convertir Base64 a Binario",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Convertir Base64 a Binario", "type": "main", "index": 0 }]]
     },
     "Convertir Base64 a Binario": {
-      "main": [
-        [
-          {
-            "node": "🎙️ Transcribir (Whisper)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "🎙️ Transcribir (Whisper)", "type": "main", "index": 0 }]]
     },
     "🎙️ Transcribir (Whisper)": {
-      "main": [
-        [
-          {
-            "node": "🎤 Transcripción Audio",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "🎤 Transcripción Audio", "type": "main", "index": 0 }]]
     },
     "🎤 Transcripción Audio": {
-      "main": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "🤖 Agente IA — Negocio", "type": "main", "index": 0 }]]
     },
     "🤖 Agente IA — Negocio": {
-      "main": [
-        [
-          {
-            "node": "✉️ Enviar respuesta IA",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "✉️ Enviar respuesta IA", "type": "main", "index": 0 }]]
+    },
+    "🛍️ Agente de Ventas GestivaOne": {
+      "main": [[{ "node": "✉️ Enviar respuesta Ventas", "type": "main", "index": 0 }]]
     },
     "🧠 GPT-4o Mini": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_languageModel": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_languageModel", "index": 0 }]]
     },
     "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_memory": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_memory", "index": 0 }]]
+    },
+    "🧠 GPT-4o Mini (Ventas)": {
+      "ai_languageModel": [[{ "node": "🛍️ Agente de Ventas GestivaOne", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Simple Memory (Ventas)": {
+      "ai_memory": [[{ "node": "🛍️ Agente de Ventas GestivaOne", "type": "ai_memory", "index": 0 }]]
     },
     "enviar_factura_email": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "pedir_factura_pdf": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "crear_venta_facturar": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "crear_cliente": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "crear_trabajador": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "obtener_reporte_financiero": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "validar_gestitoken": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "listar_clientes": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "consultar_deudas": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "resumen_dia": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "buscar_cliente": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "crear_gasto": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     },
     "consultar_inventario": {
-      "ai_tool": [
-        [
-          {
-            "node": "🤖 Agente IA — Negocio",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_tool": [[{ "node": "🤖 Agente IA — Negocio", "type": "ai_tool", "index": 0 }]]
     }
   },
   "pinData": {},
