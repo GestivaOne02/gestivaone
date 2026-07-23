@@ -25,7 +25,7 @@ export default function LanguageSelector() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-foreground dark:text-white text-xs font-semibold transition-all focus:outline-none"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-700/60 hover:bg-surface-600 text-foreground text-xs font-semibold transition-all focus:outline-none border border-subtle shadow-sm"
         aria-expanded={isOpen}
       >
         <Icon name="Languages" size={15} className="text-brand-400"  />
@@ -40,7 +40,7 @@ export default function LanguageSelector() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.95 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute right-0 top-full mt-2 w-36 bg-[#13131e] border border-white/15 rounded-xl shadow-2xl p-1 z-50 backdrop-blur-xl"
+            className="absolute right-0 top-full mt-2 w-40 bg-surface-800 border border-subtle rounded-xl shadow-2xl p-1 z-50 backdrop-blur-xl text-foreground"
           >
             <div className="space-y-0.5">
               {LANGUAGES.map((lang) => {
@@ -54,8 +54,8 @@ export default function LanguageSelector() {
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                       isSelected
-                        ? 'bg-brand-600/30 text-white font-bold'
-                        : 'text-muted-300 hover:bg-white/10 hover:text-white'
+                        ? 'bg-brand-600/20 text-brand-400 font-bold'
+                        : 'text-muted-500 hover:bg-surface-700 hover:text-foreground'
                     }`}
                   >
                     <div className="flex items-center gap-2">
