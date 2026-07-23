@@ -58,9 +58,9 @@ export const TRANSLATIONS = {
       subtitle: 'Descubre cómo GestivaOne transforma la gestión de cada sector.',
     },
     geo: {
-      tag: 'IA & Tecnología',
-      title: 'Respuestas Inteligentes para la Toma de Decisiones',
-      subtitle: 'Asistencia con Inteligencia Artificial para consultas contables y comerciales.',
+      tag: 'Infraestructura & Tecnología',
+      title: 'Tecnología Robusta Diseñada para tu Empresa',
+      subtitle: 'Infraestructura Cloud, hardware POS e integraciones financieras listas para operar desde el primer día.',
     },
     faq: {
       tag: 'Preguntas Frecuentes',
@@ -144,9 +144,9 @@ export const TRANSLATIONS = {
       subtitle: 'Discover how GestivaOne transforms management in every sector.',
     },
     geo: {
-      tag: 'AI & Technology',
-      title: 'Smart Answers for Decision Making',
-      subtitle: 'Artificial Intelligence assistance for accounting and business queries.',
+      tag: 'Infrastructure & Tech',
+      title: 'Robust & High-Performance Platform',
+      subtitle: 'Cloud infrastructure, POS hardware & financial integrations ready for non-stop operations.',
     },
     faq: {
       tag: 'Frequently Asked Questions',
@@ -230,9 +230,9 @@ export const TRANSLATIONS = {
       subtitle: 'Descubra como o GestivaOne transforma a gestão de cada setor.',
     },
     geo: {
-      tag: 'IA & Tecnologia',
-      title: 'Respostas Inteligentes para Tomada de Decisão',
-      subtitle: 'Assistência de Inteligência Artificial para consultas contábeis e comerciais.',
+      tag: 'Infraestrutura & Tecnologia',
+      title: 'Tecnologia Robusta para Sua Empresa',
+      subtitle: 'Infraestrutura em nuvem, hardware POS e integrações financeiras prontas para operar.',
     },
     faq: {
       tag: 'Perguntas Frequentes',

@@ -1,9 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
-
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
-import ReactPlayer from 'react-player'
 import SEOHead from '@/components/seo/SEOHead'
 import FAQSection from '@/components/landing/FAQSection'
 import GEOPromptsSection from '@/components/landing/GEOPromptsSection'
@@ -19,20 +17,11 @@ export default function Landing() {
   const { t } = useLanguageStore()
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
-  const [showAppsMenu, setShowAppsMenu] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [contactSent, setContactSent] = useState(false)
 
   useEffect(() => {
-    // Check current theme
     const isDark = document.documentElement.classList.contains('dark')
     setIsDarkMode(isDark)
-
-    // Video transition timer
-    const timer = setTimeout(() => {
-      setShowVideo(true)
-    }, 5000)
-    return () => clearTimeout(timer)
   }, [])
 
   const toggleTheme = () => {
@@ -63,123 +52,77 @@ export default function Landing() {
     <div className="min-h-screen bg-surface-900 text-foreground selection:bg-brand-500/30 selection:text-brand-300 transition-colors duration-200">
       <SEOHead />
 
-      {/* ─── 2-TIER HEADER ─── */}
-      <header className="sticky top-0 z-50 bg-surface-900/95 backdrop-blur-md border-b border-subtle transition-colors duration-200">
-        {/* Tier 1: Logo centered at the top */}
-        <div className="border-b border-white/5 py-3 px-4 flex items-center justify-center relative">
-          {/* Apps Menu Dropdown Trigger (Left) */}
-          <div className="absolute left-4 sm:left-8 flex items-center gap-2">
-            <div className="relative">
-              <button 
-                onClick={() => setShowAppsMenu(!showAppsMenu)}
-                onBlur={() => setTimeout(() => setShowAppsMenu(false), 200)}
-                className="text-muted-400 hover:text-foreground transition-colors p-2 rounded-xl hover:bg-surface-800 flex items-center gap-1.5 text-xs font-semibold"
-                aria-label="Apps Menu"
-              >
-                <Icon name="LayoutGrid" size={18}  />
-                <span className="hidden sm:inline text-xs">Ecosistema</span>
-              </button>
-              <AnimatePresence>
-                {showAppsMenu && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 mt-2 w-64 bg-surface-900 border border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
-                  >
-                    <div className="px-3 py-2 text-[10px] font-bold text-muted-400 uppercase tracking-wider">
-                      Más productos de Gestiva
-                    </div>
-                    <a
-                      href="https://gestivapost.vercel.app/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
-                        <Icon name="Palette" size={16}  />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-foreground">GestivaPost</span>
-                        <span className="text-xs text-muted-400">Software de Diseño</span>
-                      </div>
-                    </a>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
+      {/* ─── SINGLE UNIFIED HEADER ─── */}
+      <header className="sticky top-0 z-50 bg-surface-900/90 backdrop-blur-xl border-b border-subtle transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
 
-          {/* Centered GestivaOne Logo */}
-          <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
-            <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-9 w-auto" />
-            <span className="font-extrabold text-foreground text-xl tracking-tight">
-              Gestiva<span className="text-brand-500">One</span>
-            </span>
-          </Link>
-
-          {/* Right User & Theme shortcuts */}
-          <div className="absolute right-4 sm:right-8 flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
-              aria-label="Toggle Theme"
-            >
-              {isDarkMode ? <Icon name="Sun" size={18}  /> : <Icon name="Moon" size={18}  />}
-            </button>
-            <Link
-              to="/auth?mode=login"
-              className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 transition-all overflow-hidden"
-              title={t('nav.login')}
-            >
-              <Icon name="User" size={16}  />
+            {/* Left: Brand Logo */}
+            <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+              <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
+              <span className="font-extrabold text-foreground text-xl tracking-tight">
+                Gestiva<span className="text-brand-500">One</span>
+              </span>
             </Link>
-          </div>
-        </div>
 
-        {/* Tier 2: Navigation Links (Left) and Language Selector (Right) */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-800/60">
-          <div className="flex items-center justify-between h-14">
-            {/* Left: Navigation Buttons */}
-            <div className="hidden lg:flex items-center gap-6">
+            {/* Center: Main Navigation (Desktop) */}
+            <nav className="hidden lg:flex items-center gap-7">
               <a href="#caracteristicas" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.features')}</a>
               <a href="#nosotros" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.about')}</a>
               <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.pricing')}</a>
+              <a href="#especificaciones" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('geo.tag')}</a>
               <a href="#contacto" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.contact')}</a>
+            </nav>
 
-              <a
-                href="https://gestivaone-store.vercel.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-xs font-extrabold uppercase tracking-wider text-brand-400 hover:text-brand-300 transition-colors"
+            {/* Right: Language + Theme + Login + CTA */}
+            <div className="hidden lg:flex items-center gap-3">
+              <LanguageSelector />
+
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors border border-subtle"
+                aria-label="Toggle Theme"
+                title="Cambiar tema"
               >
-                {t('nav.marketplace')}
-              </a>
+                {isDarkMode ? <Icon name="Sun" size={16} /> : <Icon name="Moon" size={16} />}
+              </button>
+
+              <Link
+                to="/auth?mode=login"
+                className="px-3.5 py-2 text-xs font-bold text-muted-400 hover:text-foreground transition-colors"
+              >
+                {t('nav.login')}
+              </Link>
 
               <Link
                 to="/auth?mode=register"
-                className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all duration-300 shadow-md ml-2"
+                className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all duration-200 shadow-md shadow-brand-500/20 active:scale-95"
               >
-                {t('nav.start')}
+                {t('hero.ctaPrimary')}
               </Link>
             </div>
 
-            {/* Mobile Menu Button (Left on Mobile) */}
-            <div className="lg:hidden flex items-center">
+            {/* Mobile Actions: Language + Theme + Hamburger */}
+            <div className="lg:hidden flex items-center gap-2">
+              <LanguageSelector />
+
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors border border-subtle"
+                aria-label="Toggle Theme"
+              >
+                {isDarkMode ? <Icon name="Sun" size={16} /> : <Icon name="Moon" size={16} />}
+              </button>
+
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors flex items-center gap-2 text-xs font-bold"
+                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors flex items-center gap-1.5 text-xs font-bold border border-subtle"
                 aria-label="Toggle Mobile Navigation"
               >
-                {mobileMenuOpen ? <Icon name="X" size={20}  /> : <Icon name="Menu" size={20}  />}
-                <span>Menú</span>
+                {mobileMenuOpen ? <Icon name="X" size={18} /> : <Icon name="Menu" size={18} />}
               </button>
             </div>
 
-            {/* Right: Language Selector Button */}
-            <div className="flex items-center gap-3">
-              <LanguageSelector />
-            </div>
           </div>
         </div>
 
@@ -192,51 +135,72 @@ export default function Landing() {
               exit={{ opacity: 0, height: 0 }}
               className="lg:hidden bg-surface-900 border-b border-subtle overflow-hidden"
             >
-              <div className="px-4 pt-3 pb-6 space-y-3">
+              <div className="px-4 pt-3 pb-6 space-y-2">
                 <a
                   href="#caracteristicas"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.features')}
                 </a>
                 <a
                   href="#nosotros"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.about')}
                 </a>
                 <a
                   href="#precios"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.pricing')}
                 </a>
                 <a
+                  href="#especificaciones"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                >
+                  {t('geo.tag')}
+                </a>
+                <a
                   href="#contacto"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.contact')}
                 </a>
+
+                {/* Ecosystem Link */}
                 <a
-                  href="https://gestivaone-store.vercel.app"
+                  href="https://gestivapost.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-bold text-brand-400 hover:bg-surface-800 transition-colors"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-surface-800 border border-subtle text-xs font-bold text-foreground"
                 >
-                  {t('nav.marketplace')}
+                  <span className="flex items-center gap-2">
+                    <Icon name="Palette" size={16} className="text-orange-500" />
+                    GestivaPost (Diseño)
+                  </span>
+                  <Icon name="ExternalLink" size={14} className="text-muted-400" />
                 </a>
-                <div className="pt-2 border-t border-subtle">
+
+                <div className="pt-3 border-t border-subtle flex flex-col gap-2">
+                  <Link
+                    to="/auth?mode=login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full text-center py-2.5 rounded-xl border border-subtle text-sm font-bold text-foreground hover:bg-surface-800 transition-colors"
+                  >
+                    {t('nav.login')}
+                  </Link>
+
                   <Link
                     to="/auth?mode=register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all"
+                    className="w-full text-center py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold shadow-md transition-colors"
                   >
-                    {t('nav.start')}
+                    {t('hero.ctaPrimary')}
                   </Link>
                 </div>
               </div>
@@ -246,9 +210,7 @@ export default function Landing() {
       </header>
 
       {/* ─── HERO SECTION ─── */}
-      <header className="relative overflow-hidden py-6 lg:py-8 bg-[#0e0e17]">
-
-
+      <section className="relative overflow-hidden py-8 lg:py-12 bg-[#0e0e17]">
         {/* Subtle purple glow on top */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none" />
 
@@ -258,7 +220,7 @@ export default function Landing() {
             initial="hidden"
             animate="visible"
           >
-            {/* ── Glass card wrapping everything ── */}
+            {/* Glass card wrapping everything */}
             <motion.div
               variants={itemVariants}
               className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-5 lg:p-7"
@@ -271,7 +233,7 @@ export default function Landing() {
                     variants={itemVariants}
                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider"
                   >
-                    <Icon name="ShieldCheck" size={14}  />
+                    <Icon name="ShieldCheck" size={14} />
                     {t('hero.badge')}
                   </motion.div>
 
@@ -295,7 +257,7 @@ export default function Landing() {
                   >
                     <Link
                       to="/auth?mode=register"
-                      className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all duration-300 flex items-center justify-center gap-2"
+                      className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-extrabold transition-all duration-300 shadow-lg shadow-brand-500/25 active:scale-95 flex items-center justify-center gap-2"
                     >
                       {t('hero.ctaPrimary')}
                     </Link>
@@ -306,6 +268,7 @@ export default function Landing() {
                       {t('hero.ctaSecondary')}
                     </a>
                   </motion.div>
+
                   <p className="text-[11px] text-white/50 text-center lg:text-left pt-1 font-medium">
                     {t('hero.trustMicro')}
                   </p>
@@ -327,39 +290,58 @@ export default function Landing() {
                   variants={itemVariants}
                   className="lg:col-span-7 relative"
                 >
-                  {/* Glow behind video */}
                   <div className="absolute -inset-2 bg-brand-500/15 rounded-3xl blur-xl pointer-events-none" />
 
-                  {/* App Card Container with Chrome Bar */}
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-[#0e0e17] border border-white/10">
-                    {/* Browser chrome bar */}
                     <div className="relative flex items-center gap-3 px-3 py-2 bg-[#0e0e17] border-b border-white/5">
                       <div className="flex items-center gap-2 text-white/60">
-                        <button className="p-1 hover:text-white transition-colors"><Icon name="ArrowLeft" size={16} strokeWidth={2.5}  /></button>
-                        <button className="p-1 hover:text-white transition-colors opacity-50"><Icon name="ArrowRight" size={16} strokeWidth={2.5}  /></button>
-                        <button className="p-1 hover:text-white transition-colors"><Icon name="RotateCw" size={14} strokeWidth={2.5}  /></button>
-                        <button className="p-1 hover:text-white transition-colors ml-1"><Icon name="Home" size={16} strokeWidth={2}  /></button>
+                        <button className="p-1 hover:text-white transition-colors"><Icon name="ArrowLeft" size={16} strokeWidth={2.5} /></button>
+                        <button className="p-1 hover:text-white transition-colors opacity-50"><Icon name="ArrowRight" size={16} strokeWidth={2.5} /></button>
+                        <button className="p-1 hover:text-white transition-colors"><Icon name="RotateCw" size={14} strokeWidth={2.5} /></button>
+                        <button className="p-1 hover:text-white transition-colors ml-1"><Icon name="Home" size={16} strokeWidth={2} /></button>
                       </div>
                       <div className="flex-1 flex items-center justify-between bg-white/10 rounded-full h-8 px-3 mx-2 border border-white/5">
                         <div className="flex items-center gap-2 text-white/60">
-                          <Icon name="SlidersHorizontal" size={14} strokeWidth={2}  />
+                          <Icon name="SlidersHorizontal" size={14} strokeWidth={2} />
                           <span className="text-xs text-white font-medium tracking-wide">gestivaone.com</span>
                         </div>
                         <button className="text-white/60 hover:text-white transition-colors">
-                          <Icon name="Star" size={14} strokeWidth={2}  />
+                          <Icon name="Star" size={14} strokeWidth={2} />
                         </button>
                       </div>
                     </div>
 
-                    {/* Video Wrapper */}
-                    <div className="relative bg-[#0e0e17] w-full aspect-video overflow-hidden">
-                      <iframe
-                        src="https://www.youtube-nocookie.com/embed/0XhKFxjnsh8?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1"
-                        title="GestivaOne Demo"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                        className="absolute inset-0 w-full h-full border-0"
-                      />
+                    <div className="relative bg-[#0e0e17] w-full aspect-video overflow-hidden group cursor-pointer" onClick={() => setShowVideo(true)}>
+                      {showVideo ? (
+                        <iframe
+                          src="https://www.youtube-nocookie.com/embed/0XhKFxjnsh8?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1"
+                          title="GestivaOne Demo"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="absolute inset-0 w-full h-full border-0"
+                        />
+                      ) : (
+                        <div className="relative w-full h-full">
+                          <img
+                            src="/images/gestivaOneFullPreview.png"
+                            alt="GestivaOne Dashboard Preview"
+                            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all group-hover:bg-black/30">
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); setShowVideo(true); }}
+                              className="w-16 h-16 rounded-full bg-brand-600 text-white flex items-center justify-center shadow-2xl shadow-brand-500/50 group-hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/20"
+                              aria-label="Reproducir video demo"
+                            >
+                              <Icon name="Play" size={28} className="translate-x-0.5" />
+                            </button>
+                            <span className="px-4 py-1.5 rounded-full bg-surface-900/90 border border-white/10 text-xs font-bold text-white tracking-wide shadow-lg">
+                              Ver Demostración en Vivo
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -370,7 +352,7 @@ export default function Landing() {
         </div>
 
         {/* Client Logos Marquee */}
-        <div className="mt-2 pt-2 pb-2 overflow-hidden relative">
+        <div className="mt-6 pt-2 pb-2 overflow-hidden relative">
           <h3 className="text-center text-xl sm:text-2xl font-extrabold text-white mb-1">
             Familia Gestiva<span className="text-brand-400">One</span>
           </h3>
@@ -405,9 +387,9 @@ export default function Landing() {
             </motion.div>
           </div>
         </div>
-      </header>
+      </section>
 
-      {/* ─── FEATURES SECTION (ADAPTED TO IMAGE 1 CARDS) ─── */}
+      {/* ─── FEATURES SECTION ─── */}
       <section id="caracteristicas" className="py-10 bg-surface-800 border-t border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 max-w-3xl mx-auto mb-8">
