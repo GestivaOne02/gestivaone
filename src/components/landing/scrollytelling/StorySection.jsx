@@ -1,13 +1,20 @@
 import React from 'react'
+import { motion } from 'framer-motion'
 import SectionBackground from './SectionBackground'
 import SectionContent from './SectionContent'
 import SectionMedia from './SectionMedia'
-import RevealAnimation from './RevealAnimation'
 
-export default function StorySection({ moduleData, scrollYProgress }) {
+export default function StorySection({ moduleData, index, isReversed }) {
   return (
-    <div className="relative w-full max-w-6xl mx-auto rounded-[28px] border border-subtle bg-surface-900/90 shadow-2xl p-5 sm:p-7 lg:p-9 backdrop-blur-xl overflow-hidden">
-      {/* Background Accent & Glow Engine */}
+    <motion.div
+      id={`module-${moduleData.id}`}
+      initial={{ opacity: 0, y: 60, scale: 0.96 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: false, margin: '-80px' }}
+      transition={{ duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98] }}
+      className="relative w-full rounded-[36px] border border-white/10 bg-surface-900/90 shadow-2xl p-6 sm:p-10 lg:p-12 backdrop-blur-2xl overflow-hidden group hover:border-white/20 transition-colors"
+    >
+      {/* Background Glow Signature */}
       <SectionBackground
         accentColor={moduleData.accentColor}
         glowColor={moduleData.glowColor}
@@ -15,41 +22,38 @@ export default function StorySection({ moduleData, scrollYProgress }) {
         gradientTo={moduleData.gradientTo}
       />
 
-      {/* Internal Content Container */}
-      <div className="relative z-10 w-full flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10">
-        
-        {/* Left Column: Text & Content Reveal */}
+      {/* Card Content Grid (Alternating Left/Right) */}
+      <div
+        className={`relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14 ${
+          isReversed ? 'lg:flex-row-reverse' : ''
+        }`}
+      >
+        {/* Text & Specs Column */}
         <div className="w-full lg:w-1/2">
-          <RevealAnimation progress={scrollYProgress} range={[0, 0.25, 0.75, 1]}>
-            <SectionContent
-              icon={moduleData.icon}
-              iconBg={moduleData.iconBg}
-              badge={moduleData.badge}
-              title={moduleData.title}
-              desc={moduleData.desc}
-              tags={moduleData.tags}
-              metric={moduleData.metric}
-              submetric={moduleData.submetric}
-              ctaText={moduleData.ctaText}
-              ctaLink={moduleData.ctaLink}
-              accentColor={moduleData.accentColor}
-            />
-          </RevealAnimation>
+          <SectionContent
+            icon={moduleData.icon}
+            iconBg={moduleData.iconBg}
+            badge={moduleData.badge}
+            title={moduleData.title}
+            desc={moduleData.desc}
+            tags={moduleData.tags}
+            metric={moduleData.metric}
+            submetric={moduleData.submetric}
+            ctaText={moduleData.ctaText}
+            ctaLink={moduleData.ctaLink}
+          />
         </div>
 
-        {/* Right Column: Interactive UI Mockup Reveal */}
+        {/* Interactive Glassmorphism UI Mockup Column */}
         <div className="w-full lg:w-1/2">
-          <RevealAnimation progress={scrollYProgress} range={[0.1, 0.35, 0.8, 1]}>
-            <SectionMedia
-              mockupType={moduleData.mockupType}
-              mockupData={moduleData.mockupData}
-              accentColor={moduleData.accentColor}
-              title={moduleData.title}
-            />
-          </RevealAnimation>
+          <SectionMedia
+            mockupType={moduleData.mockupType}
+            mockupData={moduleData.mockupData}
+            accentColor={moduleData.accentColor}
+            title={moduleData.title}
+          />
         </div>
-
       </div>
-    </div>
+    </motion.div>
   )
 }
