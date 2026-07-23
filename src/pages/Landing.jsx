@@ -3,17 +3,29 @@ import { Link, useNavigate } from 'react-router-dom'
 import {
   Zap, Layers, TrendingUp, Printer, MessageSquare, Mail, Phone, MapPin, Check,
   ChevronRight, ArrowRight, ShieldCheck, ShoppingCart, BarChart3, Users2, Moon, Sun,
-  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star, Palette
+  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star, Palette,
+  Instagram, Facebook, Youtube, X, Menu, Bookmark
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
 import ReactPlayer from 'react-player'
+import SEOHead from '@/components/seo/SEOHead'
+import FAQSection from '@/components/landing/FAQSection'
+import GEOPromptsSection from '@/components/landing/GEOPromptsSection'
+import CEOUseCasesSection from '@/components/landing/CEOUseCasesSection'
+import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp'
+import TrustEEATSection from '@/components/landing/TrustEEATSection'
+import LanguageSelector from '@/components/ui/LanguageSelector'
+import { useLanguageStore } from '@/store/useLanguageStore'
 
 export default function Landing() {
   const navigate = useNavigate()
+  const { t } = useLanguageStore()
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
   const [showAppsMenu, setShowAppsMenu] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [contactSent, setContactSent] = useState(false)
 
   useEffect(() => {
     // Check current theme
@@ -52,110 +64,193 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-foreground selection:bg-brand-500/30 selection:text-brand-300">
+    <div className="min-h-screen bg-surface-900 text-foreground selection:bg-brand-500/30 selection:text-brand-300 transition-colors duration-200">
+      <SEOHead />
 
-      {/* ─── NAVBAR ─── */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 dark:bg-[#0e0e17]/95 dark:border-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Left: App Launcher & Logo */}
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <button 
-                  onClick={() => setShowAppsMenu(!showAppsMenu)}
-                  onBlur={() => setTimeout(() => setShowAppsMenu(false), 200)}
-                  className="text-muted-400 hover:text-foreground transition-colors p-2 -ml-2 rounded-xl hover:bg-surface-800"
-                >
-                  <LayoutGrid size={20} />
-                </button>
-                {/* Apps Menu Dropdown */}
-                <AnimatePresence>
-                  {showAppsMenu && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 mt-2 w-64 bg-surface-900 border border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
+      {/* ─── 2-TIER HEADER ─── */}
+      <header className="sticky top-0 z-50 bg-surface-900/95 backdrop-blur-md border-b border-subtle transition-colors duration-200">
+        {/* Tier 1: Logo centered at the top */}
+        <div className="border-b border-white/5 py-3 px-4 flex items-center justify-center relative">
+          {/* Apps Menu Dropdown Trigger (Left) */}
+          <div className="absolute left-4 sm:left-8 flex items-center gap-2">
+            <div className="relative">
+              <button 
+                onClick={() => setShowAppsMenu(!showAppsMenu)}
+                onBlur={() => setTimeout(() => setShowAppsMenu(false), 200)}
+                className="text-muted-400 hover:text-foreground transition-colors p-2 rounded-xl hover:bg-surface-800 flex items-center gap-1.5 text-xs font-semibold"
+                aria-label="Apps Menu"
+              >
+                <LayoutGrid size={18} />
+                <span className="hidden sm:inline text-xs">Ecosistema</span>
+              </button>
+              <AnimatePresence>
+                {showAppsMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 mt-2 w-64 bg-surface-900 border border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
+                  >
+                    <div className="px-3 py-2 text-[10px] font-bold text-muted-400 uppercase tracking-wider">
+                      Más productos de Gestiva
+                    </div>
+                    <a
+                      href="https://gestivapost.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
                     >
-                      <div className="px-3 py-2 text-[10px] font-bold text-muted-400 uppercase tracking-wider">
-                        Más productos de Gestiva
+                      <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
+                        <Palette size={16} />
                       </div>
-                      <a
-                        href="https://gestivapost.vercel.app/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
-                          <Palette size={16} />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-foreground">GestivaPost</span>
-                          <span className="text-xs text-muted-400">Software de Diseño</span>
-                        </div>
-                      </a>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-              <div className="flex items-center gap-2">
-                <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
-                <span className="font-bold text-foreground text-lg hidden sm:block">
-                  Gestiva<span className="text-brand-500">One</span>
-                </span>
-              </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-foreground">GestivaPost</span>
+                        <span className="text-xs text-muted-400">Software de Diseño</span>
+                      </div>
+                    </a>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+          </div>
 
-            {/* Center: Navigation links */}
-            <div className="hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-              <a href="#caracteristicas" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Características</a>
-              <a href="#nosotros" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Nosotros</a>
-              <a href="#precios" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Precios</a>
-              <a href="#contacto" className="text-sm font-semibold text-muted-400 hover:text-foreground transition-colors">Contacto</a>
+          {/* Centered GestivaOne Logo */}
+          <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+            <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-9 w-auto" />
+            <span className="font-extrabold text-foreground text-xl tracking-tight">
+              Gestiva<span className="text-brand-500">One</span>
+            </span>
+          </Link>
 
-              {/* Market link */}
+          {/* Right User & Theme shortcuts */}
+          <div className="absolute right-4 sm:right-8 flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+              aria-label="Toggle Theme"
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <Link
+              to="/auth?mode=login"
+              className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 transition-all overflow-hidden"
+              title={t('nav.login')}
+            >
+              <User size={16} />
+            </Link>
+          </div>
+        </div>
+
+        {/* Tier 2: Navigation Links (Left) and Language Selector (Right) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-800/60">
+          <div className="flex items-center justify-between h-14">
+            {/* Left: Navigation Buttons */}
+            <div className="hidden lg:flex items-center gap-6">
+              <a href="#caracteristicas" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.features')}</a>
+              <a href="#nosotros" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.about')}</a>
+              <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.pricing')}</a>
+              <a href="#contacto" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.contact')}</a>
+
               <a
                 href="https://gestivaone-store.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-sm font-bold text-brand-400 hover:text-brand-300 transition-colors"
+                className="inline-flex items-center text-xs font-extrabold uppercase tracking-wider text-brand-400 hover:text-brand-300 transition-colors"
               >
-                Marketplace
+                {t('nav.marketplace')}
               </a>
-            </div>
 
-            {/* Right: Actions */}
-            <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 to="/auth?mode=register"
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all duration-300"
+                className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all duration-300 shadow-md ml-2"
               >
-                <span className="hidden md:inline">Empieza Tu Gestión</span>
-                <span className="md:hidden">Empezar</span>
+                {t('nav.start')}
               </Link>
+            </div>
 
+            {/* Mobile Menu Button (Left on Mobile) */}
+            <div className="lg:hidden flex items-center">
               <button
-                onClick={toggleTheme}
-                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
-                aria-label="Toggle Theme"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors flex items-center gap-2 text-xs font-bold"
+                aria-label="Toggle Mobile Navigation"
               >
-                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                <span>Menú</span>
               </button>
+            </div>
 
-              <Link
-                to="/auth?mode=login"
-                className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 transition-all overflow-hidden"
-                title="Ingresar"
-              >
-                <User size={16} />
-              </Link>
+            {/* Right: Language Selector Button */}
+            <div className="flex items-center gap-3">
+              <LanguageSelector />
             </div>
           </div>
         </div>
-      </nav>
+
+        {/* Mobile Navigation Drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden bg-surface-900 border-b border-subtle overflow-hidden"
+            >
+              <div className="px-4 pt-3 pb-6 space-y-3">
+                <a
+                  href="#caracteristicas"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                >
+                  {t('nav.features')}
+                </a>
+                <a
+                  href="#nosotros"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                >
+                  {t('nav.about')}
+                </a>
+                <a
+                  href="#precios"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                >
+                  {t('nav.pricing')}
+                </a>
+                <a
+                  href="#contacto"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                >
+                  {t('nav.contact')}
+                </a>
+                <a
+                  href="https://gestivaone-store.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-xl text-sm font-bold text-brand-400 hover:bg-surface-800 transition-colors"
+                >
+                  {t('nav.marketplace')}
+                </a>
+                <div className="pt-2 border-t border-subtle">
+                  <Link
+                    to="/auth?mode=register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full flex items-center justify-center py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all"
+                  >
+                    {t('nav.start')}
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
 
       {/* ─── HERO SECTION ─── */}
-      <header className="relative overflow-hidden py-12 lg:py-16 bg-[#0e0e17]">
+      <header className="relative overflow-hidden py-6 lg:py-8 bg-[#0e0e17]">
 
 
         {/* Subtle purple glow on top */}
@@ -170,7 +265,7 @@ export default function Landing() {
             {/* ── Glass card wrapping everything ── */}
             <motion.div
               variants={itemVariants}
-              className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 lg:p-10"
+              className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-5 lg:p-7"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
@@ -181,21 +276,21 @@ export default function Landing() {
                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider"
                   >
                     <ShieldCheck size={14} />
-                    Gestión Inteligente y Automatizada
+                    {t('hero.badge')}
                   </motion.div>
 
                   <motion.h1
                     variants={itemVariants}
                     className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-white"
                   >
-                    Toma el Control de tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">Negocio</span> en Tiempo Real
+                    {t('hero.title1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">{t('hero.title2')}</span>
                   </motion.h1>
 
                   <motion.p
                     variants={itemVariants}
                     className="text-base sm:text-lg text-white/70 max-w-xl mx-auto lg:mx-0 leading-relaxed"
                   >
-                    La plataforma moderna que necesitas para automatizar inventarios, facturación, cuentas de cobro, reportes financieros y más, diseñada para optimizar cada proceso en tu empresa.
+                    {t('hero.desc')}
                   </motion.p>
 
                   <motion.div
@@ -206,15 +301,18 @@ export default function Landing() {
                       to="/auth?mode=register"
                       className="w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all duration-300 flex items-center justify-center gap-2"
                     >
-                      Empieza Tu Gestión Gratis
+                      {t('hero.ctaPrimary')}
                     </Link>
                     <a
                       href="#caracteristicas"
                       className="w-full sm:w-auto text-center px-6 py-4 rounded-xl bg-white/10 border border-white/10 hover:bg-white/15 text-muted-400 hover:text-white text-sm font-semibold transition-colors backdrop-blur-sm"
                     >
-                      Ver Características
+                      {t('hero.ctaSecondary')}
                     </a>
                   </motion.div>
+                  <p className="text-[11px] text-white/50 text-center lg:text-left pt-1 font-medium">
+                    {t('hero.trustMicro')}
+                  </p>
 
                   {/* Wompi integration */}
                   <motion.div
@@ -222,31 +320,28 @@ export default function Landing() {
                     className="pt-6 flex flex-col items-center lg:items-start gap-3"
                   >
                     <span className="text-white font-semibold text-sm tracking-wide">Pagos con</span>
-                    <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi" className="h-10 object-contain" />
+                    <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi" width="120" height="40" loading="lazy" decoding="async" className="h-10 object-contain" />
                   </motion.div>
                 </div>
 
-                {/* Dashboard mockup — right column, solid bg */}
+                {/* Dashboard / Video player — right column */}
                 <motion.div
                   variants={itemVariants}
                   className="lg:col-span-7 relative"
                 >
-                  {/* Glow behind card */}
+                  {/* Glow behind video */}
                   <div className="absolute -inset-2 bg-brand-500/15 rounded-3xl blur-xl pointer-events-none" />
 
-                  {/* App card — solid background, no border */}
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                  {/* App Card Container with Chrome Bar */}
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-[#0e0e17] border border-white/10">
                     {/* Browser chrome bar */}
-                    <div className="relative flex items-center gap-3 px-3 py-2 bg-[#0e0e17]">
-                      {/* Navigation icons */}
+                    <div className="relative flex items-center gap-3 px-3 py-2 bg-[#0e0e17] border-b border-white/5">
                       <div className="flex items-center gap-2 text-white/60">
                         <button className="p-1 hover:text-white transition-colors"><ArrowLeft size={16} strokeWidth={2.5} /></button>
                         <button className="p-1 hover:text-white transition-colors opacity-50"><ArrowRight size={16} strokeWidth={2.5} /></button>
                         <button className="p-1 hover:text-white transition-colors"><RotateCw size={14} strokeWidth={2.5} /></button>
                         <button className="p-1 hover:text-white transition-colors ml-1"><Home size={16} strokeWidth={2} /></button>
                       </div>
-
-                      {/* Address bar */}
                       <div className="flex-1 flex items-center justify-between bg-white/10 rounded-full h-8 px-3 mx-2 border border-white/5">
                         <div className="flex items-center gap-2 text-white/60">
                           <SlidersHorizontal size={14} strokeWidth={2} />
@@ -256,92 +351,17 @@ export default function Landing() {
                           <Star size={14} strokeWidth={2} />
                         </button>
                       </div>
-
-                      {/* Loading progress bar */}
-                      <AnimatePresence>
-                        {!showVideo && (
-                          <motion.div
-                            className="absolute bottom-0 left-0 h-[2px] bg-brand-500"
-                            initial={{ width: '0%' }}
-                            animate={{ width: '100%' }}
-                            transition={{ duration: 5, ease: "linear" }}
-                            exit={{ opacity: 0 }}
-                          />
-                        )}
-                      </AnimatePresence>
                     </div>
-                    {/* Dashboard content / Video wrapper */}
+
+                    {/* Video Wrapper */}
                     <div className="relative bg-[#0e0e17] w-full aspect-video overflow-hidden">
-                      <AnimatePresence mode="wait">
-                        {!showVideo ? (
-                          <motion.div
-                            key="mockup"
-                            initial={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="absolute inset-0 p-4 sm:p-6 space-y-4 flex flex-col justify-center bg-surface-800"
-                          >
-                            {/* Widgets row */}
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
-                                <span className="text-[9px] text-muted-400 font-bold uppercase">Ventas Hoy</span>
-                                <p className="text-sm sm:text-base font-bold text-foreground">$1,245,000</p>
-                                <span className="text-[8px] sm:text-[9px] text-success-400 font-bold">+12.5% vs ayer</span>
-                              </div>
-                              <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
-                                <span className="text-[9px] text-muted-400 font-bold uppercase">Deudas</span>
-                                <p className="text-sm sm:text-base font-bold text-danger-400">$340,000</p>
-                                <span className="text-[8px] sm:text-[9px] text-muted-400">4 pendientes</span>
-                              </div>
-                              <div className="bg-surface-700 border border-subtle rounded-xl p-3 space-y-1">
-                                <span className="text-[9px] text-muted-400 font-bold uppercase">Stock</span>
-                                <p className="text-sm sm:text-base font-bold text-warning-400">2 Bajos</p>
-                                <span className="text-[8px] sm:text-[9px] text-warning-400 font-bold">Revisar</span>
-                              </div>
-                            </div>
-                            {/* Activity list */}
-                            <div className="space-y-2">
-                              <span className="text-[10px] text-muted-400 font-bold uppercase tracking-wider">Últimas Actividades</span>
-                              <div className="flex items-center justify-between p-2.5 sm:p-3 bg-surface-750 border border-subtle rounded-xl text-xs">
-                                <div className="flex items-center gap-2 sm:gap-3">
-                                  <div className="w-7 h-7 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center font-bold">$</div>
-                                  <div>
-                                    <p className="font-bold text-foreground">Venta Realizada</p>
-                                    <span className="text-[9px] sm:text-[10px] text-muted-400">Cliente Express • Hace 3 min</span>
-                                  </div>
-                                </div>
-                                <span className="font-extrabold text-success-400">+$215,390</span>
-                              </div>
-                              <div className="flex items-center justify-between p-2.5 sm:p-3 bg-surface-750 border border-subtle rounded-xl text-xs">
-                                <div className="flex items-center gap-2 sm:gap-3">
-                                  <div className="w-7 h-7 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center font-bold">-</div>
-                                  <div>
-                                    <p className="font-bold text-foreground">Egreso Registrado</p>
-                                    <span className="text-[9px] sm:text-[10px] text-muted-400">Alquiler/Servicios • Hace 1h</span>
-                                  </div>
-                                </div>
-                                <span className="font-extrabold text-danger-400">-$150,000</span>
-                              </div>
-                            </div>
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="video"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="absolute inset-0 w-full h-full"
-                          >
-                            <iframe
-                              src="https://www.youtube-nocookie.com/embed/0XhKFxjnsh8?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1"
-                              title="GestivaOne Demo"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                              allowFullScreen
-                              className="absolute inset-0 w-full h-full border-0"
-                            />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      <iframe
+                        src="https://www.youtube-nocookie.com/embed/0XhKFxjnsh8?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1&playsinline=1"
+                        title="GestivaOne Demo"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                        className="absolute inset-0 w-full h-full border-0"
+                      />
                     </div>
                   </div>
                 </motion.div>
@@ -352,7 +372,7 @@ export default function Landing() {
         </div>
 
         {/* Client Logos Marquee */}
-        <div className="mt-4 pt-4 pb-4 overflow-hidden relative">
+        <div className="mt-2 pt-2 pb-2 overflow-hidden relative">
           <h3 className="text-center text-xl sm:text-2xl font-extrabold text-white mb-1">
             Familia Gestiva<span className="text-brand-400">One</span>
           </h3>
@@ -365,115 +385,173 @@ export default function Landing() {
           <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#0e0e17] to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#0e0e17] to-transparent z-10 pointer-events-none" />
           
-          <div className="flex overflow-hidden">
-            <div className="flex min-w-full animate-marquee items-center justify-center px-8">
-              <a href="https://festa.gestivaone.com/" target="_blank" rel="noopener noreferrer">
-                <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+          <div className="flex overflow-hidden relative w-full">
+            <motion.div
+              className="flex shrink-0 items-center justify-center min-w-full"
+              animate={{ x: ['0%', '-100%'] }}
+              transition={{ repeat: Infinity, ease: 'linear', duration: 12 }}
+            >
+              <a href="https://festa.gestivaone.com/" target="_blank" rel="noopener noreferrer" className="shrink-0">
+                <img src="/images/Coutomers/festaLogo.png" alt="Festa Events" width="160" height="96" decoding="async" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
               </a>
-            </div>
-            <div className="flex min-w-full animate-marquee items-center justify-center px-8">
-              <a href="https://festa.gestivaone.com/" target="_blank" rel="noopener noreferrer">
-                <img src="/images/Coutomers/festaLogo.png" alt="Festa" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
+            </motion.div>
+            <motion.div
+              className="flex shrink-0 items-center justify-center min-w-full"
+              animate={{ x: ['0%', '-100%'] }}
+              transition={{ repeat: Infinity, ease: 'linear', duration: 12 }}
+              aria-hidden="true"
+            >
+              <a href="https://festa.gestivaone.com/" target="_blank" rel="noopener noreferrer" className="shrink-0">
+                <img src="/images/Coutomers/festaLogo.png" alt="Festa Events" width="160" height="96" decoding="async" className="h-20 sm:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity" />
               </a>
-            </div>
+            </motion.div>
           </div>
         </div>
       </header>
 
-      {/* ─── FEATURES SECTION ─── */}
-      <section id="caracteristicas" className="py-20 bg-surface-800 border-t border-b border-subtle">
+      {/* ─── FEATURES SECTION (ADAPTED TO IMAGE 1 CARDS) ─── */}
+      <section id="caracteristicas" className="py-10 bg-surface-800 border-t border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
-            <h2 className="text-brand-400 text-xs font-bold uppercase tracking-widest">Todo en una sola herramienta</h2>
-            <p className="text-3xl sm:text-4xl font-extrabold text-foreground">Características principales diseñadas para tu crecimiento</p>
-            <p className="text-sm text-muted-400">Automatiza la gestión operativa y contable para concentrarte en expandir tu negocio.</p>
+          <div className="text-center space-y-4 max-w-3xl mx-auto mb-8">
+            <h2 className="text-brand-400 text-xs font-bold uppercase tracking-widest">{t('features.tag')}</h2>
+            <p className="text-3xl sm:text-4xl font-extrabold text-foreground">{t('features.title')}</p>
+            <p className="text-sm text-muted-400">{t('features.subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-surface-750 border border-subtle p-6 rounded-3xl hover:border-brand-500/40 transition-all duration-300 group">
-              <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform mb-6">
-                <ShoppingCart size={20} />
-              </div>
-              <h3 className="text-base font-bold text-foreground mb-2">Control de Inventario</h3>
-              <p className="text-xs text-muted-400 leading-relaxed">
-                Supervisa tu stock con notificaciones de stock crítico y agotados en tiempo real. Gestiona categorías de productos, precios de venta e IVA.
-              </p>
-            </div>
+            {[
+              {
+                icon: ShoppingCart,
+                iconBg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+                tagline: 'GestivaOne • Módulo Activo',
+                title: t('features.invTitle'),
+                desc: t('features.invDesc'),
+                tags: ['Stock Real', 'Alertas Mínimas', 'Multisede'],
+                metric: 'Incluido en Pro',
+                submetric: 'Gestión en Nube'
+              },
+              {
+                icon: Printer,
+                iconBg: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
+                tagline: 'GestivaOne • POS Térmico',
+                title: t('features.posTitle'),
+                desc: t('features.posDesc'),
+                tags: ['Tickets 58/80mm', 'Bluetooth & USB', 'Rápido'],
+                metric: 'Multidispositivo',
+                submetric: 'Impresión 3 seg'
+              },
+              {
+                icon: MessageSquare,
+                iconBg: 'bg-brand-500/10 text-brand-400 border-brand-500/20',
+                tagline: 'GestivaOne • Notificaciones',
+                title: t('features.crmTitle'),
+                desc: t('features.crmDesc'),
+                tags: ['WhatsApp Business', 'Cartera', 'SMTP Directo'],
+                metric: 'Recaudos Rápidos',
+                submetric: 'Cobro Automático'
+              },
+              {
+                icon: BarChart3,
+                iconBg: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+                tagline: 'GestivaOne • Analítica',
+                title: t('features.analyticsTitle'),
+                desc: t('features.analyticsDesc'),
+                tags: ['PDF & Excel', 'Flujo de Caja', 'Utilidades'],
+                metric: 'Reportes 1 Click',
+                submetric: 'Cierres de Caja'
+              },
+              {
+                icon: Users2,
+                iconBg: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+                tagline: 'GestivaOne • DIAN / Normativo',
+                title: t('features.dianTitle'),
+                desc: t('features.dianDesc'),
+                tags: ['100% Normativo', 'Cifrado SSL', 'Notas Crédito'],
+                metric: 'Validado DIAN',
+                submetric: 'Nivel Bancario'
+              },
+              {
+                icon: TrendingUp,
+                iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+                tagline: 'GestivaOne • Gastronomía',
+                title: t('features.restaurantTitle'),
+                desc: t('features.restaurantDesc'),
+                tags: ['Comandas Cocina', 'Recetas & Stock', 'Control Mesas'],
+                metric: 'Módulo Gourmet',
+                submetric: 'Menú Virtual'
+              }
+            ].map((card, idx) => {
+              const Icon = card.icon
+              return (
+                <div
+                  key={idx}
+                  className="bg-surface-900 border border-subtle p-7 rounded-[28px] space-y-5 flex flex-col justify-between relative"
+                >
+                  <div className="space-y-4">
+                    {/* Top Row: Circular Icon (Left) + Title Beside Icon */}
+                    <div className="flex items-center gap-3.5">
+                      <div className={`w-12 h-12 rounded-full border flex items-center justify-center shadow-sm shrink-0 ${card.iconBg}`}>
+                        <Icon size={22} />
+                      </div>
+                      <div>
+                        <span className="text-[11px] font-semibold text-muted-400 block tracking-tight leading-none mb-1">
+                          {card.tagline}
+                        </span>
+                        <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight leading-tight">
+                          {card.title}
+                        </h3>
+                      </div>
+                    </div>
 
-            {/* Feature 2 */}
-            <div className="bg-surface-750 border border-subtle p-6 rounded-3xl hover:border-brand-500/40 transition-all duration-300 group">
-              <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform mb-6">
-                <Printer size={20} />
-              </div>
-              <h3 className="text-base font-bold text-foreground mb-2">Impresión de Recibos</h3>
-              <p className="text-xs text-muted-400 leading-relaxed">
-                Configura tu impresora térmica con plantillas estilizadas. Imprime recibos automáticamente al completar una venta o genera test de impresión.
-              </p>
-            </div>
+                    {/* Description */}
+                    <p className="text-xs text-muted-400 leading-relaxed">
+                      {card.desc}
+                    </p>
 
-            {/* Feature 3 */}
-            <div className="bg-surface-750 border border-subtle p-6 rounded-3xl hover:border-brand-500/40 transition-all duration-300 group">
-              <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform mb-6">
-                <MessageSquare size={20} />
-              </div>
-              <h3 className="text-base font-bold text-foreground mb-2">Notificaciones por Canal</h3>
-              <p className="text-xs text-muted-400 leading-relaxed">
-                Envía facturas automáticas por correo (SMTP) o notificaciones de cobro a través de WhatsApp Business para asegurar recaudos rápidos.
-              </p>
-            </div>
+                    {/* Tag Pills */}
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {card.tags.map((tag, tIdx) => (
+                        <span
+                          key={tIdx}
+                          className="px-2.5 py-1 rounded-lg bg-surface-750 border border-subtle text-[10px] font-bold text-muted-300"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
 
-            {/* Feature 4 */}
-            <div className="bg-surface-750 border border-subtle p-6 rounded-3xl hover:border-brand-500/40 transition-all duration-300 group">
-              <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform mb-6">
-                <BarChart3 size={20} />
-              </div>
-              <h3 className="text-base font-bold text-foreground mb-2">Reportes Ejecutivos Profundos</h3>
-              <p className="text-xs text-muted-400 leading-relaxed">
-                Exporta reportes oficiales de facturación, egresos y abonos de dinero a PDF o Excel con un solo clic. Análisis de utilidades integrado.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="bg-surface-750 border border-subtle p-6 rounded-3xl hover:border-brand-500/40 transition-all duration-300 group">
-              <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform mb-6">
-                <Users2 size={20} />
-              </div>
-              <h3 className="text-base font-bold text-foreground mb-2">Trabajo Multi-Usuario</h3>
-              <p className="text-xs text-muted-400 leading-relaxed">
-                Añade trabajadores (despachadores, contables) mediante invitaciones encriptadas y restringe accesos según roles definidos.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="bg-surface-750 border border-subtle p-6 rounded-3xl hover:border-brand-500/40 transition-all duration-300 group">
-              <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 group-hover:scale-110 transition-transform mb-6">
-                <TrendingUp size={20} />
-              </div>
-              <h3 className="text-base font-bold text-foreground mb-2">Multi-Moneda & Tasas</h3>
-              <p className="text-xs text-muted-400 leading-relaxed">
-                Configura tu moneda local y sincroniza tasas cambiarias en tiempo real para cotizaciones y cierres financieros de alta precisión.
-              </p>
-            </div>
+                  {/* Bottom Row: Divider + Centered Metric Text */}
+                  <div className="pt-4 border-t border-subtle/60 text-center">
+                    <span className="text-sm font-extrabold text-foreground block">
+                      {card.metric}
+                    </span>
+                    <span className="text-[10px] font-medium text-muted-400 block">
+                      {card.submetric}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
 
+      {/* ─── CEO USE CASES SECTION ─── */}
+      <CEOUseCasesSection />
+
       {/* ─── ABOUT US SECTION ─── */}
-      <section id="nosotros" className="py-20">
+      <section id="nosotros" className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Text description */}
             <div className="space-y-6">
-              <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">Nuestra Misión</span>
+              <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">{t('nav.about')}</span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground leading-tight">
-                Impulsando la transformación digital de las empresas
+                {t('trust.title')}
               </h2>
               <p className="text-sm text-muted-400 leading-relaxed">
                 En GestivaOne, creemos que la contabilidad y la gestión operativa no deberían ser un dolor de cabeza para los emprendedores. Nacimos con la visión de crear un software intuitivo, potente y accesible que permita a cualquier negocio automatizar sus ventas, cobranzas y reportes ejecutivos.
-              </p>
-              <p className="text-sm text-muted-400 leading-relaxed">
-                Nos dedicamos a construir herramientas estables en la nube que utilicen bases de datos rápidas, alertas preventivas y canales de comunicación modernos para que tengas una visualización integral del estado financiero de tu negocio estés donde estés.
               </p>
 
               <div className="grid grid-cols-2 gap-6 pt-4 border-t border-subtle">
@@ -515,10 +593,13 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ─── GEO SPECS SECTION ─── */}
+      <GEOPromptsSection />
+
       {/* ─── PRICING SECTION ─── */}
-      <section id="precios" className="py-20 bg-surface-800 border-t border-b border-subtle">
+      <section id="precios" className="py-10 bg-surface-800 border-t border-b border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
+          <div className="text-center space-y-4 max-w-3xl mx-auto mb-8">
             <span className="text-brand-400 text-xs font-bold uppercase tracking-widest">Planes de Suscripción</span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground">Precios transparentes y sin sorpresas</h2>
             <p className="text-sm text-muted-400">Encuentra el plan perfecto para las necesidades de tu empresa.</p>
@@ -655,8 +736,11 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ─── FAQ SECTION ─── */}
+      <FAQSection />
+
       {/* ─── CONTACT SECTION ─── */}
-      <section id="contacto" className="py-20 relative">
+      <section id="contacto" className="py-10 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
@@ -714,40 +798,176 @@ export default function Landing() {
                 <label htmlFor="contact-message" className="text-[10px] text-muted-400 font-bold uppercase tracking-wider block mb-1">Tu mensaje</label>
                 <textarea id="contact-message" name="message" rows={4} placeholder="Escribe tu duda o consulta aquí..." className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 resize-none" />
               </div>
-              <button
-                type="button"
-                onClick={() => alert('¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.')}
-                className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all"
-              >
-                Enviar Mensaje
-              </button>
+              {contactSent ? (
+                <div className="p-4 rounded-xl bg-success-500/10 border border-success-500/20 text-success-400 text-xs font-bold text-center">
+                  ✓ ¡Mensaje enviado con éxito! Nuestro equipo te responderá pronto.
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setContactSent(true)}
+                  className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all"
+                >
+                  Enviar Mensaje
+                </button>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
-      <footer className="bg-surface-950 border-t border-subtle py-12 text-center text-xs text-muted-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="flex items-center justify-center gap-2">
-            <Zap size={16} className="text-brand-400" />
-            <span className="font-extrabold uppercase text-foreground tracking-wider">GESTIVAONE</span>
-          </div>
-          <p className="max-w-md mx-auto leading-relaxed">
-            Plataforma digital avanzada para el control integral de negocios, inventarios y finanzas corporativas.
+      {/* ─── TRUST EEAT SECTION ─── */}
+      <TrustEEATSection />
+
+      {/* ─── PRE-FOOTER BANNER (MAGNIFIC STYLE + BLURRY GRADIENT & LIQUID GLASS) ─── */}
+      <section className="relative py-12 overflow-hidden border-t border-subtle">
+        {/* Background blurryGradient image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-70 pointer-events-none"
+          style={{ backgroundImage: `url('/images/blurryGradient.svg')` }}
+        />
+        {/* Liquid Glass Overlay filter matching header */}
+        <div className="absolute inset-0 bg-[#0e0e17]/70 backdrop-blur-md border-b border-white/10 pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto px-4 text-center space-y-6 relative z-10">
+          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+            {t('prefooter.title').startsWith('Sé') || t('prefooter.title').startsWith('Be') || t('prefooter.title').startsWith('Seja') ? (
+              <>
+                {t('prefooter.title').split(' ')[0]} <span className="text-brand-400">{t('prefooter.title').split(' ').slice(1).join(' ')}</span>
+              </>
+            ) : (
+              t('prefooter.title')
+            )}
+          </h2>
+          <p className="text-muted-200 text-sm sm:text-base max-w-xl mx-auto font-medium">
+            {t('prefooter.desc')}
           </p>
-          <div className="flex items-center justify-center gap-6">
-            <Link to="/terms" className="hover:text-foreground transition-colors font-medium">Términos y Condiciones</Link>
-            <span className="text-white/10">|</span>
-            <span className="font-medium">Política de Privacidad</span>
-            <span className="text-white/10">|</span>
-            <span className="font-medium">Soporte Técnico</span>
+          <div className="pt-2">
+            <Link
+              to="/auth?mode=register"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-black font-extrabold text-sm hover:bg-neutral-200 transition-all shadow-2xl hover:scale-105"
+            >
+              {t('prefooter.btn')} <ArrowRight size={16} />
+            </Link>
           </div>
-          <p className="pt-6 border-t border-white/5">
-            &copy; {new Date().getFullYear()} GestivaOne. Todos los derechos reservados.
-          </p>
+        </div>
+      </section>
+
+      {/* ─── FOOTER (MAGNIFIC AI STYLE) ─── */}
+      <footer className="bg-[#08080c] border-t border-white/10 pt-16 pb-12 text-xs text-muted-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+            {/* Left Brand Column */}
+            <div className="lg:col-span-1 space-y-4">
+              <Link to="/" className="inline-block">
+                <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-10 w-auto hover:opacity-90 transition-opacity" />
+              </Link>
+              <p className="text-xs text-muted-400 leading-relaxed max-w-xs">
+                La plataforma digital para dirigir tu mejor negocio. Más que un software, la inteligencia financiera para tu empresa.
+              </p>
+
+              {/* Language / Location Pill Badge */}
+              <div className="pt-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-semibold hover:bg-white/10 transition-colors">
+                  <img src="/images/colombiaFlag.png" alt="Colombia" className="h-3.5 w-auto object-contain rounded-xs" />
+                  <span>{t('footer.colombia')}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Content Columns Grid */}
+            <div className="lg:col-span-4 grid grid-cols-2 sm:grid-cols-4 gap-8">
+              {/* Column 1: Productos */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-white tracking-wide">{t('footer.colProducts')}</h4>
+                <ul className="space-y-2.5">
+                  <li><Link to="/facturacion-electronica" className="hover:text-white transition-colors">Facturación Electrónica</Link></li>
+                  <li><Link to="/pos-inventario" className="hover:text-white transition-colors">Sistema POS & Inventarios</Link></li>
+                  <li><Link to="/restaurantes" className="hover:text-white transition-colors">Restaurantes & Comandos</Link></li>
+                  <li className="flex items-center gap-1.5">
+                    <Link to="/minimarkets" className="hover:text-white transition-colors">Minimarkets</Link>
+                    <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-brand-500/20 text-brand-400 border border-brand-500/30">Nuevo</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <Link to="/crm-whatsapp" className="hover:text-white transition-colors">CRM & WhatsApp</Link>
+                    <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-brand-500/20 text-brand-400 border border-brand-500/30">Nuevo</span>
+                  </li>
+                  <li><Link to="/pymes" className="hover:text-white transition-colors">Software PyME</Link></li>
+                </ul>
+              </div>
+
+              {/* Column 2: Información útil */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-white tracking-wide">{t('footer.colResources')}</h4>
+                <ul className="space-y-2.5">
+                  <li><Link to="/ayuda" className="hover:text-white transition-colors">Centro de Ayuda</Link></li>
+                  <li><a href="#faq" className="hover:text-white transition-colors">{t('faq.tag')}</a></li>
+                  <li><a href="mailto:support@gestivaone.com" className="hover:text-white transition-colors">Soporte Técnico</a></li>
+                  <li><Link to="/terms" className="hover:text-white transition-colors">Términos de uso</Link></li>
+                  <li><span className="hover:text-white cursor-pointer transition-colors">Política de privacidad</span></li>
+                  <li><a href="#garantias" className="hover:text-white transition-colors">Cifrado SSL & Seguridad</a></li>
+                </ul>
+              </div>
+
+              {/* Column 3: Empresa */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-white tracking-wide">{t('footer.colLegal')}</h4>
+                <ul className="space-y-2.5">
+                  <li><a href="#precios" className="hover:text-white transition-colors">{t('nav.pricing')}</a></li>
+                  <li><Link to="/blog" className="hover:text-white transition-colors">Blog Editorial</Link></li>
+                  <li><a href="#garantias" className="hover:text-white transition-colors">{t('nav.about')}</a></li>
+                  <li><a href="mailto:contact@gestivaone.com" className="hover:text-white transition-colors">{t('nav.contact')}</a></li>
+                  <li><span className="hover:text-white cursor-pointer transition-colors">SLA 99.9% Uptime</span></li>
+                </ul>
+              </div>
+
+              {/* Column 4: Síguenos */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-white tracking-wide">{t('footer.colSocial')}</h4>
+                <ul className="space-y-2.5">
+                  <li>
+                    <a href="https://www.instagram.com/gestivaone/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2">
+                      <Instagram size={14} className="text-brand-400" />
+                      <span>Instagram</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.facebook.com/profile.php?id=61591826760203&ref=PROFILE_EDIT_xav_ig_profile_page_web#" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2">
+                      <Facebook size={14} className="text-brand-400" />
+                      <span>Facebook</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.youtube.com/@tienesunagestionpendiente" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2">
+                      <Youtube size={14} className="text-brand-400" />
+                      <span>YouTube</span>
+                    </a>
+                  </li>
+                  <li>
+                    <span className="text-muted-500 flex items-center gap-2 cursor-not-allowed">
+                      <svg className="w-3.5 h-3.5 fill-current text-muted-500" viewBox="0 0 24 24">
+                        <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.562-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.688-.562-1.249-1.25-1.249zm-4.466 3.99a.33.33 0 0 0-.232.099.33.33 0 0 0 0 .463c.66.66 1.733.99 2.948.99 1.216 0 2.288-.33 2.948-.99a.33.33 0 0 0 0-.463.33.33 0 0 0-.463 0c-.516.516-1.436.786-2.485.786-1.049 0-1.97-.27-2.485-.786a.326.326 0 0 0-.231-.099z"/>
+                      </svg>
+                      <span>Reddit</span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Copyright */}
+          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-muted-500">
+            <p>Copyright &copy; {new Date().getFullYear()} GestivaOne. {t('footer.rights')}</p>
+            <p className="text-white/30">Barranquilla, Colombia</p>
+          </div>
+
         </div>
       </footer>
+
+      {/* ─── FLOATING WHATSAPP CTA ─── */}
+      <FloatingWhatsApp />
 
 
 

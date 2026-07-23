@@ -188,6 +188,9 @@ export const useAuthStore = create(
           } else if (session) {
             await get().syncProfile(session.user.id)
           } else {
+            if (get().isAuthenticated) {
+              await supabase.auth.signOut({ scope: 'local' })
+            }
             set({ isAuthenticated: false, user: null })
           }
         } catch (e) {

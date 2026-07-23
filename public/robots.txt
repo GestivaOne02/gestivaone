@@ -1,0 +1,30 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /account
+Disallow: /settings
+Disallow: /crm
+Disallow: /facturero
+Disallow: /dian
+Disallow: /seguridad
+Disallow: /emails
+Disallow: /store
+
+# Allow AI Search & Retrieval Engines (GEO / CEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://www.gestivaone.com/sitemap.xml

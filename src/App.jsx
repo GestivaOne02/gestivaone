@@ -22,6 +22,14 @@ const CRM = lazy(() => import('@/pages/CRM'))
 const Emails = lazy(() => import('@/pages/Emails'))
 const Upgrade = lazy(() => import('@/pages/Upgrade'))
 const Store = lazy(() => import('@/pages/Store'))
+const LandingFacturacion = lazy(() => import('@/pages/landings/LandingFacturacion'))
+const LandingPOS = lazy(() => import('@/pages/landings/LandingPOS'))
+const LandingRestaurantes = lazy(() => import('@/pages/landings/LandingRestaurantes'))
+const LandingMinimarkets = lazy(() => import('@/pages/landings/LandingMinimarkets'))
+const LandingPymes = lazy(() => import('@/pages/landings/LandingPymes'))
+const LandingCRM = lazy(() => import('@/pages/landings/LandingCRM'))
+const KnowledgeBase = lazy(() => import('@/pages/help/KnowledgeBase'))
+const BlogHome = lazy(() => import('@/pages/blog/BlogHome'))
 import { useUIStore, applyTheme } from '@/store/useUIStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -315,6 +323,14 @@ export default function App() {
             element={isAuthenticated ? <Navigate to="/" replace /> : <Auth />}
           />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/facturacion-electronica" element={<LandingFacturacion />} />
+          <Route path="/pos-inventario" element={<LandingPOS />} />
+          <Route path="/restaurantes" element={<LandingRestaurantes />} />
+          <Route path="/minimarkets" element={<LandingMinimarkets />} />
+          <Route path="/pymes" element={<LandingPymes />} />
+          <Route path="/crm-whatsapp" element={<LandingCRM />} />
+          <Route path="/ayuda" element={<KnowledgeBase />} />
+          <Route path="/blog" element={<BlogHome />} />
 
           {/* Protected Routes */}
           <Route
