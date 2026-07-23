@@ -437,14 +437,13 @@ export default function Store() {
       {/* ─── Menu Navigation Tabs ─── */}
       <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b border-subtle/50 no-scrollbar select-none shrink-0">
         {[
-          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'appearance', label: 'Apariencia & Preview', icon: Palette },
-          { id: 'catalog', label: 'Catálogo Store', icon: Package },
-          { id: 'orders', label: 'Pedidos Recibidos', icon: Receipt },
-          { id: 'settings', label: 'Pagos & Envíos', icon: SettingsIcon },
-          { id: 'integrations', label: 'Integraciones', icon: PlugZap }
+          { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
+          { id: 'appearance', label: 'Apariencia & Preview', icon: 'Palette' },
+          { id: 'catalog', label: 'Catálogo Store', icon: 'Package' },
+          { id: 'orders', label: 'Pedidos Recibidos', icon: 'Receipt' },
+          { id: 'settings', label: 'Pagos & Envíos', icon: 'Settings' },
+          { id: 'integrations', label: 'Integraciones', icon: 'PlugZap' }
         ].map(tab => {
-          const Icon = tab.icon
           const active = activeTab === tab.id
           return (
             <button
@@ -457,7 +456,7 @@ export default function Store() {
                   : 'border-transparent text-muted-400 hover:text-foreground hover:bg-surface-800/40'
               )}
             >
-              <Icon size={14} />
+              <Icon name={tab.icon} size={14} />
               <span>{tab.label}</span>
             </button>
           )

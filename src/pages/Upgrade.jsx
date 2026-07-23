@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 const PLANS_DATA = [
   {
@@ -73,7 +73,7 @@ const ADDONS_DATA = [
     desc: 'Seguimiento de compras, historiales de abonos y segmentación automática de clientes.',
     price: 5000,
     priceDisplay: '$5.000',
-    icon: Users,
+    icon: 'Users',
     color: 'text-blue-400 bg-blue-500/10 border-blue-500/20'
   },
   {
@@ -82,7 +82,7 @@ const ADDONS_DATA = [
     desc: 'Constructor Drag & Drop de correos, plantillas de marketing e historial integrado con Resend.',
     price: 8000,
     priceDisplay: '$8.000',
-    icon: Mail,
+    icon: 'Mail',
     color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20'
   },
   {
@@ -91,7 +91,7 @@ const ADDONS_DATA = [
     desc: 'Cuentas de cobro ilimitadas, abonos parciales, alertas de mora y descarga PDF.',
     price: 12000,
     priceDisplay: '$12.000',
-    icon: Receipt,
+    icon: 'Receipt',
     color: 'text-success-400 bg-success-500/10 border-success-500/20'
   },
   {
@@ -100,7 +100,7 @@ const ADDONS_DATA = [
     desc: 'Validación en vivo de NIT/cédulas, facturación electrónica homologada y XML oficial.',
     price: 15000,
     priceDisplay: '$15.000',
-    icon: Calculator,
+    icon: 'Calculator',
     color: 'text-orange-400 bg-orange-500/10 border-orange-500/20'
   },
   {
@@ -109,7 +109,7 @@ const ADDONS_DATA = [
     desc: 'Protección de accesos de empleados mediante códigos de seguridad aleatorios de 6 dígitos.',
     price: 4000,
     priceDisplay: '$4.000',
-    icon: Lock,
+    icon: 'Lock',
     color: 'text-red-400 bg-red-500/10 border-red-500/20'
   },
   {
@@ -118,7 +118,7 @@ const ADDONS_DATA = [
     desc: 'Separa tus ingresos por categorías, propósitos o metas de ahorro independientes.',
     price: 5000,
     priceDisplay: '$5.000',
-    icon: FolderClosed,
+    icon: 'FolderClosed',
     color: 'text-pink-400 bg-pink-500/10 border-pink-500/20'
   },
   {
@@ -127,7 +127,7 @@ const ADDONS_DATA = [
     desc: 'Control unificado de ingresos, gastos del hogar y balances integrados al negocio.',
     price: 6000,
     priceDisplay: '$6.000',
-    icon: Wallet,
+    icon: 'Wallet',
     color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20'
   }
 ]
@@ -137,7 +137,7 @@ export default function Upgrade() {
   const changePlan = useAuthStore((s) => s.changePlan)
   const updateProfile = useAuthStore((s) => s.updateProfile)
 
-  const [checkoutItem, setCheckoutItem] = useState(null) // { type: 'plan'|'addon', item: data }
+  const [checkoutItem, setCheckoutItem] = useState(null)
   const [processing, setProcessing] = useState(false)
 
   // Card form state
@@ -165,7 +165,6 @@ export default function Upgrade() {
     e.preventDefault()
     setProcessing(true)
 
-    // Simulate network delay
     await new Promise((r) => setTimeout(r, 1200))
 
     try {
@@ -177,7 +176,6 @@ export default function Upgrade() {
           toast.error(`Error al cambiar plan: ${res.error}`)
         }
       } else {
-        // Buy addon
         const updatedAddons = Array.isArray(purchasedFeatures)
           ? [...purchasedFeatures, checkoutItem.item.id]
           : [checkoutItem.item.id]

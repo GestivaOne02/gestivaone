@@ -20,13 +20,13 @@ import clsx from 'clsx'
 import { clearAccountData, exportAccountBackup, importAccountBackup } from '@/services/accountDataService'
 import Modal from '@/components/ui/Modal'
 import { supabase } from '@/lib/supabase'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
-function SectionTitle({ icon: Icon, title, desc }) {
+function SectionTitle({ icon, title, desc }) {
   return (
     <div className="flex items-start gap-3 pb-4 border-b border-subtle">
       <div className="p-2 rounded-xl bg-brand-600/10 text-brand-400">
-        <Icon size={18} />
+        <Icon name={typeof icon === 'string' ? icon : 'Settings'} size={18} />
       </div>
       <div>
         <h2 className="text-sm font-bold text-brand-600 dark:text-brand-400">{title}</h2>
@@ -34,31 +34,6 @@ function SectionTitle({ icon: Icon, title, desc }) {
       </div>
     </div>
   )
-}
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1,
-    transition: { 
-      staggerChildren: 0.08,
-      delayChildren: 0.1
-    } 
-  }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16, scale: 0.98 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    scale: 1,
-    transition: { 
-      type: 'spring', 
-      stiffness: 260, 
-      damping: 25 
-    } 
-  }
 }
 
 export default function Settings() {

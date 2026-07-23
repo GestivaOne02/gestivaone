@@ -417,7 +417,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: ShoppingCart,
+                icon: 'ShoppingCart',
                 iconBg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
                 tagline: 'GestivaOne • Módulo Activo',
                 title: t('features.invTitle'),
@@ -427,7 +427,7 @@ export default function Landing() {
                 submetric: 'Gestión en Nube'
               },
               {
-                icon: Printer,
+                icon: 'Printer',
                 iconBg: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
                 tagline: 'GestivaOne • POS Térmico',
                 title: t('features.posTitle'),
@@ -437,7 +437,7 @@ export default function Landing() {
                 submetric: 'Impresión 3 seg'
               },
               {
-                icon: MessageSquare,
+                icon: 'MessageSquare',
                 iconBg: 'bg-brand-500/10 text-brand-400 border-brand-500/20',
                 tagline: 'GestivaOne • Notificaciones',
                 title: t('features.crmTitle'),
@@ -447,7 +447,7 @@ export default function Landing() {
                 submetric: 'Cobro Automático'
               },
               {
-                icon: BarChart3,
+                icon: 'BarChart3',
                 iconBg: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
                 tagline: 'GestivaOne • Analítica',
                 title: t('features.analyticsTitle'),
@@ -457,7 +457,7 @@ export default function Landing() {
                 submetric: 'Cierres de Caja'
               },
               {
-                icon: Users2,
+                icon: 'Users',
                 iconBg: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
                 tagline: 'GestivaOne • DIAN / Normativo',
                 title: t('features.dianTitle'),
@@ -467,7 +467,7 @@ export default function Landing() {
                 submetric: 'Nivel Bancario'
               },
               {
-                icon: TrendingUp,
+                icon: 'TrendingUp',
                 iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
                 tagline: 'GestivaOne • Gastronomía',
                 title: t('features.restaurantTitle'),
@@ -477,7 +477,6 @@ export default function Landing() {
                 submetric: 'Menú Virtual'
               }
             ].map((card, idx) => {
-              const Icon = card.icon
               return (
                 <div
                   key={idx}
@@ -487,7 +486,7 @@ export default function Landing() {
                     {/* Top Row: Circular Icon (Left) + Title Beside Icon */}
                     <div className="flex items-center gap-3.5">
                       <div className={`w-12 h-12 rounded-full border flex items-center justify-center shadow-sm shrink-0 ${card.iconBg}`}>
-                        <Icon size={22} />
+                        <Icon name={card.icon} size={22} />
                       </div>
                       <div>
                         <span className="text-[11px] font-semibold text-muted-400 block tracking-tight leading-none mb-1">

@@ -3,22 +3,22 @@ import Icon from '@/components/ui/Icon';
 
 const useCases = [
   {
-    icon: Store,
+    icon: 'Store',
     title: 'Minimarkets & Supermercados',
     desc: 'Control de inventario rápido, escaneo de códigos de barra, cierre de caja diario e impresión de recibos en menos de 3 segundos.'
   },
   {
-    icon: Utensils,
+    icon: 'Utensils',
     title: 'Restaurantes & Gastronomía',
     desc: 'Gestión de comanda de cocina, comandas térmicas, catálogo de productos con imágenes y módulo de menú virtual rápido.'
   },
   {
-    icon: ShoppingBag,
+    icon: 'ShoppingBag',
     title: 'Moda, Calzado & Retail',
     desc: 'Organización por categorías, notificaciones de productos con bajo stock, cuentas por cobrar y fidelización de clientes.'
   },
   {
-    icon: Wrench,
+    icon: 'Wrench',
     title: 'Ferreterías & Servicios',
     desc: 'Emisión de cuentas de cobro oficiales, control de egresos, abonos a crédito y recordatorios automáticos por WhatsApp.'
   }
@@ -65,14 +65,13 @@ export default function CEOUseCasesSection() {
         {/* Grid Use Cases */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {useCases.map((uc, idx) => {
-            const Icon = uc.icon
             return (
               <div
                 key={idx}
                 className="bg-surface-900 border border-subtle p-6 rounded-3xl space-y-4 hover:border-brand-500/30 transition-all duration-200"
               >
                 <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20">
-                  <Icon size={24} />
+                  <Icon name={uc.icon} size={24} />
                 </div>
                 <h3 className="text-base font-bold text-foreground">{uc.title}</h3>
                 <p className="text-xs text-muted-400 leading-relaxed">{uc.desc}</p>

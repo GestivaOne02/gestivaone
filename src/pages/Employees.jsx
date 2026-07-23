@@ -18,12 +18,12 @@ import OrgChart from '@/components/hr/OrgChart'
 import VacationsPanel from '@/components/hr/VacationsPanel'
 import PayrollPanel from '@/components/hr/PayrollPanel'
 import EmployeeDetail360 from '@/components/hr/EmployeeDetail360'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 const ROLE_META = {
-  administrador: { icon: ShieldCheck, color: 'text-brand-500', bg: 'bg-brand-500/10 border-brand-500/25' },
-  despachador: { icon: Truck, color: 'text-warning-500', bg: 'bg-warning-500/10 border-warning-500/25' },
-  contable: { icon: Calculator, color: 'text-success-500', bg: 'bg-success-500/10 border-success-500/25' },
+  administrador: { icon: 'ShieldCheck', color: 'text-brand-500', bg: 'bg-brand-500/10 border-brand-500/25' },
+  despachador: { icon: 'Truck', color: 'text-warning-500', bg: 'bg-warning-500/10 border-warning-500/25' },
+  contable: { icon: 'Calculator', color: 'text-success-500', bg: 'bg-success-500/10 border-success-500/25' },
 }
 
 const containerVariants = {
@@ -575,7 +575,7 @@ export default function Employees() {
                   <div className="grid grid-cols-2 gap-3">
                     {Object.entries(ROLES).map(([k, v]) => {
                       if (k === 'administrador') return null
-                      const Icon = ROLE_META[k].icon
+                      const iconName = ROLE_META[k]?.icon
                       return (
                         <button
                           key={k}
@@ -586,7 +586,7 @@ export default function Employees() {
                             inviteRole === k ? 'border-brand-500 bg-brand-600/10 scale-[1.02]' : 'border-subtle bg-surface-900/50 hover:border-surface-300'
                           )}
                         >
-                          <Icon size={18} className={inviteRole === k ? 'text-brand-500' : 'text-muted-400'} />
+                          <Icon name={iconName} size={18} className={inviteRole === k ? 'text-brand-500' : 'text-muted-400'} />
                           <p className={clsx('text-xs font-black', inviteRole === k ? 'text-brand-500' : 'text-muted-400')}>{v.label}</p>
                         </button>
                       )

@@ -7,7 +7,7 @@ import { useCRMStore } from '@/store/useCRMStore'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 // ── Passport & Type Icons ──────────────────────────────────
 const PassportIcon = ({ size = 14, className = "" }) => (
@@ -46,31 +46,30 @@ const fmtCOP = (v) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v || 0)
 
 const SEGMENT_CONFIG = {
-  vip:      { label: 'VIP',       color: 'text-amber-400',   bg: 'bg-amber-500/15',  border: 'border-amber-500/30', icon: Crown },
-  activo:   { label: 'Activo',    color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/30', icon: UserCheck },
-  tibio:    { label: 'Tibio',     color: 'text-orange-400',  bg: 'bg-orange-500/15',  border: 'border-orange-500/30', icon: ThermometerSun },
-  inactivo: { label: 'Inactivo',  color: 'text-red-400',     bg: 'bg-red-500/15',     border: 'border-red-500/30', icon: Snowflake },
-  nuevo:    { label: 'Nuevo',     color: 'text-blue-400',    bg: 'bg-blue-500/15',    border: 'border-blue-500/30', icon: Sparkles },
+  vip:      { label: 'VIP',       color: 'text-amber-400',   bg: 'bg-amber-500/15',  border: 'border-amber-500/30', icon: 'Crown' },
+  activo:   { label: 'Activo',    color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/30', icon: 'UserCheck' },
+  tibio:    { label: 'Tibio',     color: 'text-orange-400',  bg: 'bg-orange-500/15',  border: 'border-orange-500/30', icon: 'ThermometerSun' },
+  inactivo: { label: 'Inactivo',  color: 'text-red-400',     bg: 'bg-red-500/15',     border: 'border-red-500/30', icon: 'Snowflake' },
+  nuevo:    { label: 'Nuevo',     color: 'text-blue-400',    bg: 'bg-blue-500/15',    border: 'border-blue-500/30', icon: 'Sparkles' },
 }
 
 // ── Segment Badge Component ────────────────────────────────
 function SegmentBadge({ segment }) {
   const cfg = SEGMENT_CONFIG[segment] || SEGMENT_CONFIG.nuevo
-  const Icon = cfg.icon
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${cfg.bg} ${cfg.color} ${cfg.border} border`}>
-      <Icon size={10} />
+      <Icon name={cfg.icon} size={10} />
       {cfg.label}
     </span>
   )
 }
 
 // ── Metric Card ────────────────────────────────────────────
-function MetricCard({ icon: Icon, label, value, sub, color = 'brand' }) {
+function MetricCard({ icon, label, value, sub, color = 'brand' }) {
   return (
     <div className="bg-surface-800/60 border border-subtle rounded-xl p-3 flex items-start gap-3">
       <div className={`w-9 h-9 rounded-lg bg-${color}-500/15 flex items-center justify-center shrink-0`}>
-        <Icon size={16} className={`text-${color}-400`} />
+        <Icon name={typeof icon === 'string' ? icon : 'BarChart'} size={16} className={`text-${color}-400`} />
       </div>
       <div className="min-w-0">
         <p className="text-[10px] uppercase tracking-wider text-muted-400 font-bold">{label}</p>
@@ -84,13 +83,13 @@ function MetricCard({ icon: Icon, label, value, sub, color = 'brand' }) {
 // ── Activity Item ──────────────────────────────────────────
 function ActivityItem({ activity }) {
   const typeIcons = {
-    sale: ShoppingCart,
-    note: FileText,
-    call: Phone,
-    email: Mail,
-    status_change: Tag,
+    sale: 'ShoppingCart',
+    note: 'FileText',
+    call: 'Phone',
+    email: 'Mail',
+    status_change: 'Tag',
   }
-  const Icon = typeIcons[activity.type] || Activity
+  const iconName = typeIcons[activity.type] || 'Activity'
   const typeLabels = {
     sale: 'Venta',
     note: 'Nota',
@@ -102,7 +101,7 @@ function ActivityItem({ activity }) {
   return (
     <div className="flex items-start gap-3 py-2.5 border-b border-subtle/50 last:border-0">
       <div className="w-7 h-7 rounded-lg bg-surface-700/60 flex items-center justify-center shrink-0 mt-0.5">
-        <Icon size={13} className="text-muted-400" />
+        <Icon name={iconName} size={13} className="text-muted-400" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-xs text-foreground font-medium">{activity.description}</p>

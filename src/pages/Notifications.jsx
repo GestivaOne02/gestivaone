@@ -5,8 +5,7 @@ import { useNotificationStore } from '@/store/useNotificationStore'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import clsx from 'clsx'
-import toast from 'react-hot-toast'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -34,10 +33,10 @@ const itemVariants = {
 }
 
 const CATEGORY_ICONS = {
-  'Inventario': ShoppingCart,
-  'Cobros': Calendar,
-  'Ventas': Sparkles,
-  'Sistema': Settings,
+  'Inventario': 'ShoppingCart',
+  'Cobros': 'Calendar',
+  'Ventas': 'Sparkles',
+  'Sistema': 'Settings',
 }
 
 const TYPE_STYLES = {
@@ -45,25 +44,25 @@ const TYPE_STYLES = {
     border: 'border-danger-500/20 dark:border-danger-500/30',
     bg: 'bg-danger-500/5 dark:bg-danger-500/10',
     text: 'text-danger-500 dark:text-danger-400',
-    icon: AlertCircle,
+    icon: 'AlertCircle',
   },
   warning: {
     border: 'border-warning-500/20 dark:border-warning-500/30',
     bg: 'bg-warning-500/5 dark:bg-warning-500/10',
     text: 'text-warning-500 dark:text-warning-400',
-    icon: AlertTriangle,
+    icon: 'AlertTriangle',
   },
   success: {
     border: 'border-success-500/20 dark:border-success-500/30',
     bg: 'bg-success-500/5 dark:bg-success-500/10',
     text: 'text-success-500 dark:text-success-400',
-    icon: CheckCircle2,
+    icon: 'CheckCircle2',
   },
   info: {
     border: 'border-brand-500/20 dark:border-brand-500/30',
     bg: 'bg-brand-500/5 dark:bg-brand-500/10',
     text: 'text-brand-500 dark:text-brand-400',
-    icon: Info,
+    icon: 'Info',
   },
 }
 
@@ -75,12 +74,10 @@ export default function Notifications() {
   const clearReadNotifications = useNotificationStore((s) => s.clearReadNotifications)
   const fetchNotifications = useNotificationStore((s) => s.fetchNotifications)
 
-  // Fetch notifications on mount
   useEffect(() => {
     fetchNotifications()
   }, [fetchNotifications])
 
-  // Automatically mark all as read when user enters the page
   useEffect(() => {
     const unreadIds = notifications.filter(n => !n.read).map(n => n.id)
     if (unreadIds.length > 0) {
@@ -187,8 +184,8 @@ export default function Notifications() {
           ) : (
             filtered.map((notif) => {
               const style = TYPE_STYLES[notif.type] || TYPE_STYLES.info
-              const IconComp = style.icon
-              const CatIcon = CATEGORY_ICONS[notif.category] || Info
+              const iconName = style.icon
+              const catIconName = CATEGORY_ICONS[notif.category] || 'Info'
 
               return (
                 <motion.div
@@ -210,20 +207,17 @@ export default function Notifications() {
                       : "bg-white hover:scale-[1.01] shadow-sm"
                   )}
                 >
-                  {/* Left indicator strip for unread notifications */}
                   {!notif.read && (
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-success-500" />
                   )}
 
-                  {/* Left Icon with color scheme */}
                   <div className={clsx(
                     "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105",
                     notif.read ? "bg-success-50/50 text-success-500/60 opacity-60" : "bg-success-50 text-success-500"
                   )}>
-                    <IconComp size={20} />
+                    <Icon name={iconName} size={20} />
                   </div>
 
-                  {/* Message body */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className={clsx("text-sm truncate transition-colors duration-300", notif.read ? "text-gray-500 font-medium" : "text-black font-bold")}>
@@ -233,7 +227,7 @@ export default function Notifications() {
                         "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border transition-colors duration-300",
                         notif.read ? "bg-gray-100 border-gray-200 text-gray-400" : "bg-gray-100 border-gray-200 text-gray-500"
                       )}>
-                        <CatIcon size={10} />
+                        <Icon name={catIconName} size={10} />
                         <span>{notif.category}</span>
                       </div>
                     </div>
@@ -242,7 +236,6 @@ export default function Notifications() {
                     </p>
                   </div>
 
-                  {/* Action actions container (right side) */}
                   <div className="flex items-center gap-3 shrink-0">
                     {!notif.read && (
                       <span className={clsx("w-2 h-2 rounded-full animate-pulse shrink-0", 
@@ -252,7 +245,6 @@ export default function Notifications() {
                       )} />
                     )}
 
-                    {/* Individual delete action */}
                     <button
                       type="button"
                       onClick={(e) => {

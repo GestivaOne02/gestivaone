@@ -5,7 +5,7 @@ import Icon from '@/components/ui/Icon';
 
 const categories = [
   {
-    icon: BookOpen,
+    icon: 'BookOpen',
     title: 'Primeros Pasos',
     desc: 'Guía de inicio rápido, configuración de cuenta e invitaciones de equipo.',
     articles: [
@@ -15,7 +15,7 @@ const categories = [
     ]
   },
   {
-    icon: Printer,
+    icon: 'Printer',
     title: 'Impresoras Térmicas POS',
     desc: 'Conexión y calibración de impresoras térmicas USB, Bluetooth y de red.',
     articles: [
@@ -25,7 +25,7 @@ const categories = [
     ]
   },
   {
-    icon: ShoppingCart,
+    icon: 'ShoppingCart',
     title: 'Inventario & Catálogo',
     desc: 'Gestión de productos, categorías, precios y lectura de código de barras.',
     articles: [
@@ -35,7 +35,7 @@ const categories = [
     ]
   },
   {
-    icon: FileText,
+    icon: 'FileText',
     title: 'Facturación & Finanzas',
     desc: 'Emisión de recibos, cuentas de cobro y exportación de reportes.',
     articles: [
@@ -45,7 +45,7 @@ const categories = [
     ]
   },
   {
-    icon: MessageSquare,
+    icon: 'MessageSquare',
     title: 'WhatsApp & Notificaciones',
     desc: 'Notificaciones automáticas por correo SMTP y recordatorios por WhatsApp.',
     articles: [
@@ -118,12 +118,11 @@ export default function KnowledgeBase() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredCategories.map((cat, idx) => {
-            const Icon = cat.icon
             return (
               <div key={idx} className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-4 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20">
-                    <Icon size={22} />
+                    <Icon name={cat.icon} size={22} />
                   </div>
                   <h2 className="text-lg font-bold text-foreground">{cat.title}</h2>
                   <p className="text-xs text-muted-400">{cat.desc}</p>

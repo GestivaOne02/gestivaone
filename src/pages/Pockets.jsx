@@ -11,7 +11,7 @@ import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -25,9 +25,9 @@ const itemVariants = {
 const smoothTransition = { type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }
 
 const POCKET_TYPES = [
-  { id: 'caja', label: 'Caja Fuerte', icon: BoxIcon, desc: 'Ideal para efectivo o reserva general' },
-  { id: 'tarjeta', label: 'Tarjeta Prepago', icon: CreditCard, desc: 'Gastos digitales o suscripciones' },
-  { id: 'factura', label: 'Factura Fija', icon: Receipt, desc: 'Pagos recurrentes o gastos fijos' },
+  { id: 'caja', label: 'Caja Fuerte', icon: 'Box', desc: 'Ideal para efectivo o reserva general' },
+  { id: 'tarjeta', label: 'Tarjeta Prepago', icon: 'CreditCard', desc: 'Gastos digitales o suscripciones' },
+  { id: 'factura', label: 'Factura Fija', icon: 'Receipt', desc: 'Pagos recurrentes o gastos fijos' },
 ]
 
 export default function Pockets({ isNested = false }) {
@@ -49,9 +49,9 @@ export default function Pockets({ isNested = false }) {
   const addExpense = useExpenseStore((s) => s.addExpense)
 
   const [showAddModal, setShowAddModal] = useState(false)
-  const [showFundModal, setShowFundModal] = useState(null) // { pocketId, action: 'add' | 'withdraw' }
+  const [showFundModal, setShowFundModal] = useState(null)
   const [fundAmount, setFundAmount] = useState('')
-  const [fundSource, setFundSource] = useState('manual') // 'manual' | 'utility' | pocketId
+  const [fundSource, setFundSource] = useState('manual')
   const [loading, setLoading] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
 
