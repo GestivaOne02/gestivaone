@@ -316,8 +316,8 @@ export default function Landing() {
                     className="pt-6 flex flex-col items-center lg:items-start gap-2"
                   >
                     <span className="text-muted-400 font-semibold text-xs tracking-wider uppercase">Pagos Procesados con</span>
-                    <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-surface-800/80 border border-subtle backdrop-blur-md hover:border-brand-500/30 transition-all">
-                      <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi por Bancolombia" width="140" height="35" loading="lazy" decoding="async" className="h-7 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity" />
+                    <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-surface-800/80 border border-subtle backdrop-blur-md transition-all">
+                      <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi por Bancolombia" width="140" height="35" loading="eager" decoding="sync" className="h-8 w-auto object-contain block opacity-100" />
                     </div>
                   </motion.div>
                 </div>
@@ -372,11 +372,12 @@ export default function Landing() {
                               aria-label="Reproducir video demo"
                             >
                               <svg
-                                className="w-8 h-8 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
+                                viewBox="0 0 267.49 259.62"
+                                className="w-8 h-8 fill-white text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.7)]"
                               >
-                                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                <path fill="white" d="M205.88,163.76c-8.76,0-17.24-.03-25.72,0-13.89.07-27.78.23-41.67.26-11.68.03-21.43-9.19-22.13-20.8-.72-11.98,7.91-22.5,19.59-23.94,2.05-.25,4.1-.25,6.15-.25,33.74,0,67.47,0,101.21.02,13.74.01,24.13,10.28,24.15,23.97.04,29.36.03,58.71,0,88.07,0,9.44-6.01,17.45-14.79,19.97-8.54,2.44-17.87-1.06-22.76-8.64-2.41-3.73-3.3-7.88-3.15-12.32.22-6.22.33-12.44.47-18.67.02-1.02,0-2.04,0-3.57-.93,1.24-1.61,2.13-2.26,3.02-15.06,20.7-35.25,34.26-59.32,42.28-15.14,5.05-30.77,7.12-46.69,6.23-12.07-.67-21.12-10.67-20.66-22.27.48-12.37,10.44-21.97,22.77-21.7,9.35.2,18.62-.2,27.66-2.77,25.64-7.3,44.44-22.86,56.26-46.8.3-.6.52-1.24.89-2.12Z"/>
+                                <path fill="white" d="M0,131.1c.51-28.99,9.51-55.09,27.25-78.02C49.13,24.78,77.72,7.39,113.11,1.69c26.48-4.26,51.9-.46,76.12,11.13,7,3.35,13.63,7.38,19.65,12.23,14.34,11.56,12.29,32.19-3.24,39.45-8.53,3.98-16.74,2.55-24.17-2.95-10.16-7.52-21.19-13.2-33.7-15.31-28.13-4.75-52.9,2.75-74.11,21.62-15.73,14-24.75,31.77-27.73,52.6-1.09,7.63-.94,15.29-.09,22.93,1.16,10.5-5.68,20.93-15.91,24.02-10.01,3.02-21.33-1.79-26.15-11.16-1.61-3.13-2.54-6.46-2.87-9.99-.46-5.04-.91-10.08-.91-15.17Z"/>
+                                <path fill="white" d="M77.11,214.61c-1.21,15.51-14.09,27.24-28.65,26.22-15.53-1.09-26.83-13.91-26-28.84.89-16.06,14.21-27.46,30.07-26.03,14.8,1.34,25.24,14.39,24.58,28.64Z"/>
                               </svg>
                             </button>
                           </div>
