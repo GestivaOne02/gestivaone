@@ -14,7 +14,7 @@ import React from 'react';
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { QRCodeSVG } from 'qrcode.react';
-import Section from '@/components/Section';
+import Section from '@/components/ui/Section';
 import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
