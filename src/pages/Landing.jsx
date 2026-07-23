@@ -313,10 +313,12 @@ export default function Landing() {
                   {/* Wompi integration */}
                   <motion.div
                     variants={itemVariants}
-                    className="pt-6 flex flex-col items-center lg:items-start gap-3"
+                    className="pt-6 flex flex-col items-center lg:items-start gap-2"
                   >
-                    <span className="text-white font-semibold text-sm tracking-wide">Pagos con</span>
-                    <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi" width="120" height="40" loading="lazy" decoding="async" className="h-10 object-contain" />
+                    <span className="text-muted-400 font-semibold text-xs tracking-wider uppercase">Pagos Procesados con</span>
+                    <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-surface-800/80 border border-subtle backdrop-blur-md hover:border-brand-500/30 transition-all">
+                      <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi por Bancolombia" width="140" height="35" loading="lazy" decoding="async" className="h-7 w-auto object-contain" />
+                    </div>
                   </motion.div>
                 </div>
 
