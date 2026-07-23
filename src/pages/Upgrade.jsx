@@ -282,7 +282,6 @@ export default function Upgrade() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {ADDONS_DATA.map((addon) => {
             const owned = hasAddon(addon.id)
-            const Icon = addon.icon
             return (
               <div
                 key={addon.id}
@@ -294,7 +293,7 @@ export default function Upgrade() {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div className={clsx('p-2.5 rounded-xl border shrink-0', addon.color)}>
-                      <Icon size={18} />
+                      <Icon name={addon.icon} size={18} />
                     </div>
                     <span className="text-sm font-black text-white">{addon.priceDisplay}<span className="text-[10px] text-muted-400 font-medium">/mes</span></span>
                   </div>

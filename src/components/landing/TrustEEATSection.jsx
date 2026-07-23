@@ -6,22 +6,22 @@ export default function TrustEEATSection() {
 
   const trustItems = [
     {
-      icon: Lock,
+      icon: 'Lock',
       title: t('trust.sslTitle'),
       desc: t('trust.sslDesc')
     },
     {
-      icon: MapPin,
+      icon: 'MapPin',
       title: t('trust.supportTitle'),
       desc: t('trust.supportDesc')
     },
     {
-      icon: Server,
+      icon: 'Server',
       title: t('trust.uptimeTitle'),
       desc: t('trust.uptimeDesc')
     },
     {
-      icon: Award,
+      icon: 'Award',
       title: t('trust.dianTitle'),
       desc: t('trust.dianDesc')
     }
@@ -45,14 +45,13 @@ export default function TrustEEATSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {trustItems.map((item, idx) => {
-            const Icon = item.icon
             return (
               <div
                 key={idx}
                 className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3 hover:border-brand-500/30 transition-colors"
               >
                 <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20">
-                  <Icon size={20} />
+                  <Icon name={item.icon} size={20} />
                 </div>
                 <h3 className="text-sm font-bold text-foreground">{item.title}</h3>
                 <p className="text-xs text-muted-400 leading-relaxed">{item.desc}</p>

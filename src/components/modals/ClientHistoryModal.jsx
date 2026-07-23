@@ -35,16 +35,14 @@ export function parseInvoiceNote(note) {
 
 function StatusBadge({ status }) {
   const cfg = {
-    paid:    { label: 'Pagada',    color: 'bg-success-500/10 text-success-400 border-success-500/20', icon: CheckCircle },
-    pending: { label: 'Pendiente', color: 'bg-warning-500/10 text-warning-400 border-warning-500/20', icon: Clock },
-    overdue: { label: 'Atrasada',  color: 'bg-danger-500/10  text-danger-400  border-danger-500/20',  icon: AlertTriangle },
-  }[status] || { label: 'Desconocido', color: 'bg-surface-600 text-muted-400 border-subtle', icon: FileText }
-
-  const Icon = cfg.icon
+    paid:    { label: 'Pagada',    color: 'bg-success-500/10 text-success-400 border-success-500/20', icon: 'CheckCircle' },
+    pending: { label: 'Pendiente', color: 'bg-warning-500/10 text-warning-400 border-warning-500/20', icon: 'Clock' },
+    overdue: { label: 'Atrasada',  color: 'bg-danger-500/10  text-danger-400  border-danger-500/20',  icon: 'AlertTriangle' },
+  }[status] || { label: 'Desconocido', color: 'bg-surface-600 text-muted-400 border-subtle', icon: 'FileText' }
 
   return (
     <div className={clsx('flex items-center gap-1.5 px-2 py-1 rounded-md border text-xs font-bold uppercase tracking-wider', cfg.color)}>
-      <Icon size={12} />
+      <Icon name={cfg.icon} size={12} />
       {cfg.label}
     </div>
   )

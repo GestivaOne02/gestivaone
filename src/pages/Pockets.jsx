@@ -416,7 +416,6 @@ export default function Pockets({ isNested = false }) {
                   <span className="text-xs font-medium text-muted-500 uppercase tracking-wide">Diseño / Formato</span>
                   <div className="grid grid-cols-3 gap-2">
                     {POCKET_TYPES.map((t) => {
-                      const Icon = t.icon
                       const active = type === t.id
                       return (
                         <button
@@ -430,7 +429,7 @@ export default function Pockets({ isNested = false }) {
                               : "border-subtle bg-surface-700 hover:border-surface-600 text-muted-400"
                           )}
                         >
-                          <Icon size={16} />
+                          <Icon name={t.icon} size={16} />
                           <span className="text-[10px] font-bold">{t.label}</span>
                         </button>
                       )

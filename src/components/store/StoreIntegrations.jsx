@@ -223,18 +223,17 @@ export default function StoreIntegrations({
       {/* Future Integrations Bento Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {[
-          { name: 'WhatsApp API', desc: 'Alertas automáticas de pedidos.', icon: Phone, tag: 'Próximamente' },
-          { name: 'WooCommerce', desc: 'Unifica tu stock de WordPress.', icon: Globe, tag: 'Próximamente' },
-          { name: 'MercadoLibre', desc: 'Sincroniza publicaciones en vivo.', icon: TrendingUp, tag: 'Próximamente' },
-          { name: 'Coordinadora / TCC', desc: 'Rastreo automático de guías.', icon: Truck, tag: 'Próximamente' },
-          { name: 'PSE / Tarjetas', desc: 'Pasarela de pagos en línea.', icon: ShieldCheck, tag: 'En evaluación' }
+          { name: 'WhatsApp API', desc: 'Alertas automáticas de pedidos.', icon: 'Phone', tag: 'Próximamente' },
+          { name: 'WooCommerce', desc: 'Unifica tu stock de WordPress.', icon: 'Globe', tag: 'Próximamente' },
+          { name: 'MercadoLibre', desc: 'Sincroniza publicaciones en vivo.', icon: 'TrendingUp', tag: 'Próximamente' },
+          { name: 'Coordinadora / TCC', desc: 'Rastreo automático de guías.', icon: 'Truck', tag: 'Próximamente' },
+          { name: 'PSE / Tarjetas', desc: 'Pasarela de pagos en línea.', icon: 'ShieldCheck', tag: 'En evaluación' }
         ].map(integ => {
-          const Icon = integ.icon;
           return (
             <div key={integ.name} className="bg-white/5 border border-white/5 p-5 rounded-[2rem] flex flex-col justify-between gap-4 opacity-50 hover:opacity-75 transition-opacity duration-300">
               <div className="flex items-center justify-between">
                 <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-muted-400 shrink-0">
-                  <Icon size={14} />
+                  <Icon name={integ.icon} size={14} />
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[8px] font-black bg-white/5 border border-white/10 text-muted-500 uppercase tracking-widest">
                   {integ.tag}
