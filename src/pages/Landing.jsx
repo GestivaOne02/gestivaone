@@ -9,7 +9,7 @@ import CEOUseCasesSection from '@/components/landing/CEOUseCasesSection'
 import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp'
 import TrustEEATSection from '@/components/landing/TrustEEATSection'
 import LanguageSelector from '@/components/ui/LanguageSelector'
-import { useLanguageStore } from '@/store/useLanguageStore'
+import ScrollStoryEngine from '@/components/landing/scrollytelling/ScrollStoryEngine'
 import Icon from '@/components/ui/Icon';
 
 export default function Landing() {
@@ -436,132 +436,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ─── FEATURES SECTION ─── */}
-      <section id="caracteristicas" className="py-10 bg-surface-800 border-t border-b border-subtle">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 max-w-3xl mx-auto mb-8">
-            <h2 className="text-brand-400 text-xs font-bold uppercase tracking-widest">{t('features.tag')}</h2>
-            <p className="text-3xl sm:text-4xl font-extrabold text-foreground">{t('features.title')}</p>
-            <p className="text-sm text-muted-400">{t('features.subtitle')}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: 'ShoppingCart',
-                iconBg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-                tagline: 'GestivaOne • Módulo Activo',
-                title: t('features.invTitle'),
-                desc: t('features.invDesc'),
-                tags: ['Stock Real', 'Alertas Mínimas', 'Multisede'],
-                metric: 'Incluido en Pro',
-                submetric: 'Gestión en Nube'
-              },
-              {
-                icon: 'Printer',
-                iconBg: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
-                tagline: 'GestivaOne • POS Térmico',
-                title: t('features.posTitle'),
-                desc: t('features.posDesc'),
-                tags: ['Tickets 58/80mm', 'Bluetooth & USB', 'Rápido'],
-                metric: 'Multidispositivo',
-                submetric: 'Impresión 3 seg'
-              },
-              {
-                icon: 'MessageSquare',
-                iconBg: 'bg-brand-500/10 text-brand-400 border-brand-500/20',
-                tagline: 'GestivaOne • Notificaciones',
-                title: t('features.crmTitle'),
-                desc: t('features.crmDesc'),
-                tags: ['WhatsApp Business', 'Cartera', 'SMTP Directo'],
-                metric: 'Recaudos Rápidos',
-                submetric: 'Cobro Automático'
-              },
-              {
-                icon: 'BarChart3',
-                iconBg: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-                tagline: 'GestivaOne • Analítica',
-                title: t('features.analyticsTitle'),
-                desc: t('features.analyticsDesc'),
-                tags: ['PDF & Excel', 'Flujo de Caja', 'Utilidades'],
-                metric: 'Reportes 1 Click',
-                submetric: 'Cierres de Caja'
-              },
-              {
-                icon: 'Users',
-                iconBg: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-                tagline: 'GestivaOne • DIAN / Normativo',
-                title: t('features.dianTitle'),
-                desc: t('features.dianDesc'),
-                tags: ['100% Normativo', 'Cifrado SSL', 'Notas Crédito'],
-                metric: 'Validado DIAN',
-                submetric: 'Nivel Bancario'
-              },
-              {
-                icon: 'TrendingUp',
-                iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-                tagline: 'GestivaOne • Gastronomía',
-                title: t('features.restaurantTitle'),
-                desc: t('features.restaurantDesc'),
-                tags: ['Comandas Cocina', 'Recetas & Stock', 'Control Mesas'],
-                metric: 'Módulo Gourmet',
-                submetric: 'Menú Virtual'
-              }
-            ].map((card, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className="bg-surface-900 border border-subtle p-7 rounded-[28px] space-y-5 flex flex-col justify-between relative"
-                >
-                  <div className="space-y-4">
-                    {/* Top Row: Circular Icon (Left) + Title Beside Icon */}
-                    <div className="flex items-center gap-3.5">
-                      <div className={`w-12 h-12 rounded-full border flex items-center justify-center shadow-sm shrink-0 ${card.iconBg}`}>
-                        <Icon name={card.icon} size={22} />
-                      </div>
-                      <div>
-                        <span className="text-[11px] font-semibold text-muted-400 block tracking-tight leading-none mb-1">
-                          {card.tagline}
-                        </span>
-                        <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight leading-tight">
-                          {card.title}
-                        </h3>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-xs text-muted-400 leading-relaxed">
-                      {card.desc}
-                    </p>
-
-                    {/* Tag Pills */}
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {card.tags.map((tag, tIdx) => (
-                        <span
-                          key={tIdx}
-                          className="px-2.5 py-1 rounded-lg bg-surface-750 border border-subtle text-[10px] font-bold text-muted-300"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Bottom Row: Divider + Centered Metric Text */}
-                  <div className="pt-4 border-t border-subtle/60 text-center">
-                    <span className="text-sm font-extrabold text-foreground block">
-                      {card.metric}
-                    </span>
-                    <span className="text-[10px] font-medium text-muted-400 block">
-                      {card.submetric}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+      {/* ─── SCROLLEYTELLING FEATURES SECTION ENGINE ─── */}
+      <ScrollStoryEngine />
 
       {/* ─── CEO USE CASES SECTION ─── */}
       <CEOUseCasesSection />
