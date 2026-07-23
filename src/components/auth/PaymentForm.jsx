@@ -5,9 +5,9 @@ import clsx from 'clsx'
 import Icon from '@/components/ui/Icon';
 
 const METHODS = [
-  { id: 'card',   label: 'Tarjeta',  icon: CreditCard },
-  { id: 'pse',    label: 'PSE',      icon: Building   },
-  { id: 'nequi',  label: 'Nequi',    icon: Smartphone },
+  { id: 'card',   label: 'Tarjeta',  iconName: 'CreditCard' },
+  { id: 'pse',    label: 'PSE',      iconName: 'Building'   },
+  { id: 'nequi',  label: 'Nequi',    iconName: 'Smartphone' },
 ]
 
 function formatCard(v) {
@@ -51,13 +51,13 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
       <div>
         <p className="text-[11px] font-medium text-muted-400 uppercase tracking-wide mb-1.5">Método de pago</p>
         <div className="grid grid-cols-3 gap-2">
-          {METHODS.map(({ id, label, icon: Icon }) => (
+          {METHODS.map(({ id, label, iconName }) => (
             <button key={id} type="button" onClick={() => setMethod(id)}
               className={clsx(
                 'flex flex-col items-center gap-1 py-2 rounded-xl border-2 text-xs font-medium transition-all',
                 method === id ? 'border-brand-500 bg-brand-600/10 text-brand-300' : 'border-subtle bg-surface-700 text-muted-400 hover:border-surface-300'
               )}>
-              <Icon size={14} />
+              <Icon name={iconName} size={14} />
               {label}
             </button>
           ))}
