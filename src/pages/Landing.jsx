@@ -18,6 +18,7 @@ export default function Landing() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [contactSent, setContactSent] = useState(false)
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark')
