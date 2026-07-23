@@ -149,6 +149,7 @@ export function useRealtimeSync() {
 
     return () => {
       supabase.removeChannel(channel)
+      globalChannel = null
     }
   }, [user?.companyId, user?.id])
 }

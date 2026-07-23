@@ -892,24 +892,33 @@ export const useAuthStore = create(
       },
 
       logout: async () => {
-        localStorage.setItem('gestiva-explicit-logout', 'true')
-        localStorage.removeItem('gestiva-active-session-token')
-        await supabase.auth.signOut()
+        try {
+          await supabase.auth.signOut()
+        } catch (e) {
+          // Ignore signOut network errors during offline logout
+        }
 
-        // Clear all user-specific cache keys from localStorage to prevent leakage
+        const rememberedEmail = localStorage.getItem('gestiva-remembered-email')
+        const rememberMe = localStorage.getItem('gestiva-remember-me')
+
+        // Clear user-specific cache keys from localStorage
         Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('gestiva-')) {
+          if (key.startsWith('gestiva-') && key !== 'gestiva-remembered-email' && key !== 'gestiva-remember-me') {
             localStorage.removeItem(key)
           }
         })
 
-        // Clear all local records stored in IndexedDB (products, clients, invoices, etc.)
+        if (rememberMe === 'true' && rememberedEmail) {
+          localStorage.setItem('gestiva-remembered-email', rememberedEmail)
+          localStorage.setItem('gestiva-remember-me', 'true')
+        }
+        localStorage.setItem('gestiva-explicit-logout', 'true')
+
+        // Clear IndexedDB cache
         try {
           const { clear } = await import('idb-keyval')
           await clear()
-        } catch (e) {
-          console.warn('Error clearing IndexedDB on logout:', e)
-        }
+        } catch (e) {}
 
         set({ isAuthenticated: false, user: null })
         window.location.href = '/auth'

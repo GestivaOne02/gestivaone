@@ -528,36 +528,12 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('gestiva-remembered-email')
-    const savedPass = localStorage.getItem('gestiva-remembered-password')
-    const savedRemember = localStorage.getItem('gestiva-remember-me') === 'true'
-    const explicitLogout = localStorage.getItem('gestiva-explicit-logout') === 'true'
-
     if (savedEmail) {
       setEmail(savedEmail)
     }
-
-    let decodedPass = ''
-    if (savedPass) {
-      try {
-        decodedPass = atob(savedPass)
-        setPass(decodedPass)
-      } catch (e) {
-        console.error('Error decoding saved password:', e)
-      }
-    }
-
-    if (savedRemember && savedEmail && decodedPass && !explicitLogout) {
-      const autoLogin = async () => {
-        const result = await login(savedEmail.trim().toLowerCase(), decodedPass)
-        if (result.success) {
-          toast.success('Sesión restaurada automáticamente')
-          localStorage.removeItem('gestiva-explicit-logout')
-          goToDashboard(navigate)
-        }
-      }
-      autoLogin()
-    }
-  }, [login, navigate])
+    // Security cleanup: purge any legacy plaintext password stored in localStorage
+    localStorage.removeItem('gestiva-remembered-password')
+  }, [])
 
   // Handle social autofill and password dots visual animation
   useEffect(() => {
@@ -607,14 +583,13 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
 
     if (rememberMe && !socialAutofill) {
       localStorage.setItem('gestiva-remembered-email', email.trim().toLowerCase())
-      localStorage.setItem('gestiva-remembered-password', btoa(pass))
       localStorage.setItem('gestiva-remember-me', 'true')
       localStorage.removeItem('gestiva-explicit-logout')
     } else if (!socialAutofill) {
       localStorage.removeItem('gestiva-remembered-email')
-      localStorage.removeItem('gestiva-remembered-password')
       localStorage.setItem('gestiva-remember-me', 'false')
     }
+    localStorage.removeItem('gestiva-remembered-password')
 
     toast.success('¡Bienvenido!')
     if (onClearAutofill) onClearAutofill()

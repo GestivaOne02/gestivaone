@@ -97,72 +97,10 @@ export default function App() {
     const lastVersion = localStorage.getItem('gestiva-app-version')
     const hasVersionChanged = lastVersion !== CURRENT_VERSION
 
-    const ACTIVE_KEYS = [
-      'gestiva-app-version',
-      'gestiva-auth-v2.2',
-      'gestiva-currency-v2',
-      'gestiva-expenses-v2',
-      'gestiva-notifications',
-      'gestiva-settings-v2.3',
-      'gestiva-ui',
-      'gestiva-cookies-accepted',
-      'gestiva-remembered-email',
-      'gestiva-remembered-password',
-      'gestiva-remember-me',
-      'gestiva-active-session-token',
-      'gestiva-explicit-logout'
-    ]
-
-    // If version changed, perform a full purge of all non-essential data
     if (hasVersionChanged) {
-      // Clear active keys too to force a complete reset of store states to avoid mismatches
-      const keysToForceClear = [
-        'gestiva-auth-v2.2',
-        'gestiva-settings-v2.3',
-        'gestiva-notifications',
-        'gestiva-expenses-v2',
-        'gestiva-currency-v2',
-        'gestiva-ui',
-        'gestiva-cookies-accepted'
-      ]
-      keysToForceClear.forEach(k => localStorage.removeItem(k))
-    }
-
-    // Clean up any remaining/legacy keys starting with 'gestiva-'
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i)
-        if (key && key.startsWith('gestiva-') && !ACTIVE_KEYS.includes(key)) {
-          localStorage.removeItem(key)
-          i--
-        }
-      }
-    } catch (e) {
-      console.error('Error cleaning legacy localStorage:', e)
-    }
-
-    // Only clear heavy caches and workers if the version has changed
-    if (hasVersionChanged) {
-      // Clear CacheStorage (browser cache buckets)
-      if (window.caches) {
-        caches.keys().then((keys) => {
-          keys.forEach((key) => {
-            caches.delete(key)
-          })
-        }).catch(err => console.error('Error clearing CacheStorage:', err))
-      }
-
-      // Unregister legacy Service Workers
-      if (navigator.serviceWorker) {
-        navigator.serviceWorker.getRegistrations().then((registrations) => {
-          registrations.forEach((registration) => {
-            registration.unregister()
-          })
-        }).catch(err => console.error('Error unregistering ServiceWorkers:', err))
-      }
-
+      const obsoleteKeys = ['gestiva-expenses-v1', 'gestiva-ui-legacy', 'gestiva-remembered-password']
+      obsoleteKeys.forEach((k) => localStorage.removeItem(k))
       localStorage.setItem('gestiva-app-version', CURRENT_VERSION)
-      window.location.reload()
     }
   }, [])
 
