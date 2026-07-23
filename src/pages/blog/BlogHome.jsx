@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { FileText, Calendar, User, ArrowRight, Sparkles, BookOpen } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 const plannedArticles = [
   {
@@ -59,7 +59,7 @@ export default function BlogHome() {
       <header className="py-16 bg-surface-900 border-b border-subtle text-center space-y-4">
         <div className="max-w-3xl mx-auto px-4 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-            <BookOpen size={14} />
+            <Icon name="BookOpen" size={14}  />
             Blog & Recursos Educativos
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Conocimiento para Hacer Crecer tu <span className="text-brand-400">Empresa</span></h1>
@@ -84,7 +84,7 @@ export default function BlogHome() {
 
               <div className="pt-4 border-t border-subtle flex items-center justify-between text-[11px] text-muted-500 font-semibold">
                 <div className="flex items-center gap-1.5">
-                  <Calendar size={13} />
+                  <Icon name="Calendar" size={13}  />
                   <span>{art.date}</span>
                 </div>
                 <span>{art.readTime} lectura</span>

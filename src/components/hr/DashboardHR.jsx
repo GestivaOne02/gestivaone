@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts'
-import { Users, DollarSign, Calendar, TrendingUp, AlertTriangle, ShieldCheck, FileText } from 'lucide-react'
+
 import Badge from '@/components/ui/Badge'
+import Icon from '@/components/ui/Icon';
 
 const COLORS = ['#8B5CF6', '#EC4899', '#3B82F6', '#10B981', '#F59E0B']
 
@@ -68,7 +69,7 @@ export default function DashboardHR({ employees, runs, vacations, candidates }) 
           className="liquid-glass p-5 rounded-3xl flex items-center gap-4 border border-subtle"
         >
           <div className="p-3 bg-brand-500/10 text-brand-400 rounded-2xl">
-            <Users size={24} />
+            <Icon name="Users" size={24}  />
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-400 uppercase tracking-widest">Colaboradores</p>
@@ -81,7 +82,7 @@ export default function DashboardHR({ employees, runs, vacations, candidates }) 
           className="liquid-glass p-5 rounded-3xl flex items-center gap-4 border border-subtle"
         >
           <div className="p-3 bg-success-500/10 text-success-400 rounded-2xl">
-            <DollarSign size={24} />
+            <Icon name="DollarSign" size={24}  />
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-400 uppercase tracking-widest">Costo Mensual Base</p>
@@ -96,7 +97,7 @@ export default function DashboardHR({ employees, runs, vacations, candidates }) 
           className="liquid-glass p-5 rounded-3xl flex items-center gap-4 border border-subtle"
         >
           <div className="p-3 bg-warning-500/10 text-warning-400 rounded-2xl">
-            <Calendar size={24} />
+            <Icon name="Calendar" size={24}  />
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-400 uppercase tracking-widest">Vacaciones Pendientes</p>
@@ -109,7 +110,7 @@ export default function DashboardHR({ employees, runs, vacations, candidates }) 
           className="liquid-glass p-5 rounded-3xl flex items-center gap-4 border border-subtle"
         >
           <div className="p-3 bg-pink-500/10 text-pink-400 rounded-2xl">
-            <TrendingUp size={24} />
+            <Icon name="TrendingUp" size={24}  />
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-400 uppercase tracking-widest">Candidatos en Proceso</p>
@@ -200,13 +201,13 @@ export default function DashboardHR({ employees, runs, vacations, candidates }) 
         {/* IA / Heuristics Alert Center */}
         <div className="bg-surface-800 border border-subtle rounded-3xl p-5 md:p-6 shadow-sm space-y-4">
           <h3 className="text-xs font-black uppercase tracking-widest text-muted-400 flex items-center gap-1.5">
-            <AlertTriangle size={14} className="text-warning-500" />
+            <Icon name="AlertTriangle" size={14} className="text-warning-500"  />
             Alertas y Detección de Anomalías (Heurística)
           </h3>
           <div className="space-y-3 max-h-[200px] overflow-y-auto pr-1">
             {alerts.length === 0 ? (
               <div className="flex items-center gap-2 p-3 bg-success-500/5 border border-success-500/10 rounded-2xl text-[11px] text-success-400 font-bold">
-                <ShieldCheck size={14} />
+                <Icon name="ShieldCheck" size={14}  />
                 No se detectaron inconsistencias ni anomalías salariales. Todo al día.
               </div>
             ) : (
@@ -219,7 +220,7 @@ export default function DashboardHR({ employees, runs, vacations, candidates }) 
                       : 'bg-warning-500/10 border-warning-500/20 text-warning-400'
                   }`}
                 >
-                  <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                  <Icon name="AlertTriangle" size={14} className="shrink-0 mt-0.5"  />
                   <p>{alert.text}</p>
                 </div>
               ))
@@ -230,7 +231,7 @@ export default function DashboardHR({ employees, runs, vacations, candidates }) 
         {/* Analytics Cross-cutting Insight */}
         <div className="bg-surface-800 border border-subtle rounded-3xl p-5 md:p-6 shadow-sm flex flex-col justify-between space-y-4">
           <h3 className="text-xs font-black uppercase tracking-widest text-muted-400 flex items-center gap-1.5">
-            <TrendingUp size={14} className="text-brand-500" />
+            <Icon name="TrendingUp" size={14} className="text-brand-500"  />
             Salud Financiera & Eficiencia del Personal
           </h3>
           

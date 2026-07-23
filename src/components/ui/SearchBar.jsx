@@ -1,11 +1,12 @@
-import { Search, X } from 'lucide-react'
+
 import { useId } from 'react'
+import Icon from '@/components/ui/Icon';
 
 export default function SearchBar({ value, onChange, placeholder = 'Buscar...', onClear }) {
   const searchId = useId()
   return (
     <div className="relative">
-      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-400 pointer-events-none" />
+      <Icon name="Search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-400 pointer-events-none"  />
       <input
         id={searchId}
         name="search"
@@ -20,7 +21,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Buscar...', 
           onClick={() => { onChange(''); onClear?.() }}
           className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-400 hover:text-white p-0.5 rounded"
         >
-          <X size={12} />
+          <Icon name="X" size={12}  />
         </button>
       )}
     </div>

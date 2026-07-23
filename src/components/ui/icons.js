@@ -1,0 +1,329 @@
+import ActivityIcon from '@mui/icons-material/ShowChart';
+import AlertCircleIcon from '@mui/icons-material/ErrorOutlined';
+import AlertTriangleIcon from '@mui/icons-material/WarningAmber';
+import AlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import AlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import AlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import ArrowDownIcon from '@mui/icons-material/ArrowDownward';
+import ArrowDownRightIcon from '@mui/icons-material/SouthEast';
+import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
+import ArrowRightIcon from '@mui/icons-material/ArrowForward';
+import ArrowUpIcon from '@mui/icons-material/ArrowUpward';
+import ArrowUpRightIcon from '@mui/icons-material/NorthEast';
+import AwardIcon from '@mui/icons-material/EmojiEvents';
+import BarChart3Icon from '@mui/icons-material/BarChart';
+import BarcodeIcon from '@mui/icons-material/QrCodeScanner';
+import BellIcon from '@mui/icons-material/Notifications';
+import BookOpenIcon from '@mui/icons-material/MenuBook';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BoxIcon from '@mui/icons-material/Inventory2';
+import BriefcaseIcon from '@mui/icons-material/Work';
+import BuildingIcon from '@mui/icons-material/Business';
+import Building2Icon from '@mui/icons-material/Apartment';
+import CalculatorIcon from '@mui/icons-material/Calculate';
+import CalendarIcon from '@mui/icons-material/CalendarToday';
+import CalendarDaysIcon from '@mui/icons-material/CalendarMonth';
+import CameraIcon from '@mui/icons-material/PhotoCamera';
+import CheckIcon from '@mui/icons-material/Check';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircle2Icon from '@mui/icons-material/CheckCircleOutlined';
+import ChevronDownIcon from '@mui/icons-material/ExpandMore';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronUpIcon from '@mui/icons-material/ExpandLess';
+import ClipboardIcon from '@mui/icons-material/Assignment';
+import ClockIcon from '@mui/icons-material/AccessTime';
+import CloudIcon from '@mui/icons-material/Cloud';
+import CoinsIcon from '@mui/icons-material/MonetizationOn';
+import ColumnsIcon from '@mui/icons-material/ViewColumn';
+import ContactIcon from '@mui/icons-material/ContactPage';
+import CookieIcon from '@mui/icons-material/Cookie';
+import CopyIcon from '@mui/icons-material/ContentCopy';
+import CpuIcon from '@mui/icons-material/Memory';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import CrownIcon from '@mui/icons-material/MilitaryTech';
+import DatabaseIcon from '@mui/icons-material/Storage';
+import DollarSignIcon from '@mui/icons-material/AttachMoney';
+import DownloadIcon from '@mui/icons-material/FileDownload';
+import EditIcon from '@mui/icons-material/Edit';
+import Edit2Icon from '@mui/icons-material/EditNote';
+import Edit3Icon from '@mui/icons-material/BorderColor';
+import ExternalLinkIcon from '@mui/icons-material/OpenInNew';
+import EyeIcon from '@mui/icons-material/Visibility';
+import EyeOffIcon from '@mui/icons-material/VisibilityOff';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import FileCheckIcon from '@mui/icons-material/Task';
+import FilePlusIcon from '@mui/icons-material/NoteAdd';
+import FileSpreadsheetIcon from '@mui/icons-material/TableChart';
+import FileTextIcon from '@mui/icons-material/Description';
+import FileUpIcon from '@mui/icons-material/UploadFile';
+import FilterIcon from '@mui/icons-material/FilterList';
+import FolderIcon from '@mui/icons-material/Folder';
+import FolderClosedIcon from '@mui/icons-material/FolderZip';
+import FolderPlusIcon from '@mui/icons-material/CreateNewFolder';
+import GemIcon from '@mui/icons-material/Diamond';
+import GlobeIcon from '@mui/icons-material/Language';
+import GripVerticalIcon from '@mui/icons-material/DragHandle';
+import HashIcon from '@mui/icons-material/Tag';
+import HelpCircleIcon from '@mui/icons-material/HelpOutlined';
+import HistoryIcon from '@mui/icons-material/History';
+import HomeIcon from '@mui/icons-material/Home';
+import ImageIcon from '@mui/icons-material/Image';
+import ImagePlusIcon from '@mui/icons-material/AddPhotoAlternate';
+import InfoIcon from '@mui/icons-material/Info';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import KeyIcon from '@mui/icons-material/Key';
+import LandmarkIcon from '@mui/icons-material/AccountBalance';
+import LanguagesIcon from '@mui/icons-material/Translate';
+import LayersIcon from '@mui/icons-material/Layers';
+import LayoutDashboardIcon from '@mui/icons-material/Dashboard';
+import LayoutGridIcon from '@mui/icons-material/GridView';
+import LinkIcon from '@mui/icons-material/Link';
+import Link2Icon from '@mui/icons-material/AddLink';
+import Loader2Icon from '@mui/icons-material/Autorenew';
+import LockIcon from '@mui/icons-material/Lock';
+import LogOutIcon from '@mui/icons-material/Logout';
+import MailIcon from '@mui/icons-material/Email';
+import MapPinIcon from '@mui/icons-material/LocationOn';
+import Maximize2Icon from '@mui/icons-material/Fullscreen';
+import MenuIcon from '@mui/icons-material/Menu';
+import MessageCircleIcon from '@mui/icons-material/ChatBubble';
+import MessageSquareIcon from '@mui/icons-material/Chat';
+import Minimize2Icon from '@mui/icons-material/FullscreenExit';
+import MinusIcon from '@mui/icons-material/Remove';
+import MonitorIcon from '@mui/icons-material/DesktopWindows';
+import MoonIcon from '@mui/icons-material/DarkMode';
+import MoreVerticalIcon from '@mui/icons-material/MoreVert';
+import MousePointerClickIcon from '@mui/icons-material/TouchApp';
+import PackageIcon from '@mui/icons-material/Inventory';
+import PackagePlusIcon from '@mui/icons-material/AddBox';
+import PaletteIcon from '@mui/icons-material/Palette';
+import PaperclipIcon from '@mui/icons-material/AttachFile';
+import PartyPopperIcon from '@mui/icons-material/Celebration';
+import PenIcon from '@mui/icons-material/Create';
+import PercentIcon from '@mui/icons-material/Percent';
+import PhoneIcon from '@mui/icons-material/Phone';
+import PlaneIcon from '@mui/icons-material/Flight';
+import PlugZapIcon from '@mui/icons-material/Power';
+import PlusIcon from '@mui/icons-material/Add';
+import PrinterIcon from '@mui/icons-material/Print';
+import ReceiptIcon from '@mui/icons-material/ReceiptLong';
+import RefreshCwIcon from '@mui/icons-material/Refresh';
+import RotateCwIcon from '@mui/icons-material/RotateRight';
+import SaveIcon from '@mui/icons-material/Save';
+import ScanLineIcon from '@mui/icons-material/QrCodeScanner';
+import SearchIcon from '@mui/icons-material/Search';
+import SendIcon from '@mui/icons-material/Send';
+import ServerIcon from '@mui/icons-material/Dns';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ShieldIcon from '@mui/icons-material/Shield';
+import ShieldAlertIcon from '@mui/icons-material/GppBad';
+import ShieldCheckIcon from '@mui/icons-material/VerifiedUser';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import SlidersHorizontalIcon from '@mui/icons-material/Tune';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
+import SmileIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import SnowflakeIcon from '@mui/icons-material/AcUnit';
+import SparklesIcon from '@mui/icons-material/AutoAwesome';
+import StarIcon from '@mui/icons-material/Star';
+import StoreIcon from '@mui/icons-material/Storefront';
+import SunIcon from '@mui/icons-material/LightMode';
+import TagIcon from '@mui/icons-material/LocalOffer';
+import ThermometerSunIcon from '@mui/icons-material/Thermostat';
+import TrashIcon from '@mui/icons-material/Delete';
+import Trash2Icon from '@mui/icons-material/DeleteOutlined';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TruckIcon from '@mui/icons-material/LocalShipping';
+import TypeIcon from '@mui/icons-material/TextFields';
+import UnlockIcon from '@mui/icons-material/LockOpen';
+import UploadIcon from '@mui/icons-material/FileUpload';
+import UserIcon from '@mui/icons-material/Person';
+import UserCheckIcon from '@mui/icons-material/HowToReg';
+import UserPlusIcon from '@mui/icons-material/PersonAdd';
+import UsersIcon from '@mui/icons-material/People';
+import Users2Icon from '@mui/icons-material/Groups';
+import UtensilsIcon from '@mui/icons-material/Restaurant';
+import WalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import WifiIcon from '@mui/icons-material/Wifi';
+import WifiOffIcon from '@mui/icons-material/WifiOff';
+import WrenchIcon from '@mui/icons-material/Build';
+import CloseIcon from '@mui/icons-material/Close';
+import YoutubeIcon from '@mui/icons-material/YouTube';
+import ZapIcon from '@mui/icons-material/FlashOn';
+import ZapOffIcon from '@mui/icons-material/FlashOff';
+
+export const icons = {
+  // Common alias keys
+  home: HomeIcon,
+  search: SearchIcon,
+  settings: SettingsIcon,
+  dashboard: LayoutDashboardIcon,
+  user: UserIcon,
+  inventory: PackageIcon,
+  cart: ShoppingCartIcon,
+  receipt: ReceiptIcon,
+  analytics: BarChart3Icon,
+  notification: BellIcon,
+  menu: MenuIcon,
+  close: CloseIcon,
+  x: CloseIcon,
+
+  // Direct Lucide PascalCase & camelCase mapping for 100% project-wide compatibility
+  Activity: ActivityIcon, activity: ActivityIcon,
+  AlertCircle: AlertCircleIcon, alertCircle: AlertCircleIcon,
+  AlertTriangle: AlertTriangleIcon, alertTriangle: AlertTriangleIcon,
+  AlignCenter: AlignCenterIcon, alignCenter: AlignCenterIcon,
+  AlignLeft: AlignLeftIcon, alignLeft: AlignLeftIcon,
+  AlignRight: AlignRightIcon, alignRight: AlignRightIcon,
+  Archive: ArchiveIcon, archive: ArchiveIcon,
+  ArrowDown: ArrowDownIcon, arrowDown: ArrowDownIcon,
+  ArrowDownRight: ArrowDownRightIcon, arrowDownRight: ArrowDownRightIcon,
+  ArrowLeft: ArrowLeftIcon, arrowLeft: ArrowLeftIcon,
+  ArrowRight: ArrowRightIcon, arrowRight: ArrowRightIcon,
+  ArrowUp: ArrowUpIcon, arrowUp: ArrowUpIcon,
+  ArrowUpRight: ArrowUpRightIcon, arrowUpRight: ArrowUpRightIcon,
+  Award: AwardIcon, award: AwardIcon,
+  BarChart3: BarChart3Icon, barChart3: BarChart3Icon, barChart: BarChart3Icon,
+  Barcode: BarcodeIcon, barcode: BarcodeIcon,
+  Bell: BellIcon, bell: BellIcon,
+  BookOpen: BookOpenIcon, bookOpen: BookOpenIcon,
+  Bookmark: BookmarkIcon, bookmark: BookmarkIcon,
+  Box: BoxIcon, box: BoxIcon,
+  Briefcase: BriefcaseIcon, briefcase: BriefcaseIcon,
+  Building: BuildingIcon, building: BuildingIcon,
+  Building2: Building2Icon, building2: Building2Icon,
+  Calculator: CalculatorIcon, calculator: CalculatorIcon,
+  Calendar: CalendarIcon, calendar: CalendarIcon,
+  CalendarDays: CalendarDaysIcon, calendarDays: CalendarDaysIcon,
+  Camera: CameraIcon, camera: CameraIcon,
+  Check: CheckIcon, check: CheckIcon,
+  CheckCircle: CheckCircleIcon, checkCircle: CheckCircleIcon,
+  CheckCircle2: CheckCircle2Icon, checkCircle2: CheckCircle2Icon,
+  ChevronDown: ChevronDownIcon, chevronDown: ChevronDownIcon,
+  ChevronLeft: ChevronLeftIcon, chevronLeft: ChevronLeftIcon,
+  ChevronRight: ChevronRightIcon, chevronRight: ChevronRightIcon,
+  ChevronUp: ChevronUpIcon, chevronUp: ChevronUpIcon,
+  Clipboard: ClipboardIcon, clipboard: ClipboardIcon,
+  Clock: ClockIcon, clock: ClockIcon,
+  Cloud: CloudIcon, cloud: CloudIcon,
+  Coins: CoinsIcon, coins: CoinsIcon,
+  Columns: ColumnsIcon, columns: ColumnsIcon,
+  Contact: ContactIcon, contact: ContactIcon,
+  Cookie: CookieIcon, cookie: CookieIcon,
+  Copy: CopyIcon, copy: CopyIcon,
+  Cpu: CpuIcon, cpu: CpuIcon,
+  CreditCard: CreditCardIcon, creditCard: CreditCardIcon,
+  Crown: CrownIcon, crown: CrownIcon,
+  Database: DatabaseIcon, database: DatabaseIcon,
+  DollarSign: DollarSignIcon, dollarSign: DollarSignIcon,
+  Download: DownloadIcon, download: DownloadIcon,
+  Edit: EditIcon, edit: EditIcon,
+  Edit2: Edit2Icon, edit2: Edit2Icon,
+  Edit3: Edit3Icon, edit3: Edit3Icon,
+  ExternalLink: ExternalLinkIcon, externalLink: ExternalLinkIcon,
+  Eye: EyeIcon, eye: EyeIcon,
+  EyeOff: EyeOffIcon, eyeOff: EyeOffIcon,
+  Facebook: FacebookIcon, facebook: FacebookIcon,
+  FileCheck: FileCheckIcon, fileCheck: FileCheckIcon,
+  FilePlus: FilePlusIcon, filePlus: FilePlusIcon,
+  FileSpreadsheet: FileSpreadsheetIcon, fileSpreadsheet: FileSpreadsheetIcon,
+  FileText: FileTextIcon, fileText: FileTextIcon,
+  FileUp: FileUpIcon, fileUp: FileUpIcon,
+  Filter: FilterIcon, filter: FilterIcon,
+  Folder: FolderIcon, folder: FolderIcon,
+  FolderClosed: FolderClosedIcon, folderClosed: FolderClosedIcon,
+  FolderPlus: FolderPlusIcon, folderPlus: FolderPlusIcon,
+  Gem: GemIcon, gem: GemIcon,
+  Globe: GlobeIcon, globe: GlobeIcon,
+  GripVertical: GripVerticalIcon, gripVertical: GripVerticalIcon,
+  Hash: HashIcon, hash: HashIcon,
+  HelpCircle: HelpCircleIcon, helpCircle: HelpCircleIcon,
+  History: HistoryIcon, history: HistoryIcon,
+  Home: HomeIcon, home: HomeIcon,
+  Image: ImageIcon, image: ImageIcon,
+  ImagePlus: ImagePlusIcon, imagePlus: ImagePlusIcon,
+  Info: InfoIcon, info: InfoIcon,
+  Instagram: InstagramIcon, instagram: InstagramIcon,
+  Key: KeyIcon, key: KeyIcon,
+  Landmark: LandmarkIcon, landmark: LandmarkIcon,
+  Languages: LanguagesIcon, languages: LanguagesIcon,
+  Layers: LayersIcon, layers: LayersIcon,
+  LayoutDashboard: LayoutDashboardIcon, layoutDashboard: LayoutDashboardIcon,
+  LayoutGrid: LayoutGridIcon, layoutGrid: LayoutGridIcon,
+  Link: LinkIcon, link: LinkIcon,
+  Link2: Link2Icon, link2: Link2Icon,
+  Loader2: Loader2Icon, loader2: Loader2Icon,
+  Lock: LockIcon, lock: LockIcon,
+  LogOut: LogOutIcon, logOut: LogOutIcon, logout: LogOutIcon,
+  Mail: MailIcon, mail: MailIcon,
+  MapPin: MapPinIcon, mapPin: MapPinIcon,
+  Maximize2: Maximize2Icon, maximize2: Maximize2Icon,
+  Menu: MenuIcon, menu: MenuIcon,
+  MessageCircle: MessageCircleIcon, messageCircle: MessageCircleIcon,
+  MessageSquare: MessageSquareIcon, messageSquare: MessageSquareIcon,
+  Minimize2: Minimize2Icon, minimize2: Minimize2Icon,
+  Minus: MinusIcon, minus: MinusIcon,
+  Monitor: MonitorIcon, monitor: MonitorIcon,
+  Moon: MoonIcon, moon: MoonIcon,
+  MoreVertical: MoreVerticalIcon, moreVertical: MoreVerticalIcon,
+  MousePointerClick: MousePointerClickIcon, mousePointerClick: MousePointerClickIcon,
+  Package: PackageIcon, package: PackageIcon,
+  PackagePlus: PackagePlusIcon, packagePlus: PackagePlusIcon,
+  Palette: PaletteIcon, palette: PaletteIcon,
+  Paperclip: PaperclipIcon, paperclip: PaperclipIcon,
+  PartyPopper: PartyPopperIcon, partyPopper: PartyPopperIcon,
+  Pen: PenIcon, pen: PenIcon,
+  Percent: PercentIcon, percent: PercentIcon,
+  Phone: PhoneIcon, phone: PhoneIcon,
+  Plane: PlaneIcon, plane: PlaneIcon,
+  PlugZap: PlugZapIcon, plugZap: PlugZapIcon,
+  Plus: PlusIcon, plus: PlusIcon,
+  Printer: PrinterIcon, printer: PrinterIcon,
+  Receipt: ReceiptIcon, receipt: ReceiptIcon,
+  RefreshCw: RefreshCwIcon, refreshCw: RefreshCwIcon,
+  RotateCw: RotateCwIcon, rotateCw: RotateCwIcon,
+  Save: SaveIcon, save: SaveIcon,
+  ScanLine: ScanLineIcon, scanLine: ScanLineIcon,
+  Search: SearchIcon, search: SearchIcon,
+  Send: SendIcon, send: SendIcon,
+  Server: ServerIcon, server: ServerIcon,
+  Settings: SettingsIcon, settings: SettingsIcon,
+  Shield: ShieldIcon, shield: ShieldIcon,
+  ShieldAlert: ShieldAlertIcon, shieldAlert: ShieldAlertIcon,
+  ShieldCheck: ShieldCheckIcon, shieldCheck: ShieldCheckIcon,
+  ShoppingBag: ShoppingBagIcon, shoppingBag: ShoppingBagIcon,
+  ShoppingCart: ShoppingCartIcon, shoppingCart: ShoppingCartIcon,
+  SlidersHorizontal: SlidersHorizontalIcon, slidersHorizontal: SlidersHorizontalIcon,
+  Smartphone: SmartphoneIcon, smartphone: SmartphoneIcon,
+  Smile: SmileIcon, smile: SmileIcon,
+  Snowflake: SnowflakeIcon, snowflake: SnowflakeIcon,
+  Sparkles: SparklesIcon, sparkles: SparklesIcon,
+  Star: StarIcon, star: StarIcon,
+  Store: StoreIcon, store: StoreIcon,
+  Sun: SunIcon, sun: SunIcon,
+  Tag: TagIcon, tag: TagIcon,
+  ThermometerSun: ThermometerSunIcon, thermometerSun: ThermometerSunIcon,
+  Trash: TrashIcon, trash: TrashIcon,
+  Trash2: Trash2Icon, trash2: Trash2Icon,
+  TrendingUp: TrendingUpIcon, trendingUp: TrendingUpIcon,
+  Truck: TruckIcon, truck: TruckIcon,
+  Type: TypeIcon, type: TypeIcon,
+  Unlock: UnlockIcon, unlock: UnlockIcon,
+  Upload: UploadIcon, upload: UploadIcon,
+  User: UserIcon, user: UserIcon,
+  UserCheck: UserCheckIcon, userCheck: UserCheckIcon,
+  UserPlus: UserPlusIcon, userPlus: UserPlusIcon,
+  Users: UsersIcon, users: UsersIcon,
+  Users2: Users2Icon, users2: Users2Icon,
+  Utensils: UtensilsIcon, utensils: UtensilsIcon,
+  Wallet: WalletIcon, wallet: WalletIcon,
+  Wifi: WifiIcon, wifi: WifiIcon,
+  WifiOff: WifiOffIcon, wifiOff: WifiOffIcon,
+  Wrench: WrenchIcon, wrench: WrenchIcon,
+  X: CloseIcon, Close: CloseIcon,
+  Youtube: YoutubeIcon, youtube: YoutubeIcon,
+  Zap: ZapIcon, zap: ZapIcon,
+  ZapOff: ZapOffIcon, zapOff: ZapOffIcon
+};

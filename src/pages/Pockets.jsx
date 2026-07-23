@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, FolderPlus, Coins, ArrowUpRight, ArrowDownRight, Trash2, Edit, CreditCard, Box as BoxIcon, Receipt } from 'lucide-react'
+
 import { usePocketStore } from '@/store/usePocketStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
@@ -11,6 +11,7 @@ import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -218,7 +219,7 @@ export default function Pockets({ isNested = false }) {
             variant="primary"
             size="sm"
             pill
-            icon={<Plus size={14} />}
+            icon={<Icon name="Plus" size={14}  />}
             onClick={() => setShowAddModal(true)}
             title="Crear un nuevo bolsillo con meta de ahorro o desvío automático de ventas"
             >
@@ -233,7 +234,7 @@ export default function Pockets({ isNested = false }) {
             variant="primary"
             size="sm"
             pill
-            icon={<Plus size={14} />}
+            icon={<Icon name="Plus" size={14}  />}
             onClick={() => setShowAddModal(true)}
             title="Crear un nuevo bolsillo con meta de ahorro o desvío automático de ventas"
           >
@@ -267,7 +268,7 @@ export default function Pockets({ isNested = false }) {
           </>
         ) : pockets.length === 0 ? (
           <div className="col-span-full bg-surface-800/40 border border-subtle border-dashed rounded-3xl p-12 text-center text-muted-400 flex flex-col items-center justify-center gap-3 shadow-glow-sm">
-            <FolderPlus size={36} className="text-muted-500" />
+            <Icon name="FolderPlus" size={36} className="text-muted-500"  />
             <div>
               <p className="text-sm font-bold text-foreground">No tienes bolsillos activos</p>
               <p className="text-xs text-muted-500 mt-1 max-w-sm">Crea bolsillos para separar fondos específicos, apartar dinero para impuestos o deducir tus egresos operacionales de forma controlada.</p>
@@ -311,9 +312,9 @@ export default function Pockets({ isNested = false }) {
                 {/* Info Header */}
                 <div>
                   <div className="flex items-center gap-2">
-                    {p.type === 'tarjeta' && <CreditCard size={15} className="text-brand-400" />}
-                    {p.type === 'caja' && <BoxIcon size={15} className="text-success-400" />}
-                    {p.type === 'factura' && <Receipt size={15} className="text-warning-400" />}
+                    {p.type === 'tarjeta' && <Icon name="CreditCard" size={15} className="text-brand-400"  />}
+                    {p.type === 'caja' && <Icon name="Box" size={15} className="text-success-400"  />}
+                    {p.type === 'factura' && <Icon name="Receipt" size={15} className="text-warning-400"  />}
                     <span className="text-[10px] font-bold text-muted-400 uppercase tracking-widest">{p.type === 'caja' ? 'Caja Fuerte' : p.type === 'tarjeta' ? 'Tarjeta' : 'Factura fija'}</span>
                   </div>
                   <h3 className="text-base font-bold text-foreground mt-1.5 truncate max-w-[180px]">{p.name}</h3>
@@ -359,7 +360,7 @@ export default function Pockets({ isNested = false }) {
                     title="Añadir dinero manualmente a este bolsillo"
                     className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl bg-brand-600/10 hover:bg-brand-600/20 text-brand-400 text-xs font-bold transition-all"
                   >
-                    <ArrowUpRight size={12} />
+                    <Icon name="ArrowUpRight" size={12}  />
                     Depositar
                   </button>
                   <button
@@ -367,7 +368,7 @@ export default function Pockets({ isNested = false }) {
                     title="Retirar saldo de este bolsillo para moverlo al balance general"
                     className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-xl bg-surface-700 hover:bg-surface-650 text-muted-300 text-xs font-bold transition-all"
                   >
-                    <ArrowDownRight size={12} />
+                    <Icon name="ArrowDownRight" size={12}  />
                     Retirar
                   </button>
                   <button
@@ -375,14 +376,14 @@ export default function Pockets({ isNested = false }) {
                     className="p-1.5 rounded-xl bg-brand-500/10 hover:bg-brand-500/30 text-brand-400 transition-all shrink-0"
                     title="Editar bolsillo"
                   >
-                    <Edit size={12} />
+                    <Icon name="Edit" size={12}  />
                   </button>
                   <button
                     onClick={() => setDeleteConfirmId(p.id)}
                     className="p-1.5 rounded-xl bg-danger-900/10 hover:bg-danger-900/30 text-danger-400 transition-all shrink-0"
                     title="Eliminar este bolsillo permanentemente y retirar su saldo"
                   >
-                    <Trash2 size={12} />
+                    <Icon name="Trash2" size={12}  />
                   </button>
                 </div>
               </motion.div>

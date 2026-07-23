@@ -1,5 +1,6 @@
-import { Check, Clock, AlertTriangle, HelpCircle } from 'lucide-react'
+
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 // Icon-only colors for status mode
 const statusIcons = {

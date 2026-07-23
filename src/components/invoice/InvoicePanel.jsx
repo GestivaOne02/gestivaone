@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Trash2, Plus, Minus, ChevronRight, ChevronDown, FileText, User, X, Check, GripVertical, Building2, Globe, History, ArrowLeft, Download, ScanLine, Wallet, Search, UserPlus, Menu, LogOut, Settings } from 'lucide-react'
+
 import { useCartStore, selectSubtotal } from '@/store/useCartStore'
 import { useClientStore } from '@/store/useClientStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -30,6 +30,7 @@ const TAX_RATES = {
   DOP: 0.18,
 }
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const PassportIcon = ({ size = 12, className = "" }) => (
   <svg
@@ -55,11 +56,11 @@ const PassportIcon = ({ size = 12, className = "" }) => (
 const getClientIcon = (docType) => {
   const code = String(docType)
   const cls = "text-brand-700 dark:text-brand-300 font-bold"
-  if (code === '13') return <User size={12} className={cls} />
-  if (code === '31') return <Building2 size={12} className={cls} />
-  if (code === '22') return <Globe size={12} className={cls} />
+  if (code === '13') return <Icon name="User" size={12} className={cls}  />
+  if (code === '31') return <Icon name="Building2" size={12} className={cls}  />
+  if (code === '22') return <Icon name="Globe" size={12} className={cls}  />
   if (code === '41') return <PassportIcon size={12} className={cls} />
-  return <User size={12} className={cls} />
+  return <Icon name="User" size={12} className={cls}  />
 }
 
 export default function InvoicePanel({ isMobile }) {
@@ -395,7 +396,7 @@ export default function InvoicePanel({ isMobile }) {
         <div className="flex items-center justify-between text-xs text-muted-400 py-0.5">
           <div onClick={toggleTax} className="flex items-center gap-2 cursor-pointer group">
             <div className={clsx("w-4 h-4 rounded border flex items-center justify-center transition-colors", includeTax ? "bg-brand-500 border-brand-500" : "bg-surface-700 border-subtle group-hover:border-surface-400")}>
-              {includeTax && <Check size={12} className="text-white" strokeWidth={3} />}
+              {includeTax && <Icon name="Check" size={12} className="text-white" strokeWidth={3}  />}
             </div>
             <span className={clsx("transition-colors select-none", includeTax ? "text-foreground font-semibold" : "text-muted-400 group-hover:text-muted-500")}>
               IVA ({(activeTaxRate * 100).toFixed(0)}%)
@@ -526,7 +527,7 @@ export default function InvoicePanel({ isMobile }) {
                 : "bg-surface-700/50 border-subtle text-muted-400 hover:border-surface-500 hover:text-foreground"
             )}
           >
-            <Plus size={10} /> Cargo
+            <Icon name="Plus" size={10}  /> Cargo
           </button>
           <button
             type="button"
@@ -541,7 +542,7 @@ export default function InvoicePanel({ isMobile }) {
                 : "bg-surface-700/50 border-subtle text-muted-400 hover:border-surface-500 hover:text-foreground"
             )}
           >
-            <Plus size={10} /> Descuento
+            <Icon name="Plus" size={10}  /> Descuento
           </button>
         </div>
       </div>
@@ -611,11 +612,11 @@ export default function InvoicePanel({ isMobile }) {
                   </div>
                   <div className="flex items-center gap-2 px-5 py-3 border-b border-subtle">
                     {mobileViewMode === 'history' ? (
-                      <History size={16} className="text-brand-400" />
+                      <Icon name="History" size={16} className="text-brand-400"  />
                     ) : isExpenseMode ? (
-                      <Wallet size={16} className="text-brand-400" />
+                      <Icon name="Wallet" size={16} className="text-brand-400"  />
                     ) : (
-                      <FileText size={16} className="text-brand-400" />
+                      <Icon name="FileText" size={16} className="text-brand-400"  />
                     )}
                     
                     <span className="text-sm font-bold flex-1 text-brand-600 dark:text-brand-400">
@@ -629,21 +630,21 @@ export default function InvoicePanel({ isMobile }) {
                           className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
                           title={isExpenseMode ? 'Volver a Ventas' : 'Registrar Egreso'}
                         >
-                          {isExpenseMode ? <FileText size={15} /> : <Wallet size={15} />}
+                          {isExpenseMode ? <Icon name="FileText" size={15}  /> : <Icon name="Wallet" size={15}  />}
                         </button>
                         <button
                           onClick={() => setScannerActive(!scannerActive)}
                           className={`p-1.5 rounded-lg transition-colors shrink-0 ${scannerActive ? 'bg-brand-600 text-white' : 'text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white'}`}
                           title={scannerActive ? 'Apagar Escáner' : 'Escáner Express'}
                         >
-                          <ScanLine size={15} />
+                          <Icon name="ScanLine" size={15}  />
                         </button>
                         <button
                           onClick={() => setMobileViewMode('history')}
                           className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
                           title="Historial de Facturas"
                         >
-                          <History size={15} />
+                          <Icon name="History" size={15}  />
                         </button>
                       </>
                     )}
@@ -653,7 +654,7 @@ export default function InvoicePanel({ isMobile }) {
                         className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors"
                         title="Factura en Tiempo Real"
                       >
-                        <FileText size={15} />
+                        <Icon name="FileText" size={15}  />
                       </button>
                     )}
                     {items.length > 0 && mobileViewMode === 'cart' && (
@@ -662,14 +663,14 @@ export default function InvoicePanel({ isMobile }) {
                         className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors"
                         title="Limpiar carrito"
                       >
-                        <Trash2 size={13} />
+                        <Icon name="Trash2" size={13}  />
                       </button>
                     )}
                     <button
                       onClick={togglePanel}
                       className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors"
                     >
-                      <ChevronDown size={16} />
+                      <Icon name="ChevronDown" size={16}  />
                     </button>
                   </div>
                 </div>
@@ -693,7 +694,7 @@ export default function InvoicePanel({ isMobile }) {
                             </p>
                           </div>
                           <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground">
-                            <X size={12} />
+                            <Icon name="X" size={12}  />
                           </button>
                         </div>
                       ) : (
@@ -707,7 +708,7 @@ export default function InvoicePanel({ isMobile }) {
                         {items.length === 0 ? (
                           <div className="flex flex-col items-center justify-center h-32 gap-3 text-center">
                             <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center">
-                              <ShoppingCart size={20} className="text-muted-400" />
+                              <Icon name="ShoppingCart" size={20} className="text-muted-400"  />
                             </div>
                             <p className="text-xs text-muted-400">El carrito está vacío.</p>
                           </div>
@@ -727,17 +728,17 @@ export default function InvoicePanel({ isMobile }) {
                                   <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
                                 </div>
                                 <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 p-0.5">
-                                  <X size={11} />
+                                  <Icon name="X" size={11}  />
                                 </button>
                               </div>
                               <div className="flex items-center justify-between mt-2">
                                 <div className="flex items-center gap-2">
                                   <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
-                                    <Minus size={10} />
+                                    <Icon name="Minus" size={10}  />
                                   </button>
                                   <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
                                   <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-6 h-6 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors">
-                                    <Plus size={10} />
+                                    <Icon name="Plus" size={10}  />
                                   </button>
                                 </div>
                                 <span className="text-xs font-bold text-foreground">{format(item.price * item.qty)}</span>
@@ -767,7 +768,7 @@ export default function InvoicePanel({ isMobile }) {
                   <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 pb-safe">
                     {invoices.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-muted-400 py-10">
-                        <FileText size={40} className="mb-3 opacity-20" />
+                        <Icon name="FileText" size={40} className="mb-3 opacity-20"  />
                         <p className="text-sm">No hay facturas registradas aún.</p>
                       </div>
                     ) : (
@@ -775,7 +776,7 @@ export default function InvoicePanel({ isMobile }) {
                         <div key={inv.id} className="flex flex-col bg-surface-700 border border-subtle rounded-xl p-3 gap-3">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-full bg-brand-500/10 flex items-center justify-center shrink-0">
-                              <FileText size={16} className="text-brand-400" />
+                              <Icon name="FileText" size={16} className="text-brand-400"  />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="text-xs font-bold text-foreground truncate">
@@ -799,7 +800,7 @@ export default function InvoicePanel({ isMobile }) {
                             onClick={() => handleDownloadInvoice(inv)}
                             className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-surface-600 hover:bg-brand-600 hover:text-white text-brand-400 transition-colors text-[11px] font-semibold"
                           >
-                            <Download size={12} />
+                            <Icon name="Download" size={12}  />
                             <span>Descargar PDF</span>
                           </button>
                         </div>
@@ -854,7 +855,7 @@ export default function InvoicePanel({ isMobile }) {
         className="fixed top-1/2 -translate-y-1/2 z-20 bg-brand-600 rounded-l-xl px-1.5 py-9 text-white hover:bg-brand-700 transition-colors shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.1)]"
       >
         <motion.div animate={{ rotate: panelOpen ? 0 : 180 }}>
-          <ChevronRight size={14} className="text-white" />
+          <Icon name="ChevronRight" size={14} className="text-white"  />
         </motion.div>
         {items.length > 0 && (
           <span className="absolute -top-1.5 -left-1.5 w-4 h-4 bg-brand-600 rounded-full text-[9px] text-white flex items-center justify-center font-bold">
@@ -886,7 +887,7 @@ export default function InvoicePanel({ isMobile }) {
         <div style={{ width: panelWidth }} className="h-full flex flex-col shrink-0">
           {/* Header */}
           <div className="flex items-center gap-2 px-4 h-16 border-b border-subtle shrink-0">
-            {isExpenseMode ? <Wallet size={16} className="text-brand-400" /> : <FileText size={16} className="text-brand-400" />}
+            {isExpenseMode ? <Icon name="Wallet" size={16} className="text-brand-400"  /> : <Icon name="FileText" size={16} className="text-brand-400"  />}
             <span className="text-sm font-bold flex-1 whitespace-nowrap text-brand-600 dark:text-brand-400">
               {isExpenseMode ? 'Registro de Egreso' : 'Factura en Tiempo Real'}
             </span>
@@ -895,18 +896,18 @@ export default function InvoicePanel({ isMobile }) {
               className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
               title={isExpenseMode ? 'Volver a Ventas' : 'Registrar Egreso'}
             >
-              {isExpenseMode ? <FileText size={15} /> : <Wallet size={15} />}
+              {isExpenseMode ? <Icon name="FileText" size={15}  /> : <Icon name="Wallet" size={15}  />}
             </button>
             <button
               onClick={() => setShowHistoryModal(true)}
               className="p-1.5 rounded-lg text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white transition-colors shrink-0"
               title="Historial de Facturas"
             >
-              <History size={15} />
+              <Icon name="History" size={15}  />
             </button>
             {items.length > 0 && (
               <button onClick={clearCart} className="p-1.5 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-danger-900/30 transition-colors shrink-0" title="Limpiar carrito">
-                <Trash2 size={13} />
+                <Icon name="Trash2" size={13}  />
               </button>
             )}
           </div>
@@ -933,7 +934,7 @@ export default function InvoicePanel({ isMobile }) {
                     </p>
                   </div>
                   <button onClick={clearClientSel} className="text-muted-400 hover:text-foreground shrink-0">
-                    <X size={12} />
+                    <Icon name="X" size={12}  />
                   </button>
                 </div>
               ) : (
@@ -951,7 +952,7 @@ export default function InvoicePanel({ isMobile }) {
                       className="flex flex-col items-center justify-center h-full gap-3 text-center"
                     >
                       <div className="w-12 h-12 rounded-2xl bg-surface-600 flex items-center justify-center shrink-0">
-                        <ShoppingCart size={20} className="text-muted-400" />
+                        <Icon name="ShoppingCart" size={20} className="text-muted-400"  />
                       </div>
                       <div className="text-sm text-muted-400 max-w-[200px]">
                         El carrito está vacío.<br />
@@ -975,17 +976,17 @@ export default function InvoicePanel({ isMobile }) {
                             <p className="text-[11px] text-muted-400">{format(item.price)} / {item.unit}</p>
                           </div>
                           <button onClick={() => removeItem(item.id)} className="text-muted-400 hover:text-danger-400 transition-colors p-0.5 shrink-0">
-                            <X size={11} />
+                            <Icon name="X" size={11}  />
                           </button>
                         </div>
                         <div className="flex items-center justify-between mt-2">
                           <div className="flex items-center gap-1.5">
                             <button onClick={() => updateQty(item.id, item.qty - 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
-                              <Minus size={9} />
+                              <Icon name="Minus" size={9}  />
                             </button>
                             <span className="text-xs font-semibold text-foreground w-6 text-center">{item.qty}</span>
                             <button onClick={() => updateQty(item.id, item.qty + 1)} className="w-5 h-5 rounded-md bg-surface-500 hover:bg-surface-400 flex items-center justify-center text-white transition-colors shrink-0">
-                              <Plus size={9} />
+                              <Icon name="Plus" size={9}  />
                             </button>
                           </div>
                           <motion.span

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { MessageSquare, Users2, ShieldCheck, ArrowRight } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 export default function LandingCRM() {
   return (
@@ -33,7 +33,7 @@ export default function LandingCRM() {
 
       <header className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-          <MessageSquare size={14} />
+          <Icon name="MessageSquare" size={14}  />
           CRM y Notificaciones por WhatsApp
         </div>
         <h1 className="text-4xl sm:text-5xl font-black text-white max-w-4xl mx-auto tracking-tight leading-tight">
@@ -47,7 +47,7 @@ export default function LandingCRM() {
             to="/auth?mode=register"
             className="px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all flex items-center gap-2"
           >
-            Probar CRM Gratis <ArrowRight size={16} />
+            Probar CRM Gratis <Icon name="ArrowRight" size={16}  />
           </Link>
         </div>
       </header>
@@ -55,17 +55,17 @@ export default function LandingCRM() {
       <section className="py-16 bg-surface-800 border-t border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <MessageSquare size={24} className="text-brand-400" />
+            <Icon name="MessageSquare" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Recordatorios por WhatsApp</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Notifica a tus compradores con un solo clic el estado de sus deudas o facturas.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Users2 size={24} className="text-brand-400" />
+            <Icon name="Users2" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Historial Único de Compras</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Consulta las facturas pasadas, preferencias y frecuencia de compra de cada cliente.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <ShieldCheck size={24} className="text-brand-400" />
+            <Icon name="ShieldCheck" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Abonos y Cuentas por Cobrar</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Registra créditos otorgados, abonos parciales y saldos pendientes en tiempo real.</p>
           </div>

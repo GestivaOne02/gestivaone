@@ -1,9 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import {
-  Calculator, Download, AlertTriangle, ArrowUpRight,
-  ArrowDownRight, FileText, Info, HelpCircle, Landmark, CheckCircle2
-} from 'lucide-react'
+
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 import { useClientStore } from '@/store/useClientStore'
@@ -13,6 +10,7 @@ import { getLocalizationByCountry } from '@/services/localizationService'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,7 +35,7 @@ export default function DianAssistant() {
     return (
       <div className="page-container flex flex-col items-center justify-center min-h-[70vh] text-center px-4 max-w-2xl mx-auto space-y-6">
         <div className="relative flex items-center justify-center w-24 h-24 rounded-3xl bg-amber-500/10 border border-amber-500/20 shadow-[0_0_50px_rgba(245,158,11,0.1)]">
-          <Landmark className="w-12 h-12 text-amber-500 animate-pulse" />
+          <Icon name="Landmark" className="w-12 h-12 text-amber-500 animate-pulse"  />
         </div>
         <div className="space-y-2">
           <h1 className="text-xl md:text-2xl font-black text-white">Asistente DIAN de Colombia</h1>
@@ -364,7 +362,7 @@ export default function DianAssistant() {
 
       {/* Warning Banner */}
       <div className="flex gap-3.5 p-4 rounded-2xl bg-brand-500/10 border border-brand-500/25 text-brand-400">
-        <Info className="shrink-0 mt-0.5" size={18} />
+        <Icon name="Info" className="shrink-0 mt-0.5" size={18}  />
         <div>
           <h3 className="text-sm font-bold">Módulo Experimental Informativo</h3>
           <p className="text-xs opacity-90 mt-1 leading-relaxed">
@@ -463,7 +461,7 @@ export default function DianAssistant() {
                 <span className="text-[10px] text-brand-400 font-semibold block mt-1">Soportados por Factura Electrónica</span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-success-500/10 text-success-400 flex items-center justify-center">
-                <ArrowUpRight size={20} />
+                <Icon name="ArrowUpRight" size={20}  />
               </div>
             </div>
 
@@ -478,7 +476,7 @@ export default function DianAssistant() {
                 <span className="text-[10px] text-brand-400 font-semibold block mt-1">Egresos operativos registrados</span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-danger-500/10 text-danger-400 flex items-center justify-center">
-                <ArrowDownRight size={20} />
+                <Icon name="ArrowDownRight" size={20}  />
               </div>
             </div>
 
@@ -495,7 +493,7 @@ export default function DianAssistant() {
                 </span>
               </div>
               <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-300 flex items-center justify-center">
-                <Landmark size={20} />
+                <Icon name="Landmark" size={20}  />
               </div>
             </div>
           </div>
@@ -505,7 +503,7 @@ export default function DianAssistant() {
             {/* Column 1: Adjustments Inputs */}
             <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-5 shadow-glow-sm">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Calculator size={18} className="text-brand-400" />
+                <Icon name="Calculator" size={18} className="text-brand-400"  />
                 Ajustes Tributarios del Año
               </h3>
 
@@ -516,7 +514,7 @@ export default function DianAssistant() {
                     <label className="text-xs font-bold text-muted-400 uppercase tracking-wide">
                       Ingresos No Constitutivos de Renta (INCR)
                     </label>
-                    <HelpCircle size={14} className="text-muted-500 cursor-help" title="Aportes obligatorios a salud, pensión, etc." />
+                    <Icon name="HelpCircle" size={14} className="text-muted-500 cursor-help" title="Aportes obligatorios a salud, pensión, etc."  />
                   </div>
                   <div className="relative">
                     <span className="absolute left-3 top-2 text-muted-400 text-sm">$</span>
@@ -538,7 +536,7 @@ export default function DianAssistant() {
                     <label className="text-xs font-bold text-muted-400 uppercase tracking-wide">
                       Rentas Exentas y Deducciones
                     </label>
-                    <HelpCircle size={14} className="text-muted-500 cursor-help" title="Medicina prepagada, dependientes, aportes AFC, renta exenta del 25%" />
+                    <Icon name="HelpCircle" size={14} className="text-muted-500 cursor-help" title="Medicina prepagada, dependientes, aportes AFC, renta exenta del 25%"  />
                   </div>
                   <div className="relative">
                     <span className="absolute left-3 top-2 text-muted-400 text-sm">$</span>
@@ -574,7 +572,7 @@ export default function DianAssistant() {
                     <label className="text-xs font-bold text-muted-400 uppercase tracking-wide">
                       Retenciones en la Fuente Practicadas
                     </label>
-                    <HelpCircle size={14} className="text-muted-500 cursor-help" title="Anticipos de renta retenidos por tus clientes" />
+                    <Icon name="HelpCircle" size={14} className="text-muted-500 cursor-help" title="Anticipos de renta retenidos por tus clientes"  />
                   </div>
                   <div className="relative">
                     <span className="absolute left-3 top-2 text-muted-400 text-sm">$</span>
@@ -595,7 +593,7 @@ export default function DianAssistant() {
             {/* Column 2: Tax Calculation Ledger */}
             <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-6 shadow-glow-sm">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <FileText size={18} className="text-brand-400" />
+                <Icon name="FileText" size={18} className="text-brand-400"  />
                 Depuración de Renta e Impuesto Neto
               </h3>
 
@@ -664,7 +662,7 @@ export default function DianAssistant() {
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">IVA Generado (Cobrado en Ventas)</span>
                 <span className="w-8 h-8 rounded-lg bg-success-500/10 text-success-400 flex items-center justify-center">
-                  <ArrowUpRight size={16} />
+                  <Icon name="ArrowUpRight" size={16}  />
                 </span>
               </div>
               <h3 className="text-2xl font-black text-foreground">{format$(totalIvaCollected)}</h3>
@@ -723,7 +721,7 @@ export default function DianAssistant() {
               <div className="flex justify-between items-center">
                 <span className="text-xs text-muted-400 font-bold uppercase tracking-wider">IVA Descontable (Pagado en Compras)</span>
                 <span className="w-8 h-8 rounded-lg bg-danger-500/10 text-danger-400 flex items-center justify-center">
-                  <ArrowDownRight size={16} />
+                  <Icon name="ArrowDownRight" size={16}  />
                 </span>
               </div>
               <h3 className="text-2xl font-black text-foreground">{format$(totalIvaDeductible)}</h3>
@@ -815,7 +813,7 @@ export default function DianAssistant() {
         <div className="space-y-6">
           <div className="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/25 text-brand-300">
             <h3 className="text-sm font-bold flex items-center gap-2">
-              <Landmark size={16} />
+              <Icon name="Landmark" size={16}  />
               ¿Qué es la Exógena y para qué sirven estos archivos?
             </h3>
             <p className="text-xs opacity-90 mt-1 leading-relaxed">
@@ -826,13 +824,13 @@ export default function DianAssistant() {
           {/* Data Audit Card */}
           <div className="bg-surface-800 border border-subtle p-6 rounded-3xl space-y-4 shadow-glow-sm">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Landmark size={18} className="text-brand-400" />
+              <Icon name="Landmark" size={18} className="text-brand-400"  />
               Auditoría y Calidad de los Datos (Exógena)
             </h3>
 
             {exogenaAudit.hasIssues ? (
               <div className="flex gap-3.5 p-4 rounded-2xl bg-danger-500/10 border border-danger-500/25 text-danger-400 text-xs">
-                <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+                <Icon name="AlertTriangle" size={18} className="shrink-0 mt-0.5"  />
                 <div>
                   <h4 className="font-bold text-sm">Se encontraron inconsistencias en tus datos de {selectedYear}</h4>
                   <p className="opacity-90 mt-1 leading-relaxed">
@@ -853,7 +851,7 @@ export default function DianAssistant() {
               </div>
             ) : (
               <div className="flex gap-3.5 p-4 rounded-2xl bg-success-500/10 border border-success-500/25 text-success-400 text-xs">
-                <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
+                <Icon name="CheckCircle2" size={18} className="shrink-0 mt-0.5"  />
                 <div>
                   <h4 className="font-bold text-sm">¡Calidad de datos excelente!</h4>
                   <p className="opacity-90 mt-1 leading-relaxed">
@@ -878,7 +876,7 @@ export default function DianAssistant() {
                 variant="primary"
                 size="md"
                 className="w-full justify-center gap-2 mt-4"
-                icon={<Download size={16} />}
+                icon={<Icon name="Download" size={16}  />}
                 onClick={downloadExogena1007}
               >
                 Exportar Formato 1007 (.csv)
@@ -898,7 +896,7 @@ export default function DianAssistant() {
                 variant="secondary"
                 size="md"
                 className="w-full justify-center gap-2 mt-4"
-                icon={<Download size={16} />}
+                icon={<Icon name="Download" size={16}  />}
                 onClick={downloadExogena1001}
               >
                 Exportar Formato 1001 (.csv)

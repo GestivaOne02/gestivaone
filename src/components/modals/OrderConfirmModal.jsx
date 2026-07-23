@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle, Clock, CalendarDays, Zap, PartyPopper, Mail } from 'lucide-react'
+
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -17,6 +17,7 @@ import { printInvoice } from '@/services/printService'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { format as dateFormat } from 'date-fns'
+import Icon from '@/components/ui/Icon';
 
 const TAX_RATES = {
   COP: 0.19,
@@ -180,7 +181,7 @@ export default function OrderConfirmModal({ open }) {
               transition={{ delay: 0.1, type: 'spring', stiffness: 300 }}
               className="w-16 h-16 rounded-full bg-success-500/20 border border-success-500/30 flex items-center justify-center"
             >
-              <PartyPopper size={28} className="text-success-400" />
+              <Icon name="PartyPopper" size={28} className="text-success-400"  />
             </motion.div>
             <div>
               <p className="text-lg font-bold text-foreground">{isExpenseMode ? '¡Egreso Confirmado!' : '¡Pedido Confirmado!'}</p>
@@ -242,7 +243,7 @@ export default function OrderConfirmModal({ open }) {
                       <p className="text-xs text-muted-400">{desc}</p>
                     </div>
                     {paymentType === id && (
-                      <CheckCircle size={16} className="ml-auto text-brand-400" />
+                      <Icon name="CheckCircle" size={16} className="ml-auto text-brand-400"  />
                     )}
                   </button>
                 ))}
@@ -311,7 +312,7 @@ export default function OrderConfirmModal({ open }) {
                   >
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Mail size={16} className="text-muted-400" />
+                        <Icon name="Mail" size={16} className="text-muted-400"  />
                       </div>
                       <input
                         type="email"

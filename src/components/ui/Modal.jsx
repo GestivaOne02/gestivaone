@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
+
 import { createPortal } from 'react-dom'
+import Icon from '@/components/ui/Icon';
 
 const overlayVariants = {
   hidden:  { opacity: 0 },
@@ -70,7 +71,7 @@ export default function Modal({ open, onClose, title, children, size = 'md', hid
                     onClick={onClose}
                     className="ml-auto p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-500 transition-colors"
                   >
-                    <X size={16} />
+                    <Icon name="X" size={16}  />
                   </button>
                 )}
               </div>

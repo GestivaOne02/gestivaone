@@ -1,11 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  Zap, Layers, TrendingUp, Printer, MessageSquare, Mail, Phone, MapPin, Check,
-  ChevronRight, ArrowRight, ShieldCheck, ShoppingCart, BarChart3, Users2, Moon, Sun,
-  LayoutGrid, Gem, User, ArrowLeft, RotateCw, Home, SlidersHorizontal, Star, Palette,
-  Instagram, Facebook, Youtube, X, Menu, Bookmark
-} from 'lucide-react'
+
 import { useState, useEffect } from 'react'
 import clsx from 'clsx'
 import ReactPlayer from 'react-player'
@@ -17,6 +12,7 @@ import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp'
 import TrustEEATSection from '@/components/landing/TrustEEATSection'
 import LanguageSelector from '@/components/ui/LanguageSelector'
 import { useLanguageStore } from '@/store/useLanguageStore'
+import Icon from '@/components/ui/Icon';
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -80,7 +76,7 @@ export default function Landing() {
                 className="text-muted-400 hover:text-foreground transition-colors p-2 rounded-xl hover:bg-surface-800 flex items-center gap-1.5 text-xs font-semibold"
                 aria-label="Apps Menu"
               >
-                <LayoutGrid size={18} />
+                <Icon name="LayoutGrid" size={18}  />
                 <span className="hidden sm:inline text-xs">Ecosistema</span>
               </button>
               <AnimatePresence>
@@ -101,7 +97,7 @@ export default function Landing() {
                       className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
-                        <Palette size={16} />
+                        <Icon name="Palette" size={16}  />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-foreground">GestivaPost</span>
@@ -129,14 +125,14 @@ export default function Landing() {
               className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
               aria-label="Toggle Theme"
             >
-              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              {isDarkMode ? <Icon name="Sun" size={18}  /> : <Icon name="Moon" size={18}  />}
             </button>
             <Link
               to="/auth?mode=login"
               className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 transition-all overflow-hidden"
               title={t('nav.login')}
             >
-              <User size={16} />
+              <Icon name="User" size={16}  />
             </Link>
           </div>
         </div>
@@ -175,7 +171,7 @@ export default function Landing() {
                 className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors flex items-center gap-2 text-xs font-bold"
                 aria-label="Toggle Mobile Navigation"
               >
-                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                {mobileMenuOpen ? <Icon name="X" size={20}  /> : <Icon name="Menu" size={20}  />}
                 <span>Menú</span>
               </button>
             </div>
@@ -275,7 +271,7 @@ export default function Landing() {
                     variants={itemVariants}
                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider"
                   >
-                    <ShieldCheck size={14} />
+                    <Icon name="ShieldCheck" size={14}  />
                     {t('hero.badge')}
                   </motion.div>
 
@@ -337,18 +333,18 @@ export default function Landing() {
                     {/* Browser chrome bar */}
                     <div className="relative flex items-center gap-3 px-3 py-2 bg-[#0e0e17] border-b border-white/5">
                       <div className="flex items-center gap-2 text-white/60">
-                        <button className="p-1 hover:text-white transition-colors"><ArrowLeft size={16} strokeWidth={2.5} /></button>
-                        <button className="p-1 hover:text-white transition-colors opacity-50"><ArrowRight size={16} strokeWidth={2.5} /></button>
-                        <button className="p-1 hover:text-white transition-colors"><RotateCw size={14} strokeWidth={2.5} /></button>
-                        <button className="p-1 hover:text-white transition-colors ml-1"><Home size={16} strokeWidth={2} /></button>
+                        <button className="p-1 hover:text-white transition-colors"><Icon name="ArrowLeft" size={16} strokeWidth={2.5}  /></button>
+                        <button className="p-1 hover:text-white transition-colors opacity-50"><Icon name="ArrowRight" size={16} strokeWidth={2.5}  /></button>
+                        <button className="p-1 hover:text-white transition-colors"><Icon name="RotateCw" size={14} strokeWidth={2.5}  /></button>
+                        <button className="p-1 hover:text-white transition-colors ml-1"><Icon name="Home" size={16} strokeWidth={2}  /></button>
                       </div>
                       <div className="flex-1 flex items-center justify-between bg-white/10 rounded-full h-8 px-3 mx-2 border border-white/5">
                         <div className="flex items-center gap-2 text-white/60">
-                          <SlidersHorizontal size={14} strokeWidth={2} />
+                          <Icon name="SlidersHorizontal" size={14} strokeWidth={2}  />
                           <span className="text-xs text-white font-medium tracking-wide">gestivaone.com</span>
                         </div>
                         <button className="text-white/60 hover:text-white transition-colors">
-                          <Star size={14} strokeWidth={2} />
+                          <Icon name="Star" size={14} strokeWidth={2}  />
                         </button>
                       </div>
                     </div>
@@ -617,11 +613,11 @@ export default function Landing() {
                 <p className="text-xs text-muted-400">Perfecto para pequeños comercios y profesionales independientes.</p>
 
                 <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> 1 trabajador</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Facturación básica</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Gestión de clientes</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Inventario limitado</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Soporte comunitario</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> 1 trabajador</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Facturación básica</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Gestión de clientes</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Inventario limitado</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Soporte comunitario</li>
                 </ul>
               </div>
 
@@ -653,12 +649,12 @@ export default function Landing() {
                 <p className="text-xs text-muted-400">Para negocios en crecimiento que requieren gestión de personal y reportes avanzados.</p>
 
                 <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Hasta 10 trabajadores</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Todo lo de Standard</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Dashboard avanzado</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Gestión de empleados</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Reportes PDF/Excel</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Soporte prioritario</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Hasta 10 trabajadores</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Todo lo de Standard</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Dashboard avanzado</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Gestión de empleados</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Reportes PDF/Excel</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Soporte prioritario</li>
                 </ul>
               </div>
 
@@ -687,12 +683,12 @@ export default function Landing() {
                 <p className="text-xs text-muted-400">Para empresas consolidadas que buscan automatización avanzada y multi-dispositivo.</p>
 
                 <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Hasta 30 trabajadores</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Todo lo de Pro</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Multi-sucursal</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> API personalizada</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Gerente de cuenta dedicado</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> SLA 99.9%</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Hasta 30 trabajadores</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Todo lo de Pro</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Multi-sucursal</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> API personalizada</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Gerente de cuenta dedicado</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> SLA 99.9%</li>
                 </ul>
               </div>
 
@@ -717,11 +713,11 @@ export default function Landing() {
                 <p className="text-xs text-muted-400">Soluciones de alto rendimiento para corporaciones complejas que requieren desarrollos customizados.</p>
 
                 <ul className="space-y-3 pt-4 border-t border-subtle text-xs text-muted-300">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Trabajadores ilimitados</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Desarrollo a la medida</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Migración premium</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Infraestructura dedicada</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-brand-400" /> Soporte 24/7</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Trabajadores ilimitados</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Desarrollo a la medida</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Migración premium</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Infraestructura dedicada</li>
+                  <li className="flex items-center gap-2"><Icon name="Check" size={14} className="text-brand-400"  /> Soporte 24/7</li>
                 </ul>
               </div>
 
@@ -754,21 +750,21 @@ export default function Landing() {
 
               <div className="space-y-4 pt-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><Mail size={16} /></div>
+                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><Icon name="Mail" size={16}  /></div>
                   <div>
                     <p className="text-[10px] text-muted-500 uppercase font-bold">Correo Electrónico</p>
                     <a href="mailto:soporte@gestivaone.com" className="text-sm font-semibold text-foreground hover:text-brand-400 transition-colors">soporte@gestivaone.com</a>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><Phone size={16} /></div>
+                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><Icon name="Phone" size={16}  /></div>
                   <div>
                     <p className="text-[10px] text-muted-500 uppercase font-bold">Línea de Atención</p>
                     <a href="tel:+573043059862" className="text-sm font-semibold text-foreground hover:text-brand-400 transition-colors">+57 (304) 405-9862</a>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><MapPin size={16} /></div>
+                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20"><Icon name="MapPin" size={16}  /></div>
                   <div>
                     <p className="text-[10px] text-muted-500 uppercase font-bold">Oficina Principal</p>
                     <p className="text-sm font-semibold text-foreground">Barranquilla, Atlantico, Colombia</p>
@@ -847,7 +843,7 @@ export default function Landing() {
               to="/auth?mode=register"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-black font-extrabold text-sm hover:bg-neutral-200 transition-all shadow-2xl hover:scale-105"
             >
-              {t('prefooter.btn')} <ArrowRight size={16} />
+              {t('prefooter.btn')} <Icon name="ArrowRight" size={16}  />
             </Link>
           </div>
         </div>
@@ -928,19 +924,19 @@ export default function Landing() {
                 <ul className="space-y-2.5">
                   <li>
                     <a href="https://www.instagram.com/gestivaone/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2">
-                      <Instagram size={14} className="text-brand-400" />
+                      <Icon name="Instagram" size={14} className="text-brand-400"  />
                       <span>Instagram</span>
                     </a>
                   </li>
                   <li>
                     <a href="https://www.facebook.com/profile.php?id=61591826760203&ref=PROFILE_EDIT_xav_ig_profile_page_web#" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2">
-                      <Facebook size={14} className="text-brand-400" />
+                      <Icon name="Facebook" size={14} className="text-brand-400"  />
                       <span>Facebook</span>
                     </a>
                   </li>
                   <li>
                     <a href="https://www.youtube.com/@tienesunagestionpendiente" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-2">
-                      <Youtube size={14} className="text-brand-400" />
+                      <Icon name="Youtube" size={14} className="text-brand-400"  />
                       <span>YouTube</span>
                     </a>
                   </li>

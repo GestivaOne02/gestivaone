@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Package, Tag, DollarSign, Archive, Link2, FileUp, CalendarDays, Image, ImagePlus, PackagePlus, FilePlus, Barcode, ChevronDown, Check, Trash2 } from 'lucide-react'
+
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -14,6 +14,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const schema = z.object({
   name: z.string().min(2, 'Mínimo 2 caracteres').max(50, 'Máximo 50 caracteres'),
@@ -455,7 +456,7 @@ export default function AddProductModal({ open }) {
             )}
             title="Imagen de Portada"
           >
-            <ImagePlus size={20} />
+            <Icon name="ImagePlus" size={20}  />
           </button>
 
           {/* Tienda Virtual Button */}
@@ -470,7 +471,7 @@ export default function AddProductModal({ open }) {
             )}
             title="Tienda Virtual / Catálogo"
           >
-            <PackagePlus size={20} />
+            <Icon name="PackagePlus" size={20}  />
           </button>
 
           {/* Adjuntos Button */}
@@ -485,7 +486,7 @@ export default function AddProductModal({ open }) {
             )}
             title="Enlaces y Documentos"
           >
-            <FilePlus size={20} />
+            <Icon name="FilePlus" size={20}  />
           </button>
 
           {/* Barcode Toggle Button */}
@@ -500,7 +501,7 @@ export default function AddProductModal({ open }) {
             )}
             title="Código de Barras"
           >
-            <Barcode size={20} />
+            <Icon name="Barcode" size={20}  />
           </button>
         </div>
 
@@ -521,7 +522,7 @@ export default function AddProductModal({ open }) {
             <div className={clsx(isHourly ? "lg:col-span-5 space-y-5 lg:max-h-[62vh] lg:overflow-y-auto pr-4 lg:pr-6 lg:border-r border-neutral-200 dark:border-surface-700/80 lg:no-scrollbar" : "space-y-5")}>
             <Input
               label="Nombre del producto *"
-              icon={<Package size={14} />}
+              icon={<Icon name="Package" size={14}  />}
               error={errors.name?.message}
               placeholder="Ej: Arroz blanco"
               maxLength={50}
@@ -532,7 +533,7 @@ export default function AddProductModal({ open }) {
               <div className="animate-in fade-in slide-in-from-top-2 duration-200">
                 <Input
                   label="Código de Barras"
-                  icon={<Barcode size={14} />}
+                  icon={<Icon name="Barcode" size={14}  />}
                   placeholder="Ej: 75010080"
                   {...register('barcode')}
                 />
@@ -543,7 +544,7 @@ export default function AddProductModal({ open }) {
             <div className="grid grid-cols-2 gap-3">
               <Input
                 label={`Precio Venta (${baseCurrency}) *`}
-                icon={<DollarSign size={14} />}
+                icon={<Icon name="DollarSign" size={14}  />}
                 error={errors.price?.message}
                 placeholder="0.00"
                 type="number"
@@ -552,7 +553,7 @@ export default function AddProductModal({ open }) {
               />
               <Input
                 label={`Costo Compra (${baseCurrency})`}
-                icon={<DollarSign size={14} />}
+                icon={<Icon name="DollarSign" size={14}  />}
                 error={errors.cost?.message}
                 placeholder="0.00"
                 type="number"
@@ -569,7 +570,7 @@ export default function AddProductModal({ open }) {
                   isUnlimited ? 'border-brand-500 ring-2 ring-brand-500/20' : 'border-subtle focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/50'
                 )}>
                   <div className="pl-3 flex items-center text-muted-400">
-                    <Archive size={14} />
+                    <Icon name="Archive" size={14}  />
                   </div>
                   <input
                     type="number"
@@ -604,7 +605,7 @@ export default function AddProductModal({ open }) {
             <div className="pt-2">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2 text-brand-500 hover:text-brand-400 cursor-pointer select-none" onClick={() => setHasDiscount(!hasDiscount)}>
-                  <Tag size={14} />
+                  <Icon name="Tag" size={14}  />
                   <span className="text-xs font-bold uppercase tracking-wide">Añadir Descuento</span>
                 </div>
               </div>
@@ -626,7 +627,7 @@ export default function AddProductModal({ open }) {
                       onBlur={() => setIsDiscountTypeOpen(false)}
                     >
                       <span>{watch('discount_type') === 'percentage' ? 'Porcentaje (%)' : 'Valor Fijo ($)'}</span>
-                      <ChevronDown size={16} className={clsx("text-muted-400 transition-transform", isDiscountTypeOpen && "rotate-180")} />
+                      <Icon name="ChevronDown" size={16} className={clsx("text-muted-400 transition-transform", isDiscountTypeOpen && "rotate-180")}  />
                     </div>
 
                     {isDiscountTypeOpen && discountTypeCoords && createPortal(
@@ -643,7 +644,7 @@ export default function AddProductModal({ open }) {
                           onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setValue('discount_type', 'percentage'); setIsDiscountTypeOpen(false) }}
                         >
                           <span>Porcentaje (%)</span>
-                          {watch('discount_type') === 'percentage' && <Check size={14} className="text-brand-500" />}
+                          {watch('discount_type') === 'percentage' && <Icon name="Check" size={14} className="text-brand-500"  />}
                         </div>
                         <div
                           className={clsx(
@@ -653,7 +654,7 @@ export default function AddProductModal({ open }) {
                           onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setValue('discount_type', 'fixed'); setIsDiscountTypeOpen(false) }}
                         >
                           <span>Valor Fijo ($)</span>
-                          {watch('discount_type') === 'fixed' && <Check size={14} className="text-brand-500" />}
+                          {watch('discount_type') === 'fixed' && <Icon name="Check" size={14} className="text-brand-500"  />}
                         </div>
                       </div>,
                       document.body
@@ -715,7 +716,7 @@ export default function AddProductModal({ open }) {
                 onBlur={() => setIsCategoryOpen(false)}
               >
                 <span>{selectedCategory || 'Selecciona una categoría'}</span>
-                <ChevronDown size={16} className={clsx("text-muted-400 transition-transform", isCategoryOpen && "rotate-180")} />
+                <Icon name="ChevronDown" size={16} className={clsx("text-muted-400 transition-transform", isCategoryOpen && "rotate-180")}  />
               </div>
 
               {isCategoryOpen && categoryCoords && createPortal(
@@ -742,7 +743,7 @@ export default function AddProductModal({ open }) {
                     >
                       <span>{c}</span>
                       <div className="flex items-center gap-2">
-                        {selectedCategory === c && <Check size={14} className="text-brand-500" />}
+                        {selectedCategory === c && <Icon name="Check" size={14} className="text-brand-500"  />}
                         {!CATEGORIES.includes(c) && (
                           <button
                             type="button"
@@ -755,7 +756,7 @@ export default function AddProductModal({ open }) {
                             className="p-1.5 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-500 hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors"
                             title="Eliminar categoría"
                           >
-                            <Trash2 size={14} />
+                            <Icon name="Trash2" size={14}  />
                           </button>
                         )}
                       </div>
@@ -781,7 +782,7 @@ export default function AddProductModal({ open }) {
               <div className="pt-2 border-t border-subtle">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2 text-brand-400">
-                    <Image size={14} />
+                    <Icon name="Image" size={14}  />
                     <label className="text-xs font-medium uppercase tracking-wide cursor-pointer" onClick={() => setShowImage(!showImage)}>Mostrar Imagen de Portada</label>
                   </div>
                   <button
@@ -885,7 +886,7 @@ export default function AddProductModal({ open }) {
                         </>
                       ) : (
                         <>
-                          <FileUp size={16} />
+                          <Icon name="FileUp" size={16}  />
                           Subir Archivo
                         </>
                       )}
@@ -895,13 +896,13 @@ export default function AddProductModal({ open }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Input
                     label="Nombre del Adjunto"
-                    icon={<Tag size={14} />}
+                    icon={<Icon name="Tag" size={14}  />}
                     placeholder="Ej: Registro INVIMA"
                     {...register('attachment_name')}
                   />
                   <Input
                     label="Enlace del Adjunto"
-                    icon={<Link2 size={14} />}
+                    icon={<Icon name="Link2" size={14}  />}
                     placeholder="Ej: https://drive.google.com/..."
                     {...register('attachment_url')}
                   />
@@ -914,7 +915,7 @@ export default function AddProductModal({ open }) {
            {isHourly && (
              <div className="lg:col-span-7 bg-surface-800/40 border border-subtle p-5 rounded-2xl space-y-5 flex flex-col justify-start lg:max-h-[62vh] lg:overflow-y-auto lg:pr-2 lg:no-scrollbar mt-6 lg:mt-0">
               <h3 className="text-sm font-black text-brand-400 uppercase tracking-widest flex items-center gap-2">
-                <CalendarDays size={16} />
+                <Icon name="CalendarDays" size={16}  />
                 Disponibilidad Gantt
               </h3>
 

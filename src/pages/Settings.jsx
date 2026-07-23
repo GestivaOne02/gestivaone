@@ -1,11 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 // framer-motion removed for performance
-import {
-  Globe, RefreshCw, Check, Moon, Sun, Building2, Bell, Database,
-  AlertTriangle, Monitor, Mail, MessageSquare, Server, FileText,
-  FileSpreadsheet, Download, ChevronDown, ChevronUp, Loader2, Wifi, WifiOff, Lock,
-  Printer, Trash2, ShoppingBag
-} from 'lucide-react'
+
 import { useCurrencyStore, SUPPORTED_CURRENCIES } from '@/store/useCurrencyStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
@@ -25,6 +20,7 @@ import clsx from 'clsx'
 import { clearAccountData, exportAccountBackup, importAccountBackup } from '@/services/accountDataService'
 import Modal from '@/components/ui/Modal'
 import { supabase } from '@/lib/supabase'
+import Icon from '@/components/ui/Icon';
 
 function SectionTitle({ icon: Icon, title, desc }) {
   return (
@@ -142,7 +138,7 @@ export default function Settings() {
           <Button
             variant="ghost"
             size="sm"
-            icon={<RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />}
+            icon={<Icon name="RefreshCw" size={13} className={refreshing ? 'animate-spin' : ''}  />}
             onClick={handleRefresh}
             loading={loading}
             title="Actualizar tasas ahora"
@@ -161,7 +157,7 @@ export default function Settings() {
 
         {error && (
           <div className="flex items-center gap-2 bg-danger-900/30 border border-danger-500/30 rounded-xl px-4 py-3">
-            <AlertTriangle size={14} className="text-danger-400" />
+            <Icon name="AlertTriangle" size={14} className="text-danger-400"  />
             <p className="text-xs text-danger-400">Error al obtener tasas: {error}. Verifica tu conexión.</p>
           </div>
         )}
@@ -198,7 +194,7 @@ export default function Settings() {
                   <p className={clsx('text-[10px] truncate transition-colors', baseCurrency === currency.code ? 'text-brand-500/80 dark:text-brand-400/80' : 'text-muted-500 dark:text-muted-400')}>{currency.name}</p>
                 </div>
                 {baseCurrency === currency.code && (
-                  <Check size={13} className="text-brand-400 shrink-0" />
+                  <Icon name="Check" size={13} className="text-brand-400 shrink-0"  />
                 )}
                 {rates[currency.code] && currency.code !== 'USD' && (
                   <span className="text-[10px] text-muted-400 font-mono shrink-0">
@@ -270,7 +266,7 @@ export default function Settings() {
                   <div
                     className="w-4 h-4 rounded-full bg-brand-500 flex items-center justify-center"
                   >
-                    <Check size={9} className="text-white" />
+                    <Icon name="Check" size={9} className="text-white"  />
                   </div>
                 )}
               </button>
@@ -284,7 +280,7 @@ export default function Settings() {
             <div
               className="flex items-center gap-2 bg-brand-600/10 border border-brand-500/20 rounded-xl px-4 py-2.5"
             >
-              <Monitor size={13} className="text-brand-400 shrink-0" />
+              <Icon name="Monitor" size={13} className="text-brand-400 shrink-0"  />
               <p className="text-xs text-brand-300">
                 Modo sistema activo — la app seguirá tu preferencia del SO automáticamente.
                 {' '}
@@ -392,7 +388,7 @@ function ResendBlock() {
     >
       <div onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left cursor-pointer select-none">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Mail size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon name="Mail" size={16}  /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">Correo electrónico (Resend)</p>
           <p className="text-xs text-muted-400">Envía facturas, comprobantes y notificaciones automáticas</p>
@@ -400,7 +396,7 @@ function ResendBlock() {
         <div onClick={e => e.stopPropagation()}>
           <Toggle checked={resend.enabled} onChange={v => { setResend({ enabled: v }); toast(v ? `Servicio de correo activado` : `Servicio de correo desactivado`, { duration: 1500 }) }} />
         </div>
-        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+        <span className="text-muted-400 ml-1">{open ? <Icon name="ChevronUp" size={14}  /> : <Icon name="ChevronDown" size={14}  />}</span>
       </div>
       <>
         {open && (
@@ -466,7 +462,7 @@ function ResendBlock() {
                   disabled={testing || !resend.enabled || !testEmail}
                   className="flex items-center justify-center gap-2 text-xs bg-surface-600 hover:bg-surface-500 border border-subtle text-muted-400 hover:text-foreground px-4 h-10 rounded-xl transition-colors disabled:opacity-50 cursor-pointer w-full sm:w-auto"
                 >
-                  {testing ? <Loader2 size={12} className="animate-spin" /> : <Mail size={12} />}
+                  {testing ? <Icon name="Loader2" size={12} className="animate-spin"  /> : <Icon name="Mail" size={12}  />}
                   {testing ? 'Enviando...' : 'Probar Correo'}
                 </button>
               </div>
@@ -533,7 +529,7 @@ function VirtualStoreBlock() {
     <section className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden shadow-glow-sm">
       <div onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left cursor-pointer select-none">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><ShoppingBag size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon name="ShoppingBag" size={16}  /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">Tienda Virtual y Catálogo</p>
           <p className="text-xs text-muted-400">Activa tu catálogo online público, configura enlace y marca</p>
@@ -541,7 +537,7 @@ function VirtualStoreBlock() {
         <div onClick={e => e.stopPropagation()}>
           <Toggle checked={storeEnabled} onChange={v => setStoreEnabled(v)} />
         </div>
-        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+        <span className="text-muted-400 ml-1">{open ? <Icon name="ChevronUp" size={14}  /> : <Icon name="ChevronDown" size={14}  />}</span>
       </div>
 
       {open && (
@@ -634,7 +630,7 @@ function VirtualStoreBlock() {
             disabled={saving}
             className="flex items-center justify-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-40 text-white px-5 py-2.5 rounded-xl font-bold transition-all w-full sm:w-auto cursor-pointer"
           >
-            {saving ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+            {saving ? <Icon name="Loader2" size={13} className="animate-spin"  /> : <Icon name="Check" size={13}  />}
             {saving ? 'Guardando...' : 'Guardar configuración'}
           </button>
         </div>
@@ -671,7 +667,7 @@ function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
         <div onClick={e => e.stopPropagation()}>
           <Toggle checked={cfg.enabled} onChange={v => { setCfg({ enabled: v }); toast(v ? `${title} activado` : `${title} desactivado`, { duration: 1500 }) }} />
         </div>
-        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+        <span className="text-muted-400 ml-1">{open ? <Icon name="ChevronUp" size={14}  /> : <Icon name="ChevronDown" size={14}  />}</span>
       </div>
       <>
         {open && (
@@ -711,13 +707,13 @@ function ApiBlock() {
     return (
       <section className="bg-surface-800/50 border border-subtle border-dashed rounded-3xl p-5 flex items-center justify-between opacity-70 group grayscale hover:grayscale-0 transition-all shadow-glow-sm">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-surface-700 text-muted-500"><Server size={16} /></div>
+          <div className="p-2 rounded-xl bg-surface-700 text-muted-500"><Icon name="Server" size={16}  /></div>
           <div>
             <p className="text-sm font-semibold text-muted-400">Backend API REST</p>
             <p className="text-[10px] text-muted-500">Disponible en Plan Empresarial</p>
           </div>
         </div>
-        <Lock size={14} className="text-muted-500 group-hover:text-brand-400 transition-colors" />
+        <Icon name="Lock" size={14} className="text-muted-500 group-hover:text-brand-400 transition-colors"  />
       </section>
     )
   }
@@ -728,7 +724,7 @@ function ApiBlock() {
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Server size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon name="Server" size={16}  /></div>
         <div className="flex-1 text-left">
           <p className="text-sm font-semibold text-foreground">Backend API REST</p>
           <p className="text-xs text-muted-400">Sincronización multi-dispositivo</p>
@@ -737,7 +733,7 @@ function ApiBlock() {
           api.status === 'connected' ? 'bg-success-900/20 border-success-400/20' : 'bg-surface-700 border-subtle')}>
           {api.status === 'connected' ? '\u25cf Conectado' : api.status === 'testing' ? '\u25cf Probando' : '\u25cf Desconectado'}
         </span>
-        {open ? <ChevronUp size={14} className="text-muted-400" /> : <ChevronDown size={14} className="text-muted-400" />}
+        {open ? <Icon name="ChevronUp" size={14} className="text-muted-400"  /> : <Icon name="ChevronDown" size={14} className="text-muted-400"  />}
       </button>
       <>
         {open && (
@@ -750,7 +746,7 @@ function ApiBlock() {
               <div className="flex gap-2">
                 <button onClick={runTest} disabled={testing}
                   className="flex items-center gap-2 text-xs bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50 font-semibold">
-                  {testing ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
+                  {testing ? <Icon name="Loader2" size={12} className="animate-spin"  /> : <Icon name="Wifi" size={12}  />}
                   {testing ? 'Probando...' : 'Probar conexión'}
                 </button>
               </div>
@@ -791,7 +787,7 @@ function ExportBlock() {
     return (
       <section className="bg-surface-800/50 border border-subtle border-dashed rounded-3xl p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-80 shadow-glow-sm">
         <div className="p-3 rounded-2xl bg-brand-600/10 text-brand-400 border border-brand-500/20">
-          <Lock size={20} />
+          <Icon name="Lock" size={20}  />
         </div>
         <div>
           <p className="text-sm font-bold text-foreground">Reportes PDF/Excel bloqueados</p>
@@ -817,7 +813,7 @@ function ExportBlock() {
                 : 'bg-success-900/10 text-success-400 hover:bg-success-900/20 border-success-500/20',
               loading[key] && 'opacity-60 cursor-not-allowed'
             )}>
-            {loading[key] ? <Loader2 size={13} className="animate-spin" /> : <Icon size={13} />}
+            {loading[key] ? <Icon name="Loader2" size={13} className="animate-spin"  /> : <Icon size={13} />}
             {loading[key] ? 'Generando...' : label}
           </button>
         ))}
@@ -907,7 +903,7 @@ function PrinterBlock() {
     >
       <div onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors cursor-pointer select-none">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Printer size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon name="Printer" size={16}  /></div>
         <div className="flex-1 text-left">
           <p className="text-sm font-semibold text-foreground">Impresión de Facturas</p>
           <p className="text-xs text-muted-400">Elige la plantilla y contenido de los recibos impresos</p>
@@ -917,7 +913,7 @@ function PrinterBlock() {
             <Toggle checked={printer.autoPrint} onChange={v => { setPrinter({ autoPrint: v }); toast(v ? `Impresión automática activada` : `Impresión automática desactivada`, { duration: 1500 }) }} />
           </div>
         )}
-        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+        <span className="text-muted-400 ml-1">{open ? <Icon name="ChevronUp" size={14}  /> : <Icon name="ChevronDown" size={14}  />}</span>
       </div>
 
       <>
@@ -929,7 +925,7 @@ function PrinterBlock() {
             <div className="px-5 pb-5 border-t border-subtle pt-4 font-sans">
               {!hasPrinter && !checking ? (
                 <div className="flex flex-col items-center justify-center text-center p-6 bg-surface-750 border border-dashed border-subtle rounded-2xl gap-3 shadow-glow-sm">
-                  <Printer size={32} className="text-muted-500 animate-pulse" />
+                  <Icon name="Printer" size={32} className="text-muted-500 animate-pulse"  />
                   <div>
                     <h4 className="text-sm font-bold text-foreground">No se detectó impresora configurada</h4>
                     <p className="text-xs text-muted-400 mt-1 max-w-sm mx-auto">
@@ -941,7 +937,7 @@ function PrinterBlock() {
                     onClick={requestUsbPrinter}
                     className="mt-1 flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow cursor-pointer"
                   >
-                    <Printer size={13} />
+                    <Icon name="Printer" size={13}  />
                     <span>Detectar Impresora USB</span>
                   </button>
                 </div>
@@ -1179,7 +1175,7 @@ function SecurityBlock() {
       <input type={show ? 'text' : 'password'} value={value} onChange={e => onChange(e.target.value)} placeholder="••••••••"
         className="w-full bg-surface-700 border border-subtle rounded-xl px-4 py-2.5 pr-10 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50" />
       <button type="button" onClick={() => setShow(!show)} className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground transition-colors">
-        {show ? <AlertTriangle size={14} /> : <Check size={14} />} {/* Mocked icon toggle */}
+        {show ? <Icon name="AlertTriangle" size={14}  /> : <Icon name="Check" size={14}  />} {/* Mocked icon toggle */}
       </button>
     </div>
   )
@@ -1190,12 +1186,12 @@ function SecurityBlock() {
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Lock size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon name="Lock" size={16}  /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">Seguridad</p>
           <p className="text-xs text-muted-400">Contraseña, 2FA y sesiones activas</p>
         </div>
-        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+        <span className="text-muted-400 ml-1">{open ? <Icon name="ChevronUp" size={14}  /> : <Icon name="ChevronDown" size={14}  />}</span>
       </button>
       <>
         {open && (
@@ -1212,7 +1208,7 @@ function SecurityBlock() {
               </div>
               <button onClick={changePassword} disabled={saving || !current || !next || !confirm}
                 className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-40 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors w-full sm:w-auto justify-center">
-                <Lock size={14} /> {saving ? 'Guardando...' : 'Actualizar contraseña'}
+                <Icon name="Lock" size={14}  /> {saving ? 'Guardando...' : 'Actualizar contraseña'}
               </button>
 
               <div className="border-t border-subtle pt-4 space-y-3">
@@ -1226,7 +1222,7 @@ function SecurityBlock() {
                 {twoFA && (
                   <div className="space-y-2">
                     <button onClick={generateBackupCodes} className="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-1 font-semibold">
-                      <Lock size={11} /> Generar códigos de respaldo
+                      <Icon name="Lock" size={11}  /> Generar códigos de respaldo
                     </button>
                     {codes && (
                       <div className="bg-surface-900 border border-brand-500/20 rounded-xl p-3">
@@ -1292,12 +1288,12 @@ function DataManagementBlock() {
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Database size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon name="Database" size={16}  /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">Datos y Respaldo</p>
           <p className="text-xs text-muted-400">Genera o importa un backup local (Excel)</p>
         </div>
-        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+        <span className="text-muted-400 ml-1">{open ? <Icon name="ChevronUp" size={14}  /> : <Icon name="ChevronDown" size={14}  />}</span>
       </button>
       <>
         {open && (
@@ -1313,7 +1309,7 @@ function DataManagementBlock() {
                   disabled={busy}
                   className="flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 disabled:opacity-50 border border-subtle text-foreground text-sm font-semibold px-4 py-3 rounded-xl transition-colors"
                 >
-                  <Download size={15} /> Generar Backup (Excel)
+                  <Icon name="Download" size={15}  /> Generar Backup (Excel)
                 </button>
 
                 <button
@@ -1418,12 +1414,12 @@ function ResetWorkspaceBlock() {
     >
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors text-left group">
-        <div className="p-2 rounded-xl bg-danger-500/10 text-danger-400 group-hover:bg-danger-500/20 transition-colors"><AlertTriangle size={16} /></div>
+        <div className="p-2 rounded-xl bg-danger-500/10 text-danger-400 group-hover:bg-danger-500/20 transition-colors"><Icon name="AlertTriangle" size={16}  /></div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-danger-400">Zona de peligro</p>
           <p className="text-xs text-muted-400">Acciones irreversibles sobre tu espacio de trabajo</p>
         </div>
-        <span className="text-muted-400 ml-1">{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
+        <span className="text-muted-400 ml-1">{open ? <Icon name="ChevronUp" size={14}  /> : <Icon name="ChevronDown" size={14}  />}</span>
       </button>
       <>
         {open && (
@@ -1444,7 +1440,7 @@ function ResetWorkspaceBlock() {
                   disabled={busy || sendingEmail || !isAdmin}
                   className="mt-2 flex items-center gap-2 bg-danger-600 hover:bg-danger-700 disabled:opacity-40 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-danger-900/30"
                 >
-                  {sendingEmail ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                  {sendingEmail ? <Icon name="Loader2" size={13} className="animate-spin"  /> : <Icon name="Trash2" size={13}  />}
                   Limpiar todo el espacio de trabajo
                 </button>
                 {!isAdmin && (
@@ -1460,7 +1456,7 @@ function ResetWorkspaceBlock() {
         <div className="space-y-5">
           <div className="bg-danger-500/10 border border-danger-500/25 rounded-xl p-4 space-y-2">
             <p className="text-sm font-bold text-danger-300 flex items-center gap-2">
-              <AlertTriangle size={14} /> Esta acción es irreversible
+              <Icon name="AlertTriangle" size={14}  /> Esta acción es irreversible
             </p>
             <p className="text-xs text-muted-300 leading-relaxed">
               Hemos enviado un correo electrónico a <strong>{user?.email}</strong> con un código numérico de 4 dígitos. Ingrésalo a continuación para confirmar el borrado de datos.
@@ -1497,11 +1493,11 @@ function ResetWorkspaceBlock() {
             >
               {busy ? (
                 <>
-                  <Loader2 size={13} className="animate-spin" />
+                  <Icon name="Loader2" size={13} className="animate-spin"  />
                   Limpiando...
                 </>
               ) : (
-                <><Trash2 size={13} /> Confirmar borrado</>
+                <><Icon name="Trash2" size={13}  /> Confirmar borrado</>
               )}
             </button>
           </div>

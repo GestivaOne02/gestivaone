@@ -1,15 +1,12 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  User, Shield, Bell, Zap, LogOut, Building2, Phone, Mail,
-  Camera, Check, Eye, EyeOff, ChevronDown, ChevronUp, Key, Copy,
-  Database, Download, Upload, Trash2, AlertTriangle, ArrowRight
-} from 'lucide-react'
+
 import { useAuthStore, PLANS, ROLES } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 // ── Toggle switch ─────────────────────────────────────────────
 function Toggle({ checked, onChange }) {
@@ -64,7 +61,7 @@ function Section({ icon: Icon, title, desc, children, defaultOpen = false, varia
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         >
-          <ChevronDown size={15} className="text-muted-400" />
+          <Icon name="ChevronDown" size={15} className="text-muted-400"  />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
@@ -128,7 +125,7 @@ function ProfileSection({ user, updateProfile, variants }) {
           </div>
           <button onClick={() => fileRef.current?.click()}
             className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center shadow-lg hover:bg-brand-500 transition-colors">
-            <Camera size={11} className="text-white" />
+            <Icon name="Camera" size={11} className="text-white"  />
           </button>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleLogo} />
         </div>
@@ -152,7 +149,7 @@ function ProfileSection({ user, updateProfile, variants }) {
 
       <button onClick={save} disabled={saving}
         className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
-        {saving ? 'Guardando...' : <><Check size={14} /> Guardar cambios</>}
+        {saving ? 'Guardando...' : <><Icon name="Check" size={14}  /> Guardar cambios</>}
       </button>
     </Section>
   )
@@ -299,7 +296,7 @@ export default function Account() {
                 <p className="text-sm text-muted-400 truncate">{user?.email}</p>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                   <span className="text-[10px] bg-brand-600/20 text-brand-600 dark:text-brand-300 border border-brand-500/30 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
-                    <Zap size={10} /> Plan {planInfo.name}
+                    <Icon name="Zap" size={10}  /> Plan {planInfo.name}
                   </span>
                   <span className="text-[10px] bg-surface-600 text-muted-400 border border-subtle px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
                     {roleInfo.label}
@@ -317,7 +314,7 @@ export default function Account() {
           <div className="relative z-10 flex flex-col h-full justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Zap className="text-brand-300 fill-brand-300" size={18} />
+                <Icon name="Zap" className="text-brand-300 fill-brand-300" size={18}  />
                 Lleva tu negocio al siguiente nivel
               </h3>
               <p className="text-brand-100/90 text-sm mt-1.5 leading-relaxed max-w-sm">
@@ -326,7 +323,7 @@ export default function Account() {
             </div>
             <div>
               <button onClick={() => navigate('/settings?tab=plan')} className="bg-white text-brand-700 hover:bg-brand-50 hover:scale-[1.02] active:scale-95 font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-sm w-full sm:w-auto flex items-center justify-center gap-2">
-                Mejorar Capacidad <ArrowRight size={16} />
+                Mejorar Capacidad <Icon name="ArrowRight" size={16}  />
               </button>
             </div>
           </div>
@@ -334,7 +331,7 @@ export default function Account() {
           {/* Decorative elements */}
           <div className="absolute -right-8 -bottom-10 w-40 h-40 bg-brand-400/20 blur-3xl rounded-full pointer-events-none group-hover:bg-brand-400/30 transition-colors" />
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-            <Zap size={100} />
+            <Icon name="Zap" size={100}  />
           </div>
         </motion.div>
       </div>
@@ -347,7 +344,7 @@ export default function Account() {
         onClick={handleLogout}
         className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border-2 border-danger-500/20 text-danger-400 hover:bg-danger-500/10 hover:border-danger-500/40 transition-all text-sm font-bold"
       >
-        <LogOut size={16} /> Cerrar sesión
+        <Icon name="LogOut" size={16}  /> Cerrar sesión
       </motion.button>
     </motion.div>
   )

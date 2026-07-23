@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Languages, ChevronDown, Check } from 'lucide-react'
 import { useLanguageStore, LANGUAGES } from '@/store/useLanguageStore'
+import Icon from '@/components/ui/Icon';
 
 export default function LanguageSelector() {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,9 +28,9 @@ export default function LanguageSelector() {
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-foreground dark:text-white text-xs font-semibold transition-all focus:outline-none"
         aria-expanded={isOpen}
       >
-        <Languages size={15} className="text-brand-400" />
+        <Icon name="Languages" size={15} className="text-brand-400"  />
         <span>{selectedLangObj.name}</span>
-        <ChevronDown size={14} className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <Icon name="ChevronDown" size={14} className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}  />
       </button>
 
       <AnimatePresence>
@@ -62,7 +62,7 @@ export default function LanguageSelector() {
                       <span>{lang.flag}</span>
                       <span>{lang.name}</span>
                     </div>
-                    {isSelected && <Check size={14} className="text-brand-400" />}
+                    {isSelected && <Icon name="Check" size={14} className="text-brand-400"  />}
                   </button>
                 )
               })}

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Utensils, Printer, Menu, ArrowRight } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 export default function LandingRestaurantes() {
   return (
@@ -33,7 +33,7 @@ export default function LandingRestaurantes() {
 
       <header className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-          <Utensils size={14} />
+          <Icon name="Utensils" size={14}  />
           Especializado en Gastronomía
         </div>
         <h1 className="text-4xl sm:text-5xl font-black text-white max-w-4xl mx-auto tracking-tight leading-tight">
@@ -47,7 +47,7 @@ export default function LandingRestaurantes() {
             to="/auth?mode=register"
             className="px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all flex items-center gap-2"
           >
-            Comenzar Gratis para Restaurantes <ArrowRight size={16} />
+            Comenzar Gratis para Restaurantes <Icon name="ArrowRight" size={16}  />
           </Link>
         </div>
       </header>
@@ -55,17 +55,17 @@ export default function LandingRestaurantes() {
       <section className="py-16 bg-surface-800 border-t border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Menu size={24} className="text-brand-400" />
+            <Icon name="Menu" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Menú y Carta Digital</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Crea productos con fotos, modificadores y precios dinámicos por categoría.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Printer size={24} className="text-brand-400" />
+            <Icon name="Printer" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Comandas de Cocina</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Envío directo de pedidos a impresoras térmicas en barra o cocina.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Utensils size={24} className="text-brand-400" />
+            <Icon name="Utensils" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Cierre de Caja Gastronómico</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Arqueo de ventas por turno, propinas y medios de pago integrados.</p>
           </div>

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import Modal from '@/components/ui/Modal'
-import { FileText, Download, X, Search } from 'lucide-react'
+
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { exportSingleInvoicePDF } from '@/services/exportService'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 export default function InvoiceHistoryModal({ open, onClose }) {
   const invoices = useInvoiceStore((s) => s.invoices)
@@ -61,7 +62,7 @@ export default function InvoiceHistoryModal({ open, onClose }) {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {invoices.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-muted-400">
-              <FileText size={48} className="mb-4 opacity-20" />
+              <Icon name="FileText" size={48} className="mb-4 opacity-20"  />
               <p>No hay facturas registradas aún.</p>
             </div>
           ) : (
@@ -69,7 +70,7 @@ export default function InvoiceHistoryModal({ open, onClose }) {
               <div key={inv.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-surface-700 border border-subtle gap-4 hover:border-brand-500/30 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-brand-500/10 flex items-center justify-center shrink-0">
-                    <FileText size={20} className="text-brand-400" />
+                    <Icon name="FileText" size={20} className="text-brand-400"  />
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-foreground">
@@ -94,7 +95,7 @@ export default function InvoiceHistoryModal({ open, onClose }) {
                     onClick={() => handleDownload(inv)}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-600 hover:bg-brand-600 hover:text-white text-brand-400 transition-colors text-xs font-semibold"
                   >
-                    <Download size={14} />
+                    <Icon name="Download" size={14}  />
                     <span>Descargar</span>
                   </button>
                 </div>

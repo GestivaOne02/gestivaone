@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Printer, FileText, Check, Save, Download, Image, HelpCircle, AlertCircle, Sparkles, Building2, Phone, Mail, FileCheck, Settings, Palette } from 'lucide-react'
+
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
@@ -15,6 +15,7 @@ import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import { QRCodeSVG } from 'qrcode.react';
 import Section from '@/components/Section';
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -307,7 +308,7 @@ export default function Facturero() {
                 {showLogo && logoUrl ? (
                   <img src={logoUrl} alt="Logo" className="w-16 h-16 rounded-full object-cover mb-3 border-2 border-white/20" />
                 ) : (
-                  <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: activeColor.primary }}><Sparkles className="text-white w-7 h-7" /></div>
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: activeColor.primary }}><Icon name="Sparkles" className="text-white w-7 h-7"  /></div>
                 )}
                 {showCompanyName && <h4 className="text-xl font-black tracking-wide uppercase drop-shadow-md" style={{ color: activeColor.primaryLight }}>{companyName}</h4>}
                 <p className="text-xs text-slate-200 mt-1 font-medium drop-shadow-md">NIT: 901.458.789-2</p>
@@ -751,7 +752,7 @@ export default function Facturero() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
         <div>
           <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <FileCheck size={20} className="text-brand-400" />
+            <Icon name="FileCheck" size={20} className="text-brand-400"  />
             Facturero
           </h1>
           <p className="text-xs text-muted-400 mt-0.5">
@@ -770,7 +771,7 @@ export default function Facturero() {
           {saving ? (
             <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
           ) : (
-            <Save size={15} />
+            <Icon name="Save" size={15}  />
           )}
           <span>Guardar Configuración</span>
         </Button>
@@ -782,7 +783,7 @@ export default function Facturero() {
           {/* Template Choices Card */}
           <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
-              <Sparkles size={18} className="text-brand-400" />
+              <Icon name="Sparkles" size={18} className="text-brand-400"  />
               <Section title="Plantillas de Facturación" />
             </div>
 
@@ -802,7 +803,7 @@ export default function Facturero() {
                   )}
                 >
                   <div className={clsx('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', pdfTemplate === 'corporate' ? 'bg-brand-500 text-white' : 'bg-surface-650 text-muted-400')}>
-                    <Building2 size={16} />
+                    <Icon name="Building2" size={16}  />
                   </div>
                   <div>
                       <h4 className="text-xs font-bold text-foreground">Corporativo</h4>
@@ -822,7 +823,7 @@ export default function Facturero() {
                   )}
                 >
                   <div className={clsx('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', pdfTemplate === 'minimalist' ? 'bg-brand-500 text-white' : 'bg-surface-650 text-muted-400')}>
-                    <FileText size={16} />
+                    <Icon name="FileText" size={16}  />
                   </div>
                   <div>
                       <h4 className="text-xs font-bold text-foreground">Minimalista</h4>
@@ -848,7 +849,7 @@ export default function Facturero() {
                   )}
                 >
                   <div className={clsx('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', thermalTemplate === 'classic' ? 'bg-brand-500 text-white' : 'bg-surface-650 text-muted-400')}>
-                    <Printer size={16} />
+                    <Icon name="Printer" size={16}  />
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground">Ticket Clásico</h4>
@@ -868,7 +869,7 @@ export default function Facturero() {
                   )}
                 >
                   <div className={clsx('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', thermalTemplate === 'modern' ? 'bg-brand-500 text-white' : 'bg-surface-650 text-muted-400')}>
-                    <Sparkles size={16} />
+                    <Icon name="Sparkles" size={16}  />
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-foreground">Ticket Moderno</h4>
@@ -880,7 +881,7 @@ export default function Facturero() {
           </div>
           <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
-              <Settings size={18} className="text-brand-400" />
+              <Icon name="Settings" size={18} className="text-brand-400"  />
               <Section title="Configuración Visual" />
             </div>
 
@@ -910,7 +911,7 @@ export default function Facturero() {
                 >
                   <div className="space-y-0.5">
                     <span className="text-sm font-bold text-brand-400 block flex items-center gap-1.5">
-                      <Printer size={14} />
+                      <Icon name="Printer" size={14}  />
                       Vincular Impresora USB
                     </span>
                     <span className="text-[11px] text-muted-400 block">Habilita la impresión automática de tickets</span>
@@ -1002,7 +1003,7 @@ export default function Facturero() {
 
           <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
-              <Building2 size={18} className="text-brand-400" />
+              <Icon name="Building2" size={18} className="text-brand-400"  />
               <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">Datos de Empresa</h2>
             </div>
 
@@ -1040,7 +1041,7 @@ export default function Facturero() {
                       </>
                     ) : (
                       <>
-                        <Image size={14} className="text-muted-500" />
+                        <Icon name="Image" size={14} className="text-muted-500"  />
                         <span className="text-muted-500">Sin logotipo asignado</span>
                       </>
                     )}
@@ -1072,7 +1073,7 @@ export default function Facturero() {
                         </>
                       ) : (
                         <>
-                          <Image size={14} className="text-muted-500" />
+                          <Icon name="Image" size={14} className="text-muted-500"  />
                           <span className="text-muted-500">Sin banner asignado (usará color corporativo)</span>
                         </>
                       )}
@@ -1106,7 +1107,7 @@ export default function Facturero() {
           {/* Color Theme Selector */}
           <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle">
-              <Palette size={18} className="text-brand-400" />
+              <Icon name="Palette" size={18} className="text-brand-400"  />
               <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">Paleta de Color</h2>
             </div>
 
@@ -1160,7 +1161,7 @@ export default function Facturero() {
           <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 flex-1 flex flex-col overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-3 border-b border-subtle shrink-0">
               <span className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
-                <FileCheck size={16} className="text-brand-400" />
+                <Icon name="FileCheck" size={16} className="text-brand-400"  />
                 Vista Previa Interactiva
               </span>
 
@@ -1199,7 +1200,7 @@ export default function Facturero() {
                 className="flex items-center justify-center gap-1.5 border border-subtle font-bold text-xs"
                 title="Descargar un archivo PDF de demostración con la configuración actual"
               >
-                <Download size={14} />
+                <Icon name="Download" size={14}  />
                 <span>Descargar PDF</span>
               </Button>
 
@@ -1211,7 +1212,7 @@ export default function Facturero() {
                   className="flex items-center justify-center gap-1.5 border border-subtle font-bold text-xs text-brand-300"
                   title="Enviar un ticket de demostración a la impresora para probar el formato"
                 >
-                  <Printer size={14} />
+                  <Icon name="Printer" size={14}  />
                   <span>Imprimir Ticket</span>
                 </Button>
               ) : (
@@ -1222,14 +1223,14 @@ export default function Facturero() {
                   className="flex items-center justify-center gap-1.5 border border-dashed border-brand-500/20 font-bold text-xs text-brand-400 hover:bg-brand-500/10"
                   title="Detectar y vincular impresora USB"
                 >
-                  <Printer size={14} className="animate-pulse" />
+                  <Icon name="Printer" size={14} className="animate-pulse"  />
                   <span>Vincular Impresora</span>
                 </Button>
               )}
             </div>
 
             <div className="p-2.5 rounded-xl bg-surface-900/50 border border-subtle flex items-start gap-2 shrink-0">
-              <AlertCircle size={14} className="text-brand-400 shrink-0 mt-0.5" />
+              <Icon name="AlertCircle" size={14} className="text-brand-400 shrink-0 mt-0.5"  />
               <p className="text-[10px] text-muted-400 leading-normal">
                 Simulación visual en tiempo real. Presiona <strong className="text-foreground">Guardar Configuración</strong> para aplicar los cambios.
               </p>
@@ -1261,7 +1262,7 @@ export default function Facturero() {
         <Modal open={bannerModalOpen} onClose={() => setBannerModalOpen(false)} title="Actualizar Banner">
           <div className="p-5 space-y-4">
             <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-3 flex gap-3 mb-2">
-              <AlertCircle className="text-brand-400 shrink-0 mt-0.5" size={16} />
+              <Icon name="AlertCircle" className="text-brand-400 shrink-0 mt-0.5" size={16}  />
               <p className="text-xs text-brand-300">
                 <strong>Guía de medidas:</strong> Te recomendamos usar una imagen de <strong>1200x300 píxeles</strong> (Proporción 4:1) para que se vea en alta definición y encaje perfectamente en el encabezado corporativo.
               </p>

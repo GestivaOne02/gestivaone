@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
-import { X, ScanLine, AlertTriangle } from 'lucide-react'
 import { useScanner } from '@/services/scanner/useScanner'
+import Icon from '@/components/ui/Icon';
 
 const SCAN_COOLDOWN_MS = 1500
 
@@ -45,11 +45,11 @@ function BaseScanner({ onScan, onClose, isMobile }) {
       style={!isMobile ? { borderRadius: 16, height: 400 } : {}}
     >
       <div className="flex items-center gap-2 px-3 py-2.5 border-b border-subtle bg-surface-800 shrink-0 z-20 absolute top-0 left-0 w-full shadow-lg">
-        <ScanLine size={14} className="text-brand-400" />
+        <Icon name="ScanLine" size={14} className="text-brand-400"  />
         <span className="text-xs font-bold text-brand-400 flex-1">Escáner Activo (Orchestrator)</span>
         <span className="text-[10px] text-muted-400 mr-1">Escaneados: {scanCount}</span>
         <button onClick={onClose} className="p-1 rounded-lg text-muted-400 hover:text-danger-400 transition-colors">
-          <X size={14} />
+          <Icon name="X" size={14}  />
         </button>
       </div>
 
@@ -67,7 +67,7 @@ function BaseScanner({ onScan, onClose, isMobile }) {
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-surface-900 p-6 text-center">
             <div className="flex flex-col items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-danger-500/20 flex items-center justify-center">
-                <AlertTriangle size={24} className="text-danger-400" />
+                <Icon name="AlertTriangle" size={24} className="text-danger-400"  />
               </div>
               <p className="text-xs text-muted-300 max-w-[250px] leading-relaxed">{errorMsg}</p>
             </div>

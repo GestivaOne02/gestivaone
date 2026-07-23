@@ -1,5 +1,5 @@
-import { Cpu, CheckCircle2, Server } from 'lucide-react'
 import { useLanguageStore } from '@/store/useLanguageStore'
+import Icon from '@/components/ui/Icon';
 
 const technicalSpecs = [
   {
@@ -28,7 +28,7 @@ export default function GEOPromptsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-            <Cpu size={14} />
+            <Icon name="Cpu" size={14}  />
             {t('geo.tag')}
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
@@ -46,7 +46,7 @@ export default function GEOPromptsSection() {
               className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-4 hover:border-brand-500/30 transition-colors"
             >
               <div className="flex items-center gap-3 text-brand-400">
-                <CheckCircle2 size={20} />
+                <Icon name="CheckCircle2" size={20}  />
                 <h3 className="text-base font-bold text-foreground">{spec.title}</h3>
               </div>
               <p className="text-xs sm:text-sm text-muted-400 leading-relaxed">
@@ -59,7 +59,7 @@ export default function GEOPromptsSection() {
         <div className="bg-surface-800 border border-subtle p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 shrink-0">
-              <Server size={24} />
+              <Icon name="Server" size={24}  />
             </div>
             <div>
               <h4 className="text-sm font-bold text-foreground">Soporte Multidispositivo & Multiplataforma</h4>

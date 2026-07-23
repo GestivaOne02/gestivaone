@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, ChevronLeft, ChevronRight, User, Trash2, Mail, Phone, Calendar, GripVertical } from 'lucide-react'
+
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import toast from 'react-hot-toast'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import Icon from '@/components/ui/Icon';
 
 const COLUMNS = [
   { id: 'applied', title: 'Postulados', color: 'bg-blue-500/10 border-blue-500/30 text-blue-400' },
@@ -91,7 +92,7 @@ export default function CandidatesKanban({ candidates, addCandidate, updateCandi
           variant="primary"
           size="sm"
           className="rounded-xl py-2"
-          icon={<Plus size={14} />}
+          icon={<Icon name="Plus" size={14}  />}
         >
           Agregar Candidato
         </Button>
@@ -138,7 +139,7 @@ export default function CandidatesKanban({ candidates, addCandidate, updateCandi
                                 <div className="flex items-start justify-between gap-1.5">
                                   <div className="flex items-start gap-2 min-w-0">
                                     <div {...provided.dragHandleProps} className="mt-1 text-muted-500 cursor-grab active:cursor-grabbing hover:text-brand-400">
-                                      <GripVertical size={14} />
+                                      <Icon name="GripVertical" size={14}  />
                                     </div>
                                     <div>
                                       <p className="text-xs font-bold text-foreground truncate">{cand.full_name}</p>
@@ -149,19 +150,19 @@ export default function CandidatesKanban({ candidates, addCandidate, updateCandi
                                     onClick={() => removeCandidate(cand.id)}
                                     className="text-muted-500 hover:text-danger-500 transition-colors p-1 rounded-lg hover:bg-danger-500/10 shrink-0"
                                   >
-                                    <Trash2 size={12} />
+                                    <Icon name="Trash2" size={12}  />
                                   </button>
                                 </div>
 
                                 {/* Candidate Contact Details */}
                                 <div className="space-y-1 text-[10px] text-muted-400 leading-tight pl-5">
                                   <div className="flex items-center gap-1.5 truncate">
-                                    <Mail size={10} className="shrink-0" />
+                                    <Icon name="Mail" size={10} className="shrink-0"  />
                                     <span>{cand.email}</span>
                                   </div>
                                   {cand.phone && (
                                     <div className="flex items-center gap-1.5">
-                                      <Phone size={10} className="shrink-0" />
+                                      <Icon name="Phone" size={10} className="shrink-0"  />
                                       <span>{cand.phone}</span>
                                     </div>
                                   )}
@@ -174,7 +175,7 @@ export default function CandidatesKanban({ candidates, addCandidate, updateCandi
                                     onClick={() => updateCandidateStage(cand.id, prev)}
                                     className="p-1 rounded-lg bg-surface-700/50 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-foreground disabled:opacity-35 disabled:cursor-not-allowed transition-all"
                                   >
-                                    <ChevronLeft size={12} />
+                                    <Icon name="ChevronLeft" size={12}  />
                                   </button>
                                   
                                   <span className="text-[9px] uppercase font-bold text-muted-500 select-none">
@@ -186,7 +187,7 @@ export default function CandidatesKanban({ candidates, addCandidate, updateCandi
                                     onClick={() => updateCandidateStage(cand.id, next)}
                                     className="p-1 rounded-lg bg-surface-700/50 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-foreground disabled:opacity-35 disabled:cursor-not-allowed transition-all"
                                   >
-                                    <ChevronRight size={12} />
+                                    <Icon name="ChevronRight" size={12}  />
                                   </button>
                                 </div>
                               </div>

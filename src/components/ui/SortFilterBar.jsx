@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
-import { Clock, Hash, AlignLeft } from 'lucide-react'
+
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 /**
  * SortFilterBar

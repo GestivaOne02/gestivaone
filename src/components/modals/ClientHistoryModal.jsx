@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FileText, Clock, AlertTriangle, CheckCircle, Package, Plus, Coins, Check, Loader2, ChevronDown, ChevronUp, MessageSquare, Mail } from 'lucide-react'
+
 import Modal from '@/components/ui/Modal'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
@@ -9,6 +9,7 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 // Helper for parsing note structured abonos
 export function parseInvoiceNote(note) {
@@ -193,7 +194,7 @@ function InvoiceItemCard({ inv, format$, client }) {
             onClick={() => setShowHistory(!showHistory)}
             className="text-brand-400 hover:text-brand-300 flex items-center gap-1 font-semibold"
           >
-            {showHistory ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+            {showHistory ? <Icon name="ChevronUp" size={12}  /> : <Icon name="ChevronDown" size={12}  />}
             <span>Ver historial de abonos ({payments.length})</span>
           </button>
           {showHistory && (
@@ -215,7 +216,7 @@ function InvoiceItemCard({ inv, format$, client }) {
       {/* Action panel */}
       <div className="flex items-center justify-between pt-3 border-t border-subtle mt-3">
         <div className="flex items-center gap-1.5 text-muted-400">
-          <Package size={14} />
+          <Icon name="Package" size={14}  />
           <span className="text-xs">{inv.items?.length || 0} artículos</span>
         </div>
         <div className="flex items-center gap-2">
@@ -225,7 +226,7 @@ function InvoiceItemCard({ inv, format$, client }) {
             title={inv.payment_status === 'paid' ? "Compartir Factura por WhatsApp" : "Enviar Recordatorio por WhatsApp"}
             className="p-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors flex items-center justify-center gap-1 text-xs font-bold"
           >
-            <MessageSquare size={12} />
+            <Icon name="MessageSquare" size={12}  />
             <span>{inv.payment_status === 'paid' ? 'Compartir' : 'Recordar'}</span>
           </button>
           <button
@@ -234,7 +235,7 @@ function InvoiceItemCard({ inv, format$, client }) {
             title="Enviar factura por correo electrónico"
             className="p-1.5 rounded-lg text-brand-400 bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/20 transition-colors flex items-center justify-center gap-1 text-xs font-bold"
           >
-            <Mail size={12} />
+            <Icon name="Mail" size={12}  />
             <span>Correo</span>
           </button>
           {inv.payment_status !== 'paid' && (
@@ -242,7 +243,7 @@ function InvoiceItemCard({ inv, format$, client }) {
               onClick={() => setShowAbonoForm(!showAbonoForm)}
               className="text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1.5 transition-colors"
             >
-              <Coins size={12} />
+              <Icon name="Coins" size={12}  />
               Abonar
             </button>
           )}
@@ -254,7 +255,7 @@ function InvoiceItemCard({ inv, format$, client }) {
       {showAbonoForm && (
         <form onSubmit={handleAbonoSubmit} className="mt-4 p-3 rounded-xl bg-surface-700/60 border border-amber-500/30 space-y-2.5 animate-slide-up">
           <div className="text-xs font-bold text-amber-400 flex items-center gap-1">
-            <Coins size={12} />
+            <Icon name="Coins" size={12}  />
             <span>Registrar Abono a Factura #{inv.id.slice(0, 8)}</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -295,7 +296,7 @@ function InvoiceItemCard({ inv, format$, client }) {
               disabled={submitting}
               className="text-xs font-bold bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
             >
-              {submitting ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+              {submitting ? <Icon name="Loader2" size={12} className="animate-spin"  /> : <Icon name="Check" size={12}  />}
               Confirmar Abono
             </button>
           </div>
@@ -353,7 +354,7 @@ export default function ClientHistoryModal({ open }) {
         <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
           {clientInvoices.length === 0 ? (
             <div className="text-center py-10">
-              <FileText size={32} className="text-muted-500 mx-auto mb-3" />
+              <Icon name="FileText" size={32} className="text-muted-500 mx-auto mb-3"  />
               <p className="text-sm text-muted-400">Este cliente aún no tiene facturas registradas.</p>
             </div>
           ) : (

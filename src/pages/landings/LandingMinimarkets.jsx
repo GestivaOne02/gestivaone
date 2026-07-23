@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Store, Barcode, ShieldCheck, ArrowRight } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 export default function LandingMinimarkets() {
   return (
@@ -33,7 +33,7 @@ export default function LandingMinimarkets() {
 
       <header className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-          <Store size={14} />
+          <Icon name="Store" size={14}  />
           Minimarkets y Tiendas de Barrio
         </div>
         <h1 className="text-4xl sm:text-5xl font-black text-white max-w-4xl mx-auto tracking-tight leading-tight">
@@ -47,7 +47,7 @@ export default function LandingMinimarkets() {
             to="/auth?mode=register"
             className="px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all flex items-center gap-2"
           >
-            Registrar Minimarket Gratis <ArrowRight size={16} />
+            Registrar Minimarket Gratis <Icon name="ArrowRight" size={16}  />
           </Link>
         </div>
       </header>
@@ -55,17 +55,17 @@ export default function LandingMinimarkets() {
       <section className="py-16 bg-surface-800 border-t border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Barcode size={24} className="text-brand-400" />
+            <Icon name="Barcode" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Lectura de Código de Barras</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Búsqueda veloz de productos por código EAN/UPC o nombre comercial.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Store size={24} className="text-brand-400" />
+            <Icon name="Store" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Ventas Rápidas en Caja</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Procesa múltiples métodos de pago (Efectivo, Nequi, Daviplata, Tarjeta) sin demoras.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <ShieldCheck size={24} className="text-brand-400" />
+            <Icon name="ShieldCheck" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Aviso de Productos Faltantes</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Monitorea los insumos de alta rotación para reponerlos antes de que se agoten.</p>
           </div>

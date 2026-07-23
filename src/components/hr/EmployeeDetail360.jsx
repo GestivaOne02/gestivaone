@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, ShieldCheck, Mail, Phone, Calendar, Briefcase, DollarSign, Building, CreditCard, Folder, Check, X } from 'lucide-react'
+
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 export default function EmployeeDetail360({ employee, allEmployees = [], onUpdate, onClose }) {
   const [activeTab, setActiveTab] = useState('contract') // contract, docs, payroll
@@ -277,7 +278,7 @@ export default function EmployeeDetail360({ employee, allEmployees = [], onUpdat
                 type="submit"
                 disabled={saving}
                 className="rounded-xl px-6 py-2"
-                icon={<Check size={14} />}
+                icon={<Icon name="Check" size={14}  />}
               >
                 {saving ? 'Guardando...' : 'Guardar Cambios'}
               </Button>
@@ -306,7 +307,7 @@ export default function EmployeeDetail360({ employee, allEmployees = [], onUpdat
               <div key={idx} className="bg-surface-900/40 border border-subtle/80 p-4 rounded-3xl flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-brand-500/10 text-brand-400 rounded-2xl">
-                    <Folder size={18} />
+                    <Icon name="Folder" size={18}  />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-foreground truncate max-w-[150px]" title={doc.name}>{doc.name}</p>
@@ -317,7 +318,7 @@ export default function EmployeeDetail360({ employee, allEmployees = [], onUpdat
                   onClick={() => setDocs(d => d.filter((_, i) => i !== idx))}
                   className="text-muted-500 hover:text-danger-500 transition-colors p-1.5 rounded-lg hover:bg-danger-500/10"
                 >
-                  <X size={13} />
+                  <Icon name="X" size={13}  />
                 </button>
               </div>
             ))}

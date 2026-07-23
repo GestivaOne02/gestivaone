@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
-import { Shield, Lock, FileText, ChevronRight, Eye, ArrowLeft } from 'lucide-react'
+
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,12 +38,12 @@ export default function Terms() {
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-800/80 hover:bg-surface-700/80 border border-subtle transition-all duration-300 text-sm font-bold shadow-sm"
           >
-            <ArrowLeft size={16} />
+            <Icon name="ArrowLeft" size={16}  />
             <span>Volver</span>
           </button>
           
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-xs font-black text-brand-400">
-            <Shield size={12} />
+            <Icon name="Shield" size={12}  />
             <span>Privacidad Garantizada</span>
           </div>
         </motion.div>
@@ -50,7 +51,7 @@ export default function Terms() {
         {/* Hero Header */}
         <motion.div variants={itemVariants} className="text-center space-y-4">
           <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-brand-500 to-brand-600 flex items-center justify-center mx-auto shadow-glow-sm">
-            <FileText size={32} className="text-white" />
+            <Icon name="FileText" size={32} className="text-white"  />
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Términos, Condiciones y Privacidad</h1>
           <p className="text-sm md:text-base text-muted-400 max-w-xl mx-auto leading-relaxed">
@@ -61,7 +62,7 @@ export default function Terms() {
         {/* Content sections with Liquid Glass effect */}
         <motion.div variants={itemVariants} className="liquid-glass p-6 md:p-8 rounded-3xl space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-subtle">
-            <Lock className="text-brand-500 shrink-0" size={24} />
+            <Icon name="Lock" className="text-brand-500 shrink-0" size={24}  />
             <h2 className="text-lg md:text-xl font-bold">1. Tratamiento de Datos Personales</h2>
           </div>
           <p className="text-xs md:text-sm text-muted-400 leading-relaxed">
@@ -91,7 +92,7 @@ export default function Terms() {
 
         <motion.div variants={itemVariants} className="liquid-glass p-6 md:p-8 rounded-3xl space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-subtle">
-            <Shield className="text-brand-500 shrink-0" size={24} />
+            <Icon name="Shield" className="text-brand-500 shrink-0" size={24}  />
             <h2 className="text-lg md:text-xl font-bold">2. Límites de Privacidad que Brindamos</h2>
           </div>
           <p className="text-xs md:text-sm text-muted-400 leading-relaxed">
@@ -105,7 +106,7 @@ export default function Terms() {
               "Vencimiento de Enlaces: Los códigos temporales que generas para tus trabajadores vencen automáticamente para evitar intrusiones no deseadas."
             ].map((text, idx) => (
               <li key={idx} className="flex gap-3 text-xs md:text-sm text-muted-400 leading-relaxed">
-                <ChevronRight size={16} className="text-brand-500 shrink-0 mt-0.5" />
+                <Icon name="ChevronRight" size={16} className="text-brand-500 shrink-0 mt-0.5"  />
                 <span>{text}</span>
               </li>
             ))}
@@ -114,7 +115,7 @@ export default function Terms() {
 
         <motion.div variants={itemVariants} className="liquid-glass p-6 md:p-8 rounded-3xl space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-subtle">
-            <Eye className="text-brand-500 shrink-0" size={24} />
+            <Icon name="Eye" className="text-brand-500 shrink-0" size={24}  />
             <h2 className="text-lg md:text-xl font-bold">3. Uso de Cookies Operativas</h2>
           </div>
           <p className="text-xs md:text-sm text-muted-400 leading-relaxed">
@@ -125,7 +126,7 @@ export default function Terms() {
         {/* Footer Section */}
         <motion.div variants={itemVariants} className="text-center space-y-4 pt-4">
           <div className="flex justify-center items-center gap-2 text-xs font-bold text-muted-500">
-            <Shield size={14} className="text-brand-500" />
+            <Icon name="Shield" size={14} className="text-brand-500"  />
             <span>Comprometidos con tu seguridad · GestivaOne 2026</span>
           </div>
           <Button

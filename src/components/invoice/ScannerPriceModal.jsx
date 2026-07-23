@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ScanLine, Package, DollarSign, Save } from 'lucide-react'
+import Icon from '@/components/ui/Icon';
+
 
 export default function ScannerPriceModal({ barcode, suggestedName = '', onConfirm, onCancel }) {
   const [name, setName] = useState(suggestedName)
@@ -41,21 +42,21 @@ export default function ScannerPriceModal({ barcode, suggestedName = '', onConfi
         >
           <div className="flex items-center gap-3 px-5 py-4 border-b border-subtle bg-surface-750">
             <div className="w-9 h-9 rounded-xl bg-brand-500/15 flex items-center justify-center shrink-0">
-              <ScanLine size={18} className="text-brand-400" />
+              <Icon name="ScanLine" size={18} className="text-brand-400"  />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-foreground">Nuevo Producto Escaneado</p>
               <p className="text-[11px] text-muted-400 font-mono">Código: ...{shortCode}</p>
             </div>
             <button onClick={onCancel} className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors">
-              <X size={16} />
+              <Icon name="X" size={16}  />
             </button>
           </div>
 
           <div className="p-5 space-y-4">
             <div>
               <label className="text-xs font-bold text-muted-300 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-                <Package size={11} />
+                <Icon name="Package" size={11}  />
                 Nombre del Producto
               </label>
               <input
@@ -72,7 +73,7 @@ export default function ScannerPriceModal({ barcode, suggestedName = '', onConfi
 
             <div>
               <label className="text-xs font-bold text-muted-300 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-                <DollarSign size={11} />
+                <Icon name="DollarSign" size={11}  />
                 Precio Unitario
               </label>
               <input
@@ -103,7 +104,7 @@ export default function ScannerPriceModal({ barcode, suggestedName = '', onConfi
           <div className="flex gap-2 px-5 pb-5">
             <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl text-xs font-bold text-muted-400 border border-subtle hover:bg-surface-700 transition-colors">Cancelar</button>
             <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white transition-colors flex items-center justify-center gap-1.5">
-              <Save size={12} />Añadir a Factura
+              <Icon name="Save" size={12}  />Añadir a Factura
             </button>
           </div>
         </motion.div>

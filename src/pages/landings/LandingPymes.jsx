@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { TrendingUp, BarChart3, Users2, ArrowRight } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 export default function LandingPymes() {
   return (
@@ -33,7 +33,7 @@ export default function LandingPymes() {
 
       <header className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-          <TrendingUp size={14} />
+          <Icon name="TrendingUp" size={14}  />
           Gestión Empresarial Inteligente
         </div>
         <h1 className="text-4xl sm:text-5xl font-black text-white max-w-4xl mx-auto tracking-tight leading-tight">
@@ -47,7 +47,7 @@ export default function LandingPymes() {
             to="/auth?mode=register"
             className="px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all flex items-center gap-2"
           >
-            Empieza a Administrar tu PyME Gratis <ArrowRight size={16} />
+            Empieza a Administrar tu PyME Gratis <Icon name="ArrowRight" size={16}  />
           </Link>
         </div>
       </header>
@@ -55,17 +55,17 @@ export default function LandingPymes() {
       <section className="py-16 bg-surface-800 border-t border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <BarChart3 size={24} className="text-brand-400" />
+            <Icon name="BarChart3" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Reportes PDF & Excel</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Exporta balances oficiales, estados de cuenta y resúmenes de egresos en un clic.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Users2 size={24} className="text-brand-400" />
+            <Icon name="Users2" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Gestión de Empleados</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Añade trabajadores con roles específicos (cajeros, contables) e invitaciones encriptadas.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <TrendingUp size={24} className="text-brand-400" />
+            <Icon name="TrendingUp" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Métrica de Márgenes y Ganancias</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Analiza la rentabilidad neta de tu empresa por día, semana o mes.</p>
           </div>

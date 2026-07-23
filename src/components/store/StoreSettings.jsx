@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
-import { CreditCard, Save, RefreshCw } from 'lucide-react';
+import Icon from '@/components/ui/Icon';
 
 export default function StoreSettings({
   codEnabled, setCodEnabled,
@@ -40,7 +40,7 @@ export default function StoreSettings({
           >
             <div className="flex flex-col gap-1">
               <span className="text-xs font-bold flex items-center gap-2">
-                <CreditCard size={14} className={codEnabled ? "text-brand-400" : "text-muted-500"} />
+                <Icon name="CreditCard" size={14} className={codEnabled ? "text-brand-400" : "text-muted-500"}  />
                 Pago Contra Entrega (Efectivo)
               </span>
               <p className={clsx(
@@ -70,7 +70,7 @@ export default function StoreSettings({
                   "text-xs font-bold flex items-center gap-2",
                   bankTransferEnabled ? "text-white" : "text-muted-500"
                 )}>
-                  <CreditCard size={14} className={bankTransferEnabled ? "text-brand-400" : "text-muted-500"} />
+                  <Icon name="CreditCard" size={14} className={bankTransferEnabled ? "text-brand-400" : "text-muted-500"}  />
                   Transferencia Bancaria Directa
                 </span>
                 <p className={clsx(
@@ -116,7 +116,7 @@ export default function StoreSettings({
           disabled={saving}
           className="w-full sm:w-auto self-end mt-4 px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 border border-brand-400 disabled:opacity-50"
         >
-          {saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Icon name="RefreshCw" size={14} className="animate-spin"  /> : <Icon name="Save" size={14}  />}
           <span>Guardar Métodos</span>
         </button>
       </div>
@@ -171,7 +171,7 @@ export default function StoreSettings({
           disabled={saving}
           className="w-full sm:w-auto self-end mt-6 px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 border border-brand-400 disabled:opacity-50"
         >
-          {saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Icon name="RefreshCw" size={14} className="animate-spin"  /> : <Icon name="Save" size={14}  />}
           <span>Guardar Envíos</span>
         </button>
       </div>

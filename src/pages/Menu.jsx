@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { UserPlus, Users, Edit2, Trash2, Check, ShoppingBag, History, CalendarDays, MousePointerClick, User, Building2, Globe, Plane } from 'lucide-react'
+
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import SearchBar from '@/components/ui/SearchBar'
@@ -16,6 +16,7 @@ import { es } from 'date-fns/locale'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const DOC_TYPES = {
   '13': 'CC',
@@ -60,11 +61,11 @@ const PassportIcon = ({ size = 18, className = "" }) => (
 
 const getClientIcon = (docType) => {
   const code = String(docType)
-  if (code === '13') return <User size={18} className="stroke-[2.5]" />
-  if (code === '31') return <Building2 size={18} className="stroke-[2.5]" />
-  if (code === '22') return <Globe size={18} className="stroke-[2.5]" />
+  if (code === '13') return <Icon name="User" size={18} className="stroke-[2.5]"  />
+  if (code === '31') return <Icon name="Building2" size={18} className="stroke-[2.5]"  />
+  if (code === '22') return <Icon name="Globe" size={18} className="stroke-[2.5]"  />
   if (code === '41') return <PassportIcon size={18} />
-  return <User size={18} className="stroke-[2.5]" />
+  return <Icon name="User" size={18} className="stroke-[2.5]"  />
 }
 
 function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistory, format$, lastInvoice, pendingAmount, totalBilled, status }) {
@@ -104,7 +105,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
           {getClientIcon(client.document_type)}
           {selected && (
             <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-brand-500 border-2 border-surface-800 dark:border-surface-700 flex items-center justify-center">
-              <Check size={8} className="text-white stroke-[3]" />
+              <Icon name="Check" size={8} className="text-white stroke-[3]"  />
             </span>
           )}
         </div>
@@ -127,7 +128,7 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
         <div className="flex flex-col gap-0.5">
           <span className="text-[10px] font-bold uppercase tracking-wider text-muted-500">Última Factura</span>
           <span className="text-xs font-semibold text-foreground flex items-center gap-1">
-            <CalendarDays size={11} className="text-muted-500 shrink-0" />
+            <Icon name="CalendarDays" size={11} className="text-muted-500 shrink-0"  />
             {lastInvoice
               ? format(new Date(lastInvoice.created_at), "dd MMM yyyy", { locale: es })
               : '—'
@@ -166,21 +167,21 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
             className="h-8 w-8 rounded-lg flex items-center justify-center bg-brand-600/15 hover:bg-brand-600 text-brand-400 hover:text-white transition-all duration-200 cursor-pointer"
             title="Ver Historial"
           >
-            <History size={13} />
+            <Icon name="History" size={13}  />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onEdit() }}
             className="h-8 w-8 rounded-lg flex items-center justify-center bg-surface-700/60 hover:bg-surface-600 text-muted-400 hover:text-foreground transition-all duration-200 cursor-pointer"
             title="Editar cliente"
           >
-            <Edit2 size={13} />
+            <Icon name="Edit2" size={13}  />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete() }}
             className="h-8 w-8 rounded-lg flex items-center justify-center bg-transparent text-muted-400 hover:bg-red-100 hover:text-red-800 dark:hover:bg-red-950/50 dark:hover:text-red-400 transition-all duration-200 cursor-pointer"
             title="Eliminar cliente"
           >
-            <Trash2 size={13} />
+            <Icon name="Trash2" size={13}  />
           </button>
         </div>
 
@@ -188,12 +189,12 @@ function ClientCard({ client, selected, onSelect, onEdit, onDelete, onOpenHistor
         <div className="flex items-center gap-1 select-none">
           {selected ? (
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-brand-400 flex items-center gap-1">
-              <Check size={11} className="stroke-[3]" />
+              <Icon name="Check" size={11} className="stroke-[3]"  />
               Elegido
             </span>
           ) : (
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-brand-400/70 group-hover:text-brand-400 transition-colors flex items-center gap-1">
-              <MousePointerClick size={11} className="shrink-0" />
+              <Icon name="MousePointerClick" size={11} className="shrink-0"  />
               Haz click para elegir
             </span>
           )}
@@ -331,7 +332,7 @@ export default function Menu() {
               variant="primary"
               size="sm"
               pill
-              icon={<UserPlus size={15} />}
+              icon={<Icon name="UserPlus" size={15}  />}
               onClick={() => openModal('addClient')}
               whileHover={{ y: 0 }}
               whileTap={{ scale: 1 }}
@@ -367,7 +368,7 @@ export default function Menu() {
       <div className="flex-1 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users size={16} className="text-brand-400" />
+            <Icon name="Users" size={16} className="text-brand-400"  />
             <span className="text-sm font-semibold text-foreground">Clientes Frecuentes</span>
             <span className="text-xs text-muted-400 bg-surface-600 px-2 py-0.5 rounded-full">{frequent.length}</span>
           </div>
@@ -383,7 +384,7 @@ export default function Menu() {
                   animate={{ opacity: 1 }}
                   className="col-span-full text-center py-12"
                 >
-                  <Users size={32} className="text-muted-400 mx-auto mb-3" />
+                  <Icon name="Users" size={32} className="text-muted-400 mx-auto mb-3"  />
                   <p className="text-sm text-muted-400">
                     {search ? 'Sin resultados para tu búsqueda' : 'Aún no tienes clientes frecuentes'}
                   </p>

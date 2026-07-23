@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Zap, Star, Building2, Check, ChevronDown, Sparkles, ShieldCheck } from 'lucide-react'
+
 import { PLANS } from '@/store/useAuthStore'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const glows = {
   standard: 'border-brand-500/10 hover:border-brand-500/30',
@@ -127,7 +128,7 @@ export default function PlanSelector({ selected, onSelect }) {
 
               {plan.popular && (
                 <span className="absolute -top-0 right-6 bg-brand-500 text-white text-[8px] font-black px-3 py-1 rounded-b-xl flex items-center gap-1 shadow-sm uppercase tracking-wider z-10">
-                  <Star size={8} fill="currentColor" /> RECOMENDADO
+                  <Icon name="Star" size={8} fill="currentColor"  /> RECOMENDADO
                 </span>
               )}
 
@@ -136,7 +137,7 @@ export default function PlanSelector({ selected, onSelect }) {
                 <div className="space-y-4 w-full">
                   <div className="flex items-center justify-between">
                     <div className={clsx('w-9 h-9 rounded-xl border flex items-center justify-center transition-all duration-300', activeBadge)}>
-                      {plan.id === 'empresarial' ? <Building2 size={16} /> : <Zap size={16} />}
+                      {plan.id === 'empresarial' ? <Icon name="Building2" size={16}  /> : <Icon name="Zap" size={16}  />}
                     </div>
                     <span className="text-[9px] font-bold text-muted-500 uppercase tracking-widest bg-surface-900 border border-subtle px-2 py-0.5 rounded-full">
                       {plan.id === 'empresarial' ? 'Completo' : plan.id === 'pro' ? 'Crecimiento' : 'Básico'}
@@ -192,7 +193,7 @@ export default function PlanSelector({ selected, onSelect }) {
               <ul className="space-y-2 text-left pt-4 border-t border-subtle/50 w-full px-1 mt-4 relative z-10">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-[11px] text-neutral-800 dark:text-neutral-300 leading-tight">
-                    <Check size={11} className="stroke-[3.5] text-brand-500 shrink-0 mt-0.5" />
+                    <Icon name="Check" size={11} className="stroke-[3.5] text-brand-500 shrink-0 mt-0.5"  />
                     <span className="font-semibold">{f}</span>
                   </li>
                 ))}
@@ -212,7 +213,7 @@ export default function PlanSelector({ selected, onSelect }) {
             <div className="space-y-4 w-full">
               <div className="flex items-center justify-between">
                 <div className="w-9 h-9 rounded-xl border border-warning-500/20 bg-warning-500/10 text-warning-400 flex items-center justify-center shrink-0">
-                  <Sparkles size={16} />
+                  <Icon name="Sparkles" size={16}  />
                 </div>
                 <span className="text-[9px] font-bold text-warning-400 uppercase tracking-widest bg-warning-500/5 border border-warning-500/15 px-2 py-0.5 rounded-full">
                   Exclusivo
@@ -249,7 +250,7 @@ export default function PlanSelector({ selected, onSelect }) {
               'Integraciones nativas a medida'
             ].map((f) => (
               <li key={f} className="flex items-start gap-2 text-[11px] text-neutral-500 dark:text-neutral-500 leading-tight">
-                <Check size={10} className="stroke-[3.5] text-neutral-400 dark:text-neutral-500 shrink-0 mt-0.5" />
+                <Icon name="Check" size={10} className="stroke-[3.5] text-neutral-400 dark:text-neutral-500 shrink-0 mt-0.5"  />
                 <span className="font-semibold">{f}</span>
               </li>
             ))}
@@ -269,7 +270,7 @@ export default function PlanSelector({ selected, onSelect }) {
             animate={{ rotate: showComparison ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronDown size={14} />
+            <Icon name="ChevronDown" size={14}  />
           </motion.div>
         </button>
       </div>

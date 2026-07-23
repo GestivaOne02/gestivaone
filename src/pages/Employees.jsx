@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Users, Plus, ShieldCheck, Truck, Calculator,
-  Trash2, MoreVertical, Check, X, Clock, Copy, Link as LinkIcon, Mail,
-  LayoutDashboard, DollarSign, Calendar, TrendingUp, Shield
-} from 'lucide-react'
+
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
 import { useHRStore } from '@/store/useHRStore'
 import { usePayrollStore } from '@/store/usePayrollStore'
@@ -22,6 +18,7 @@ import OrgChart from '@/components/hr/OrgChart'
 import VacationsPanel from '@/components/hr/VacationsPanel'
 import PayrollPanel from '@/components/hr/PayrollPanel'
 import EmployeeDetail360 from '@/components/hr/EmployeeDetail360'
+import Icon from '@/components/ui/Icon';
 
 const ROLE_META = {
   administrador: { icon: ShieldCheck, color: 'text-brand-500', bg: 'bg-brand-500/10 border-brand-500/25' },
@@ -84,7 +81,7 @@ function InviteTimer({ expiresAt }) {
         ? "bg-danger-500/10 border-danger-500/20 text-danger-500"
         : "bg-surface-700/50 border-subtle text-muted-400"
     )}>
-      <Clock size={10} />
+      <Icon name="Clock" size={10}  />
       {timeLeft}
     </span>
   )
@@ -293,14 +290,14 @@ export default function Employees() {
             onClick={() => setInviteModalOpen(true)}
             className="flex items-center justify-center gap-2 bg-surface-800 hover:bg-surface-700 text-muted-300 border border-subtle text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-300 shrink-0"
           >
-            <LinkIcon size={14} />
+            <Icon name="Link" size={14}  />
             <span>Generar Invitación</span>
           </button>
           <button
             onClick={() => setAddEmployeeModalOpen(true)}
             className="flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all duration-300 hover:scale-[1.02] shrink-0"
           >
-            <Plus size={14} />
+            <Icon name="Plus" size={14}  />
             <span>Agregar Colaborador</span>
           </button>
         </div>
@@ -315,7 +312,7 @@ export default function Employees() {
             activeTab === 'dashboard' ? "border-brand-500 text-brand-500 font-black" : "border-transparent hover:text-foreground"
           )}
         >
-          <LayoutDashboard size={14} />
+          <Icon name="LayoutDashboard" size={14}  />
           Dashboard
         </button>
         <button
@@ -325,7 +322,7 @@ export default function Employees() {
             activeTab === 'staff' ? "border-brand-500 text-brand-500 font-black" : "border-transparent hover:text-foreground"
           )}
         >
-          <Users size={14} />
+          <Icon name="Users" size={14}  />
           Colaboradores
         </button>
         <button
@@ -335,7 +332,7 @@ export default function Employees() {
             activeTab === 'payroll' ? "border-brand-500 text-brand-500 font-black" : "border-transparent hover:text-foreground"
           )}
         >
-          <DollarSign size={14} />
+          <Icon name="DollarSign" size={14}  />
           Nómina
         </button>
         <button
@@ -345,7 +342,7 @@ export default function Employees() {
             activeTab === 'vacations' ? "border-brand-500 text-brand-500 font-black" : "border-transparent hover:text-foreground"
           )}
         >
-          <Calendar size={14} />
+          <Icon name="Calendar" size={14}  />
           Vacaciones
         </button>
         <button
@@ -355,7 +352,7 @@ export default function Employees() {
             activeTab === 'recruitment' ? "border-brand-500 text-brand-500 font-black" : "border-transparent hover:text-foreground"
           )}
         >
-          <TrendingUp size={14} />
+          <Icon name="TrendingUp" size={14}  />
           Selección (Kanban)
         </button>
         <button
@@ -365,7 +362,7 @@ export default function Employees() {
             activeTab === 'orgchart' ? "border-brand-500 text-brand-500 font-black" : "border-transparent hover:text-foreground"
           )}
         >
-          <Shield size={14} />
+          <Icon name="Shield" size={14}  />
           Organigrama
         </button>
       </div>
@@ -426,15 +423,15 @@ export default function Employees() {
                                 {!inv.used && !isExpired && (
                                   <>
                                     <button onClick={() => copyToClipboard(inv.code, 'código')} className="p-2 rounded-xl bg-surface-700/50 hover:bg-surface-700 text-muted-400 transition-all">
-                                      <Copy size={12} />
+                                      <Icon name="Copy" size={12}  />
                                     </button>
                                     <button onClick={() => copyToClipboard(registerLink, 'enlace')} className="p-2 rounded-xl bg-surface-700/50 hover:bg-surface-700 text-muted-400 transition-all">
-                                      <LinkIcon size={12} />
+                                      <Icon name="Link" size={12}  />
                                     </button>
                                   </>
                                 )}
                                 <button onClick={() => handleRevokeInvite(inv.code)} className="p-2 rounded-xl bg-danger-500/10 hover:bg-danger-500/20 text-danger-500 transition-all">
-                                  <Trash2 size={12} />
+                                  <Icon name="Trash2" size={12}  />
                                 </button>
                               </div>
                             </div>
@@ -492,7 +489,7 @@ export default function Employees() {
                                   onClick={() => setMenuId(menuId === emp.id ? null : emp.id)}
                                   className="p-1 rounded-lg text-muted-400 hover:bg-surface-700"
                                 >
-                                  <MoreVertical size={13} />
+                                  <Icon name="MoreVertical" size={13}  />
                                 </button>
                                 {menuId === emp.id && (
                                   <>

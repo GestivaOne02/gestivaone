@@ -2,9 +2,10 @@ import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Building2, User, Mail, Phone, Upload, X, Check, Eye, EyeOff } from 'lucide-react'
+
 import Input from '@/components/ui/Input'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const schema = z.object({
   companyName: z.string().min(2, 'Mínimo 2 caracteres'),
@@ -52,7 +53,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
     <form onSubmit={handleSubmit(submit)} className="space-y-3">
       <div className="flex items-center gap-2 mb-2">
         <div className="p-1.5 bg-success-500/10 rounded-lg border border-success-500/20 shrink-0">
-          <Check size={14} className="text-success-400" />
+          <Icon name="Check" size={14} className="text-success-400"  />
         </div>
         <div className="space-y-0">
           <h2 className="text-sm font-extrabold text-neutral-900 dark:text-white">Datos de tu empresa</h2>
@@ -73,7 +74,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
         >
           {logo
             ? <img src={logo} alt="Logo" className="w-full h-full object-cover" />
-            : <Upload size={16} className="text-muted-400" />
+            : <Icon name="Upload" size={16} className="text-muted-400"  />
           }
         </div>
         <div className="flex-1 min-w-0 flex items-center justify-between">
@@ -85,7 +86,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
           </div>
           {logo && (
             <button type="button" onClick={() => setLogo(null)} className="p-1 rounded-lg text-muted-400 hover:text-danger-400 hover:bg-surface-700">
-              <X size={13} />
+              <Icon name="X" size={13}  />
             </button>
           )}
         </div>
@@ -93,16 +94,16 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Input label="Nombre de la empresa *" icon={<Building2 size={14} />} placeholder="Nombre de tu negocio"
+        <Input label="Nombre de la empresa *" icon={<Icon name="Building2" size={14}  />} placeholder="Nombre de tu negocio"
           error={errors.companyName?.message} {...register('companyName')} />
-        <Input label="Tu nombre *" icon={<User size={14} />} placeholder="Ej: Juan Pérez"
+        <Input label="Tu nombre *" icon={<Icon name="User" size={14}  />} placeholder="Ej: Juan Pérez"
           error={errors.name?.message} {...register('name')} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <Input 
           label="Correo electrónico *" 
-          icon={<Mail size={14} />} 
+          icon={<Icon name="Mail" size={14}  />} 
           placeholder="correo@empresa.com"
           error={errors.email?.message} 
           {...register('email')}
@@ -116,7 +117,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
         />
         <Input 
           label="Teléfono *" 
-          icon={<Phone size={14} />} 
+          icon={<Icon name="Phone" size={14}  />} 
           placeholder="Ej: +57 300..."
           error={errors.phone?.message} 
           {...register('phone')}
@@ -134,7 +135,7 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
         <Input 
           label="Contraseña *" 
           type={showPassword ? "text" : "password"} 
-          icon={<User size={14} />} 
+          icon={<Icon name="User" size={14}  />} 
           placeholder="Establecer contraseña"
           error={errors.password?.message} 
           hint="Requiere mayúscula, minúscula, número y un carácter especial"
@@ -149,14 +150,14 @@ export default function CompanyForm({ onSubmit: onNext, defaultValues, plan, soc
               onTouchEnd={() => setShowPassword(false)}
               className="text-muted-400 hover:text-foreground transition-colors"
             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showPassword ? <Icon name="EyeOff" size={16}  /> : <Icon name="Eye" size={16}  />}
             </button>
           }
         />
         <Input 
           label="Repetir contraseña *" 
           type={showPassword ? "text" : "password"} 
-          icon={<User size={14} />} 
+          icon={<Icon name="User" size={14}  />} 
           placeholder="Confirmar contraseña"
           error={errors.repeatPassword?.message} 
           {...register('repeatPassword')} 

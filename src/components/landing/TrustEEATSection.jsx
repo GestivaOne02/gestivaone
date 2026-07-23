@@ -1,5 +1,5 @@
-import { ShieldCheck, Lock, Server, MapPin, Award } from 'lucide-react'
 import { useLanguageStore } from '@/store/useLanguageStore'
+import Icon from '@/components/ui/Icon';
 
 export default function TrustEEATSection() {
   const { t } = useLanguageStore()
@@ -32,7 +32,7 @@ export default function TrustEEATSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-            <ShieldCheck size={14} />
+            <Icon name="ShieldCheck" size={14}  />
             {t('trust.tag')}
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">

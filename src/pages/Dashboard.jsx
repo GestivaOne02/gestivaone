@@ -2,7 +2,7 @@ import { useMemo, useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
-import { DollarSign, FileText, Clock, CheckCircle, Users, TrendingUp, AlertTriangle, Lock, Package, Calendar, Coins, Download, Plus, Trash2, Zap, FolderPlus, Wallet } from 'lucide-react'
+
 import {
   AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, LineChart, Line, Legend
@@ -17,6 +17,7 @@ import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore, ROLES, PLANS } from '@/store/useAuthStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 import { usePocketStore } from '@/store/usePocketStore'
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -484,7 +485,7 @@ export default function Dashboard() {
     return (
       <div className="h-full flex flex-col items-center justify-center gap-4 p-6 text-center">
         <div className="w-20 h-20 rounded-3xl bg-surface-700 border border-subtle flex items-center justify-center">
-          <Lock size={36} className="text-muted-400" />
+          <Icon name="Lock" size={36} className="text-muted-400"  />
         </div>
         <div>
           <h2 className="text-lg font-bold text-foreground">Acceso restringido</h2>
@@ -808,7 +809,7 @@ export default function Dashboard() {
       {/* Financial Export Panel - Mobile First & Fully Responsive */}
       <motion.div variants={itemVariants} className="bg-surface-800 border border-subtle rounded-2xl p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-6 shadow-glow-sm overflow-hidden">
         <div className="flex items-start md:items-center gap-4 flex-1 min-w-0">
-          <TrendingUp size={24} className="text-brand-400 shrink-0 mt-0.5 md:mt-0" />
+          <Icon name="TrendingUp" size={24} className="text-brand-400 shrink-0 mt-0.5 md:mt-0"  />
           <div className="flex-1 min-w-0">
             <h3 className="text-sm md:text-base font-bold text-brand-600 dark:text-white truncate">
               Reportes Financieros Ejecutivos
@@ -824,7 +825,7 @@ export default function Dashboard() {
             title="Genera y descarga un reporte financiero detallado en PDF"
             className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors shadow-glow-sm whitespace-nowrap"
           >
-            <Download size={16} className="shrink-0" />
+            <Icon name="Download" size={16} className="shrink-0"  />
             <span>Exportar PDF</span>
           </button>
           <button
@@ -832,7 +833,7 @@ export default function Dashboard() {
             title="Genera y descarga una hoja de cálculo con todos tus movimientos en Excel"
             className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 bg-surface-700 hover:bg-surface-600 border border-subtle text-foreground text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors whitespace-nowrap"
           >
-            <Download size={16} className="shrink-0" />
+            <Icon name="Download" size={16} className="shrink-0"  />
             <span>Exportar Excel</span>
           </button>
         </div>
@@ -845,7 +846,7 @@ export default function Dashboard() {
           {
             title: "Ingresos (Recaudado)",
             value: format$(totalRevenue),
-            icon: <DollarSign size={18} />,
+            icon: <Icon name="DollarSign" size={18}  />,
             color: "brand",
             subtitle: `${paid.length} facturas pagadas`,
             tooltip: "Total de ingresos provenientes de facturas completamente pagadas"
@@ -853,7 +854,7 @@ export default function Dashboard() {
           {
             title: "Pendiente por Cobrar",
             value: format$(pendingRevenue),
-            icon: <Clock size={18} />,
+            icon: <Icon name="Clock" size={18}  />,
             color: "warning",
             subtitle: `${pending.length + overdue.length} facturas`,
             tooltip: "Suma de saldos por cobrar de facturas pendientes o vencidas"
@@ -861,7 +862,7 @@ export default function Dashboard() {
           {
             title: "Gastos (Egresos)",
             value: format$(totalExpenses),
-            icon: <Coins size={18} />,
+            icon: <Icon name="Coins" size={18}  />,
             color: "danger",
             subtitle: `${expenses.length} egresos registrados`,
             tooltip: "Total de egresos y gastos registrados de la empresa"
@@ -869,7 +870,7 @@ export default function Dashboard() {
           {
             title: "Utilidad Neta Real",
             value: format$(totalRevenue - totalCOGS - totalExpenses),
-            icon: <Wallet size={18} />,
+            icon: <Icon name="Wallet" size={18}  />,
             color: "success",
             subtitle: "Ingresos - Costos - Gastos",
             tooltip: "Utilidad calculada restando los costos de mercancía y gastos operativos de los ingresos"
@@ -877,7 +878,7 @@ export default function Dashboard() {
           {
             title: "Clientes Frecuentes",
             value: clients.filter((c) => c.type === 'frequent').length,
-            icon: <Users size={18} />,
+            icon: <Icon name="Users" size={18}  />,
             color: "brand",
             subtitle: `${clients.length} clientes totales`,
             tooltip: "Número de clientes registrados como recurrentes"
@@ -885,7 +886,7 @@ export default function Dashboard() {
           {
             title: "Facturas Express",
             value: expressCount,
-            icon: <FileText size={18} />,
+            icon: <Icon name="FileText" size={18}  />,
             color: "brand",
             subtitle: `Facturado: ${format$(expressRevenue)}`,
             tooltip: "Estadísticas de ventas directas realizadas sin registrar cliente"
@@ -908,7 +909,7 @@ export default function Dashboard() {
           {
             title: "Ingresos (Recaudado)",
             value: format$(totalRevenue),
-            icon: <DollarSign size={18} />,
+            icon: <Icon name="DollarSign" size={18}  />,
             color: "brand",
             subtitle: `${paid.length} facturas pagadas`,
             tooltip: "Total de ingresos provenientes de facturas completamente pagadas"
@@ -916,7 +917,7 @@ export default function Dashboard() {
           {
             title: "Pendiente por Cobrar",
             value: format$(pendingRevenue),
-            icon: <Clock size={18} />,
+            icon: <Icon name="Clock" size={18}  />,
             color: "warning",
             subtitle: `${pending.length + overdue.length} facturas`,
             tooltip: "Suma de saldos por cobrar de facturas pendientes o vencidas"
@@ -924,7 +925,7 @@ export default function Dashboard() {
           {
             title: "Gastos (Egresos)",
             value: format$(totalExpenses),
-            icon: <Coins size={18} />,
+            icon: <Icon name="Coins" size={18}  />,
             color: "danger",
             subtitle: `${expenses.length} egresos registrados`,
             tooltip: "Total de egresos y gastos registrados de la empresa"
@@ -932,7 +933,7 @@ export default function Dashboard() {
           {
             title: "Utilidad Neta Real",
             value: format$(totalRevenue - totalCOGS - totalExpenses),
-            icon: <Wallet size={18} />,
+            icon: <Icon name="Wallet" size={18}  />,
             color: "success",
             subtitle: "Ingresos - Costos - Gastos",
             tooltip: "Utilidad calculada restando los costos de mercancía y gastos operativos de los ingresos"
@@ -940,7 +941,7 @@ export default function Dashboard() {
           {
             title: "Clientes Frecuentes",
             value: clients.filter((c) => c.type === 'frequent').length,
-            icon: <Users size={18} />,
+            icon: <Icon name="Users" size={18}  />,
             color: "brand",
             subtitle: `${clients.length} clientes totales`,
             tooltip: "Número de clientes registrados como recurrentes"
@@ -948,7 +949,7 @@ export default function Dashboard() {
           {
             title: "Facturas Express",
             value: expressCount,
-            icon: <FileText size={18} />,
+            icon: <Icon name="FileText" size={18}  />,
             color: "brand",
             subtitle: `Facturado: ${format$(expressRevenue)}`,
             tooltip: "Estadísticas de ventas directas realizadas sin registrar cliente"
@@ -972,7 +973,7 @@ export default function Dashboard() {
         <div className="bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
-              <TrendingUp size={16} className="text-brand-400" />
+              <Icon name="TrendingUp" size={16} className="text-brand-400"  />
               <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Flujo de Caja: Ingresos vs Gastos vs Utilidad</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -1020,7 +1021,7 @@ export default function Dashboard() {
         {/* Invoices breakdown */}
         <div className="bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <FileText size={16} className="text-brand-400" />
+            <Icon name="FileText" size={16} className="text-brand-400"  />
             <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Facturas por estado</span>
           </div>
           <ResponsiveContainer width="100%" height={180}>
@@ -1057,7 +1058,7 @@ export default function Dashboard() {
       {!plan.hasAdvancedDashboard ? (
         <motion.div variants={itemVariants} className="bg-surface-800 border-2 border-dashed border-subtle rounded-3xl p-10 flex flex-col items-center justify-center text-center space-y-4 shadow-glow-sm">
           <div className="w-16 h-16 rounded-2xl bg-brand-600/10 text-brand-400 border border-brand-500/20 flex items-center justify-center shadow-glow-sm">
-            <TrendingUp size={30} />
+            <Icon name="TrendingUp" size={30}  />
           </div>
           <div className="max-w-md space-y-2">
             <h2 className="text-xl font-bold text-foreground">Análisis Avanzado Bloqueado</h2>
@@ -1076,7 +1077,7 @@ export default function Dashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-subtle pb-5">
               <div>
                 <h3 className="text-base font-bold text-brand-600 dark:text-brand-400 flex items-center gap-2">
-                  <TrendingUp className="text-brand-400" size={18} />
+                  <Icon name="TrendingUp" className="text-brand-400" size={18}  />
                   Analíticas Avanzadas de Ventas
                 </h3>
                 <p className="text-xs text-muted-400 mt-0.5">Historial unificado de ventas reconocidas, pendientes y atrasadas</p>
@@ -1246,7 +1247,7 @@ export default function Dashboard() {
             {/* Top clients */}
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
               <div className="flex items-center gap-2 mb-4">
-                <Users size={16} className="text-brand-400" />
+                <Icon name="Users" size={16} className="text-brand-400"  />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Top Clientes</span>
               </div>
               {topClients.length === 0 ? (
@@ -1273,7 +1274,7 @@ export default function Dashboard() {
             {/* Top products */}
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
               <div className="flex items-center gap-2 mb-4">
-                <TrendingUp size={16} className="text-brand-400" />
+                <Icon name="TrendingUp" size={16} className="text-brand-400"  />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Productos más vendidos</span>
               </div>
               {topProducts.length === 0 ? (
@@ -1297,12 +1298,12 @@ export default function Dashboard() {
             {/* Overdue list */}
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 shadow-glow-sm">
               <div className="flex items-center gap-2 mb-4">
-                <AlertTriangle size={16} className="text-danger-400" />
+                <Icon name="AlertTriangle" size={16} className="text-danger-400"  />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Clientes con deuda</span>
               </div>
               {overdueList.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-6">
-                  <CheckCircle size={24} className="text-success-400" />
+                  <Icon name="CheckCircle" size={24} className="text-success-400"  />
                   <p className="text-xs text-muted-400">Sin deudas atrasadas</p>
                 </div>
               ) : (
@@ -1322,7 +1323,7 @@ export default function Dashboard() {
             {/* Categorías (PieChart) */}
             <div className="xl:col-span-1 bg-surface-800 border border-subtle rounded-2xl p-5 flex flex-col shadow-glow-sm">
               <div className="flex items-center gap-2 mb-2">
-                <Package size={16} className="text-brand-400" />
+                <Icon name="Package" size={16} className="text-brand-400"  />
                 <span className="text-sm font-bold text-brand-600 dark:text-brand-400">Ventas por Categoría</span>
               </div>
               <div className="flex-1 flex flex-col justify-center">
@@ -1447,7 +1448,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px] justify-between shadow-glow-sm">
           <div className="flex flex-col flex-1">
             <div className="flex items-center gap-2 pb-3 border-b border-subtle mb-4 shrink-0">
-              <FolderPlus size={18} className="text-brand-400" />
+              <Icon name="FolderPlus" size={18} className="text-brand-400"  />
               <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Capital en Bolsillos</h3>
             </div>
             
@@ -1530,7 +1531,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1 bg-surface-800 border border-subtle rounded-3xl p-5 flex flex-col h-[520px] shadow-glow-sm">
           <div className="flex items-center justify-between pb-3 border-b border-subtle mb-4 shrink-0">
             <div className="flex items-center gap-2">
-              <FileText size={18} className="text-brand-400" />
+              <Icon name="FileText" size={18} className="text-brand-400"  />
               <h3 className="text-sm font-bold text-brand-600 dark:text-brand-400">Historial de Egresos</h3>
             </div>
             <span className="text-[10px] bg-brand-500/10 text-brand-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
@@ -1541,7 +1542,7 @@ export default function Dashboard() {
           <div className="flex-1 overflow-y-auto no-scrollbar space-y-2">
             {expenses.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-muted-400">
-                <Coins size={32} className="text-muted-500 mb-2" />
+                <Icon name="Coins" size={32} className="text-muted-500 mb-2"  />
                 <p className="text-xs">No se han registrado gastos operacionales aún.</p>
               </div>
             ) : (
@@ -1575,7 +1576,7 @@ export default function Dashboard() {
                       className="p-1 rounded text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
                       title="Eliminar registro"
                     >
-                      <Trash2 size={12} />
+                      <Icon name="Trash2" size={12}  />
                     </button>
                   </div>
                 </div>

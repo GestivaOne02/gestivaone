@@ -1,15 +1,12 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Bell, Check, AlertTriangle, AlertCircle, 
-  Info, CheckCircle2, ShoppingCart, Settings,
-  Calendar, Layers, Sparkles, Trash2, X
-} from 'lucide-react'
+
 import { useNotificationStore } from '@/store/useNotificationStore'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -136,7 +133,7 @@ export default function Notifications() {
               <Button
                 variant="ghost"
                 size="sm"
-                icon={<Trash2 size={14} />}
+                icon={<Icon name="Trash2" size={14}  />}
                 onClick={handleClearRead}
                 className="px-2.5 py-1.5 text-xs rounded-xl border border-subtle hover:border-danger-500/30 hover:text-danger-400 shrink-0"
               >
@@ -180,7 +177,7 @@ export default function Notifications() {
               className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-subtle rounded-3xl"
             >
               <div className="w-16 h-16 rounded-2xl bg-surface-800 border border-subtle flex items-center justify-center mb-4">
-                <Bell size={26} className="text-muted-400" />
+                <Icon name="Bell" size={26} className="text-muted-400"  />
               </div>
               <h3 className="text-sm font-bold text-foreground">Sin notificaciones</h3>
               <p className="text-xs text-muted-400 mt-1 max-w-[280px]">
@@ -266,7 +263,7 @@ export default function Notifications() {
                       className="p-1.5 rounded-lg bg-danger-500/10 text-danger-500 hover:bg-danger-500/20 transition-colors opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 focus:outline-none"
                       title="Eliminar"
                     >
-                      <Trash2 size={14} />
+                      <Icon name="Trash2" size={14}  />
                     </button>
                   </div>
                 </motion.div>

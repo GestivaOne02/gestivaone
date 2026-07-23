@@ -1,11 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
-import {
-  PlugZap, Lock, Copy, Save, CheckCircle2, AlertTriangle, Loader2,
-  Globe, Search, Zap, Phone, ShoppingBag, TrendingUp, Truck, ShieldCheck
-} from 'lucide-react';
 import toast from 'react-hot-toast';
+import Icon from '@/components/ui/Icon';
 
 const formatCOP = (v) => v == null ? '' : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
 
@@ -36,7 +33,7 @@ export default function StoreIntegrations({
       {/* Integrations Header */}
       <div className="bg-white/5 border border-white/10 backdrop-blur-2xl p-6 rounded-[2rem] flex items-start gap-4 relative overflow-hidden">
         <div className="w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 shrink-0">
-          <PlugZap size={20} />
+          <Icon name="PlugZap" size={20}  />
         </div>
         <div>
           <h2 className="text-lg font-bold text-white">Integraciones & Logística</h2>
@@ -51,20 +48,20 @@ export default function StoreIntegrations({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 shrink-0">
-              <Zap size={18} />
+              <Icon name="Zap" size={18}  />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-base font-bold text-white">Dropi Colombia</span>
                 {dropiTokenSaved && dropiTestStatus === 'ok' && (
                   <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black bg-success-500/10 border border-success-500/20 text-success-400 flex items-center gap-1">
-                    <CheckCircle2 size={10} />
+                    <Icon name="CheckCircle2" size={10}  />
                     Conectado
                   </span>
                 )}
                 {dropiTestStatus === 'error' && (
                   <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black bg-danger-500/10 border border-danger-500/20 text-danger-400 flex items-center gap-1">
-                    <AlertTriangle size={10} />
+                    <Icon name="AlertTriangle" size={10}  />
                     Error
                   </span>
                 )}
@@ -79,7 +76,7 @@ export default function StoreIntegrations({
             rel="noopener noreferrer"
             className="text-xs text-muted-400 hover:text-brand-400 flex items-center gap-1.5 transition-colors"
           >
-            <Globe size={13} />
+            <Icon name="Globe" size={13}  />
             <span>Visitar dropi.co</span>
           </a>
         </div>
@@ -87,7 +84,7 @@ export default function StoreIntegrations({
         {/* Credentials Form */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <Lock size={12} className="text-muted-500" />
+            <Icon name="Lock" size={12} className="text-muted-500"  />
             <span className="text-xs font-bold text-white">API Token</span>
           </div>
           <p className="text-[10px] text-muted-500 leading-relaxed -mt-1.5">
@@ -109,7 +106,7 @@ export default function StoreIntegrations({
                   onClick={() => { navigator.clipboard.writeText(dropiToken); toast.success('Copiado'); }}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-500 hover:text-white transition-colors"
                 >
-                  <Copy size={14} />
+                  <Icon name="Copy" size={14}  />
                 </button>
               )}
             </div>
@@ -120,7 +117,7 @@ export default function StoreIntegrations({
                 disabled={integSaving}
                 className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-brand-500 hover:bg-brand-400 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 border border-brand-400 disabled:opacity-50"
               >
-                {integSaving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+                {integSaving ? <Icon name="Loader2" size={13} className="animate-spin"  /> : <Icon name="Save" size={13}  />}
                 <span>Guardar</span>
               </button>
               
@@ -129,7 +126,7 @@ export default function StoreIntegrations({
                 disabled={!dropiTokenSaved || dropiTestStatus === 'loading'}
                 className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 border border-white/5 disabled:opacity-50"
               >
-                {dropiTestStatus === 'loading' ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
+                {dropiTestStatus === 'loading' ? <Icon name="Loader2" size={13} className="animate-spin"  /> : <Icon name="CheckCircle2" size={13}  />}
                 <span>Probar Conexión</span>
               </button>
             </div>
@@ -143,7 +140,7 @@ export default function StoreIntegrations({
                 ? 'bg-success-500/10 border-success-500/20 text-success-400'
                 : 'bg-danger-500/10 border-danger-500/20 text-danger-400'
             )}>
-              {dropiTestStatus === 'ok' ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+              {dropiTestStatus === 'ok' ? <Icon name="CheckCircle2" size={14}  /> : <Icon name="AlertTriangle" size={14}  />}
               <span>{dropiTestMsg}</span>
             </div>
           )}
@@ -152,7 +149,7 @@ export default function StoreIntegrations({
         {/* City Search */}
         <div className="border-t border-white/5 pt-5 flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Globe size={12} className="text-muted-500" />
+            <Icon name="Globe" size={12} className="text-muted-500"  />
             <span className="text-xs font-bold text-white">Cobertura por Ciudad</span>
           </div>
           
@@ -170,7 +167,7 @@ export default function StoreIntegrations({
               disabled={dropiCityLoading || !dropiCityQuery.trim()}
               className="px-5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-all border border-white/5 flex items-center justify-center gap-2"
             >
-              {dropiCityLoading ? <Loader2 size={13} className="animate-spin" /> : <Search size={13} />}
+              {dropiCityLoading ? <Icon name="Loader2" size={13} className="animate-spin"  /> : <Icon name="Search" size={13}  />}
               <span>Buscar</span>
             </button>
           </div>
@@ -195,7 +192,7 @@ export default function StoreIntegrations({
         {invoices.length > 0 && (
           <div className="border-t border-white/5 pt-5 flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <ShoppingBag size={12} className="text-muted-500" />
+              <Icon name="ShoppingBag" size={12} className="text-muted-500"  />
               <span className="text-xs font-bold text-white">Despacho de Pedidos Recientes</span>
             </div>
 
@@ -213,7 +210,7 @@ export default function StoreIntegrations({
                     disabled={dropiBusy}
                     className="w-full py-2 bg-violet-500/10 border border-violet-500/20 hover:bg-violet-500/20 text-violet-400 rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                   >
-                    {dropiBusy ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
+                    {dropiBusy ? <Icon name="Loader2" size={12} className="animate-spin"  /> : <Icon name="Zap" size={12}  />}
                     <span>Enviar a Dropi</span>
                   </button>
                 </div>

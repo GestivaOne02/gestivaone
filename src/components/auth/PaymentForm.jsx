@@ -1,7 +1,8 @@
 import { useState, useId } from 'react'
-import { CreditCard, Smartphone, Building, Lock, Check } from 'lucide-react'
+
 import { PLANS } from '@/store/useAuthStore'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const METHODS = [
   { id: 'card',   label: 'Tarjeta',  icon: CreditCard },
@@ -96,7 +97,7 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
 
       {method === 'pse' && (
         <div className="bg-surface-900 border border-subtle rounded-xl p-4 text-center">
-          <Building size={32} className="text-brand-400 mx-auto mb-2" />
+          <Icon name="Building" size={32} className="text-brand-400 mx-auto mb-2"  />
           <p className="text-sm text-foreground font-bold">Pago por PSE</p>
           <p className="text-xs text-muted-400 mt-1">Serás redirigido a tu banco para completar el pago de forma segura.</p>
         </div>
@@ -110,12 +111,12 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
       )}
 
       <div className="flex items-center gap-2 text-[11px] text-muted-400">
-        <Lock size={11} /> Pago seguro con cifrado SSL de 256 bits
+        <Icon name="Lock" size={11}  /> Pago seguro con cifrado SSL de 256 bits
       </div>
 
       <button type="submit" disabled={loading}
         className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2">
-        {loading ? 'Procesando...' : <><Check size={14} /> Completar registro</>}
+        {loading ? 'Procesando...' : <><Icon name="Check" size={14}  /> Completar registro</>}
       </button>
     </form>
   )

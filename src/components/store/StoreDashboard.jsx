@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
-import {
-  Store as StoreIcon, TrendingUp, Package, 
-  LayoutGrid, Clock, CreditCard,
-  FileText, Activity, ZapOff, Sparkles
-} from 'lucide-react';
+import Icon from '@/components/ui/Icon';
 
 const formatCOP = (v) => v == null ? '' : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
 
@@ -89,7 +85,7 @@ export default function StoreDashboard({
               "w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-500",
               storeEnabled ? "bg-brand-500/20 text-brand-400" : "bg-white/5 text-muted-500"
             )}>
-              {storeEnabled ? <Sparkles size={24} /> : <ZapOff size={24} />}
+              {storeEnabled ? <Icon name="Sparkles" size={24}  /> : <Icon name="ZapOff" size={24}  />}
             </div>
             
             {/* Status indicator pill */}
@@ -129,7 +125,7 @@ export default function StoreDashboard({
         <div className="md:col-span-3 lg:col-span-4 row-span-1 rounded-[2rem] bg-surface-900/40 border border-white/5 backdrop-blur-xl p-6 flex flex-col justify-between relative overflow-hidden group">
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-muted-500 font-bold uppercase tracking-widest">Ingresos Hoy</span>
-            <TrendingUp size={14} className="text-muted-600 group-hover:text-brand-400 transition-colors" />
+            <Icon name="TrendingUp" size={14} className="text-muted-600 group-hover:text-brand-400 transition-colors"  />
           </div>
           <div>
             <div className="text-3xl sm:text-4xl font-black text-white tracking-tighter">
@@ -147,7 +143,7 @@ export default function StoreDashboard({
         <div className="md:col-span-3 lg:col-span-4 row-span-1 rounded-[2rem] bg-surface-900/40 border border-white/5 backdrop-blur-xl p-6 flex flex-col justify-between relative overflow-hidden group">
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-muted-500 font-bold uppercase tracking-widest">Catálogo</span>
-            <Package size={14} className="text-muted-600 group-hover:text-brand-400 transition-colors" />
+            <Icon name="Package" size={14} className="text-muted-600 group-hover:text-brand-400 transition-colors"  />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
@@ -170,7 +166,7 @@ export default function StoreDashboard({
         <div className="md:col-span-6 lg:col-span-12 row-span-1 rounded-[2rem] bg-black/60 border border-white/5 backdrop-blur-2xl p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden">
           <div className="flex flex-col justify-center min-w-[120px]">
              <div className="flex items-center gap-2 mb-1">
-                <Activity size={12} className="text-brand-500" />
+                <Icon name="Activity" size={12} className="text-brand-500"  />
                 <span className="text-[10px] text-brand-500/80 font-bold uppercase tracking-widest">Log</span>
              </div>
              <div className="text-2xl font-black text-white tracking-tighter">{invoices.length}</div>
@@ -207,11 +203,11 @@ export default function StoreDashboard({
           transition={{ delay: 0.3, type: 'spring', damping: 20 }}
           className="flex items-center gap-2 p-2 rounded-full bg-black/80 border border-white/10 backdrop-blur-2xl shadow-2xl"
         >
-          <DockItem icon={<LayoutGrid size={18} />} label="Catálogo" onClick={() => setActiveTab('catalog')} />
-          <DockItem icon={<FileText size={18} />} label="Pedidos" onClick={() => setActiveTab('orders')} />
+          <DockItem icon={<Icon name="LayoutGrid" size={18}  />} label="Catálogo" onClick={() => setActiveTab('catalog')} />
+          <DockItem icon={<Icon name="FileText" size={18}  />} label="Pedidos" onClick={() => setActiveTab('orders')} />
           <div className="w-px h-8 bg-white/10 mx-1" />
-          <DockItem icon={<CreditCard size={18} />} label="Pagos" onClick={() => setActiveTab('settings')} />
-          <DockItem icon={<StoreIcon size={18} />} label="Apariencia" onClick={() => setActiveTab('appearance')} />
+          <DockItem icon={<Icon name="CreditCard" size={18}  />} label="Pagos" onClick={() => setActiveTab('settings')} />
+          <DockItem icon={<Icon name="Store" size={18}  />} label="Apariencia" onClick={() => setActiveTab('appearance')} />
         </motion.div>
       </div>
 

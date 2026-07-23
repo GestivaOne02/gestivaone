@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Package, Plus, Trash2, Edit2, Copy, Link2, FileText, DollarSign, ShoppingCart, LayoutGrid, Layers, Columns, Percent, CalendarDays } from 'lucide-react'
+
 import Button from '@/components/ui/Button'
 import SearchBar from '@/components/ui/SearchBar'
 import SortFilterBar from '@/components/ui/SortFilterBar'
@@ -15,6 +15,7 @@ import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import Barcode from 'react-barcode'
 import Masonry from '@/components/ui/Masonry'
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -210,7 +211,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           
           {discountInfo && (
             <span className="absolute top-2.5 left-2.5 p-1.5 rounded-lg bg-brand-500 text-white shadow-md flex items-center justify-center" title="Descuento activo">
-              <Percent size={10} className="stroke-[3]" />
+              <Icon name="Percent" size={10} className="stroke-[3]"  />
             </span>
           )}
         </div>
@@ -225,21 +226,21 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
             className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-brand-500 dark:hover:text-brand-400 shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors active:scale-90"
             title="Duplicar"
           >
-            <Copy size={12} />
+            <Icon name="Copy" size={12}  />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onEdit(product) }}
             className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-foreground dark:hover:text-white shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors active:scale-90"
             title="Editar"
           >
-            <Edit2 size={12} />
+            <Icon name="Edit2" size={12}  />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(product) }}
             className="p-1.5 rounded-lg bg-white/90 dark:bg-surface-700/90 text-neutral-500 dark:text-muted-400 hover:text-danger-500 dark:hover:text-danger-400 shadow-sm border border-neutral-100 dark:border-surface-600 transition-colors active:scale-90"
             title="Borrar"
           >
-            <Trash2 size={12} />
+            <Icon name="Trash2" size={12}  />
           </button>
         </div>
 
@@ -248,12 +249,12 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
           <div className="absolute top-2.5 right-2.5 flex items-center gap-1 sm:group-hover:opacity-0 transition-opacity pointer-events-none">
             {product.attachment_url && product.attachment_url.trim() !== '' && (
               <span title={product.attachment_name || 'Enlace adjunto'} className="flex items-center justify-center w-5 h-5 rounded-md bg-blue-500/15 border border-blue-500/25">
-                <Link2 size={10} className="text-blue-400" />
+                <Icon name="Link2" size={10} className="text-blue-400"  />
               </span>
             )}
             {product.attachment_name && !product.attachment_url && (
               <span title={product.attachment_name} className="flex items-center justify-center w-5 h-5 rounded-md bg-orange-500/15 border border-orange-500/25">
-                <FileText size={10} className="text-orange-400" />
+                <Icon name="FileText" size={10} className="text-orange-400"  />
               </span>
             )}
           </div>
@@ -332,7 +333,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
               onClick={(e) => { e.stopPropagation(); onSelectHourlyProduct(product) }}
               className="w-full flex items-center justify-center gap-2 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm border border-brand-500/30"
             >
-              <CalendarDays size={14} className="shrink-0" />
+              <Icon name="CalendarDays" size={14} className="shrink-0"  />
               <span>Ver Cronograma</span>
             </button>
           </div>
@@ -386,7 +387,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
                   <><span>✓</span><span className="hidden sm:inline">Añadido</span></>
                 ) : (
                   <>
-                    <ShoppingCart size={13} className="shrink-0" />
+                    <Icon name="ShoppingCart" size={13} className="shrink-0"  />
                     <span className="hidden sm:inline">Añadir</span>
                   </>
                 )}
@@ -408,7 +409,7 @@ function ProductCard({ product, onEdit, onDuplicate, onDelete, onAdd, format$, o
                 onClick={() => onEdit(product)}
                 className="w-full border border-warning-500/25 bg-warning-500/8 hover:bg-warning-500/15 text-warning-500 dark:text-warning-400 py-1.5 rounded-xl text-[11px] font-bold transition-colors flex items-center justify-center gap-1.5"
               >
-                <Package size={12} />
+                <Icon name="Package" size={12}  />
                 ¿Añadir Stock?
               </button>
             </motion.div>
@@ -681,11 +682,11 @@ export default function Products() {
             )}
           </div>
           <div className="flex gap-2 shrink-0">
-            <Button variant="secondary" size="sm" pill icon={<DollarSign size={14} />} onClick={() => setShowFree((v) => !v)} className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0 !bg-white !text-neutral-800 !border-neutral-200 hover:!bg-neutral-50 hover:!text-neutral-900 dark:!bg-white dark:!text-neutral-800 dark:!border-neutral-200 dark:hover:!bg-neutral-50">
+            <Button variant="secondary" size="sm" pill icon={<Icon name="DollarSign" size={14}  />} onClick={() => setShowFree((v) => !v)} className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0 !bg-white !text-neutral-800 !border-neutral-200 hover:!bg-neutral-50 hover:!text-neutral-900 dark:!bg-white dark:!text-neutral-800 dark:!border-neutral-200 dark:hover:!bg-neutral-50">
               <span className="hidden sm:inline">Valor Libre</span>
               <span className="inline sm:hidden">Libre</span>
             </Button>
-            <Button variant="primary" size="sm" pill icon={<Plus size={14} />} onClick={() => openModal('addProduct')} className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0">
+            <Button variant="primary" size="sm" pill icon={<Icon name="Plus" size={14}  />} onClick={() => openModal('addProduct')} className="px-2.5 py-1.5 md:px-4 md:py-2 text-xs md:text-sm shrink-0">
               <span className="hidden sm:inline">Añadir Producto</span>
               <span className="inline sm:hidden">Nuevo</span>
             </Button>
@@ -705,7 +706,7 @@ export default function Products() {
                   <label className="text-[10px] text-muted-400 font-bold mb-1 block uppercase tracking-wide">Precio ({baseCurrency}) *</label>
                   <input type="number" value={freePrice} onChange={(e) => setFreePrice(e.target.value)} placeholder="0.00" step="0.01" className="w-full bg-surface-600 border border-subtle rounded-xl px-3 py-1.5 text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand-500" />
                 </div>
-                <Button variant="primary" size="sm" icon={<Plus size={14} />} onClick={handleFreeAdd} className="py-2 text-xs">Añadir</Button>
+                <Button variant="primary" size="sm" icon={<Icon name="Plus" size={14}  />} onClick={handleFreeAdd} className="py-2 text-xs">Añadir</Button>
               </div>
             </motion.div>
           )}
@@ -732,21 +733,21 @@ export default function Products() {
                   className={clsx('p-1.5 rounded-md transition-colors', viewMode === 'masonry' ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
                   title="Vista Masonry (Estilo Pinterest)"
                 >
-                  <Columns size={14} />
+                  <Icon name="Columns" size={14}  />
                 </button>
                 <button
                   onClick={() => setViewMode('grid')}
                   className={clsx('p-1.5 rounded-md transition-colors', viewMode === 'grid' ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
                   title="Vista tradicional"
                 >
-                  <LayoutGrid size={14} />
+                  <Icon name="LayoutGrid" size={14}  />
                 </button>
                 <button
                   onClick={() => setViewMode('grouped')}
                   className={clsx('p-1.5 rounded-md transition-colors', viewMode === 'grouped' ? 'bg-surface-600 text-foreground shadow-sm' : 'text-muted-400 hover:text-foreground')}
                   title="Agrupar por categoría"
                 >
-                  <Layers size={14} />
+                  <Icon name="Layers" size={14}  />
                 </button>
               </div>
             </div>
@@ -792,10 +793,10 @@ export default function Products() {
             </motion.div>
           ) : filtered.length === 0 ? (
             <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-48 gap-3">
-              <Package size={36} className="text-muted-400" />
+              <Icon name="Package" size={36} className="text-muted-400"  />
               <p className="text-sm text-muted-400">{search || activeCat ? 'Sin resultados' : 'Añade tu primer producto'}</p>
               {!search && !activeCat && (
-                <Button variant="outline" size="sm" icon={<Plus size={14} />} onClick={() => openModal('addProduct')}>Crear producto</Button>
+                <Button variant="outline" size="sm" icon={<Icon name="Plus" size={14}  />} onClick={() => openModal('addProduct')}>Crear producto</Button>
               )}
             </motion.div>
           ) : viewMode === 'grouped' ? (
@@ -953,7 +954,7 @@ export default function Products() {
                   onClick={() => setSelectedHourlyProduct(null)}
                   className="p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-500 transition-colors"
                 >
-                  <Plus className="rotate-45" size={18} />
+                  <Icon name="Plus" className="rotate-45" size={18}  />
                 </button>
               </div>
 
@@ -1029,7 +1030,7 @@ export default function Products() {
 
                 {isSelectedDateOff ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center gap-2 text-purple-400 p-6 bg-purple-500/5 border border-purple-500/20 rounded-xl">
-                    <CalendarDays size={28} className="animate-pulse" />
+                    <Icon name="CalendarDays" size={28} className="animate-pulse"  />
                     <p className="text-xs font-bold uppercase tracking-wider text-purple-500 dark:text-purple-400">No Laborable</p>
                     <p className="text-[10px] text-muted-400 leading-normal">
                       Este recurso o persona tiene configurado el día como no laborable o libre. Elige otra fecha.
@@ -1168,7 +1169,7 @@ export default function Products() {
                     onClick={handleConfirmHourlyBooking}
                     className="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl transition-all active:scale-95 text-xs flex items-center justify-center gap-2 mt-2 shadow-sm border border-brand-500/20"
                   >
-                    <ShoppingCart size={14} className="shrink-0" />
+                    <Icon name="ShoppingCart" size={14} className="shrink-0"  />
                     <span>Reservar y Añadir a Factura</span>
                   </button>
                 </div>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { MessageCircle } from 'lucide-react'
+import Icon from '@/components/ui/Icon';
 
 export default function FloatingWhatsApp() {
   const whatsappUrl = 'https://wa.me/573044059862?text=Hola%20equipo%20GestivaOne,%20quisiera%20más%20información%20sobre%20la%20plataforma.'
@@ -18,7 +18,7 @@ export default function FloatingWhatsApp() {
       aria-label="Hablar por WhatsApp"
       title="Atención Comercial WhatsApp"
     >
-      <MessageCircle size={20} className="fill-white/20" />
+      <Icon name="MessageCircle" size={20} className="fill-white/20"  />
       <span className="hidden sm:inline">¿Dudas? Habla con un Asesor</span>
     </motion.a>
   )

@@ -3,9 +3,10 @@ import { useExpenseStore } from '@/store/useExpenseStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { printExpense } from '@/services/printService'
-import { Wallet } from 'lucide-react'
+
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 export default function RegisterExpenseTab({ onClose }) {
   const [loading, setLoading] = useState(false)

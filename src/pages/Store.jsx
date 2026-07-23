@@ -1,11 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Store as StoreIcon, LayoutDashboard, Palette, Package, Receipt, CreditCard,
-  Truck, Search, Settings as SettingsIcon, Save, Eye, Check, ExternalLink,
-  ChevronRight, Phone, Printer, Plus, AlertCircle, TrendingUp, ShoppingBag, X, Star, Calendar, RefreshCw,
-  Zap, Link2, Globe, Lock, CheckCircle2, AlertTriangle, Loader2, PlugZap, Copy, ShieldCheck
-} from 'lucide-react'
+
 import { useAuthStore } from '@/store/useAuthStore'
 import { useProductStore, CATEGORIES } from '@/store/useProductStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -18,6 +13,7 @@ import StoreCatalog from '@/components/store/StoreCatalog'
 import StoreOrders from '@/components/store/StoreOrders'
 import StoreSettings from '@/components/store/StoreSettings'
 import StoreIntegrations from '@/components/store/StoreIntegrations'
+import Icon from '@/components/ui/Icon';
 
 const formatCOP = (v) => v == null ? '' : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v)
 
@@ -420,7 +416,7 @@ export default function Store() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-subtle pb-4 shrink-0">
         <div>
           <div className="flex items-center gap-2">
-            <StoreIcon className="w-6 h-6 text-brand-400" />
+            <Icon name="Store" className="w-6 h-6 text-brand-400"  />
             <h1 className="text-xl font-black text-foreground uppercase tracking-tight">Canal de Ventas: Online Store</h1>
           </div>
           <p className="text-xs text-muted-400 mt-1">Configura tu e-commerce, revisa métricas en vivo y gestiona los pedidos contra entrega.</p>
@@ -433,7 +429,7 @@ export default function Store() {
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600/10 hover:bg-brand-600/20 border border-brand-500/30 text-brand-400 text-xs font-bold rounded-xl transition-all"
           >
             <span>Ver mi tienda pública</span>
-            <ExternalLink size={12} />
+            <Icon name="ExternalLink" size={12}  />
           </a>
         )}
       </div>

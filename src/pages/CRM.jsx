@@ -1,18 +1,13 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Users, Search, ChevronRight, Phone, Mail, MapPin, TrendingUp,
-  ShoppingCart, Calendar, Star, ArrowLeft, Clock, DollarSign,
-  Activity, Tag, Filter, UserPlus, FileText, BarChart3, Eye,
-  X, Sparkles, Crown, ThermometerSun, Snowflake, UserCheck,
-  User, Building2, Globe
-} from 'lucide-react'
+
 import { useClientStore } from '@/store/useClientStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useCRMStore } from '@/store/useCRMStore'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import Icon from '@/components/ui/Icon';
 
 // ── Passport & Type Icons ──────────────────────────────────
 const PassportIcon = ({ size = 14, className = "" }) => (
@@ -39,11 +34,11 @@ const PassportIcon = ({ size = 14, className = "" }) => (
 const getClientIcon = (docType) => {
   const code = String(docType)
   const cls = "text-brand-700 dark:text-brand-300 font-bold"
-  if (code === '13') return <User size={14} className={cls} />
-  if (code === '31') return <Building2 size={14} className={cls} />
-  if (code === '22') return <Globe size={14} className={cls} />
+  if (code === '13') return <Icon name="User" size={14} className={cls}  />
+  if (code === '31') return <Icon name="Building2" size={14} className={cls}  />
+  if (code === '22') return <Icon name="Globe" size={14} className={cls}  />
   if (code === '41') return <PassportIcon size={14} className={cls} />
-  return <User size={14} className={cls} />
+  return <Icon name="User" size={14} className={cls}  />
 }
 
 // ── Formatters ────────────────────────────────────────────
@@ -112,7 +107,7 @@ function ActivityItem({ activity }) {
       <div className="flex-1 min-w-0">
         <p className="text-xs text-foreground font-medium">{activity.description}</p>
         <p className="text-[10px] text-muted-500 mt-0.5 flex items-center gap-1">
-          <Clock size={9} />
+          <Icon name="Clock" size={9}  />
           {activity.created_at ? format(new Date(activity.created_at), "dd MMM yyyy, HH:mm", { locale: es }) : '—'}
           <span className="ml-1 px-1.5 py-0.5 rounded bg-surface-700/60 text-[9px] uppercase font-bold">
             {typeLabels[activity.type] || activity.type}
@@ -151,7 +146,7 @@ function ClientDetail({ client, onBack, invoices, activities }) {
           onClick={onBack}
           className="p-2 rounded-xl bg-surface-800/60 border border-subtle text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"
         >
-          <ArrowLeft size={16} />
+          <Icon name="ArrowLeft" size={16}  />
         </button>
         <div className="flex-1 min-w-0">
           <h2 className="text-base font-bold text-foreground truncate">{client.name}</h2>
@@ -170,17 +165,17 @@ function ClientDetail({ client, onBack, invoices, activities }) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
         {client.phone && (
           <div className="flex items-center gap-2 text-xs text-muted-400">
-            <Phone size={12} /> {client.phone}
+            <Icon name="Phone" size={12}  /> {client.phone}
           </div>
         )}
         {client.email && (
           <div className="flex items-center gap-2 text-xs text-muted-400">
-            <Mail size={12} /> <span className="truncate">{client.email}</span>
+            <Icon name="Mail" size={12}  /> <span className="truncate">{client.email}</span>
           </div>
         )}
         {client.address && (
           <div className="flex items-center gap-2 text-xs text-muted-400">
-            <MapPin size={12} /> <span className="truncate">{client.address}</span>
+            <Icon name="MapPin" size={12}  /> <span className="truncate">{client.address}</span>
           </div>
         )}
       </div>
@@ -233,7 +228,7 @@ function ClientDetail({ client, onBack, invoices, activities }) {
                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-800/40 border border-subtle/50 hover:bg-surface-700/50 transition-colors"
               >
                 <div className="w-8 h-8 rounded-lg bg-surface-700/60 flex items-center justify-center shrink-0">
-                  <FileText size={14} className="text-muted-400" />
+                  <Icon name="FileText" size={14} className="text-muted-400"  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-foreground truncate">
@@ -338,7 +333,7 @@ export default function CRM() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
         <div>
           <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <Users size={20} className="text-brand-400" />
+            <Icon name="Users" size={20} className="text-brand-400"  />
             CRM — Relación con Clientes
           </h1>
           <p className="text-xs text-muted-400 mt-0.5">
@@ -378,7 +373,7 @@ export default function CRM() {
             {/* Search & Filter */}
             <div className="flex flex-col sm:flex-row gap-2 mb-4">
               <div className="flex-1 relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-500" />
+                <Icon name="Search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-500"  />
                 <input
                   type="text"
                   placeholder="Buscar cliente por nombre, email o teléfono..."
@@ -420,7 +415,7 @@ export default function CRM() {
               <div className="divide-y divide-subtle/50">
                 {displayedClients.length === 0 && (
                   <div className="text-center py-12">
-                    <Users size={32} className="mx-auto text-muted-600 mb-2" />
+                    <Icon name="Users" size={32} className="mx-auto text-muted-600 mb-2"  />
                     <p className="text-xs text-muted-500">No se encontraron clientes</p>
                   </div>
                 )}
@@ -472,7 +467,7 @@ export default function CRM() {
 
                     {/* Action */}
                     <div className="flex items-center justify-end">
-                      <ChevronRight size={14} className="text-muted-500 group-hover:text-brand-400 transition-colors" />
+                      <Icon name="ChevronRight" size={14} className="text-muted-500 group-hover:text-brand-400 transition-colors"  />
                     </div>
                   </motion.div>
                 ))}

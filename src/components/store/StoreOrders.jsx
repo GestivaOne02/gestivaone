@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
-import { Phone, Printer, Search, Clipboard } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Icon from '@/components/ui/Icon';
 
 const formatCOP = (v) => v == null ? '' : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
 
@@ -52,7 +52,7 @@ export default function StoreOrders({
 
         {/* Search */}
         <div className="relative max-w-xs w-full">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-500" />
+          <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-500"  />
           <input
             type="text"
             value={searchQuery}
@@ -110,7 +110,7 @@ export default function StoreOrders({
                         className="text-muted-600 hover:text-white transition-colors ml-1"
                         title="Copiar ID Completo"
                       >
-                        <Clipboard size={10} />
+                        <Icon name="Clipboard" size={10}  />
                       </button>
                     </span>
                     <span className="text-[10px] text-muted-600 mt-0.5">
@@ -181,7 +181,7 @@ export default function StoreOrders({
                       className="w-10 h-10 bg-[#25d366]/10 border border-[#25d366]/20 hover:bg-[#25d366]/20 text-[#25d366] rounded-xl flex items-center justify-center transition-all"
                       title="Contactar WhatsApp"
                     >
-                      <Phone size={14} />
+                      <Icon name="Phone" size={14}  />
                     </a>
                   )}
 
@@ -191,7 +191,7 @@ export default function StoreOrders({
                     className="w-10 h-10 bg-white/5 border border-white/5 hover:bg-white/10 text-muted-400 hover:text-white rounded-xl flex items-center justify-center transition-all"
                     title="Imprimir Recibo"
                   >
-                    <Printer size={14} />
+                    <Icon name="Printer" size={14}  />
                   </button>
                 </div>
               </div>

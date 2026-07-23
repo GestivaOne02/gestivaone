@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Coins, ArrowUpRight, ArrowDownRight, Trash2, Wallet, FileText, CalendarDays, Check, Calendar } from 'lucide-react'
+
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCurrencyStore } from '@/store/useCurrencyStore'
 import { supabase } from '@/lib/supabase'
@@ -14,6 +14,7 @@ import clsx from 'clsx'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
 import { useExpenseStore } from '@/store/useExpenseStore'
 import { usePocketStore } from '@/store/usePocketStore'
+import Icon from '@/components/ui/Icon';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -435,7 +436,7 @@ export default function PersonalFinance({ isNested = false }) {
                   variant="secondary"
                   size="sm"
                   pill
-                  icon={<ArrowUpRight size={14} />}
+                  icon={<Icon name="ArrowUpRight" size={14}  />}
                   onClick={() => setShowAddModal(true)}
                   title="Ingresar saldo desde utilidad del negocio o bolsillos de ahorro"
                 >
@@ -445,7 +446,7 @@ export default function PersonalFinance({ isNested = false }) {
                   variant="secondary"
                   size="sm"
                   pill
-                  icon={<ArrowDownRight size={14} />}
+                  icon={<Icon name="ArrowDownRight" size={14}  />}
                   onClick={() => setShowWithdrawModal(true)}
                   title="Retirar saldo y enviarlo a la utilidad del negocio o a un bolsillo"
                 >
@@ -455,7 +456,7 @@ export default function PersonalFinance({ isNested = false }) {
                   variant="primary"
                   size="sm"
                   pill
-                  icon={<Plus size={14} />}
+                  icon={<Icon name="Plus" size={14}  />}
                   onClick={() => setShowExpenseModal(true)}
                   title="Registrar un gasto personal restándolo del bolsillo"
                 >
@@ -467,7 +468,7 @@ export default function PersonalFinance({ isNested = false }) {
                 variant="primary"
                 size="sm"
                 pill
-                icon={<Plus size={14} />}
+                icon={<Icon name="Plus" size={14}  />}
                 onClick={() => setShowLoanModal(true)}
                 title="Registrar una nueva deuda o un préstamo por cobrar"
               >
@@ -486,7 +487,7 @@ export default function PersonalFinance({ isNested = false }) {
                   variant="secondary"
                   size="sm"
                   pill
-                  icon={<ArrowUpRight size={14} />}
+                  icon={<Icon name="ArrowUpRight" size={14}  />}
                   onClick={() => setShowAddModal(true)}
                   title="Ingresar saldo"
                 >
@@ -497,7 +498,7 @@ export default function PersonalFinance({ isNested = false }) {
                   variant="secondary"
                   size="sm"
                   pill
-                  icon={<ArrowDownRight size={14} />}
+                  icon={<Icon name="ArrowDownRight" size={14}  />}
                   onClick={() => setShowWithdrawModal(true)}
                   title="Retirar saldo"
                 >
@@ -508,7 +509,7 @@ export default function PersonalFinance({ isNested = false }) {
                   variant="primary"
                   size="sm"
                   pill
-                  icon={<Plus size={14} />}
+                  icon={<Icon name="Plus" size={14}  />}
                   onClick={() => setShowExpenseModal(true)}
                   title="Registrar un gasto personal"
                 >
@@ -521,7 +522,7 @@ export default function PersonalFinance({ isNested = false }) {
                 variant="primary"
                 size="sm"
                 pill
-                icon={<Plus size={14} />}
+                icon={<Icon name="Plus" size={14}  />}
                 onClick={() => setShowLoanModal(true)}
                 title="Registrar préstamo"
               >
@@ -576,7 +577,7 @@ export default function PersonalFinance({ isNested = false }) {
                   title="Añadir saldo desde utilidad del negocio o bolsillos"
                   className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm animate-fade-in"
                 >
-                  <Plus size={13} />
+                  <Icon name="Plus" size={13}  />
                   Ingresar
                 </button>
                 <div className="flex items-center gap-2">
@@ -586,7 +587,7 @@ export default function PersonalFinance({ isNested = false }) {
                     title="Retirar saldo del bolsillo hacia utilidad o bolsillos de ahorro"
                     className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 border border-white/10 text-white flex items-center justify-center transition-all cursor-pointer"
                   >
-                    <ArrowDownRight size={14} />
+                    <Icon name="ArrowDownRight" size={14}  />
                   </button>
                   <button
                     type="button"
@@ -594,7 +595,7 @@ export default function PersonalFinance({ isNested = false }) {
                     title="Registrar egreso personal descontándolo del bolsillo"
                     className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 border border-white/10 text-white flex items-center justify-center transition-all cursor-pointer"
                   >
-                    <Coins size={14} />
+                    <Icon name="Coins" size={14}  />
                   </button>
                 </div>
               </div>
@@ -604,7 +605,7 @@ export default function PersonalFinance({ isNested = false }) {
           {/* Loans Summary */}
           <div className="bg-surface-800 border border-subtle rounded-3xl p-5 space-y-4 shadow-glow-sm">
             <div className="flex items-center gap-2 pb-2.5 border-b border-subtle">
-              <Coins size={16} className="text-brand-400" />
+              <Icon name="Coins" size={16} className="text-brand-400"  />
               <span className="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">Resumen de Préstamos</span>
             </div>
 
@@ -680,7 +681,7 @@ export default function PersonalFinance({ isNested = false }) {
               /* EXPENSES LIST */
               expenses.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center text-muted-400 py-12">
-                  <Coins size={36} className="text-muted-500 mb-2" />
+                  <Icon name="Coins" size={36} className="text-muted-500 mb-2"  />
                   <p className="text-xs">No has registrado gastos personales aún.</p>
                   <p className="text-[10px] text-muted-500 mt-1">Usa el botón superior para registrar tu primer gasto privado.</p>
                 </div>
@@ -696,7 +697,7 @@ export default function PersonalFinance({ isNested = false }) {
                         <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                           <span className="text-xs bg-surface-600 text-muted-300 px-1.5 py-0.5 rounded font-medium">{e.category}</span>
                           <span className="text-xs text-muted-400 flex items-center gap-1">
-                            <CalendarDays size={12} />
+                            <Icon name="CalendarDays" size={12}  />
                             {new Date(e.created_at).toLocaleDateString('es-CO')}
                           </span>
                         </div>
@@ -709,7 +710,7 @@ export default function PersonalFinance({ isNested = false }) {
                         className="p-1 rounded text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors"
                         title="Eliminar este registro de gasto de forma permanente"
                       >
-                        <Trash2 size={12} />
+                        <Icon name="Trash2" size={12}  />
                       </button>
                     </div>
                   </div>
@@ -719,7 +720,7 @@ export default function PersonalFinance({ isNested = false }) {
               /* LOANS LIST */
               loans.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center text-muted-400 py-12">
-                  <Coins size={36} className="text-muted-500 mb-2" />
+                  <Icon name="Coins" size={36} className="text-muted-500 mb-2"  />
                   <p className="text-xs">No has registrado préstamos aún.</p>
                   <p className="text-[10px] text-muted-500 mt-1">Usa el botón superior para registrar tu primera cuenta por cobrar o por pagar.</p>
                 </div>
@@ -751,7 +752,7 @@ export default function PersonalFinance({ isNested = false }) {
                               : "bg-danger-500/10 border-danger-500/20 text-danger-400"
                           )}
                         >
-                          {isLent ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                          {isLent ? <Icon name="ArrowUpRight" size={14}  /> : <Icon name="ArrowDownRight" size={14}  />}
                         </div>
 
                         <div className="min-w-0">
@@ -779,7 +780,7 @@ export default function PersonalFinance({ isNested = false }) {
 
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
                             <span className="text-xs text-muted-400 flex items-center gap-1">
-                              <CalendarDays size={12} />
+                              <Icon name="CalendarDays" size={12}  />
                               {new Date(l.created_at || Date.now()).toLocaleDateString('es-CO')}
                             </span>
 
@@ -794,7 +795,7 @@ export default function PersonalFinance({ isNested = false }) {
                                     : "text-muted-400"
                                 )}
                               >
-                                <Calendar size={12} />
+                                <Icon name="Calendar" size={12}  />
                                 Vence: {new Date(l.due_date).toLocaleDateString('es-CO')} {isOverdue && '(Vencido)'}
                               </span>
                             )}
@@ -828,7 +829,7 @@ export default function PersonalFinance({ isNested = false }) {
                             )}
                             title={isPaid ? "Marcar como pendiente" : "Marcar como pagado"}
                           >
-                            <Check size={11} />
+                            <Icon name="Check" size={11}  />
                           </button>
 
                           {/* Delete Action */}
@@ -837,7 +838,7 @@ export default function PersonalFinance({ isNested = false }) {
                             className="p-1.5 rounded border border-transparent text-muted-400 hover:text-danger-400 hover:bg-danger-500/10 transition-colors cursor-pointer"
                             title="Eliminar este préstamo/deuda permanentemente"
                           >
-                            <Trash2 size={11} />
+                            <Icon name="Trash2" size={11}  />
                           </button>
                         </div>
                       </div>

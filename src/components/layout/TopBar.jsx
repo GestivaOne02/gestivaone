@@ -1,8 +1,9 @@
-import { Menu, FileText, Bell } from 'lucide-react'
+
 import { useUIStore } from '@/store/useUIStore'
 import { useCartStore } from '@/store/useCartStore'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import Icon from '@/components/ui/Icon';
 
 export default function TopBar() {
   const openMobileSidebar  = useUIStore((s) => s.openMobileSidebar)
@@ -20,7 +21,7 @@ export default function TopBar() {
           className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-700 transition-colors"
           aria-label="Abrir menú"
         >
-          <Menu size={18} />
+          <Icon name="Menu" size={18}  />
         </button>
         <div className="flex items-center">
           <img src="/images/gestivaOneIcon.svg" alt="GestivaOne" className="h-6 object-contain" />
@@ -35,7 +36,7 @@ export default function TopBar() {
           className="relative p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-700 transition-colors"
           aria-label="Notificaciones"
         >
-          <Bell size={18} />
+          <Icon name="Bell" size={18}  />
         </button>
 
         {/* Invoice toggle button */}
@@ -44,7 +45,7 @@ export default function TopBar() {
           className="relative p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-700 transition-colors"
           aria-label="Abrir factura"
         >
-          <FileText size={18} />
+          <Icon name="FileText" size={18}  />
           {cartCount > 0 && (
             <motion.span
               key={cartCount}

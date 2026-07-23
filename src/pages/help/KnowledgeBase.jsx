@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, HelpCircle, Printer, ShoppingCart, FileText, MessageSquare, Users, BookOpen, ChevronRight, ArrowRight } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 const categories = [
   {
@@ -97,12 +97,12 @@ export default function KnowledgeBase() {
       <header className="py-16 bg-surface-900 border-b border-subtle text-center space-y-6">
         <div className="max-w-3xl mx-auto px-4 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-            <HelpCircle size={14} />
+            <Icon name="HelpCircle" size={14}  />
             Centro de Ayuda
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white">¿En qué podemos ayudarte hoy?</h1>
           <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-400" size={18} />
+            <Icon name="Search" className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-400" size={18}  />
             <input
               type="text"
               value={searchQuery}
@@ -130,7 +130,7 @@ export default function KnowledgeBase() {
                   <ul className="space-y-2 pt-2 border-t border-subtle/50">
                     {cat.articles.map((art, aIdx) => (
                       <li key={aIdx} className="text-xs text-muted-300 hover:text-brand-400 transition-colors flex items-center gap-2 cursor-pointer">
-                        <ChevronRight size={14} className="text-brand-400 shrink-0" />
+                        <Icon name="ChevronRight" size={14} className="text-brand-400 shrink-0"  />
                         <span>{art}</span>
                       </li>
                     ))}

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ShieldCheck, CheckCircle2, ArrowRight, Zap, FileText, Printer, Mail } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 export default function LandingFacturacion() {
   return (
@@ -36,7 +36,7 @@ export default function LandingFacturacion() {
       {/* Hero Section */}
       <header className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-          <FileText size={14} />
+          <Icon name="FileText" size={14}  />
           Facturación Inteligente para Colombia
         </div>
         <h1 className="text-4xl sm:text-5xl font-black text-white max-w-4xl mx-auto tracking-tight leading-tight">
@@ -50,7 +50,7 @@ export default function LandingFacturacion() {
             to="/auth?mode=register"
             className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all flex items-center justify-center gap-2"
           >
-            Crear Cuenta de Facturación Gratis <ArrowRight size={16} />
+            Crear Cuenta de Facturación Gratis <Icon name="ArrowRight" size={16}  />
           </Link>
         </div>
       </header>
@@ -60,17 +60,17 @@ export default function LandingFacturacion() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-              <Printer size={24} className="text-brand-400" />
+              <Icon name="Printer" size={24} className="text-brand-400"  />
               <h3 className="text-base font-bold text-foreground">Impresión POS Térmica</h3>
               <p className="text-xs text-muted-400 leading-relaxed">Imprime recibos de 58mm y 80mm al instante con tu logo corporativo y datos legales.</p>
             </div>
             <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-              <Mail size={24} className="text-brand-400" />
+              <Icon name="Mail" size={24} className="text-brand-400"  />
               <h3 className="text-base font-bold text-foreground">Envío por Email & WhatsApp</h3>
               <p className="text-xs text-muted-400 leading-relaxed">Envía comprobantes de compra directamente al correo o WhatsApp de tus clientes.</p>
             </div>
             <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-              <ShieldCheck size={24} className="text-brand-400" />
+              <Icon name="ShieldCheck" size={24} className="text-brand-400"  />
               <h3 className="text-base font-bold text-foreground">Formatos PDF Oficiales</h3>
               <p className="text-xs text-muted-400 leading-relaxed">Descarga cuentas de cobro y facturas en formato PDF estándar listo para contabilidad.</p>
             </div>

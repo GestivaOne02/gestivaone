@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { ShoppingCart, Printer, Barcode, ArrowRight, Zap, CheckCircle2 } from 'lucide-react'
 import SEOHead from '@/components/seo/SEOHead'
+import Icon from '@/components/ui/Icon';
 
 export default function LandingPOS() {
   return (
@@ -33,7 +33,7 @@ export default function LandingPOS() {
 
       <header className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-          <ShoppingCart size={14} />
+          <Icon name="ShoppingCart" size={14}  />
           Punto de Venta e Inventario Móvil
         </div>
         <h1 className="text-4xl sm:text-5xl font-black text-white max-w-4xl mx-auto tracking-tight leading-tight">
@@ -47,7 +47,7 @@ export default function LandingPOS() {
             to="/auth?mode=register"
             className="px-8 py-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold transition-all flex items-center gap-2"
           >
-            Prueba el Sistema POS Gratis <ArrowRight size={16} />
+            Prueba el Sistema POS Gratis <Icon name="ArrowRight" size={16}  />
           </Link>
         </div>
       </header>
@@ -55,17 +55,17 @@ export default function LandingPOS() {
       <section className="py-16 bg-surface-800 border-t border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Barcode size={24} className="text-brand-400" />
+            <Icon name="Barcode" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Escáner de Código de Barras</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Compatible con lectores físicos USB/Bluetooth y cámara de dispositivos móviles.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Zap size={24} className="text-brand-400" />
+            <Icon name="Zap" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Alertas de Stock Crítico</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Recibe avisos automáticos cuando los productos estén próximos a agotarse.</p>
           </div>
           <div className="bg-surface-750 border border-subtle p-6 rounded-3xl space-y-3">
-            <Printer size={24} className="text-brand-400" />
+            <Icon name="Printer" size={24} className="text-brand-400"  />
             <h3 className="text-base font-bold text-foreground">Ticket y Cierre de Caja</h3>
             <p className="text-xs text-muted-400 leading-relaxed">Resumen automático de caja diaria con reporte de ingresos, egresos y medios de pago.</p>
           </div>

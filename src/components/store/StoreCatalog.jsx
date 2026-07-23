@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
-import { Package, Search, Star, Edit3, X, Check, Percent } from 'lucide-react';
+import Icon from '@/components/ui/Icon';
 
 const formatCOP = (v) => v == null ? '' : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
 
@@ -53,7 +53,7 @@ export default function StoreCatalog({
 
         {/* Search */}
         <div className="relative max-w-xs w-full">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-500" />
+          <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-500"  />
           <input
             type="text"
             value={searchQuery}
@@ -176,7 +176,7 @@ export default function StoreCatalog({
                         : 'bg-white/5 border-white/5 text-muted-500 hover:text-white'
                     )}
                   >
-                    <Star size={10} className={p.featured ? "fill-warning-400 text-warning-400" : ""} />
+                    <Icon name="Star" size={10} className={p.featured ? "fill-warning-400 text-warning-400" : ""}  />
                     {p.featured ? 'Destacado' : 'Normal'}
                   </button>
                 </td>
@@ -224,14 +224,14 @@ export default function StoreCatalog({
                         className="p-2 bg-brand-500 hover:bg-brand-400 text-white rounded-xl transition-all"
                         title="Guardar"
                       >
-                        <Check size={14} />
+                        <Icon name="Check" size={14}  />
                       </button>
                       <button
                         onClick={() => setEditingProductId(null)}
                         className="p-2 bg-white/5 hover:bg-white/10 text-muted-400 hover:text-white rounded-xl transition-all"
                         title="Cancelar"
                       >
-                        <X size={14} />
+                        <Icon name="X" size={14}  />
                       </button>
                     </div>
                   ) : (
@@ -244,7 +244,7 @@ export default function StoreCatalog({
                       }}
                       className="px-3.5 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[10px] font-bold transition-all border border-white/5 flex items-center gap-1.5 ml-auto"
                     >
-                      <Edit3 size={11} />
+                      <Icon name="Edit3" size={11}  />
                       <span>Editar</span>
                     </button>
                   )}

@@ -1,8 +1,9 @@
 import { useState, useMemo, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Briefcase, ChevronDown, ChevronRight, Search } from 'lucide-react'
+
 import { useAuthStore } from '@/store/useAuthStore'
 import SearchBar from '@/components/ui/SearchBar'
+import Icon from '@/components/ui/Icon';
 
 const OrgNode = memo(function OrgNode({ employee, subordinates, allEmployees, searchQuery, level = 1 }) {
   const [expanded, setExpanded] = useState(true)
@@ -41,7 +42,7 @@ const OrgNode = memo(function OrgNode({ employee, subordinates, allEmployees, se
         </div>
         <p className="text-[11px] font-bold text-foreground truncate">{employee.full_name}</p>
         <p className="text-[9px] text-muted-400 font-medium truncate mt-0.5 flex items-center justify-center gap-1">
-          <Briefcase size={9} className="text-muted-500" />
+          <Icon name="Briefcase" size={9} className="text-muted-500"  />
           {employee.position}
         </p>
         {employee.department && (
@@ -53,7 +54,7 @@ const OrgNode = memo(function OrgNode({ employee, subordinates, allEmployees, se
             onClick={() => setExpanded(!expanded)}
             className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-surface-700 border border-subtle rounded-full flex items-center justify-center text-muted-400 hover:text-foreground hover:bg-surface-600 transition-colors z-20"
           >
-            {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+            {expanded ? <Icon name="ChevronDown" size={12}  /> : <Icon name="ChevronRight" size={12}  />}
           </button>
         )}
       </motion.div>
@@ -135,7 +136,7 @@ export default function OrgChart({ employees }) {
               </div>
               <p className="text-xs font-black text-foreground">{user?.name || 'Administrador'}</p>
               <p className="text-[9px] text-brand-400 font-bold uppercase tracking-wider mt-0.5 flex items-center justify-center gap-1">
-                <Shield size={10} />
+                <Icon name="Shield" size={10}  />
                 Director General
               </p>
               <p className="text-[8px] text-muted-500 mt-0.5 truncate">{user?.email}</p>

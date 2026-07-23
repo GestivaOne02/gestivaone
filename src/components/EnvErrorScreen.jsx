@@ -1,5 +1,6 @@
 import React from 'react'
-import { AlertTriangle, Key, Server, Copy, Check } from 'lucide-react'
+import Icon from '@/components/ui/Icon';
+
 
 export default function EnvErrorScreen() {
   const [copiedKey, setCopiedKey] = React.useState(null)
@@ -20,7 +21,7 @@ export default function EnvErrorScreen() {
 
         <div className="text-center space-y-3 relative z-10">
           <div className="inline-flex items-center justify-center p-3.5 bg-error-500/10 text-error-400 rounded-2xl border border-error-500/20">
-            <AlertTriangle className="w-8 h-8 animate-pulse" />
+            <Icon name="AlertTriangle" className="w-8 h-8 animate-pulse"  />
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
             Configuración Pendiente
@@ -62,7 +63,7 @@ export default function EnvErrorScreen() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between bg-surface-900 border border-subtle rounded-xl p-3 text-xs md:text-sm font-mono overflow-x-auto gap-3 text-left">
                   <div className="flex items-center gap-2 text-muted-300">
-                    <Server className="w-4 h-4 text-brand-400" />
+                    <Icon name="Server" className="w-4 h-4 text-brand-400"  />
                     <span>VITE_SUPABASE_URL=</span>
                     <span className="text-neutral-500">https://tu-proyecto.supabase.co</span>
                   </div>
@@ -70,13 +71,13 @@ export default function EnvErrorScreen() {
                     onClick={() => handleCopy("VITE_SUPABASE_URL=https://tu-proyecto.supabase.co", 'url')}
                     className="p-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-white transition-colors"
                   >
-                    {copiedKey === 'url' ? <Check className="w-3.5 h-3.5 text-success-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedKey === 'url' ? <Icon name="Check" className="w-3.5 h-3.5 text-success-400"  /> : <Icon name="Copy" className="w-3.5 h-3.5"  />}
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between bg-surface-900 border border-subtle rounded-xl p-3 text-xs md:text-sm font-mono overflow-x-auto gap-3 text-left">
                   <div className="flex items-center gap-2 text-muted-300">
-                    <Key className="w-4 h-4 text-brand-400" />
+                    <Icon name="Key" className="w-4 h-4 text-brand-400"  />
                     <span>VITE_SUPABASE_ANON_KEY=</span>
                     <span className="text-neutral-500">tu-anon-key-jwt-aqui</span>
                   </div>
@@ -84,7 +85,7 @@ export default function EnvErrorScreen() {
                     onClick={() => handleCopy("VITE_SUPABASE_ANON_KEY=tu-anon-key-jwt-aqui", 'key')}
                     className="p-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 border border-subtle text-muted-400 hover:text-white transition-colors"
                   >
-                    {copiedKey === 'key' ? <Check className="w-3.5 h-3.5 text-success-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedKey === 'key' ? <Icon name="Check" className="w-3.5 h-3.5 text-success-400"  /> : <Icon name="Copy" className="w-3.5 h-3.5"  />}
                   </button>
                 </div>
               </div>

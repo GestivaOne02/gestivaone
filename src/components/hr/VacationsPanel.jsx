@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar, Plus, Check, X, Clock, HelpCircle } from 'lucide-react'
+
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 export default function VacationsPanel({ employees, vacations, requestVacation, updateVacationStatus, isAdmin }) {
   const [openModal, setOpenModal] = useState(false)
@@ -59,7 +60,7 @@ export default function VacationsPanel({ employees, vacations, requestVacation, 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Calendar size={18} className="text-brand-500" />
+          <Icon name="Calendar" size={18} className="text-brand-500"  />
           <h3 className="text-sm font-black uppercase tracking-wider text-foreground">Gestión de Vacaciones</h3>
         </div>
         <Button
@@ -67,7 +68,7 @@ export default function VacationsPanel({ employees, vacations, requestVacation, 
           variant="primary"
           size="sm"
           className="rounded-xl py-2"
-          icon={<Plus size={14} />}
+          icon={<Icon name="Plus" size={14}  />}
         >
           Solicitar Vacaciones
         </Button>
@@ -115,14 +116,14 @@ export default function VacationsPanel({ employees, vacations, requestVacation, 
                               title="Aprobar"
                               className="p-1.5 rounded-lg bg-success-500/10 hover:bg-success-500/25 border border-success-500/20 text-success-400 transition-all"
                             >
-                              <Check size={13} />
+                              <Icon name="Check" size={13}  />
                             </button>
                             <button
                               onClick={() => updateVacationStatus(vac.id, 'rejected')}
                               title="Rechazar"
                               className="p-1.5 rounded-lg bg-danger-500/10 hover:bg-danger-500/25 border border-danger-500/20 text-danger-400 transition-all"
                             >
-                              <X size={13} />
+                              <Icon name="X" size={13}  />
                             </button>
                           </div>
                         ) : (

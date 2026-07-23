@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cookie, X, ShieldCheck } from 'lucide-react'
+
 import { useNavigate } from 'react-router-dom'
 import Button from './Button'
+import Icon from '@/components/ui/Icon';
 
 export default function ConsentBanner() {
   const [show, setShow] = useState(false)
@@ -32,13 +33,13 @@ export default function ConsentBanner() {
         >
           <div className="w-full max-w-4xl bg-surface-800/90 backdrop-blur-xl border border-white/10 p-5 md:p-6 rounded-3xl shadow-modal flex flex-col md:flex-row items-center gap-6 pointer-events-auto liquid-glass">
             <div className="w-12 h-12 rounded-2xl bg-brand-600/20 flex items-center justify-center shrink-0 border border-brand-500/20 shadow-glow-sm">
-              <Cookie size={24} className="text-brand-400" />
+              <Icon name="Cookie" size={24} className="text-brand-400"  />
             </div>
             
             <div className="flex-1 space-y-1 text-center md:text-left">
               <h3 className="text-sm font-bold text-foreground flex items-center justify-center md:justify-start gap-2">
                 Usamos cookies para mejorar tu experiencia
-                <ShieldCheck size={14} className="text-success-400" />
+                <Icon name="ShieldCheck" size={14} className="text-success-400"  />
               </h3>
               <p className="text-[11px] md:text-xs text-muted-400 leading-relaxed">
                 Al navegar en <strong>GestivaOne</strong>, aceptas nuestra política de cookies y términos de servicio. 
@@ -68,7 +69,7 @@ export default function ConsentBanner() {
               onClick={() => setShow(false)}
               className="absolute top-4 right-4 p-1 rounded-lg text-muted-500 hover:text-foreground hover:bg-white/5 transition-colors"
             >
-              <X size={14} />
+              <Icon name="X" size={14}  />
             </button>
           </div>
         </motion.div>

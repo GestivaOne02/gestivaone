@@ -1,13 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Mail, Send, AlertCircle, CheckCircle2, User, Sparkles,
-  MessageSquare, Info, Star, Percent, ShoppingBag, Search, ShoppingCart,
-  Eye, Check, Copy, RefreshCw, Layers, Plus, Trash2, Edit2,
-  ArrowUp, ArrowDown, Type, AlignLeft, AlignCenter, AlignRight,
-  FileText, Link2, Image as ImageIcon, GripVertical, Paperclip, Smile,
-  Cloud, Lock, Pen, Maximize2, X, Minimize2, ChevronDown, Trash
-} from 'lucide-react'
+
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { useClientStore } from '@/store/useClientStore'
 import { useInvoiceStore } from '@/store/useInvoiceStore'
@@ -15,6 +8,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { sendCustomCampaignEmail } from '@/services/emailService'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const MOCK_LAYOUTS = {
   promo: [
@@ -390,7 +384,7 @@ export default function Emails() {
               : 'border-transparent text-muted-400 hover:text-foreground hover:bg-surface-700/60'
           )}
         >
-          <Send size={14} />
+          <Icon name="Send" size={14}  />
           Mesa de Trabajo
         </button>
         <button
@@ -402,7 +396,7 @@ export default function Emails() {
               : 'border-transparent text-muted-400 hover:text-foreground hover:bg-surface-700/60'
           )}
         >
-          <Layers size={14} />
+          <Icon name="Layers" size={14}  />
           Analizador de Afinidades
         </button>
       </div>
@@ -422,7 +416,7 @@ export default function Emails() {
               {/* Settings & Recipients */}
               <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 flex flex-col gap-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
-                  <Layers size={14} className="text-brand-400" />
+                  <Icon name="Layers" size={14} className="text-brand-400"  />
                   Destinatarios y Segmentación
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -465,7 +459,7 @@ export default function Emails() {
               <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
-                    <Plus size={14} className="text-brand-400" />
+                    <Icon name="Plus" size={14} className="text-brand-400"  />
                     Módulos (Clic para añadir)
                   </h3>
                   <div className="flex gap-1">
@@ -475,27 +469,27 @@ export default function Emails() {
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <button onClick={() => addBlock('title')} className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-subtle bg-surface-900 hover:bg-surface-700 hover:border-brand-500/50 transition-all group">
-                    <Type size={16} className="text-purple-400 group-hover:scale-110 transition-transform" />
+                    <Icon name="Type" size={16} className="text-purple-400 group-hover:scale-110 transition-transform"  />
                     <span className="text-[10px] font-bold text-muted-400 group-hover:text-foreground uppercase tracking-wider">Título</span>
                   </button>
                   <button onClick={() => addBlock('text')} className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-subtle bg-surface-900 hover:bg-surface-700 hover:border-brand-500/50 transition-all group">
-                    <FileText size={16} className="text-blue-400 group-hover:scale-110 transition-transform" />
+                    <Icon name="FileText" size={16} className="text-blue-400 group-hover:scale-110 transition-transform"  />
                     <span className="text-[10px] font-bold text-muted-400 group-hover:text-foreground uppercase tracking-wider">Texto</span>
                   </button>
                   <button onClick={() => addBlock('image')} className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-subtle bg-surface-900 hover:bg-surface-700 hover:border-brand-500/50 transition-all group">
-                    <ImageIcon size={16} className="text-green-400 group-hover:scale-110 transition-transform" />
+                    <Icon name="Image" size={16} className="text-green-400 group-hover:scale-110 transition-transform"  />
                     <span className="text-[10px] font-bold text-muted-400 group-hover:text-foreground uppercase tracking-wider">Imagen</span>
                   </button>
                   <button onClick={() => addBlock('invoice_table')} className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-subtle bg-surface-900 hover:bg-surface-700 hover:border-brand-500/50 transition-all group">
-                    <Percent size={16} className="text-amber-400 group-hover:scale-110 transition-transform" />
+                    <Icon name="Percent" size={16} className="text-amber-400 group-hover:scale-110 transition-transform"  />
                     <span className="text-[10px] font-bold text-muted-400 group-hover:text-foreground uppercase tracking-wider">Tabla</span>
                   </button>
                   <button onClick={() => addBlock('link')} className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-subtle bg-surface-900 hover:bg-surface-700 hover:border-brand-500/50 transition-all group">
-                    <Link2 size={16} className="text-cyan-400 group-hover:scale-110 transition-transform" />
+                    <Icon name="Link2" size={16} className="text-cyan-400 group-hover:scale-110 transition-transform"  />
                     <span className="text-[10px] font-bold text-muted-400 group-hover:text-foreground uppercase tracking-wider">Enlace</span>
                   </button>
                   <button onClick={() => addBlock('button')} className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-subtle bg-surface-900 hover:bg-surface-700 hover:border-brand-500/50 transition-all group">
-                    <ShoppingCart size={16} className="text-red-400 group-hover:scale-110 transition-transform" />
+                    <Icon name="ShoppingCart" size={16} className="text-red-400 group-hover:scale-110 transition-transform"  />
                     <span className="text-[10px] font-bold text-muted-400 group-hover:text-foreground uppercase tracking-wider">Botón</span>
                   </button>
                 </div>
@@ -504,7 +498,7 @@ export default function Emails() {
               {/* Structure Builder (Drag & Drop) */}
               <div className="bg-surface-800/60 border border-subtle rounded-2xl p-4 flex-1 flex flex-col min-h-[250px]">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-3 flex items-center gap-1.5">
-                  <Layers size={14} className="text-brand-400" />
+                  <Icon name="Layers" size={14} className="text-brand-400"  />
                   Estructura (Drag & Drop)
                 </h3>
                 <DragDropContext onDragEnd={onDragEnd}>
@@ -532,7 +526,7 @@ export default function Emails() {
                               >
                                 <div className="flex items-center gap-2">
                                   <div {...provided.dragHandleProps} className="text-muted-500 hover:text-foreground cursor-grab active:cursor-grabbing p-1">
-                                    <GripVertical size={14} />
+                                    <Icon name="GripVertical" size={14}  />
                                   </div>
                                   <span className="capitalize">{block.type}</span>
                                 </div>
@@ -540,7 +534,7 @@ export default function Emails() {
                                   onClick={(e) => { e.stopPropagation(); deleteBlock(block.id); }}
                                   className="p-1.5 rounded-lg hover:bg-danger-950/30 text-muted-500 hover:text-danger-400 transition-colors"
                                 >
-                                  <Trash2 size={13} />
+                                  <Icon name="Trash2" size={13}  />
                                 </button>
                               </div>
                             )}
@@ -560,7 +554,7 @@ export default function Emails() {
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] uppercase font-bold text-muted-400">Edición de Contenido</span>
                     <span className="text-[10px] bg-brand-500/20 text-brand-300 font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">
-                      <Edit2 size={10} />
+                      <Icon name="Edit2" size={10}  />
                       {selectedBlock.type}
                     </span>
                   </div>
@@ -608,9 +602,9 @@ export default function Emails() {
                                     selectedBlock.align === align ? 'bg-surface-700 text-white font-bold' : 'text-muted-400 hover:text-foreground'
                                   )}
                                 >
-                                  {align === 'left' && <AlignLeft size={13} />}
-                                  {align === 'center' && <AlignCenter size={13} />}
-                                  {align === 'right' && <AlignRight size={13} />}
+                                  {align === 'left' && <Icon name="AlignLeft" size={13}  />}
+                                  {align === 'center' && <Icon name="AlignCenter" size={13}  />}
+                                  {align === 'right' && <Icon name="AlignRight" size={13}  />}
                                 </button>
                               ))}
                             </div>
@@ -805,9 +799,9 @@ export default function Emails() {
                 <div className="bg-[#f2f6fc] dark:bg-surface-800 px-4 py-2 flex items-center justify-between border-b border-[#e1e5ea] dark:border-subtle shrink-0">
                   <span className="text-[#041e49] dark:text-gray-200 text-sm font-medium">Nuevo Mensaje</span>
                   <div className="flex items-center gap-2 text-gray-500">
-                    <button className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded"><Minimize2 size={14} /></button>
-                    <button className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded"><Maximize2 size={14} /></button>
-                    <button className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded"><X size={16} /></button>
+                    <button className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded"><Icon name="Minimize2" size={14}  /></button>
+                    <button className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded"><Icon name="Maximize2" size={14}  /></button>
+                    <button className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded"><Icon name="X" size={16}  /></button>
                   </div>
                 </div>
 
@@ -817,7 +811,7 @@ export default function Emails() {
                   <div className="flex-1 flex flex-wrap gap-1">
                     {targetClients.length > 0 ? (
                       <span className="px-2.5 py-0.5 rounded-full border border-[#d3e3fd] bg-[#e8f0fe] dark:bg-brand-500/10 dark:border-brand-500/30 text-[#041e49] dark:text-brand-300 text-xs font-medium flex items-center gap-1">
-                        <User size={12} /> {targetClients.length} Destinatarios seleccionados
+                        <Icon name="User" size={12}  /> {targetClients.length} Destinatarios seleccionados
                       </span>
                     ) : (
                       <span className="text-gray-400 text-sm">Selecciona destinatarios...</span>
@@ -858,21 +852,21 @@ export default function Emails() {
                       className="flex items-center gap-1.5 px-6 py-2 bg-[#0b57d0] hover:bg-[#0b57d0]/90 text-white rounded-full text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {sending ? 'Enviando...' : 'Enviar'}
-                      <ChevronDown size={14} className="ml-1 opacity-70" />
+                      <Icon name="ChevronDown" size={14} className="ml-1 opacity-70"  />
                     </button>
                     <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Type size={18} /></button>
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Paperclip size={18} /></button>
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Link2 size={18} /></button>
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Smile size={18} /></button>
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Cloud size={18} /></button>
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><ImageIcon size={18} /></button>
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Lock size={18} /></button>
-                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Pen size={18} /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Type" size={18}  /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Paperclip" size={18}  /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Link2" size={18}  /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Smile" size={18}  /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Cloud" size={18}  /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Image" size={18}  /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Lock" size={18}  /></button>
+                      <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Pen" size={18}  /></button>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                    <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Trash size={18} /></button>
+                    <button className="hover:text-gray-800 dark:hover:text-gray-200 transition-colors"><Icon name="Trash" size={18}  /></button>
                   </div>
                 </div>
               </div>
@@ -889,7 +883,7 @@ export default function Emails() {
           >
             <div className="p-4 bg-surface-800/60 border border-subtle rounded-2xl">
               <h3 className="text-xs font-bold uppercase tracking-wider text-foreground mb-2 flex items-center gap-1.5">
-                <Info size={14} className="text-brand-400" />
+                <Icon name="Info" size={14} className="text-brand-400"  />
                 Análisis de Compras e Interacciones
               </h3>
               <p className="text-xs text-muted-400 leading-relaxed">
@@ -908,7 +902,7 @@ export default function Emails() {
               <div className="divide-y divide-subtle/50">
                 {clientAffinities.length === 0 && (
                   <div className="text-center py-12">
-                    <AlertCircle size={32} className="mx-auto text-muted-600 mb-2 animate-bounce" />
+                    <Icon name="AlertCircle" size={32} className="mx-auto text-muted-600 mb-2 animate-bounce"  />
                     <p className="text-xs text-muted-500">No hay ventas registradas para realizar el análisis</p>
                   </div>
                 )}
@@ -934,7 +928,7 @@ export default function Emails() {
 
                     <div>
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-brand-500/10 text-brand-300 border border-brand-500/20">
-                        <ShoppingBag size={10} />
+                        <Icon name="ShoppingBag" size={10}  />
                         {client.favoriteProduct} ({client.favoriteProductCount} u)
                       </span>
                     </div>
@@ -946,7 +940,7 @@ export default function Emails() {
                           title="Enviar campaña a WhatsApp"
                           className="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition-colors"
                         >
-                          <MessageSquare size={13} />
+                          <Icon name="MessageSquare" size={13}  />
                         </button>
                       )}
                       
@@ -960,7 +954,7 @@ export default function Emails() {
                           title="Lanzar constructor para este producto"
                           className="p-2 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-300 border border-brand-500/20 transition-colors"
                         >
-                          <Mail size={13} />
+                          <Icon name="Mail" size={13}  />
                         </button>
                       )}
                     </div>

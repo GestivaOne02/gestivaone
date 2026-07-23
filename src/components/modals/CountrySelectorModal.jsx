@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Globe, Check, ArrowRight, Zap } from 'lucide-react'
+
 import { SUPPORTED_CURRENCIES, useCurrencyStore } from '@/store/useCurrencyStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { supabase } from '@/lib/supabase'
 import Button from '@/components/ui/Button'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const COUNTRIES = [
   { id: 'CO', name: 'Colombia', currency: 'COP', lang: 'es-CO', flag: '🇨🇴' },
@@ -73,7 +74,7 @@ export default function CountrySelectorModal() {
         {/* Left Side: Visual */}
         <div className="hidden md:flex w-1/3 bg-gradient-to-br from-brand-600 to-brand-900 p-8 flex-col justify-between text-white">
           <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center">
-            <Zap size={24} className="text-white" />
+            <Icon name="Zap" size={24} className="text-white"  />
           </div>
           <div>
             <h2 className="text-3xl font-black leading-tight mb-2">Personaliza tu experiencia.</h2>
@@ -85,7 +86,7 @@ export default function CountrySelectorModal() {
         <div className="flex-1 p-6 md:p-10 flex flex-col h-full overflow-hidden">
           <div className="mb-6">
             <div className="flex items-center gap-2 text-brand-400 font-bold uppercase tracking-widest text-[10px] mb-1">
-              <Globe size={12} />
+              <Icon name="Globe" size={12}  />
               <span>Configuración Global</span>
             </div>
             <h3 className="text-2xl font-bold text-foreground">Selecciona tu país</h3>
@@ -110,7 +111,7 @@ export default function CountrySelectorModal() {
                 </div>
                 {selected === c.id && (
                   <div className="ml-auto w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center">
-                    <Check size={12} className="text-white" />
+                    <Icon name="Check" size={12} className="text-white"  />
                   </div>
                 )}
               </button>
@@ -124,7 +125,7 @@ export default function CountrySelectorModal() {
               className="w-full justify-center group"
               disabled={!selected}
               onClick={handleFinish}
-              icon={<ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+              icon={<Icon name="ArrowRight" size={18} className="group-hover:translate-x-1 transition-transform"  />}
             >
               Comenzar ahora
             </Button>

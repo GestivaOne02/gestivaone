@@ -1,9 +1,5 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
-import {
-  LayoutDashboard, Receipt, Package, Store,
-  Settings, ChevronLeft, X, Users, Lock, Bell, Printer, Calculator, Wallet, FolderClosed, Contact, Mail,
-  User, CreditCard, LogOut, HelpCircle, MessageSquare, Zap, ChevronDown
-} from 'lucide-react'
+
 import { useUIStore } from '@/store/useUIStore'
 import { useAuthStore, ROLES } from '@/store/useAuthStore'
 import { useNotificationStore } from '@/store/useNotificationStore'
@@ -13,6 +9,7 @@ import { useProductStore } from '@/store/useProductStore'
 import { supabase } from '@/lib/supabase'
 import { useEffect, useState, useRef, useMemo, startTransition } from 'react'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const AVATAR_SIZE = 40
 
@@ -232,7 +229,7 @@ export default function Sidebar({ isMobile }) {
                           <Icon size={18} />
                         </div>
                         <span className="relative z-10 flex-1">{label}</span>
-                        {!allowed && <Lock size={12} className="text-muted-400 relative z-10" />}
+                        {!allowed && <Icon name="Lock" size={12} className="text-muted-400 relative z-10"  />}
                       </NavLink>
                     )
                   })}
@@ -242,7 +239,7 @@ export default function Sidebar({ isMobile }) {
               {user?.plan !== 'empresarial' && user?.plan !== 'enterprise' && (
                 <div className="px-3 py-2 shrink-0 mt-auto">
                   <NavLink to="/upgrade" onClick={closeMobile} className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-xs tracking-wide shadow-[0_0_15px_rgba(147,51,234,0.4)] transition-all duration-200">
-                    <Zap size={14} className="fill-current text-purple-200" />
+                    <Icon name="Zap" size={14} className="fill-current text-purple-200"  />
                     <span>+ Adquirir más funciones</span>
                   </NavLink>
                 </div>
@@ -253,7 +250,7 @@ export default function Sidebar({ isMobile }) {
             {hasScrollBelow && (
               <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-14 flex flex-col items-end justify-end pb-2 pr-6 bg-gradient-to-t from-surface-800 to-transparent">
                 <div className="flex items-center gap-1 text-muted-500 text-[10px] font-semibold animate-bounce">
-                  <ChevronDown size={12} />
+                  <Icon name="ChevronDown" size={12}  />
                   <span>Más abajo</span>
                 </div>
               </div>
@@ -277,11 +274,11 @@ export default function Sidebar({ isMobile }) {
                 <div className="absolute inset-0 bg-brand-600/20 border-l-4 border-l-brand-500" />
               )}
               <div className="relative shrink-0 w-[18px] h-[18px] flex items-center justify-center z-10">
-                <Bell size={18} />
+                <Icon name="Bell" size={18}  />
                 {unreadCount > 0 && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-brand-500 rounded-full" />}
               </div>
               <span className="relative z-10 flex-1">Notificaciones</span>
-              {!permissions['dashboard'] && <Lock size={12} className="text-muted-400 relative z-10" />}
+              {!permissions['dashboard'] && <Icon name="Lock" size={12} className="text-muted-400 relative z-10"  />}
             </NavLink>
 
             {/* User profile */}
@@ -299,11 +296,11 @@ export default function Sidebar({ isMobile }) {
 
               {showProfileMenu && (
                 <div className="absolute z-50 bg-surface-800 border border-subtle shadow-2xl rounded-2xl p-1.5 flex flex-col gap-0.5 text-neutral-200 min-w-[210px] bottom-2 left-full ml-3">
-                  <NavLink to="/account" onClick={() => { setShowProfileMenu(false); closeMobile() }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><User size={15} className="text-muted-400" /><span>Profile</span></NavLink>
-                  <NavLink to="/settings" onClick={() => { setShowProfileMenu(false); closeMobile() }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Settings size={15} className="text-muted-400" /><span>Settings</span></NavLink>
+                  <NavLink to="/account" onClick={() => { setShowProfileMenu(false); closeMobile() }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Icon name="User" size={15} className="text-muted-400"  /><span>Profile</span></NavLink>
+                  <NavLink to="/settings" onClick={() => { setShowProfileMenu(false); closeMobile() }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Icon name="Settings" size={15} className="text-muted-400"  /><span>Settings</span></NavLink>
                   <div className="h-px bg-surface-700 my-1.5 mx-1" />
-                  <a href="mailto:soporte@gestivaone.com?subject=Soporte%20GestivaOne" onClick={() => { setShowProfileMenu(false); closeMobile() }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><HelpCircle size={15} className="text-muted-400" /><span>Help center</span></a>
-                  <button onClick={() => { handleLogout(); closeMobile() }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-danger-400 hover:bg-danger-950/20 transition-colors text-left"><LogOut size={15} className="text-danger-500" /><span>Sign out</span></button>
+                  <a href="mailto:soporte@gestivaone.com?subject=Soporte%20GestivaOne" onClick={() => { setShowProfileMenu(false); closeMobile() }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Icon name="HelpCircle" size={15} className="text-muted-400"  /><span>Help center</span></a>
+                  <button onClick={() => { handleLogout(); closeMobile() }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-danger-400 hover:bg-danger-950/20 transition-colors text-left"><Icon name="LogOut" size={15} className="text-danger-500"  /><span>Sign out</span></button>
                 </div>
               )}
             </div>
@@ -329,7 +326,7 @@ export default function Sidebar({ isMobile }) {
               onClick={closeMobile} 
               className="w-full flex items-center justify-center gap-2 py-4 mt-2 border-t border-subtle text-muted-400 hover:text-white hover:bg-surface-600/60 transition-colors"
             >
-              <ChevronLeft size={20} />
+              <Icon name="ChevronLeft" size={20}  />
             </button>
           </div>
         </aside>
@@ -410,7 +407,7 @@ export default function Sidebar({ isMobile }) {
                       <Icon size={18} />
                     </div>
                     <span className="relative z-10 block pl-3 whitespace-nowrap flex-1">{label}</span>
-                    {!allowed && <Lock size={12} className="text-muted-400 relative z-10 ml-2" />}
+                    {!allowed && <Icon name="Lock" size={12} className="text-muted-400 relative z-10 ml-2"  />}
                   </a>
                 )
               })}
@@ -450,7 +447,7 @@ export default function Sidebar({ isMobile }) {
           {!collapsed && user?.plan !== 'empresarial' && user?.plan !== 'enterprise' && (
             <div className="px-4 py-1.5 shrink-0 mt-2">
               <NavLink to="/upgrade" className="flex items-center justify-center rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold w-full px-4 py-2.5 text-xs tracking-wide gap-2 shadow-[0_0_15px_rgba(147,51,234,0.4)] transition-all duration-200" title="Adquirir más funciones">
-                <Zap size={14} className="fill-current text-purple-200 shrink-0" />
+                <Icon name="Zap" size={14} className="fill-current text-purple-200 shrink-0"  />
                 <span>+ Adquirir más funciones</span>
               </NavLink>
             </div>
@@ -461,7 +458,7 @@ export default function Sidebar({ isMobile }) {
         {hasScrollBelow && !collapsed && (
           <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 flex flex-col items-end justify-end pb-1 pr-6 bg-gradient-to-t from-surface-800 to-transparent">
             <div className="flex items-center gap-1 text-[11px] font-black animate-bounce" style={{ color: 'var(--brand-500)' }}>
-              <ChevronDown size={11} className="stroke-[3]" />
+              <Icon name="ChevronDown" size={11} className="stroke-[3]"  />
               <span>Más abajo</span>
             </div>
           </div>
@@ -493,7 +490,7 @@ export default function Sidebar({ isMobile }) {
           {isNotifActive && notifAllowed && !collapsed && <div className="absolute inset-0 bg-brand-600/20 border-l-4 border-l-brand-500" />}
           {isNotifActive && notifAllowed && collapsed  && <div className="absolute inset-0 rounded-lg border-l-4 border-l-brand-500 bg-brand-600/10" />}
           <div className="relative z-10 shrink-0 w-[18px] h-[18px] flex items-center justify-center">
-            <Bell size={18} />
+            <Icon name="Bell" size={18}  />
             {unreadCount > 0 && <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-brand-500 rounded-full" />}
           </div>
           {!collapsed && <span className="relative z-10 text-sm font-medium pl-3 flex-1 whitespace-nowrap">Notificaciones</span>}
@@ -526,18 +523,18 @@ export default function Sidebar({ isMobile }) {
               'absolute z-50 bg-surface-800 border border-subtle shadow-2xl rounded-2xl p-1.5 flex flex-col gap-0.5 text-neutral-200 min-w-[210px]',
               collapsed ? 'bottom-0 left-full ml-3' : 'bottom-2 left-full ml-3'
             )}>
-              <NavLink to="/account"  onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><User size={15} className="text-muted-400" /><span>Profile</span></NavLink>
-              <NavLink to="/settings" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Settings size={15} className="text-muted-400" /><span>Settings</span></NavLink>
+              <NavLink to="/account"  onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Icon name="User" size={15} className="text-muted-400"  /><span>Profile</span></NavLink>
+              <NavLink to="/settings" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Icon name="Settings" size={15} className="text-muted-400"  /><span>Settings</span></NavLink>
               <NavLink to="/account"  onClick={() => setShowProfileMenu(false)} className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors">
-                <div className="flex items-center gap-3"><CreditCard size={15} className="text-muted-400" /><span>Subscription</span></div>
+                <div className="flex items-center gap-3"><Icon name="CreditCard" size={15} className="text-muted-400"  /><span>Subscription</span></div>
                 <div className="flex items-center gap-0.5 bg-brand-600/20 border border-brand-500/30 text-brand-300 font-bold px-1.5 py-0.5 rounded text-[9px] tracking-wide shrink-0">
-                  <Zap size={8} className="fill-current text-brand-400" />
+                  <Icon name="Zap" size={8} className="fill-current text-brand-400"  />
                   {user?.plan === 'empresarial' ? '360' : 'PRO'}
                 </div>
               </NavLink>
               <div className="h-px bg-surface-700 my-1.5 mx-1" />
-              <a href="mailto:soporte@gestivaone.com?subject=Soporte%20GestivaOne" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><HelpCircle size={15} className="text-muted-400" /><span>Help center</span></a>
-              <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-danger-400 hover:bg-danger-950/20 transition-colors text-left"><LogOut size={15} className="text-danger-500" /><span>Sign out</span></button>
+              <a href="mailto:soporte@gestivaone.com?subject=Soporte%20GestivaOne" onClick={() => setShowProfileMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-muted-400 hover:text-white hover:bg-surface-700 transition-colors"><Icon name="HelpCircle" size={15} className="text-muted-400"  /><span>Help center</span></a>
+              <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-danger-400 hover:bg-danger-950/20 transition-colors text-left"><Icon name="LogOut" size={15} className="text-danger-500"  /><span>Sign out</span></button>
             </div>
           )}
         </div>
@@ -573,10 +570,10 @@ export default function Sidebar({ isMobile }) {
             className="w-full flex items-center justify-center p-2 rounded-xl text-muted-400 hover:text-white hover:bg-surface-600/60 transition-colors"
             title={collapsed ? 'Expandir' : 'Colapsar'}
           >
-            <ChevronLeft
+            <Icon name="ChevronLeft"
               size={16}
               style={{ transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}
-            />
+             />
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Zap, Mail, Lock, Eye, EyeOff, CheckCircle2, ArrowLeft, Check, Camera, Home, ChevronLeft, Star } from 'lucide-react'
+
 import { useAuthStore } from '@/store/useAuthStore'
 import { useEmployeeStore } from '@/store/useEmployeeStore'
 import { supabase } from '@/lib/supabase'
@@ -11,6 +11,7 @@ import PaymentForm from '@/components/auth/PaymentForm'
 import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const goToDashboard = async (navigate) => {
   try {
@@ -214,7 +215,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
               onTouchEnd={() => setShowPw(false)}
               className="absolute right-3 bottom-3 text-muted-400 hover:text-foreground"
             >
-              {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+              {showPw ? <Icon name="EyeOff" size={15}  /> : <Icon name="Eye" size={15}  />}
             </button>
           </div>
 
@@ -266,7 +267,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
               onClick={() => fileInputRef.current?.click()}
               className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center shadow-lg hover:bg-brand-500 transition-colors border border-surface-800"
             >
-              <Camera size={11} className="text-white" />
+              <Icon name="Camera" size={11} className="text-white"  />
             </button>
             <input
               id="worker-register-avatar"
@@ -400,7 +401,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             onTouchEnd={() => setShowPw(false)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-400 hover:text-foreground"
           >
-            {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+            {showPw ? <Icon name="EyeOff" size={15}  /> : <Icon name="Eye" size={15}  />}
           </button>
         </div>
         <p className="text-[10px] text-muted-500 mt-1.5 ml-1 leading-tight">
@@ -688,7 +689,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
               onTouchEnd={() => setShowPw(false)}
               className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground"
             >
-              {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+              {showPw ? <Icon name="EyeOff" size={15}  /> : <Icon name="Eye" size={15}  />}
             </button>
           )}
         </div>
@@ -711,7 +712,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
                   ? 'bg-amber-500 border-amber-500 text-white'
                   : 'border-subtle bg-surface-900 group-hover:border-surface-400'
               )}>
-                {rememberMe && <Check size={12} strokeWidth={3} className="text-white animate-scale-up" />}
+                {rememberMe && <Icon name="Check" size={12} strokeWidth={3} className="text-white animate-scale-up"  />}
               </div>
               <span className="text-xs font-bold text-muted-500 group-hover:text-foreground transition-colors">Acuérdate de mí</span>
             </label>
@@ -817,7 +818,7 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
           {step === 'listo' && (
             <div className="text-center space-y-4 py-6">
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-                <CheckCircle2 size={64} className="text-success-400 mx-auto" />
+                <Icon name="CheckCircle2" size={64} className="text-success-400 mx-auto"  />
               </motion.div>
               <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">¡Registro exitoso!</h2>
               {confirmationRequired ? (
@@ -845,7 +846,7 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
       {/* Back button */}
       {step !== 'plan' && step !== 'listo' && (
         <button onClick={handleBack} className="mt-4 flex items-center gap-1.5 text-xs text-muted-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
-          <ArrowLeft size={13} /> Volver
+          <Icon name="ArrowLeft" size={13}  /> Volver
         </button>
       )}
     </div>
@@ -1063,7 +1064,7 @@ export default function Auth() {
 
         <div className="flex items-center gap-3 pb-6 border-b border-white/5 relative z-10">
           <div className="w-8 h-8 rounded-xl bg-brand-600/10 border border-brand-500/30 flex items-center justify-center">
-            <Zap size={16} className="text-brand-400" />
+            <Icon name="Zap" size={16} className="text-brand-400"  />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
@@ -1110,7 +1111,7 @@ export default function Auth() {
                         <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 shrink-0">
                           <div className="w-full h-full rounded-full bg-white p-[2px]">
                             <div className="w-full h-full rounded-full bg-brand-600 flex items-center justify-center text-white">
-                              <Zap size={16} />
+                              <Icon name="Zap" size={16}  />
                             </div>
                           </div>
                         </div>
@@ -1119,7 +1120,7 @@ export default function Auth() {
                           <div className="flex items-center gap-1">
                             <span className="font-extrabold text-[11px] text-neutral-900 leading-tight">gestivaone</span>
                             <div className="w-3.5 h-3.5 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
-                              <Check size={8} className="text-white stroke-[4]" />
+                              <Icon name="Check" size={8} className="text-white stroke-[4]"  />
                             </div>
                           </div>
                           <p className="text-[9px] text-muted-500">Gestión Comercial</p>
@@ -1142,15 +1143,15 @@ export default function Auth() {
 
                       <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-neutral-200/50">
                         <div className="aspect-square bg-gradient-to-br from-brand-500/10 to-brand-500/30 rounded-xl flex flex-col items-center justify-center p-1 border border-brand-500/10 hover:scale-[1.03] transition-transform">
-                          <Zap size={13} className="text-brand-600 mb-0.5" />
+                          <Icon name="Zap" size={13} className="text-brand-600 mb-0.5"  />
                           <span className="text-[6.5px] font-black uppercase text-brand-700 text-center leading-none">Emite</span>
                         </div>
                         <div className="aspect-square bg-gradient-to-br from-success-500/10 to-success-500/30 rounded-xl flex flex-col items-center justify-center p-1 border border-success-500/10 hover:scale-[1.03] transition-transform">
-                          <CheckCircle2 size={13} className="text-success-600 mb-0.5" />
+                          <Icon name="CheckCircle2" size={13} className="text-success-600 mb-0.5"  />
                           <span className="text-[6.5px] font-black uppercase text-success-700 text-center leading-none">DIAN</span>
                         </div>
                         <div className="aspect-square bg-gradient-to-br from-warning-500/10 to-warning-500/30 rounded-xl flex flex-col items-center justify-center p-1 border border-warning-500/10 hover:scale-[1.03] transition-transform">
-                          <Star size={13} className="text-warning-600 mb-0.5" />
+                          <Icon name="Star" size={13} className="text-warning-600 mb-0.5"  />
                           <span className="text-[6.5px] font-black uppercase text-warning-700 text-center leading-none">Controla</span>
                         </div>
                       </div>
@@ -1168,7 +1169,7 @@ export default function Auth() {
                           className="p-3.5 bg-white border border-neutral-200 rounded-2xl shadow-xl flex items-center gap-3 relative z-10 w-[85%] max-w-[260px]"
                         >
                           <div className="w-8.5 h-8.5 rounded-xl bg-success-100 flex items-center justify-center shrink-0">
-                            <CheckCircle2 size={18} className="text-success-600" />
+                            <Icon name="CheckCircle2" size={18} className="text-success-600"  />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[10px] font-black text-neutral-800 truncate">Factura Electrónica</p>
@@ -1281,7 +1282,7 @@ export default function Auth() {
         )}>
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 justify-center mb-3.5 sm:mb-6">
-            <Zap size={20} className="text-brand-400" />
+            <Icon name="Zap" size={20} className="text-brand-400"  />
             <span className="font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Gestiva <span className="text-brand-400 font-extrabold">One</span></span>
           </div>
 
@@ -1318,7 +1319,7 @@ export default function Auth() {
               className="absolute -top-4 -left-4 w-10 h-10 bg-surface-800 border border-subtle rounded-full flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-surface-700 hover:text-black dark:hover:text-white transition-colors group z-20 text-muted-400 shadow-sm"
               title="Volver al inicio"
             >
-              <Home size={18} className="transition-colors" />
+              <Icon name="Home" size={18} className="transition-colors"  />
             </motion.button>
 
             <AnimatePresence mode="wait">

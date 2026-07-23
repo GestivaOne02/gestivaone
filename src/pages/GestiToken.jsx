@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, ShieldAlert, ShieldCheck, Clock, Copy, Check, Lock, Unlock } from 'lucide-react'
+
 import { useAuthStore } from '@/store/useAuthStore'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 // Framer Motion variants
 const containerVariants = {
@@ -217,7 +218,7 @@ export default function GestiToken() {
         </div>
         <div className="flex items-center gap-2 self-end sm:self-center mt-1">
           <div className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${enabled ? 'text-success-500' : 'text-danger-500'}`}>
-            {enabled ? (<>GestiBot Protegido <Lock size={14} /></>) : (<>Seguridad Inactiva <Unlock size={14} /></>)}
+            {enabled ? (<>GestiBot Protegido <Icon name="Lock" size={14}  /></>) : (<>Seguridad Inactiva <Icon name="Unlock" size={14}  /></>)}
           </div>
         </div>
       </motion.div>
@@ -287,7 +288,7 @@ export default function GestiToken() {
           {/* Card 2: Security Information / Help */}
           <div className="rounded-3xl p-5 md:p-6 space-y-5 shadow-sm">
             <h3 className="text-xs font-black text-muted-400 uppercase tracking-widest flex items-center gap-1.5">
-              <ShieldAlert size={14} className="text-brand-500" />
+              <Icon name="ShieldAlert" size={14} className="text-brand-500"  />
               ¿Por qué activar el GestiToken?
             </h3>
             <div className="space-y-3 text-xs text-muted-400 leading-relaxed">
@@ -296,7 +297,7 @@ export default function GestiToken() {
               </p>
               <div className="p-3 bg-surface-900/60 rounded-xl border border-subtle/40 space-y-2">
                 <p className="font-bold text-foreground text-[11px] flex items-center gap-1.5">
-                  <Shield size={14} className="text-brand-500" /> Seguridad Zero-Trust:
+                  <Icon name="Shield" size={14} className="text-brand-500"  /> Seguridad Zero-Trust:
                 </p>
                 <p className="text-[10px]">
                   Al activar el GestiToken, aunque alguien acceda a su chat de WhatsApp, **no podrá extraer información financiera de su negocio** ni consultar balances generales a menos que tenga acceso físico a este panel web para ver el código en tiempo real.
@@ -322,7 +323,7 @@ export default function GestiToken() {
                   ? 'bg-success-500/10 border-success-500/20 text-success-400' 
                   : 'bg-surface-900 border-subtle text-muted-500'
               }`}>
-                {enabled ? <ShieldCheck size={28} /> : <ShieldAlert size={28} />}
+                {enabled ? <Icon name="ShieldCheck" size={28}  /> : <Icon name="ShieldAlert" size={28}  />}
               </div>
             </div>
 
@@ -382,7 +383,7 @@ export default function GestiToken() {
               disabled={!enabled}
               onClick={handleCopy}
               className="w-full py-2.5 rounded-xl border"
-              icon={copied ? <Check size={14} /> : <Copy size={14} />}
+              icon={copied ? <Icon name="Check" size={14}  /> : <Icon name="Copy" size={14}  />}
             >
               {copied ? 'Copiado' : 'Copiar Token'}
             </Button>

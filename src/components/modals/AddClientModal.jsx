@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { User, MapPin, Phone, Mail, UserCheck, Zap } from 'lucide-react'
+
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -13,6 +13,7 @@ import { getLocalizationByCountry } from '@/services/localizationService'
 import toast from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const schema = z.object({
   name:          z.string().min(2, 'Mínimo 2 caracteres'),
@@ -121,7 +122,7 @@ export default function AddClientModal({ open }) {
 
           <Input
             label="Nombre o Razón Social *"
-            icon={<User size={14} />}
+            icon={<Icon name="User" size={14}  />}
             error={errors.name?.message}
             placeholder="Nombre del cliente"
             {...register('name')}
@@ -152,20 +153,20 @@ export default function AddClientModal({ open }) {
             <>
               <Input
                 label="Dirección"
-                icon={<MapPin size={14} />}
+                icon={<Icon name="MapPin" size={14}  />}
                 placeholder="Dirección de entrega (opcional)"
                 {...register('address')}
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Input
                   label="Teléfono"
-                  icon={<Phone size={14} />}
+                  icon={<Icon name="Phone" size={14}  />}
                   placeholder="Ej: +57 300..."
                   {...register('phone')}
                 />
                 <Input
                   label="Correo electrónico"
-                  icon={<Mail size={14} />}
+                  icon={<Icon name="Mail" size={14}  />}
                   placeholder="correo@cliente.com"
                   error={errors.email?.message}
                   {...register('email')}

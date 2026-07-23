@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { DollarSign, FileText, CheckCircle, Plus, Eye, Trash2, ArrowUpRight, Calculator } from 'lucide-react'
+
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import Badge from '@/components/ui/Badge'
 import toast from 'react-hot-toast'
+import Icon from '@/components/ui/Icon';
 
 export default function PayrollPanel({ employees, runs, concepts, calculatePayrollRun, approvePayrollRun, removePayrollRun }) {
   const [openModal, setOpenModal] = useState(false)
@@ -49,7 +50,7 @@ export default function PayrollPanel({ employees, runs, concepts, calculatePayro
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <DollarSign size={18} className="text-brand-500" />
+          <Icon name="DollarSign" size={18} className="text-brand-500"  />
           <h3 className="text-sm font-black uppercase tracking-wider text-foreground">Gestión de Nómina (Motor de Cálculo)</h3>
         </div>
         <Button
@@ -57,7 +58,7 @@ export default function PayrollPanel({ employees, runs, concepts, calculatePayro
           variant="primary"
           size="sm"
           className="rounded-xl py-2"
-          icon={<Plus size={14} />}
+          icon={<Icon name="Plus" size={14}  />}
         >
           Liquidar Período
         </Button>
@@ -120,14 +121,14 @@ export default function PayrollPanel({ employees, runs, concepts, calculatePayro
                           title="Ver detalle"
                           className="p-1.5 rounded-lg bg-brand-500/10 hover:bg-brand-500/25 border border-brand-500/20 text-brand-400 transition-all"
                         >
-                          <Eye size={13} />
+                          <Icon name="Eye" size={13}  />
                         </button>
                         <button
                           onClick={() => removePayrollRun(run.id)}
                           title="Eliminar"
                           className="p-1.5 rounded-lg bg-danger-500/10 hover:bg-danger-500/25 border border-danger-500/20 text-danger-400 transition-all"
                         >
-                          <Trash2 size={13} />
+                          <Icon name="Trash2" size={13}  />
                         </button>
                       </div>
                     </td>
@@ -285,7 +286,7 @@ export default function PayrollPanel({ employees, runs, concepts, calculatePayro
                       if (success) setOpenDetailModal(false)
                     }}
                     className="flex-1 rounded-xl flex items-center justify-center gap-2"
-                    icon={<CheckCircle size={14} />}
+                    icon={<Icon name="CheckCircle" size={14}  />}
                   >
                     Aprobar y Oficializar
                   </Button>

@@ -1,15 +1,12 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Zap, Check, CreditCard, Shield, Sparkles, AlertCircle, ShoppingBag,
-  HelpCircle, ChevronRight, X, ArrowLeft, LayoutGrid, Users, Receipt, Mail,
-  Calculator, Lock, FolderClosed, Wallet
-} from 'lucide-react'
+
 import { useAuthStore } from '@/store/useAuthStore'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import Icon from '@/components/ui/Icon';
 
 const PLANS_DATA = [
   {
@@ -209,7 +206,7 @@ export default function Upgrade() {
       <div className="sticky top-0 z-20 bg-surface-900/90 backdrop-blur-md pb-4 pt-1 -mx-4 px-4 md:-mx-8 md:px-8 lg:-mx-10 lg:px-10 border-b border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-lg md:text-xl font-bold text-foreground flex items-center gap-2">
-            <Sparkles size={20} className="text-purple-400" />
+            <Icon name="Sparkles" size={20} className="text-purple-400"  />
             Upgrade Center & Modular Addons
           </h1>
           <p className="text-xs text-muted-400 mt-0.5">
@@ -257,7 +254,7 @@ export default function Upgrade() {
                 <ul className="space-y-2.5 flex-1 mb-6">
                   {plan.features.map((f, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs text-muted-300">
-                      <Check size={14} className="text-success-400 shrink-0 mt-0.5" />
+                      <Icon name="Check" size={14} className="text-success-400 shrink-0 mt-0.5"  />
                       <span>{f}</span>
                     </li>
                   ))}
@@ -339,11 +336,11 @@ export default function Upgrade() {
                 onClick={() => setCheckoutItem(null)}
                 className="absolute top-4 right-4 p-1.5 rounded-lg text-muted-400 hover:text-foreground hover:bg-surface-700 transition-colors"
               >
-                <X size={16} />
+                <Icon name="X" size={16}  />
               </button>
 
               <h3 className="text-base font-extrabold text-white flex items-center gap-2 mb-1.5">
-                <CreditCard size={18} className="text-brand-400" />
+                <Icon name="CreditCard" size={18} className="text-brand-400"  />
                 Pasarela de Pago Segura
               </h3>
               <p className="text-xs text-muted-400 mb-5">
@@ -400,7 +397,7 @@ export default function Upgrade() {
                 </div>
 
                 <div className="flex items-center gap-2 text-[10px] text-muted-400 bg-surface-900/50 p-2.5 rounded-xl border border-subtle mt-1">
-                  <Shield size={14} className="text-brand-400 shrink-0" />
+                  <Icon name="Shield" size={14} className="text-brand-400 shrink-0"  />
                   <span>Esta transacción es una simulación de desarrollo local con Supabase y no realizará ningún cobro real.</span>
                 </div>
 

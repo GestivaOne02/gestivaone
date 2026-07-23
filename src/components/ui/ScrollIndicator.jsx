@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+
 import { motion, AnimatePresence } from 'framer-motion'
+import Icon from '@/components/ui/Icon';
 
 export default function ScrollIndicator({ targetRef, selector }) {
   const [show, setShow] = useState(false)
@@ -77,7 +78,7 @@ export default function ScrollIndicator({ targetRef, selector }) {
           className="absolute top-20 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none sm:hidden"
         >
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-600 text-white shadow-lg border border-brand-500 animate-bounce">
-            <ChevronDown size={18} className="stroke-[3]" />
+            <Icon name="ChevronDown" size={18} className="stroke-[3]"  />
           </div>
         </motion.div>
       )}

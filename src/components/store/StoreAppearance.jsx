@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
-import { Save, Check, RefreshCw } from 'lucide-react';
+import Icon from '@/components/ui/Icon';
 
 export default function StoreAppearance({
   storeName, setStoreName,
@@ -87,7 +87,7 @@ export default function StoreAppearance({
                   )}
                   title={color.name}
                 >
-                  {accentColor === color.hex && <Check size={14} className="text-white drop-shadow-sm" />}
+                  {accentColor === color.hex && <Icon name="Check" size={14} className="text-white drop-shadow-sm"  />}
                 </button>
               ))}
               <div className="flex items-center gap-2 ml-2 bg-black/40 border border-white/5 px-3 py-1.5 rounded-xl">
@@ -133,7 +133,7 @@ export default function StoreAppearance({
           disabled={saving}
           className="w-full sm:w-auto self-end mt-4 px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 border border-brand-400 disabled:opacity-50"
         >
-          {saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Icon name="RefreshCw" size={14} className="animate-spin"  /> : <Icon name="Save" size={14}  />}
           <span>Guardar Configuración</span>
         </button>
       </div>

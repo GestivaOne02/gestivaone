@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, HelpCircle } from 'lucide-react'
 import { useLanguageStore } from '@/store/useLanguageStore'
+import Icon from '@/components/ui/Icon';
 
 const faqs = [
   {
@@ -43,7 +43,7 @@ export default function FAQSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-4 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-wider border border-brand-500/20">
-            <HelpCircle size={14} />
+            <Icon name="HelpCircle" size={14}  />
             {t('faq.tag')}
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
@@ -67,12 +67,12 @@ export default function FAQSection() {
                   className="w-full px-6 py-4 flex items-center justify-between text-left gap-4 hover:bg-surface-750 transition-colors"
                 >
                   <span className="text-sm font-bold text-foreground">{faq.question}</span>
-                  <ChevronDown
+                  <Icon name="ChevronDown"
                     size={18}
                     className={`text-brand-400 shrink-0 transition-transform duration-200 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
-                  />
+                   />
                 </button>
 
                 <AnimatePresence initial={false}>
