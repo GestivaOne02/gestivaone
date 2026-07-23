@@ -6,7 +6,7 @@ import RevealAnimation from './RevealAnimation'
 
 export default function StorySection({ moduleData, scrollYProgress }) {
   return (
-    <div className="relative w-full h-full flex items-center justify-center bg-surface-900 overflow-hidden">
+    <div className="relative w-full max-w-6xl mx-auto rounded-[28px] border border-subtle bg-surface-900/90 shadow-2xl p-5 sm:p-7 lg:p-9 backdrop-blur-xl overflow-hidden">
       {/* Background Accent & Glow Engine */}
       <SectionBackground
         accentColor={moduleData.accentColor}
@@ -15,8 +15,8 @@ export default function StorySection({ moduleData, scrollYProgress }) {
         gradientTo={moduleData.gradientTo}
       />
 
-      {/* Internal Content Container (Responsive Full Bleed Edge-to-Edge) */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col lg:flex-row items-center justify-between gap-8 sm:gap-12 lg:gap-16">
+      {/* Internal Content Container */}
+      <div className="relative z-10 w-full flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10">
         
         {/* Left Column: Text & Content Reveal */}
         <div className="w-full lg:w-1/2">

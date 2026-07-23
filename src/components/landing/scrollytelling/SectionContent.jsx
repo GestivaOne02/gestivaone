@@ -1,6 +1,5 @@
 import React from 'react'
 import Icon from '@/components/ui/Icon'
-import Button from '@/components/ui/Button'
 
 export default function SectionContent({
   icon,
@@ -12,37 +11,36 @@ export default function SectionContent({
   metric,
   submetric,
   ctaText,
-  ctaLink,
-  accentColor
+  ctaLink
 }) {
   return (
-    <div className="space-y-6 max-w-xl">
+    <div className="space-y-4 max-w-xl">
       {/* Icon + Tagline Badge */}
-      <div className="flex items-center gap-3">
-        <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center shadow-lg shrink-0 ${iconBg}`}>
-          <Icon name={icon} size={22} />
+      <div className="flex items-center gap-2.5">
+        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shadow-md shrink-0 ${iconBg}`}>
+          <Icon name={icon} size={18} />
         </div>
-        <span className="text-xs font-bold text-muted-300 uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+        <span className="text-[11px] font-bold text-muted-300 uppercase tracking-wider px-3 py-0.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
           {badge}
         </span>
       </div>
 
       {/* Title */}
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-[1.1]">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground tracking-tight leading-tight">
         {title}
       </h2>
 
       {/* Description */}
-      <p className="text-base sm:text-lg text-muted-300 leading-relaxed font-normal">
+      <p className="text-xs sm:text-sm text-muted-300 leading-relaxed font-normal">
         {desc}
       </p>
 
       {/* Tag Pills */}
-      <div className="flex flex-wrap gap-2 pt-2">
+      <div className="flex flex-wrap gap-1.5 pt-1">
         {tags.map((tag, idx) => (
           <span
             key={idx}
-            className="px-3.5 py-1.5 rounded-xl bg-surface-750/90 border border-subtle text-xs font-bold text-muted-200 shadow-sm"
+            className="px-3 py-1 rounded-lg bg-surface-750/90 border border-subtle text-[11px] font-bold text-muted-200 shadow-sm"
           >
             ✓ {tag}
           </span>
@@ -50,18 +48,18 @@ export default function SectionContent({
       </div>
 
       {/* Live Metric Highlight */}
-      <div className="p-4 rounded-2xl bg-surface-900/80 border border-subtle flex items-center justify-between gap-4 shadow-xl backdrop-blur-md">
+      <div className="p-3.5 rounded-xl bg-surface-900/90 border border-subtle flex items-center justify-between gap-3 shadow-lg backdrop-blur-md">
         <div>
-          <span className="text-lg sm:text-xl font-extrabold text-foreground block">
+          <span className="text-base sm:text-lg font-extrabold text-foreground block">
             {metric}
           </span>
-          <span className="text-xs font-medium text-muted-400 block mt-0.5">
+          <span className="text-[11px] font-medium text-muted-400 block mt-0.5">
             {submetric}
           </span>
         </div>
         <a
           href={ctaLink}
-          className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all shadow-lg shadow-brand-600/30 hover:scale-[1.03] active:scale-[0.98] shrink-0"
+          className="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all shadow-md shadow-brand-600/30 hover:scale-[1.02] active:scale-[0.98] shrink-0"
         >
           {ctaText} →
         </a>
