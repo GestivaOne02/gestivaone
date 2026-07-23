@@ -28,7 +28,7 @@ export const TRANSLATIONS = {
       desc: 'La plataforma moderna que necesitas para automatizar inventarios, facturación, cuentas de cobro, reportes financieros y más, diseñada para optimizar cada proceso en tu empresa.',
       ctaPrimary: 'Empieza Tu Gestión Gratis',
       ctaSecondary: 'Ver Características',
-      trustMicro: '⚡ Sin tarjeta de crédito • Configuración en 1 min • Plan gratuito',
+      trustMicro: 'Sin tarjeta de crédito • Configuración en 1 min • Plan gratuito',
     },
     family: {
       title: 'Familia GestivaOne',
@@ -114,7 +114,7 @@ export const TRANSLATIONS = {
       desc: 'The modern platform you need to automate inventory, invoicing, receivables, financial reporting, and more, designed to optimize every process in your company.',
       ctaPrimary: 'Start Your Free Management',
       ctaSecondary: 'View Features',
-      trustMicro: '⚡ No credit card required • 1 min setup • Free plan available',
+      trustMicro: 'No credit card required • 1 min setup • Free plan available',
     },
     family: {
       title: 'GestivaOne Family',
@@ -200,7 +200,7 @@ export const TRANSLATIONS = {
       desc: 'A plataforma moderna que você precisa para automatizar estoques, faturamento, cobranças, relatórios financeiros e muito mais.',
       ctaPrimary: 'Comece Sua Gestão Grátis',
       ctaSecondary: 'Ver Funcionalidades',
-      trustMicro: '⚡ Sem cartão de crédito • Configuração em 1 min • Plano grátis',
+      trustMicro: 'Sem cartão de crédito • Configuração em 1 min • Plano grátis',
     },
     family: {
       title: 'Família GestivaOne',

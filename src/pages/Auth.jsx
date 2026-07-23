@@ -1112,8 +1112,8 @@ export default function Auth() {
                       </div>
 
                       <p className="text-[9.5px] text-neutral-600 leading-relaxed font-semibold">
-                        ⚡ Plataforma de facturación y gestión comercial. <br />
-                        💡 Crecimiento, automatización y tips diarios.
+                        Plataforma de facturación y gestión comercial. <br />
+                        Crecimiento, automatización y tips diarios.
                       </p>
 
                       <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-neutral-200/50">

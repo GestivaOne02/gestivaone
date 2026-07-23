@@ -317,7 +317,7 @@ export default function Landing() {
                   >
                     <span className="text-muted-400 font-semibold text-xs tracking-wider uppercase">Pagos Procesados con</span>
                     <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-surface-800/80 border border-subtle backdrop-blur-md hover:border-brand-500/30 transition-all">
-                      <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi por Bancolombia" width="140" height="35" loading="lazy" decoding="async" className="h-7 w-auto object-contain" />
+                      <img src="/images/Colabs/Wompi_ContraccionSecundaria.svg" alt="Wompi por Bancolombia" width="140" height="35" loading="lazy" decoding="async" className="h-7 w-auto object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity" />
                     </div>
                   </motion.div>
                 </div>
@@ -362,20 +362,23 @@ export default function Landing() {
                           <img
                             src="/images/gestivaOneFullPreview.png"
                             alt="GestivaOne Dashboard Preview"
-                            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                            className="w-full h-full object-cover object-top"
                           />
-                          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all group-hover:bg-black/30">
+                          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center transition-all group-hover:bg-black/30">
                             <button
                               type="button"
                               onClick={(e) => { e.stopPropagation(); setShowVideo(true); }}
                               className="w-16 h-16 rounded-full bg-brand-600 text-white flex items-center justify-center shadow-2xl shadow-brand-500/50 group-hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/20"
                               aria-label="Reproducir video demo"
                             >
-                              <Icon name="Play" size={28} className="translate-x-0.5" />
+                              <svg
+                                className="w-8 h-8 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                              </svg>
                             </button>
-                            <span className="px-4 py-1.5 rounded-full bg-surface-900/90 border border-white/10 text-xs font-bold text-white tracking-wide shadow-lg">
-                              Ver Demostración en Vivo
-                            </span>
                           </div>
                         </div>
                       )}
