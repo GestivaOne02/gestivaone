@@ -8,6 +8,7 @@ import GEOPromptsSection from '@/components/landing/GEOPromptsSection'
 import CEOUseCasesSection from '@/components/landing/CEOUseCasesSection'
 import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp'
 import TrustEEATSection from '@/components/landing/TrustEEATSection'
+import LanguageSelector from '@/components/ui/LanguageSelector'
 import { useLanguageStore } from '@/store/useLanguageStore'
 import ScrollStoryEngine from '@/components/landing/scrollytelling/ScrollStoryEngine'
 import Icon from '@/components/ui/Icon';
