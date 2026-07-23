@@ -117,24 +117,24 @@ export default function Sidebar({ isMobile }) {
       {
         title: 'Productos y Catálogo',
         items: [
-          { to: '/menu',     icon: Receipt,        label: 'Menú',     perm: 'menu',      feature: 'menu' },
-          { to: '/products', icon: Package,         label: 'Productos',perm: 'products',  feature: 'products' },
-          { to: '/store',    icon: Store,           label: 'Mi Tienda',perm: 'products',  feature: 'store' },
+          { to: '/menu',     icon: 'Receipt',        label: 'Menú',     perm: 'menu',      feature: 'menu' },
+          { to: '/products', icon: 'Package',         label: 'Productos',perm: 'products',  feature: 'products' },
+          { to: '/store',    icon: 'Store',           label: 'Mi Tienda',perm: 'products',  feature: 'store' },
         ]
       },
       {
         title: 'Gestión y Finanzas',
         items: [
-          { to: '/',                icon: LayoutDashboard, label: 'Dashboard', perm: 'dashboard', feature: 'dashboard' },
-          { to: '/finances',        icon: FolderClosed,    label: 'Bolsillos', perm: 'dashboard', feature: 'pockets' },
-          { to: '/employees',       icon: Users,           label: 'Empleados', perm: 'employees', feature: 'employees' },
+          { to: '/',                icon: 'LayoutDashboard', label: 'Dashboard', perm: 'dashboard', feature: 'dashboard' },
+          { to: '/finances',        icon: 'FolderClosed',    label: 'Bolsillos', perm: 'dashboard', feature: 'pockets' },
+          { to: '/employees',       icon: 'Users',           label: 'Empleados', perm: 'employees', feature: 'employees' },
         ]
       },
       {
         title: 'Herramientas',
         items: [
-          { to: '/facturero', icon: Printer,    label: 'Facturero',     perm: 'dashboard', feature: 'facturero' },
-          { to: '/seguridad', icon: Lock,       label: 'GestiToken',    perm: 'dashboard', feature: 'seguridad' },
+          { to: '/facturero', icon: 'Printer',    label: 'Facturero',     perm: 'dashboard', feature: 'facturero' },
+          { to: '/seguridad', icon: 'Lock',       label: 'GestiToken',    perm: 'dashboard', feature: 'seguridad' },
         ]
       }
     ]
@@ -210,7 +210,7 @@ export default function Sidebar({ isMobile }) {
                   <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1 mt-2 first:mt-0 select-none whitespace-nowrap truncate">
                     {group.title}
                   </div>
-                  {group.items.map(({ to, icon: Icon, label, perm }) => {
+                  {group.items.map(({ to, icon, label, perm }) => {
                     const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
                     const allowed  = permissions[perm] ?? true
                     return (
@@ -226,7 +226,7 @@ export default function Sidebar({ isMobile }) {
                       >
                         {isActive && allowed && <div className="absolute inset-0 bg-brand-600/20 border-l-4 border-l-brand-500" />}
                         <div className="relative shrink-0 w-[18px] h-[18px] flex items-center justify-center z-10">
-                          <Icon size={18} />
+                          <Icon name={icon} size={18} />
                         </div>
                         <span className="relative z-10 flex-1">{label}</span>
                         {!allowed && <Icon name="Lock" size={12} className="text-muted-400 relative z-10"  />}
@@ -382,7 +382,7 @@ export default function Sidebar({ isMobile }) {
               <div className="uppercase text-[9px] font-black text-muted-500 tracking-wider px-5 mb-1.5 mt-3.5 first:mt-0 select-none whitespace-nowrap truncate">
                 {group.title}
               </div>
-              {group.items.map(({ to, icon: Icon, label, perm }) => {
+              {group.items.map(({ to, icon, label, perm }) => {
                 const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
                 const allowed  = permissions[perm] ?? true
                 return (
@@ -404,7 +404,7 @@ export default function Sidebar({ isMobile }) {
                   >
                     {isActive && allowed && <div className="absolute inset-0 bg-brand-600/20 border-l-4 border-l-brand-500" />}
                     <div className="relative z-10 shrink-0 w-[18px] h-[18px] flex items-center justify-center">
-                      <Icon size={18} />
+                      <Icon name={icon} size={18} />
                     </div>
                     <span className="relative z-10 block pl-3 whitespace-nowrap flex-1">{label}</span>
                     {!allowed && <Icon name="Lock" size={12} className="text-muted-400 relative z-10 ml-2"  />}
@@ -415,7 +415,7 @@ export default function Sidebar({ isMobile }) {
           ))}
 
           {/* COLLAPSED: flat icon list, centered */}
-          {collapsed && allNavItems.map(({ to, icon: Icon, label, perm }) => {
+          {collapsed && allNavItems.map(({ to, icon, label, perm }) => {
             const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
             const allowed  = permissions[perm] ?? true
             return (
@@ -437,7 +437,7 @@ export default function Sidebar({ isMobile }) {
               >
                 {isActive && allowed && <div className="absolute inset-0 rounded-lg border-l-4 border-l-brand-500 bg-brand-600/10" />}
                 <div className="relative z-10 w-[18px] h-[18px] flex items-center justify-center">
-                  <Icon size={18} />
+                  <Icon name={icon} size={18} />
                 </div>
               </a>
             )
