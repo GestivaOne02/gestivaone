@@ -38,22 +38,23 @@ export default defineConfig({
           if (id.includes('dompurify') || id.includes('purify')) {
             return 'sanitize'
           }
-          // Core vendor (react ecosystem + motion + icons)
+          // Core vendor (react ecosystem + hot-toast + motion + icons)
           if (
             id.includes('node_modules/react/') ||
             id.includes('node_modules/react-dom/') ||
             id.includes('node_modules/react-router') ||
+            id.includes('node_modules/react-hot-toast') ||
             id.includes('node_modules/framer-motion') ||
-            id.includes('node_modules/@mui')
+            id.includes('node_modules/@mui') ||
+            id.includes('node_modules/@emotion')
           ) {
             return 'vendor'
           }
-          // Zustand + date-fns + clsx + toast utilities
+          // Pure utilities (zustand + date-fns + clsx + immer)
           if (
             id.includes('node_modules/zustand') ||
             id.includes('node_modules/date-fns') ||
             id.includes('node_modules/clsx') ||
-            id.includes('node_modules/react-hot-toast') ||
             id.includes('node_modules/immer')
           ) {
             return 'utils'
