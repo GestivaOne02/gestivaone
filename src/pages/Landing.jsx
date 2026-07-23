@@ -316,19 +316,13 @@ export default function Landing() {
                     className="pt-6 flex flex-col items-center lg:items-start gap-2"
                   >
                     <span className="text-muted-400 font-semibold text-xs tracking-wider uppercase">Pagos Procesados con</span>
-                    <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-surface-800/80 border border-subtle backdrop-blur-md transition-all">
-                      <svg viewBox="0 0 320 80" className="h-8 w-auto block" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Wompi por Bancolombia">
-                        <defs>
-                          <linearGradient id="wompiGradient" x1="176" y1="175" x2="825" y2="821" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="#00F2FE"/>
-                            <stop offset="1" stopColor="#4FACFE"/>
-                          </linearGradient>
-                        </defs>
+                    <div className="flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-surface-800/80 border border-subtle backdrop-blur-md transition-all">
+                      <svg viewBox="0 0 320 80" className="h-10 sm:h-11 w-auto block" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Wompi por Bancolombia">
                         <g transform="translate(-4, -6) scale(0.095)">
-                          <path d="M824.843 191.763V366.083C824.843 376.546 819.728 386.387 811.149 392.441L643.924 510.321C643.924 510.321 643.768 510.414 643.706 510.476C635.97 516.033 631.104 524.664 630.355 534.039C630.262 534.94 630.23 535.84 630.23 536.74V805.222C630.23 814.132 622.962 821.366 614.01 821.366H601.689C595.918 821.366 590.584 818.292 587.683 813.356L416.59 521.404C416.59 521.404 416.527 521.28 416.465 521.249C412.722 515.102 403.146 517.741 403.146 525.005V805.222C403.146 814.132 395.878 821.366 386.925 821.366H374.604C368.833 821.366 363.499 818.292 360.598 813.356L182.58 509.638C178.276 502.342 176.03 494.022 176.03 485.546V191.763C176.03 182.822 183.298 175.619 192.25 175.619H204.571C210.311 175.619 215.645 178.662 218.577 183.598L389.67 475.55C393.382 481.883 403.115 479.275 403.115 471.948V191.763C403.115 182.822 410.382 175.619 419.335 175.619H431.656C437.396 175.619 442.73 178.662 445.662 183.598L616.755 475.55C620.467 481.883 630.199 479.275 630.199 471.948V318.739C630.199 303.216 637.748 288.656 650.475 279.684L793.9 178.568C796.645 176.644 799.92 175.619 803.289 175.619H808.623C817.575 175.619 824.843 182.822 824.843 191.763Z" fill="url(#wompiGradient)"/>
+                          <path d="M824.843 191.763V366.083C824.843 376.546 819.728 386.387 811.149 392.441L643.924 510.321C643.924 510.321 643.768 510.414 643.706 510.476C635.97 516.033 631.104 524.664 630.355 534.039C630.262 534.94 630.23 535.84 630.23 536.74V805.222C630.23 814.132 622.962 821.366 614.01 821.366H601.689C595.918 821.366 590.584 818.292 587.683 813.356L416.59 521.404C416.59 521.404 416.527 521.28 416.465 521.249C412.722 515.102 403.146 517.741 403.146 525.005V805.222C403.146 814.132 395.878 821.366 386.925 821.366H374.604C368.833 821.366 363.499 818.292 360.598 813.356L182.58 509.638C178.276 502.342 176.03 494.022 176.03 485.546V191.763C176.03 182.822 183.298 175.619 192.25 175.619H204.571C210.311 175.619 215.645 178.662 218.577 183.598L389.67 475.55C393.382 481.883 403.115 479.275 403.115 471.948V191.763C403.115 182.822 410.382 175.619 419.335 175.619H431.656C437.396 175.619 442.73 178.662 445.662 183.598L616.755 475.55C620.467 481.883 630.199 479.275 630.199 471.948V318.739C630.199 303.216 637.748 288.656 650.475 279.684L793.9 178.568C796.645 176.644 799.92 175.619 803.289 175.619H808.623C817.575 175.619 824.843 182.822 824.843 191.763Z" fill="#FFFFFF"/>
                         </g>
                         <text x="82" y="48" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="42" fill="#FFFFFF" letterSpacing="-1.5">wompi</text>
-                        <text x="83" y="66" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="800" fontSize="11" fill="#00F2FE" letterSpacing="1.5">BY BANCOLOMBIA</text>
+                        <text x="83" y="66" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="800" fontSize="11" fill="#FFFFFF" letterSpacing="1.5">BY BANCOLOMBIA</text>
                       </svg>
                     </div>
                   </motion.div>
