@@ -17,6 +17,7 @@ export default function Landing() {
   const { t } = useLanguageStore()
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
+  const [showAppsMenu, setShowAppsMenu] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [contactSent, setContactSent] = useState(false)
 
@@ -53,77 +54,123 @@ export default function Landing() {
     <div className="min-h-screen bg-surface-900 text-foreground selection:bg-brand-500/30 selection:text-brand-300 transition-colors duration-200">
       <SEOHead />
 
-      {/* ─── SINGLE UNIFIED HEADER ─── */}
+      {/* ─── STICKY HEADER ─── */}
       <header className="sticky top-0 z-50 bg-surface-900/90 backdrop-blur-xl border-b border-subtle transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        {/* Tier 1: Logo centered at the top */}
+        <div className="border-b border-white/5 py-3 px-4 flex items-center justify-center relative">
+          {/* Apps Menu Dropdown Trigger (Left) */}
+          <div className="absolute left-4 sm:left-8 flex items-center gap-2">
+            <div className="relative">
+              <button 
+                onClick={() => setShowAppsMenu(!showAppsMenu)}
+                onBlur={() => setTimeout(() => setShowAppsMenu(false), 200)}
+                className="text-muted-400 hover:text-foreground transition-colors p-2 rounded-xl hover:bg-surface-800 flex items-center gap-1.5 text-xs font-semibold"
+                aria-label="Apps Menu"
+              >
+                <Icon name="LayoutGrid" size={18} />
+                <span className="hidden sm:inline text-xs">Ecosistema</span>
+              </button>
+              <AnimatePresence>
+                {showAppsMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 mt-2 w-64 bg-surface-900 border border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
+                  >
+                    <div className="px-3 py-2 text-[10px] font-bold text-muted-400 uppercase tracking-wider">
+                      Más productos de Gestiva
+                    </div>
+                    <a
+                      href="https://gestivapost.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
+                        <Icon name="Palette" size={16} />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-foreground">GestivaPost</span>
+                        <span className="text-xs text-muted-400">Software de Diseño</span>
+                      </div>
+                    </a>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
 
-            {/* Left: Brand Logo */}
-            <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
-              <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
-              <span className="font-extrabold text-foreground text-xl tracking-tight">
-                Gestiva<span className="text-brand-500">One</span>
-              </span>
+          {/* Centered GestivaOne Logo */}
+          <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+            <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-9 w-auto" />
+            <span className="font-extrabold text-foreground text-xl tracking-tight">
+              Gestiva<span className="text-brand-500">One</span>
+            </span>
+          </Link>
+
+          {/* Right User & Theme shortcuts */}
+          <div className="absolute right-4 sm:right-8 flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+              aria-label="Toggle Theme"
+            >
+              {isDarkMode ? <Icon name="Sun" size={18} /> : <Icon name="Moon" size={18} />}
+            </button>
+            <Link
+              to="/auth?mode=login"
+              className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 transition-all overflow-hidden"
+              title={t('nav.login')}
+            >
+              <Icon name="User" size={16} />
             </Link>
+          </div>
+        </div>
 
-            {/* Center: Main Navigation (Desktop) */}
-            <nav className="hidden lg:flex items-center gap-7">
+        {/* Tier 2: Navigation Links (Left) and Language Selector (Right) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-800/60">
+          <div className="flex items-center justify-between h-14">
+            {/* Left: Navigation Buttons */}
+            <div className="hidden lg:flex items-center gap-6">
               <a href="#caracteristicas" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.features')}</a>
               <a href="#nosotros" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.about')}</a>
               <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.pricing')}</a>
-              <a href="#especificaciones" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('geo.tag')}</a>
               <a href="#contacto" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.contact')}</a>
-            </nav>
 
-            {/* Right: Language + Theme + Login + CTA */}
-            <div className="hidden lg:flex items-center gap-3">
-              <LanguageSelector />
-
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors border border-subtle"
-                aria-label="Toggle Theme"
-                title="Cambiar tema"
+              <a
+                href="https://gestivaone-store.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-xs font-extrabold uppercase tracking-wider text-brand-400 hover:text-brand-300 transition-colors"
               >
-                {isDarkMode ? <Icon name="Sun" size={16} /> : <Icon name="Moon" size={16} />}
-              </button>
-
-              <Link
-                to="/auth?mode=login"
-                className="px-3.5 py-2 text-xs font-bold text-muted-400 hover:text-foreground transition-colors"
-              >
-                {t('nav.login')}
-              </Link>
+                {t('nav.marketplace')}
+              </a>
 
               <Link
                 to="/auth?mode=register"
-                className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all duration-200 shadow-md shadow-brand-500/20 active:scale-95"
+                className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all duration-300 shadow-md ml-2"
               >
-                {t('hero.ctaPrimary')}
+                {t('nav.start')}
               </Link>
             </div>
 
-            {/* Mobile Actions: Language + Theme + Hamburger */}
-            <div className="lg:hidden flex items-center gap-2">
-              <LanguageSelector />
-
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors border border-subtle"
-                aria-label="Toggle Theme"
-              >
-                {isDarkMode ? <Icon name="Sun" size={16} /> : <Icon name="Moon" size={16} />}
-              </button>
-
+            {/* Mobile Menu Button (Left on Mobile) */}
+            <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors flex items-center gap-1.5 text-xs font-bold border border-subtle"
+                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors flex items-center gap-2 text-xs font-bold"
                 aria-label="Toggle Mobile Navigation"
               >
-                {mobileMenuOpen ? <Icon name="X" size={18} /> : <Icon name="Menu" size={18} />}
+                {mobileMenuOpen ? <Icon name="X" size={20} /> : <Icon name="Menu" size={20} />}
+                <span>Menú</span>
               </button>
             </div>
 
+            {/* Right: Language Selector Button */}
+            <div className="flex items-center gap-3">
+              <LanguageSelector />
+            </div>
           </div>
         </div>
 
@@ -136,55 +183,44 @@ export default function Landing() {
               exit={{ opacity: 0, height: 0 }}
               className="lg:hidden bg-surface-900 border-b border-subtle overflow-hidden"
             >
-              <div className="px-4 pt-3 pb-6 space-y-2">
+              <div className="px-4 pt-3 pb-6 space-y-3">
                 <a
                   href="#caracteristicas"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.features')}
                 </a>
                 <a
                   href="#nosotros"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.about')}
                 </a>
                 <a
                   href="#precios"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.pricing')}
                 </a>
                 <a
-                  href="#especificaciones"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
-                >
-                  {t('geo.tag')}
-                </a>
-                <a
                   href="#contacto"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.contact')}
                 </a>
 
-                {/* Ecosystem Link */}
                 <a
-                  href="https://gestivapost.vercel.app/"
+                  href="https://gestivaone-store.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-surface-800 border border-subtle text-xs font-bold text-foreground"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-xl text-sm font-extrabold text-brand-400 hover:bg-surface-800 transition-colors"
                 >
-                  <span className="flex items-center gap-2">
-                    <Icon name="Palette" size={16} className="text-orange-500" />
-                    GestivaPost (Diseño)
-                  </span>
-                  <Icon name="ExternalLink" size={14} className="text-muted-400" />
+                  {t('nav.marketplace')}
                 </a>
 
                 <div className="pt-3 border-t border-subtle flex flex-col gap-2">
@@ -199,9 +235,9 @@ export default function Landing() {
                   <Link
                     to="/auth?mode=register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold shadow-md transition-colors"
+                    className="w-full text-center py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-md transition-colors"
                   >
-                    {t('hero.ctaPrimary')}
+                    {t('nav.start')}
                   </Link>
                 </div>
               </div>
