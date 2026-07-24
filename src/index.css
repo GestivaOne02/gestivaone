@@ -49,28 +49,18 @@
 }
 
 /* ═══════════════════════════════════════════════
-   LIQUID GLASS HEADER & DYNAMIC CONTRAST INVERSION
+   GLASS HEADER & THEME ADAPTIVE CONTRAST
 ═══════════════════════════════════════════════ */
 .liquid-glass-header {
-  background: rgba(10, 10, 15, 0.45);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  background: rgba(10, 10, 15, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 :root:not(.dark) .liquid-glass-header {
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-/* Contrast Inversion: Inverts text color automatically based on background behind it */
-.mix-blend-diff {
-  mix-blend-mode: difference;
-}
-
-.contrast-invert-text {
-  mix-blend-mode: difference;
-  color: #ffffff;
 }
 
 /* ─── LIGHT MODE ─── */
