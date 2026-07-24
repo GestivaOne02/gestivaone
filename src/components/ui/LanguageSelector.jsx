@@ -25,12 +25,12 @@ export default function LanguageSelector() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-700/60 hover:bg-surface-600 text-foreground text-xs font-semibold transition-all focus:outline-none border border-subtle shadow-sm"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#7B39ED]/10 hover:bg-[#7B39ED]/20 text-[#7B39ED] text-xs font-bold transition-all focus:outline-none border border-[#7B39ED]/30 shadow-sm"
         aria-expanded={isOpen}
       >
-        <Icon name="Languages" size={15} className="text-brand-400"  />
+        <Icon name="Languages" size={15} className="text-[#7B39ED]" />
         <span>{selectedLangObj.name}</span>
-        <Icon name="ChevronDown" size={14} className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}  />
+        <Icon name="ChevronDown" size={14} className={`text-[#7B39ED] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>

@@ -65,11 +65,11 @@ export default function Landing() {
               <button 
                 onClick={() => setShowAppsMenu(!showAppsMenu)}
                 onBlur={() => setTimeout(() => setShowAppsMenu(false), 200)}
-                className="text-muted-400 hover:text-foreground transition-colors p-2 rounded-xl hover:bg-surface-800 flex items-center gap-1.5 text-xs font-semibold"
+                className="text-[#7B39ED] hover:text-[#6929d9] transition-colors p-2 rounded-xl hover:bg-[#7B39ED]/10 flex items-center gap-1.5 text-xs font-bold"
                 aria-label="Apps Menu"
               >
-                <Icon name="LayoutGrid" size={18} />
-                <span className="hidden sm:inline text-xs">{t('nav.ecosystem') || 'Ecosistema'}</span>
+                <Icon name="LayoutGrid" size={18} className="text-[#7B39ED]" />
+                <span className="hidden sm:inline text-xs font-bold">{t('nav.ecosystem') || 'Ecosistema'}</span>
               </button>
               <AnimatePresence>
                 {showAppsMenu && (
@@ -79,7 +79,7 @@ export default function Landing() {
                     exit={{ opacity: 0, y: 10 }}
                     className="absolute top-full left-0 mt-2 w-64 bg-surface-900 border border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
                   >
-                    <div className="px-3 py-2 text-[10px] font-bold text-muted-400 uppercase tracking-wider">
+                    <div className="px-3 py-2 text-[10px] font-bold text-[#7B39ED] uppercase tracking-wider">
                       Más productos de Gestiva
                     </div>
                     <a
@@ -88,7 +88,7 @@ export default function Landing() {
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-[#7B39ED]/10 text-[#7B39ED] flex items-center justify-center">
                         <Icon name="Palette" size={16} />
                       </div>
                       <div className="flex flex-col">
@@ -102,10 +102,10 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* Centered GestivaOne Logo (Purple Icon + Purple Text) */}
+          {/* Centered GestivaOne Logo (Purple Icon + #7B39ED Purple Text) */}
           <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
             <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-9 w-auto" />
-            <span className="font-extrabold text-brand-500 text-xl tracking-tight">
+            <span className="font-black text-[#7B39ED] text-xl tracking-tight">
               GestivaOne
             </span>
           </Link>
@@ -114,14 +114,14 @@ export default function Landing() {
           <div className="absolute right-4 sm:right-8 flex items-center gap-2">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+              className="p-2 rounded-xl text-[#7B39ED] hover:bg-[#7B39ED]/10 transition-colors"
               aria-label="Toggle Theme"
             >
               {isDarkMode ? <Icon name="Sun" size={18} /> : <Icon name="Moon" size={18} />}
             </button>
             <Link
               to="/auth?mode=login"
-              className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 transition-all overflow-hidden"
+              className="w-8 h-8 rounded-full bg-[#7B39ED] flex items-center justify-center text-white hover:bg-[#6929d9] transition-all overflow-hidden shadow-md shadow-[#7B39ED]/30"
               title={t('nav.login')}
             >
               <Icon name="User" size={16} />
@@ -132,25 +132,25 @@ export default function Landing() {
         {/* Tier 2: Navigation Links (Left) and Language Selector (Right) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-800/60">
           <div className="flex items-center justify-between h-14">
-            {/* Left: Navigation Buttons */}
+            {/* Left: Navigation Buttons (All in #7B39ED Purple) */}
             <div className="hidden lg:flex items-center gap-6">
-              <a href="#caracteristicas" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.features')}</a>
-              <a href="#nosotros" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.about')}</a>
-              <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.pricing')}</a>
-              <a href="#contacto" className="text-xs font-bold uppercase tracking-wider text-muted-400 hover:text-foreground transition-colors">{t('nav.contact')}</a>
+              <a href="#caracteristicas" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.features')}</a>
+              <a href="#nosotros" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.about')}</a>
+              <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.pricing')}</a>
+              <a href="#contacto" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.contact')}</a>
 
               <a
                 href="https://gestivaone-store.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-xs font-extrabold uppercase tracking-wider text-brand-400 hover:text-brand-300 transition-colors"
+                className="inline-flex items-center text-xs font-extrabold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors"
               >
                 {t('nav.marketplace')}
               </a>
 
               <Link
                 to="/auth?mode=register"
-                className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all duration-300 shadow-md ml-2"
+                className="px-3.5 py-1.5 rounded-xl bg-[#7B39ED] hover:bg-[#6929d9] text-white text-xs font-bold transition-all duration-300 shadow-md shadow-[#7B39ED]/30 ml-2"
               >
                 {t('nav.start')}
               </Link>
@@ -160,7 +160,7 @@ export default function Landing() {
             <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors flex items-center gap-2 text-xs font-bold"
+                className="p-2 rounded-xl text-[#7B39ED] hover:bg-[#7B39ED]/10 transition-colors flex items-center gap-2 text-xs font-bold"
                 aria-label="Toggle Mobile Navigation"
               >
                 {mobileMenuOpen ? <Icon name="X" size={20} /> : <Icon name="Menu" size={20} />}
