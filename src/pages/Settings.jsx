@@ -90,7 +90,7 @@ export default function Settings() {
       {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Currency Section ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
-          icon={Globe}
+          icon="Globe"
           title="Divisa & Tasas de Cambio"
           desc="Las tasas se actualizan automáticamente cada 24 horas desde el Banco Central Europeo"
         />
