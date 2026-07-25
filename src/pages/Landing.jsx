@@ -21,6 +21,7 @@ export default function Landing() {
   const [showAppsMenu, setShowAppsMenu] = useState(false)
   const [showFeaturesMenu, setShowFeaturesMenu] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileFeaturesOpen, setMobileFeaturesOpen] = useState(false)
   const [contactSent, setContactSent] = useState(false)
 
   useEffect(() => {
@@ -112,7 +113,7 @@ export default function Landing() {
           </Link>
 
           {/* Right User & Theme shortcuts */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSelector />
             <div className="h-4 w-px bg-gray-200 dark:bg-subtle" />
             <button
@@ -124,7 +125,7 @@ export default function Landing() {
             </button>
             <Link
               to="/auth?mode=login"
-              className="w-8 h-8 rounded-full bg-[#7B39ED] flex items-center justify-center text-white hover:bg-[#6929d9] transition-all overflow-hidden shadow-md shadow-[#7B39ED]/30"
+              className="w-8 h-8 rounded-full bg-[#7B39ED] flex items-center justify-center text-white hover:bg-[#6929d9] transition-all overflow-hidden shadow-md shadow-[#7B39ED]/30 shrink-0"
               title={t('nav.login')}
             >
               <Icon name="User" size={16} />
@@ -156,7 +157,7 @@ export default function Landing() {
               >
                 <button
                   onClick={() => setShowFeaturesMenu(!showFeaturesMenu)}
-                  className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors py-2"
+                  className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors py-2"
                 >
                   <span>{t('nav.features') || 'Características'}</span>
                   <Icon name={showFeaturesMenu ? "ChevronUp" : "ChevronDown"} size={14} className="text-[#7B39ED]" />
@@ -189,26 +190,26 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* ─── CARACTERÍSTICAS MEGA MENU DROPDOWN ─── */}
+        {/* ─── CARACTERÍSTICAS MEGA MENU DROPDOWN (PERFECTLY CENTERED & RESPONSIVE) ─── */}
         <AnimatePresence>
           {showFeaturesMenu && (
             <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              initial={{ opacity: 0, y: 8, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              exit={{ opacity: 0, y: 6, scale: 0.98 }}
               transition={{ duration: 0.2 }}
               onMouseLeave={() => setShowFeaturesMenu(false)}
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-full max-w-5xl px-4 z-50 pointer-events-auto"
+              className="absolute top-full inset-x-0 mx-auto w-full max-w-5xl px-4 sm:px-6 z-50 pointer-events-auto"
             >
-              <div className="bg-white dark:bg-surface-800 border border-gray-200/90 dark:border-subtle rounded-3xl shadow-2xl p-6 sm:p-8 backdrop-blur-2xl">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+              <div className="bg-white dark:bg-surface-800 border border-gray-200/90 dark:border-subtle rounded-3xl shadow-2xl p-5 sm:p-6 md:p-8 backdrop-blur-2xl max-h-[80vh] overflow-y-auto no-scrollbar">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-left">
                   {/* 1. Gestión de Inventarios */}
                   <a
                     href="#caracteristicas"
                     onClick={() => setShowFeaturesMenu(false)}
                     className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform shrink-0">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                         <rect width="18" height="18" x="3" y="3" rx="4" />
                         <path d="m9 12 2 2 4-4" />
@@ -228,7 +229,7 @@ export default function Landing() {
                     onClick={() => setShowFeaturesMenu(false)}
                     className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform shrink-0">
                       <Icon name="FileText" size={20} />
                     </div>
                     <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-[#7B39ED] transition-colors">
@@ -245,7 +246,7 @@ export default function Landing() {
                     onClick={() => setShowFeaturesMenu(false)}
                     className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform shrink-0">
                       <Icon name="BarChart3" size={20} />
                     </div>
                     <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-[#7B39ED] transition-colors">
@@ -262,7 +263,7 @@ export default function Landing() {
                     onClick={() => setShowFeaturesMenu(false)}
                     className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform shrink-0">
                       <Icon name="Users" size={20} />
                     </div>
                     <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-[#7B39ED] transition-colors">
@@ -297,34 +298,107 @@ export default function Landing() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden bg-surface-900 border-b border-subtle overflow-hidden"
+              className="lg:hidden bg-white dark:bg-surface-900 border-b border-gray-200 dark:border-subtle overflow-hidden"
             >
               <div className="px-4 pt-3 pb-6 space-y-3">
-                <a
-                  href="#caracteristicas"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
-                >
-                  {t('nav.features')}
-                </a>
+                {/* Accordion for Features in Mobile */}
+                <div>
+                  <button
+                    onClick={() => setMobileFeaturesOpen(!mobileFeaturesOpen)}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-bold text-[#7B39ED] hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors"
+                  >
+                    <span>{t('nav.features') || 'Características'}</span>
+                    <Icon name={mobileFeaturesOpen ? "ChevronUp" : "ChevronDown"} size={16} />
+                  </button>
+                  <AnimatePresence>
+                    {mobileFeaturesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="pl-3 pr-1 py-2 space-y-2 overflow-hidden"
+                      >
+                        <a
+                          href="#caracteristicas"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 p-2.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 hover:bg-purple-100/50 transition-colors"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-[#7B39ED]/10 text-[#7B39ED] flex items-center justify-center shrink-0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect width="18" height="18" x="3" y="3" rx="4" />
+                              <path d="m9 12 2 2 4-4" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="text-xs font-bold text-foreground block">Gestión de Inventarios</span>
+                            <span className="text-[10px] text-muted-400 block">Controla tu stock en tiempo real</span>
+                          </div>
+                        </a>
+
+                        <a
+                          href="#caracteristicas"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 p-2.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 hover:bg-purple-100/50 transition-colors"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-[#7B39ED]/10 text-[#7B39ED] flex items-center justify-center shrink-0">
+                            <Icon name="FileText" size={16} />
+                          </div>
+                          <div>
+                            <span className="text-xs font-bold text-foreground block">Facturación Electrónica</span>
+                            <span className="text-[10px] text-muted-400 block">Facturas cumpliendo DIAN</span>
+                          </div>
+                        </a>
+
+                        <a
+                          href="#caracteristicas"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 p-2.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 hover:bg-purple-100/50 transition-colors"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-[#7B39ED]/10 text-[#7B39ED] flex items-center justify-center shrink-0">
+                            <Icon name="BarChart3" size={16} />
+                          </div>
+                          <div>
+                            <span className="text-xs font-bold text-foreground block">Reportes y Analíticas</span>
+                            <span className="text-[10px] text-muted-400 block">Decisiones basadas en datos</span>
+                          </div>
+                        </a>
+
+                        <a
+                          href="#caracteristicas"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 p-2.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 hover:bg-purple-100/50 transition-colors"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-[#7B39ED]/10 text-[#7B39ED] flex items-center justify-center shrink-0">
+                            <Icon name="Users" size={16} />
+                          </div>
+                          <div>
+                            <span className="text-xs font-bold text-foreground block">CRM y Clientes</span>
+                            <span className="text-[10px] text-muted-400 block">Gestión de relaciones comerciales</span>
+                          </div>
+                        </a>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
                 <a
                   href="#nosotros"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.about')}
                 </a>
                 <a
                   href="#precios"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.pricing')}
                 </a>
                 <a
                   href="#contacto"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-muted-400 hover:text-foreground hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.contact')}
                 </a>
@@ -334,16 +408,16 @@ export default function Landing() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-xl text-sm font-extrabold text-brand-400 hover:bg-surface-800 transition-colors"
+                  className="block px-3 py-2 rounded-xl text-sm font-extrabold text-[#7B39ED] hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors"
                 >
                   {t('nav.marketplace')}
                 </a>
 
-                <div className="pt-3 border-t border-subtle flex flex-col gap-2">
+                <div className="pt-3 border-t border-gray-200 dark:border-subtle flex flex-col gap-2">
                   <Link
                     to="/auth?mode=login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 rounded-xl border border-subtle text-sm font-bold text-foreground hover:bg-surface-800 transition-colors"
+                    className="w-full text-center py-2.5 rounded-xl border border-gray-300 dark:border-subtle text-sm font-bold text-foreground hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors"
                   >
                     {t('nav.login')}
                   </Link>
@@ -351,9 +425,9 @@ export default function Landing() {
                   <Link
                     to="/auth?mode=register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold shadow-md transition-colors"
+                    className="w-full text-center py-2.5 rounded-xl bg-[#7B39ED] hover:bg-[#6929d9] text-white text-sm font-bold shadow-md transition-colors"
                   >
-                    {t('nav.start')}
+                    Empieza Tu Gestión
                   </Link>
                 </div>
               </div>
