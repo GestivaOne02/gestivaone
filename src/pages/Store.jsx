@@ -459,9 +459,9 @@ export default function Store() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={clsx(
-                'flex flex-col items-start justify-between p-4 rounded-2xl transition-all cursor-pointer relative overflow-hidden group text-left min-h-[95px] border-2 shadow-sm',
+                'flex flex-col items-start justify-between p-4 rounded-2xl transition-all cursor-pointer relative overflow-hidden group text-left min-h-[95px] border-2',
                 active
-                  ? 'bg-white dark:bg-surface-800 border-brand-500 dark:border-brand-400 ring-2 ring-brand-500/20 shadow-md'
+                  ? 'bg-white dark:bg-surface-800 border-brand-500 dark:border-brand-400'
                   : 'bg-white dark:bg-surface-800 border-transparent hover:border-brand-500 dark:hover:border-brand-400'
               )}
             >
