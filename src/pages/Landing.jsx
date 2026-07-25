@@ -19,6 +19,7 @@ export default function Landing() {
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
   const [showAppsMenu, setShowAppsMenu] = useState(false)
+  const [showFeaturesMenu, setShowFeaturesMenu] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [contactSent, setContactSent] = useState(false)
 
@@ -56,20 +57,20 @@ export default function Landing() {
       <SEOHead />
 
       {/* ─── STICKY HEADER ─── */}
-      <header className="sticky top-0 z-50 bg-surface-900/90 backdrop-blur-xl border-b border-subtle transition-colors duration-200">
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-surface-900/95 backdrop-blur-xl border-b border-gray-200/80 dark:border-subtle shadow-sm transition-colors duration-200 relative">
         {/* Tier 1: Logo centered at the top */}
-        <div className="border-b border-subtle py-3 px-4 flex items-center justify-center relative">
+        <div className="border-b border-gray-100 dark:border-subtle py-3 px-4 sm:px-8 flex items-center justify-between relative">
           {/* Apps Menu Dropdown Trigger (Left) */}
-          <div className="absolute left-4 sm:left-8 flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <div className="relative">
               <button 
                 onClick={() => setShowAppsMenu(!showAppsMenu)}
                 onBlur={() => setTimeout(() => setShowAppsMenu(false), 200)}
-                className="text-[#7B39ED] hover:text-[#6929d9] transition-colors p-2 rounded-xl hover:bg-[#7B39ED]/10 flex items-center gap-1.5 text-xs font-bold"
+                className="text-[#7B39ED] hover:text-[#6929d9] transition-colors py-1.5 px-3 rounded-xl hover:bg-[#7B39ED]/10 flex items-center gap-2 text-xs font-bold"
                 aria-label="Apps Menu"
               >
                 <Icon name="LayoutGrid" size={18} className="text-[#7B39ED]" />
-                <span className="hidden sm:inline text-xs font-bold">{t('nav.ecosystem') || 'Ecosistema'}</span>
+                <span className="inline text-xs font-bold">{t('nav.ecosystem') || 'Ecosistema'}</span>
               </button>
               <AnimatePresence>
                 {showAppsMenu && (
@@ -77,7 +78,7 @@ export default function Landing() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 mt-2 w-64 bg-surface-900 border border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
+                    className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-surface-900 border border-gray-200 dark:border-subtle rounded-2xl shadow-xl overflow-hidden z-50 p-2"
                   >
                     <div className="px-3 py-2 text-[10px] font-bold text-[#7B39ED] uppercase tracking-wider">
                       Más productos de Gestiva
@@ -86,7 +87,7 @@ export default function Landing() {
                       href="https://gestivapost.vercel.app/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-800 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-surface-800 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-lg bg-[#7B39ED]/10 text-[#7B39ED] flex items-center justify-center">
                         <Icon name="Palette" size={16} />
@@ -102,7 +103,7 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* Centered GestivaOne Logo (Purple Icon + #7B39ED Purple Text) */}
+          {/* Centered GestivaOne Logo */}
           <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
             <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-9 w-auto" />
             <span className="font-black text-[#7B39ED] text-xl tracking-tight">
@@ -111,7 +112,9 @@ export default function Landing() {
           </Link>
 
           {/* Right User & Theme shortcuts */}
-          <div className="absolute right-4 sm:right-8 flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <LanguageSelector />
+            <div className="h-4 w-px bg-gray-200 dark:bg-subtle" />
             <button
               onClick={toggleTheme}
               className="p-2 rounded-xl text-[#7B39ED] hover:bg-[#7B39ED]/10 transition-colors"
@@ -129,34 +132,10 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Tier 2: Navigation Links (Left) and Language Selector (Right) */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-800/60">
+        {/* Tier 2: Navigation Links (Centered) and CTA Button (Right) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
-            {/* Left: Navigation Buttons (All in #7B39ED Purple) */}
-            <div className="hidden lg:flex items-center gap-6">
-              <a href="#caracteristicas" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.features')}</a>
-              <a href="#nosotros" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.about')}</a>
-              <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.pricing')}</a>
-              <a href="#contacto" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.contact')}</a>
-
-              <a
-                href="https://gestivaone-store.vercel.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-xs font-extrabold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors"
-              >
-                {t('nav.marketplace')}
-              </a>
-
-              <Link
-                to="/auth?mode=register"
-                className="px-3.5 py-1.5 rounded-xl bg-[#7B39ED] hover:bg-[#6929d9] text-white text-xs font-bold transition-all duration-300 shadow-md shadow-[#7B39ED]/30 ml-2"
-              >
-                {t('nav.start')}
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button (Left on Mobile) */}
+            {/* Mobile Menu Button */}
             <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -168,12 +147,148 @@ export default function Landing() {
               </button>
             </div>
 
-            {/* Right: Language Selector Button */}
-            <div className="flex items-center gap-3">
-              <LanguageSelector />
+            {/* Desktop Center Navigation Bar */}
+            <div className="hidden lg:flex items-center justify-center flex-1 gap-8">
+              {/* Características Dropdown Trigger */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setShowFeaturesMenu(true)}
+              >
+                <button
+                  onClick={() => setShowFeaturesMenu(!showFeaturesMenu)}
+                  className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors py-2"
+                >
+                  <span>{t('nav.features') || 'Características'}</span>
+                  <Icon name={showFeaturesMenu ? "ChevronUp" : "ChevronDown"} size={14} className="text-[#7B39ED]" />
+                </button>
+              </div>
+
+              <a href="#nosotros" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.about') || 'Nosotros'}</a>
+              <a href="#precios" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.pricing') || 'Precios'}</a>
+              <a href="#contacto" className="text-xs font-bold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors">{t('nav.contact') || 'Contacto'}</a>
+
+              <a
+                href="https://gestivaone-store.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-xs font-extrabold uppercase tracking-wider text-[#7B39ED] hover:text-[#6929d9] transition-colors"
+              >
+                {t('nav.marketplace') || 'Marketplace'}
+              </a>
+            </div>
+
+            {/* Right CTA Button: Empieza Tu Gestión */}
+            <div className="hidden lg:flex items-center">
+              <Link
+                to="/auth?mode=register"
+                className="px-5 py-2 rounded-full bg-[#7B39ED] hover:bg-[#6929d9] text-white text-xs font-extrabold transition-all duration-300 shadow-md shadow-[#7B39ED]/30 hover:scale-[1.02]"
+              >
+                Empieza Tu Gestión
+              </Link>
             </div>
           </div>
         </div>
+
+        {/* ─── CARACTERÍSTICAS MEGA MENU DROPDOWN ─── */}
+        <AnimatePresence>
+          {showFeaturesMenu && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              onMouseLeave={() => setShowFeaturesMenu(false)}
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-full max-w-5xl px-4 z-50 pointer-events-auto"
+            >
+              <div className="bg-white dark:bg-surface-800 border border-gray-200/90 dark:border-subtle rounded-3xl shadow-2xl p-6 sm:p-8 backdrop-blur-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+                  {/* 1. Gestión de Inventarios */}
+                  <a
+                    href="#caracteristicas"
+                    onClick={() => setShowFeaturesMenu(false)}
+                    className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="18" height="18" x="3" y="3" rx="4" />
+                        <path d="m9 12 2 2 4-4" />
+                      </svg>
+                    </div>
+                    <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-[#7B39ED] transition-colors">
+                      Gestión de Inventarios
+                    </h4>
+                    <p className="text-xs text-muted-400 font-medium leading-relaxed mt-1.5">
+                      Controla tu stock en tiempo real y evita quiebres o excesos.
+                    </p>
+                  </a>
+
+                  {/* 2. Facturación Electrónica */}
+                  <a
+                    href="#caracteristicas"
+                    onClick={() => setShowFeaturesMenu(false)}
+                    className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                      <Icon name="FileText" size={20} />
+                    </div>
+                    <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-[#7B39ED] transition-colors">
+                      Facturación Electrónica
+                    </h4>
+                    <p className="text-xs text-muted-400 font-medium leading-relaxed mt-1.5">
+                      Emite facturas electrónicas cumpliendo con la DIAN.
+                    </p>
+                  </a>
+
+                  {/* 3. Reportes y Analíticas */}
+                  <a
+                    href="#caracteristicas"
+                    onClick={() => setShowFeaturesMenu(false)}
+                    className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                      <Icon name="BarChart3" size={20} />
+                    </div>
+                    <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-[#7B39ED] transition-colors">
+                      Reportes y Analíticas
+                    </h4>
+                    <p className="text-xs text-muted-400 font-medium leading-relaxed mt-1.5">
+                      Toma decisiones basadas en datos precisos y actualizados.
+                    </p>
+                  </a>
+
+                  {/* 4. CRM y Clientes */}
+                  <a
+                    href="#caracteristicas"
+                    onClick={() => setShowFeaturesMenu(false)}
+                    className="group p-3.5 rounded-2xl hover:bg-purple-50/80 dark:hover:bg-purple-950/30 transition-all duration-200 flex flex-col items-start"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-[#7B39ED] flex items-center justify-center mb-3.5 group-hover:scale-110 transition-transform">
+                      <Icon name="Users" size={20} />
+                    </div>
+                    <h4 className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-[#7B39ED] transition-colors">
+                      CRM y Clientes
+                    </h4>
+                    <p className="text-xs text-muted-400 font-medium leading-relaxed mt-1.5">
+                      Gestiona tus clientes y mejora la relación con tu negocio.
+                    </p>
+                  </a>
+                </div>
+
+                {/* Footer Link */}
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-subtle text-center">
+                  <a
+                    href="#caracteristicas"
+                    onClick={() => setShowFeaturesMenu(false)}
+                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#7B39ED] hover:text-[#6929d9] hover:underline transition-colors"
+                  >
+                    <span>Ver todas las características</span>
+                    <Icon name="ArrowRight" size={14} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Mobile Navigation Drawer */}
         <AnimatePresence>
