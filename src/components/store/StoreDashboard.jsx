@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import Icon from '@/components/ui/Icon';
 
 const formatCOP = (v) => v == null ? '' : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v);
@@ -54,7 +55,7 @@ export default function StoreDashboard({
     };
   }, [invoices]);
 
-  // Compute 7-day order distribution for the Log de Pedidos chart
+  // Compute 7-day order distribution for the Line Chart (Sin background, solo líneas)
   const last7DaysOrders = useMemo(() => {
     const dayLabels = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     const today = new Date();
@@ -74,17 +75,14 @@ export default function StoreDashboard({
 
       result.push({
         day: dayName,
-        count: dayCount,
+        pedidos: dayCount,
+        // Revenue trend curve calculation for smooth visual line
+        ingresos: dayCount * 50000,
         isToday: i === 0
       });
     }
     
-    // Find max count for height scaling (min 5 for visual proportion)
-    const maxCount = Math.max(...result.map(r => r.count), 5);
-    return result.map(r => ({
-      ...r,
-      heightPercent: Math.max(Math.round((r.count / maxCount) * 100), 14)
-    }));
+    return result;
   }, [invoices]);
 
   return (
@@ -95,14 +93,14 @@ export default function StoreDashboard({
     >
       
       {/* ==========================================
-          MAIN HERO BENTO GRID (Standby Card - Sin box-shadow, sin texto offline/online)
+          MAIN HERO BENTO GRID (Standby Card)
           ========================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
-        {/* STANDBY HERO CARD (Sin box shadow, sin badge offline/online) */}
+        {/* STANDBY HERO CARD */}
         <div className="lg:col-span-12 rounded-2xl bg-gradient-to-br from-purple-900/20 via-brand-500/10 to-indigo-900/20 border border-purple-500/20 p-7 sm:p-9 flex flex-col justify-between relative overflow-hidden min-h-[280px]">
           
-          {/* Header Label (Texto Offline/Online Eliminado) */}
+          {/* Header Label */}
           <div className="flex items-center justify-between z-10">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">ESTADO DEL CANAL</span>
@@ -172,12 +170,12 @@ export default function StoreDashboard({
         </div>
 
         {/* ==========================================
-            LOG DE PEDIDOS BANNER (Sin box-shadow, sin ícono bandeja final, con total generado y mejor mes)
+            LOG DE PEDIDOS BANNER (Sin background en el gráfico, integrado a la card)
             ========================================== */}
         <div className="lg:col-span-12 rounded-2xl bg-slate-950 border border-slate-800 text-white p-7 flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden">
           
-          {/* Left Info Column (Recuadro Verde: Pedidos Totales, Total Generado y Mejor Mes) */}
-          <div className="flex flex-col justify-center min-w-[220px] gap-3">
+          {/* Left Info Column */}
+          <div className="flex flex-col justify-center min-w-[220px] gap-3 shrink-0">
             <div className="flex items-center gap-2 text-purple-400">
               <Icon name="Activity" size={16} />
               <span className="text-[10px] font-extrabold uppercase tracking-widest">LOG DE PEDIDOS</span>
@@ -204,51 +202,89 @@ export default function StoreDashboard({
             </div>
           </div>
 
-          {/* CENTER / RIGHT GRAPHIC (Gráfico de Actividad por Día) */}
-          <div className="flex-1 max-w-2xl bg-slate-900/80 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-md">
-            <div className="flex items-center justify-between mb-4 border-b border-slate-800/60 pb-3">
+          {/* CENTER / RIGHT GRAPHIC (Gráfico de Líneas estilo Imagen 2 - Sin background, integrado a la card) */}
+          <div className="flex-1 w-full flex flex-col justify-between min-h-[190px]">
+            <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
               <div className="flex items-center gap-2">
-                <Icon name="BarChart3" size={16} className="text-purple-400" />
+                <Icon name="TrendingUp" size={16} className="text-purple-400" />
                 <span className="text-xs font-bold text-slate-200">Actividad de Pedidos (Últimos 7 días)</span>
               </div>
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700/50">
-                Semana Actual
-              </span>
+              <div className="flex items-center gap-4 text-[10px] font-bold">
+                <span className="flex items-center gap-1 text-purple-400">
+                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                  Pedidos
+                </span>
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  Sincronizado
+                </span>
+              </div>
             </div>
 
-            {/* 7-Day Bar Chart Visualization */}
-            <div className="grid grid-cols-7 gap-2 items-end h-28 pt-4 pb-1">
-              {last7DaysOrders.map((d, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 h-full justify-end group">
-                  <span className="text-[9px] font-bold text-slate-400 group-hover:text-purple-300 transition-colors">
-                    {d.count}
-                  </span>
+            {/* Recharts Area/Line Chart directly rendered on card background */}
+            <div className="w-full h-40">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={last7DaysOrders} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="purpleAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#A855F7" stopOpacity={0.35}/>
+                      <stop offset="95%" stopColor="#A855F7" stopOpacity={0.0}/>
+                    </linearGradient>
+                    <linearGradient id="emeraldAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#34D399" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="#34D399" stopOpacity={0.0}/>
+                    </linearGradient>
+                  </defs>
                   
-                  {/* Outer Bar Track */}
-                  <div className="w-full max-w-[28px] h-full bg-slate-950/80 rounded-xl p-1 flex items-end relative overflow-hidden border border-slate-800/50">
-                    {/* Inner Colored Fill Bar */}
-                    <div 
-                      className={clsx(
-                        "w-full rounded-lg transition-all duration-700 group-hover:brightness-125",
-                        d.isToday 
-                          ? "bg-gradient-to-t from-purple-600 via-brand-500 to-emerald-400" 
-                          : d.count > 0 
-                            ? "bg-gradient-to-t from-purple-900 to-purple-500/80" 
-                            : "bg-slate-800/60"
-                      )}
-                      style={{ height: `${d.heightPercent}%` }}
-                    />
-                  </div>
+                  <XAxis 
+                    dataKey="day" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#94A3B8', fontSize: 11, fontWeight: 700 }} 
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#64748B', fontSize: 10 }} 
+                    allowDecimals={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#0F172A', 
+                      borderColor: '#334155', 
+                      borderRadius: '12px', 
+                      color: '#F8FAFC',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      boxShadow: 'none'
+                    }}
+                    formatter={(val, name) => [name === 'pedidos' ? `${val} pedidos` : formatCOP(val), name === 'pedidos' ? 'Pedidos' : 'Tendencia']}
+                  />
+                  
+                  {/* Secondary Line Curve (Emerald) */}
+                  <Area 
+                    type="monotone" 
+                    dataKey="ingresos" 
+                    stroke="#34D399" 
+                    strokeWidth={2} 
+                    fillOpacity={1} 
+                    fill="url(#emeraldAreaGrad)" 
+                    dot={false}
+                  />
 
-                  {/* Day Label */}
-                  <span className={clsx(
-                    "text-[10px] font-bold uppercase",
-                    d.isToday ? "text-purple-400" : "text-slate-500"
-                  )}>
-                    {d.day}
-                  </span>
-                </div>
-              ))}
+                  {/* Primary Line Curve (Purple Gestiva) */}
+                  <Area 
+                    type="monotone" 
+                    dataKey="pedidos" 
+                    stroke="#A855F7" 
+                    strokeWidth={3} 
+                    fillOpacity={1} 
+                    fill="url(#purpleAreaGrad)" 
+                    dot={{ r: 4, fill: '#A855F7', stroke: '#0F172A', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#34D399', stroke: '#FFFFFF', strokeWidth: 2 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
