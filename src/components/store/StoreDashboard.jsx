@@ -153,12 +153,12 @@ export default function StoreDashboard({
         </div>
 
         {/* ==========================================
-            RIGHT SIDE STAT CARDS (2 Cards)
+            RIGHT SIDE STAT CARDS (Cuadro Azul: Fondo Blanco, Sin Borde, Sin Hover)
             ========================================== */}
         <div className="lg:col-span-4 flex flex-col gap-5">
           
           {/* INGRESOS HOY CARD */}
-          <div className="rounded-[2.5rem] bg-surface-800/70 border border-subtle backdrop-blur-xl p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
+          <div className="rounded-[2.5rem] bg-white dark:bg-surface-800 border-0 p-6 flex items-center justify-between shadow-sm relative overflow-hidden">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] text-muted-400 font-bold uppercase tracking-widest">INGRESOS HOY</span>
@@ -171,13 +171,13 @@ export default function StoreDashboard({
               </div>
             </div>
 
-            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center shrink-0 shadow-sm">
               <Icon name="TrendingUp" size={24} />
             </div>
           </div>
 
           {/* CATÁLOGO CARD */}
-          <div className="rounded-[2.5rem] bg-surface-800/70 border border-subtle backdrop-blur-xl p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
+          <div className="rounded-[2.5rem] bg-white dark:bg-surface-800 border-0 p-6 flex items-center justify-between shadow-sm relative overflow-hidden">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] text-muted-400 font-bold uppercase tracking-widest">CATÁLOGO</span>
@@ -189,7 +189,7 @@ export default function StoreDashboard({
                 </div>
                 <div className="w-px h-8 bg-subtle" />
                 <div>
-                  <div className={clsx("text-2xl font-extrabold tracking-tight", metrics.outOfStock > 0 ? "text-rose-400" : "text-foreground dark:text-white")}>
+                  <div className={clsx("text-2xl font-extrabold tracking-tight", metrics.outOfStock > 0 ? "text-rose-500" : "text-foreground dark:text-white")}>
                     {metrics.outOfStock}
                   </div>
                   <div className="text-[10px] text-muted-400 font-bold">Agotados</div>
@@ -197,7 +197,7 @@ export default function StoreDashboard({
               </div>
             </div>
 
-            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-500 flex items-center justify-center shrink-0 shadow-sm">
               <Icon name="Package" size={24} />
             </div>
           </div>
@@ -205,11 +205,11 @@ export default function StoreDashboard({
         </div>
 
         {/* ==========================================
-            3. LOG DE PEDIDOS BANNER (Wide Bottom Card)
+            3. LOG DE PEDIDOS BANNER (Wide Bottom Card, Console badge removed per instructions)
             ========================================== */}
-        <div className="lg:col-span-12 rounded-[2.5rem] bg-slate-900 border border-slate-800 text-white p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden shadow-xl">
+        <div className="lg:col-span-12 rounded-[2.5rem] bg-slate-900 border border-slate-800 text-white p-7 flex items-center justify-between gap-6 relative overflow-hidden shadow-xl">
           
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+          <div className="flex items-center gap-6">
             {/* Left Counter */}
             <div className="flex flex-col justify-center min-w-[120px]">
               <div className="flex items-center gap-2 mb-1 text-brand-400">
@@ -219,18 +219,10 @@ export default function StoreDashboard({
               <div className="text-4xl font-extrabold tracking-tight text-white">{invoices.length}</div>
               <div className="text-xs text-slate-400 font-medium">Pedidos Totales</div>
             </div>
-
-            <div className="hidden sm:block w-px h-12 bg-slate-800" />
-
-            {/* Center Console Line */}
-            <div className="font-mono text-xs text-purple-300/80 bg-slate-950/60 border border-slate-800/80 rounded-2xl px-5 py-3.5 flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
-              <span>[. ] Esperando transacciones...</span>
-            </div>
           </div>
 
           {/* Right 3D Tray Icon */}
-          <div className="w-16 h-16 rounded-3xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 shrink-0 self-end sm:self-auto shadow-inner">
+          <div className="w-16 h-16 rounded-3xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 shrink-0 shadow-inner">
             <Icon name="Inbox" size={30} />
           </div>
         </div>
@@ -238,14 +230,14 @@ export default function StoreDashboard({
       </div>
 
       {/* ==========================================
-          4. FLOATING BOTTOM DOCK MENU (Exact Dock in Image)
+          4. FLOATING BOTTOM DOCK MENU (Alineado perfectamente al centro)
           ========================================== */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
+      <div className="fixed bottom-5 left-0 right-0 z-50 flex items-center justify-center px-4 pointer-events-none">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, type: 'spring', damping: 20 }}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-surface-900/90 dark:bg-slate-950/90 border border-subtle backdrop-blur-2xl shadow-2xl"
+          className="flex items-center justify-center gap-1 sm:gap-2 px-4 sm:px-6 py-2 rounded-full bg-white/95 dark:bg-slate-950/95 border border-subtle backdrop-blur-2xl shadow-2xl pointer-events-auto max-w-full overflow-x-auto no-scrollbar"
         >
           {[
             { id: 'dashboard', label: 'Dashboard', icon: 'LayoutGrid' },
@@ -258,7 +250,7 @@ export default function StoreDashboard({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className="flex flex-col items-center gap-1 px-4 py-1.5 rounded-2xl relative transition-all cursor-pointer group"
+                className="flex flex-col items-center gap-1 px-3 sm:px-4 py-1.5 rounded-2xl relative transition-all cursor-pointer group shrink-0"
               >
                 <Icon 
                   name={item.icon} 

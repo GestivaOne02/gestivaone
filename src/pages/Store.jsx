@@ -433,55 +433,17 @@ export default function Store() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-container flex flex-col gap-6 h-full pb-16">
       
-      {/* ─── Header Row (Exact Screenshot Style) ─── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-subtle pb-4 shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-500 flex items-center justify-center shadow-sm shrink-0">
-            <Icon name="Store" size={20} />
-          </div>
-          <div>
-            <h1 className="text-xl font-extrabold text-foreground dark:text-white tracking-tight">
-              Canal de Ventas: Online Store
-            </h1>
-            <p className="text-xs text-muted-400 mt-0.5">
-              Configura tu e-commerce, revisa métricas en vivo y gestiona los pedidos contra entrega.
-            </p>
-          </div>
-        </div>
-
-        {/* Right Header Action Bar */}
-        <div className="flex items-center gap-3 self-end md:self-auto">
-          {/* Notification bell button */}
-          <button className="w-9 h-9 rounded-2xl bg-surface-800 border border-subtle text-muted-300 hover:text-foreground flex items-center justify-center relative transition-all cursor-pointer">
-            <Icon name="Bell" size={16} />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500" />
-          </button>
-
-          {/* Help question mark button */}
-          <button className="w-9 h-9 rounded-2xl bg-surface-800 border border-subtle text-muted-300 hover:text-foreground flex items-center justify-center transition-all cursor-pointer">
-            <Icon name="HelpCircle" size={16} />
-          </button>
-
-          {/* Channel Status Pill Dropdown */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-surface-800 border border-subtle text-xs font-bold text-foreground dark:text-white shadow-sm cursor-pointer hover:bg-surface-700/50 transition-all">
-            <div className="w-6 h-6 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center">
-              <Icon name="Store" size={13} />
-            </div>
-            <div className="flex flex-col text-left leading-tight">
-              <span className="text-[11px] font-bold">Online Store</span>
-              <span className="text-[9px] font-semibold flex items-center gap-1">
-                <span className={clsx("w-1.5 h-1.5 rounded-full", storeEnabled ? "bg-emerald-500" : "bg-muted-500")} />
-                <span className={storeEnabled ? "text-emerald-500" : "text-muted-400"}>
-                  {storeEnabled ? 'Activo' : 'Inactivo'}
-                </span>
-              </span>
-            </div>
-            <Icon name="ChevronDown" size={13} className="text-muted-400 ml-1" />
-          </div>
-        </div>
+      {/* ─── Header Row ─── */}
+      <div className="border-b border-subtle pb-4 shrink-0">
+        <h1 className="text-xl sm:text-2xl font-black text-foreground uppercase tracking-tight">
+          Canal de Ventas: Online Store
+        </h1>
+        <p className="text-xs text-muted-400 mt-1">
+          Configura tu e-commerce, revisa métricas en vivo y gestiona los pedidos contra entrega.
+        </p>
       </div>
 
-      {/* ─── Airbnb/Apple Inspired Navigation Cards (Image 2 Inspiration) ─── */}
+      {/* ─── Top Navigation Cards (Cuadro Azul: Fondo Blanco, Sin Borde, Hover/Selección Morado Gestiva) ─── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 shrink-0 select-none">
         {[
           { id: 'dashboard', label: 'Dashboard', desc: 'Métricas y Estado', icon: 'LayoutDashboard' },
@@ -497,18 +459,18 @@ export default function Store() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={clsx(
-                'flex flex-col items-start justify-between p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden group text-left min-h-[90px]',
+                'flex flex-col items-start justify-between p-4 rounded-2xl transition-all cursor-pointer relative overflow-hidden group text-left min-h-[95px] border-2 shadow-sm',
                 active
-                  ? 'bg-surface-800 border-foreground dark:border-white shadow-md ring-2 ring-brand-500/20'
-                  : 'bg-surface-900/60 border-subtle hover:border-muted-400 hover:bg-surface-800/40'
+                  ? 'bg-white dark:bg-surface-800 border-brand-500 dark:border-brand-400 ring-2 ring-brand-500/20 shadow-md'
+                  : 'bg-white dark:bg-surface-800 border-transparent hover:border-brand-500 dark:hover:border-brand-400'
               )}
             >
               <div className="flex items-center justify-between w-full mb-2">
                 <div className={clsx(
-                  "p-2 rounded-xl border transition-colors",
+                  "p-2.5 rounded-xl transition-colors",
                   active
-                    ? "bg-brand-500/10 border-brand-500/30 text-brand-400"
-                    : "bg-surface-800 border-subtle text-muted-400 group-hover:text-foreground"
+                    ? "bg-brand-500/10 text-brand-500"
+                    : "bg-surface-100 dark:bg-surface-700 text-muted-400 group-hover:text-brand-500 group-hover:bg-brand-500/10"
                 )}>
                   <Icon name={tab.icon} size={18} />
                 </div>
@@ -519,7 +481,7 @@ export default function Store() {
               <div>
                 <span className={clsx(
                   "text-xs font-bold block leading-tight",
-                  active ? "text-foreground dark:text-white" : "text-muted-300 group-hover:text-foreground"
+                  active ? "text-brand-600 dark:text-brand-300" : "text-foreground dark:text-white group-hover:text-brand-500"
                 )}>
                   {tab.label}
                 </span>
