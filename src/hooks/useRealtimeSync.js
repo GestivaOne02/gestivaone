@@ -143,7 +143,10 @@ export function useRealtimeSync() {
       )
       .subscribe((status, err) => {
         if (status === 'CHANNEL_ERROR') {
-           console.error('❌ Realtime Channel Error:', err)
+          // Heartbeat timeouts occur normally when tabs go background or network fluctuates. Supabase auto-reconnects.
+          if (import.meta.env.DEV) {
+            console.warn('⚡ Realtime WebSocket reconectando automáticamente por timeout de latencia:', err?.message || err)
+          }
         }
       })
 
