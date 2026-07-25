@@ -81,7 +81,7 @@ export default function AddClientModal({ open }) {
     closeModal()
   }
 
-  const TypeBtn = ({ value, label, icon: Icon, desc }) => (
+  const TypeBtn = ({ value, label, iconName, desc }) => (
     <motion.button
       type="button"
       whileTap={{ scale: 0.97 }}
@@ -94,7 +94,7 @@ export default function AddClientModal({ open }) {
       )}
     >
       <div className={clsx('p-2 rounded-lg', clientType === value ? 'bg-brand-500/20 text-brand-400' : 'bg-surface-500 text-muted-400')}>
-        <Icon size={18} />
+        <Icon name={iconName} size={18} />
       </div>
       <span className={clsx('text-sm font-semibold', clientType === value ? 'text-brand-600 dark:text-white' : 'text-muted-400')}>{label}</span>
       <span className="text-[11px] text-muted-400 leading-tight">{desc}</span>
@@ -115,8 +115,8 @@ export default function AddClientModal({ open }) {
           {/* Client type */}
           {!editingClient && (
             <div className="flex gap-3">
-              <TypeBtn value="frequent" label="Frecuente" icon={UserCheck} desc="Historial & seguimiento" />
-              <TypeBtn value="express"  label="Express"   icon={Zap}       desc="Venta rápida, temporal" />
+              <TypeBtn value="frequent" label="Frecuente" iconName="UserCheck" desc="Historial & seguimiento" />
+              <TypeBtn value="express"  label="Express"   iconName="Zap"       desc="Venta rápida, temporal" />
             </div>
           )}
 
