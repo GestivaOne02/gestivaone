@@ -14,6 +14,7 @@ import ArrowUpRightIcon from '@mui/icons-material/NorthEast';
 import AwardIcon from '@mui/icons-material/EmojiEvents';
 import BarChart3Icon from '@mui/icons-material/BarChart';
 import BarcodeIcon from '@mui/icons-material/QrCodeScanner';
+import BanknoteIcon from '@mui/icons-material/Payments';
 import BellIcon from '@mui/icons-material/Notifications';
 import BookOpenIcon from '@mui/icons-material/MenuBook';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -188,6 +189,7 @@ export const icons = {
   Award: AwardIcon, award: AwardIcon,
   BarChart3: BarChart3Icon, barChart3: BarChart3Icon, barChart: BarChart3Icon,
   Barcode: BarcodeIcon, barcode: BarcodeIcon,
+  Banknote: BanknoteIcon, banknote: BanknoteIcon,
   Bell: BellIcon, bell: BellIcon,
   BookOpen: BookOpenIcon, bookOpen: BookOpenIcon,
   Bookmark: BookmarkIcon, bookmark: BookmarkIcon,
