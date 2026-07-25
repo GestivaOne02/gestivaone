@@ -72,6 +72,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ImageIcon from '@mui/icons-material/Image';
 import ImagePlusIcon from '@mui/icons-material/AddPhotoAlternate';
 import InfoIcon from '@mui/icons-material/Info';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import KeyIcon from '@mui/icons-material/Key';
 import LandmarkIcon from '@mui/icons-material/AccountBalance';
@@ -244,6 +245,7 @@ export const icons = {
   Home: HomeIcon, home: HomeIcon,
   Image: ImageIcon, image: ImageIcon,
   ImagePlus: ImagePlusIcon, imagePlus: ImagePlusIcon,
+  Inbox: InboxIcon, inbox: InboxIcon,
   Info: InfoIcon, info: InfoIcon,
   Instagram: InstagramIcon, instagram: InstagramIcon,
   Key: KeyIcon, key: KeyIcon,
