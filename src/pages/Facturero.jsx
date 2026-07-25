@@ -1168,18 +1168,18 @@ export default function Facturero() {
               {/* Preview Mode Selector */}
               <div className="flex gap-0.5 bg-surface-900 p-0.5 rounded-xl border border-subtle">
                 {[
-                  { key: 'pdf-corporate', label: 'Corp.', Icon: Building2 },
-                  { key: 'pdf-minimalist', label: 'Mini.', Icon: FileText },
-                  { key: 'ticket-classic', label: 'Clásico', Icon: Printer },
-                  { key: 'ticket-modern', label: 'Modern', Icon: Sparkles },
-                ].map(({ key, label, Icon }) => (
+                  { key: 'pdf-corporate', label: 'Corp.', iconName: 'Building2' },
+                  { key: 'pdf-minimalist', label: 'Mini.', iconName: 'FileText' },
+                  { key: 'ticket-classic', label: 'Clásico', iconName: 'Printer' },
+                  { key: 'ticket-modern', label: 'Modern', iconName: 'Sparkles' },
+                ].map(({ key, label, iconName }) => (
                   <button key={key} type="button" onClick={() => setPreviewType(key)}
                     className={clsx(
                       'flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all',
                       previewType === key ? 'bg-brand-500/20 text-brand-300 shadow-sm' : 'text-muted-500 hover:text-foreground'
                     )}
                   >
-                    <Icon size={11} />
+                    <Icon name={iconName} size={11} />
                     <span className="hidden sm:inline">{label}</span>
                   </button>
                 ))}
