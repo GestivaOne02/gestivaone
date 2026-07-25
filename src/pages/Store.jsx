@@ -475,7 +475,9 @@ export default function Store() {
                   <Icon name={tab.icon} size={18} />
                 </div>
                 {active && (
-                  <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+                  <div className="w-4 h-4 rounded-full bg-brand-500 text-white flex items-center justify-center shrink-0">
+                    <Icon name="Check" size={10} strokeWidth={3} />
+                  </div>
                 )}
               </div>
               <div>
