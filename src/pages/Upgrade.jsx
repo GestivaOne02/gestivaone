@@ -362,6 +362,7 @@ export default function Upgrade() {
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                     placeholder="4000 1234 5678 9010"
+                    autoComplete="cc-number"
                     required
                   />
 
@@ -371,6 +372,7 @@ export default function Upgrade() {
                       value={expiry}
                       onChange={(e) => setExpiry(e.target.value)}
                       placeholder="MM/AA"
+                      autoComplete="cc-exp"
                       required
                     />
                     <Input
@@ -380,6 +382,7 @@ export default function Upgrade() {
                       maxLength={4}
                       onChange={(e) => setCvv(e.target.value)}
                       placeholder="123"
+                      autoComplete="cc-csc"
                       required
                     />
                   </div>
@@ -389,6 +392,7 @@ export default function Upgrade() {
                     value={holder}
                     onChange={(e) => setHolder(e.target.value)}
                     placeholder="John Doe"
+                    autoComplete="cc-name"
                     required
                   />
                 </div>

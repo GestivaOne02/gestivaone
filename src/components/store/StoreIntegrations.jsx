@@ -95,6 +95,7 @@ export default function StoreIntegrations({
             <div className="relative flex-1">
               <input
                 type="password"
+                autoComplete="off"
                 value={dropiToken}
                 onChange={e => setDropiToken(e.target.value)}
                 placeholder={dropiTokenSaved ? "✅ Token configurado de forma segura" : "Pega tu Bearer Token de Dropi…"}

@@ -315,11 +315,14 @@ export default function Settings() {
 }
 
 // ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Small helpers ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ 
-function CfgInput({ label, value, onChange, placeholder, type = 'text', disabled }) {
+function CfgInput({ label, value, onChange, placeholder, type = 'text', disabled, autoComplete }) {
+  // Default autocomplete: off for password fields (API keys), else based on type
+  const defaultAutoComplete = type === 'password' ? 'off' : autoComplete || 'off'
   return (
     <div>
       <label className="text-xs text-muted-400 mb-1 block">{label}</label>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} disabled={disabled}
+        autoComplete={defaultAutoComplete}
         className="w-full bg-surface-600 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50" />
     </div>
   )

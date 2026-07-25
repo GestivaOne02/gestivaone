@@ -189,6 +189,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="tu@empresa.com"
               type="email"
+              autoComplete="email"
               required
               className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             />
@@ -203,6 +204,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
               onChange={(e) => setPass(e.target.value)}
               placeholder="••••••"
               type={showPw ? 'text' : 'password'}
+              autoComplete="current-password"
               required
               className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
             />
@@ -341,6 +343,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@correo.com"
             type="email"
+            autoComplete="email"
             required
             className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
           />
@@ -355,6 +358,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+57 300 000 0000"
             type="tel"
+            autoComplete="tel"
             required
             disabled={!!socialData}
             className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
@@ -372,6 +376,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@correo.com"
             type="email"
+            autoComplete="email"
             required
             disabled={!!socialData}
             className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-75 disabled:cursor-not-allowed" 
@@ -389,6 +394,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
             onChange={(e) => setPass(e.target.value)}
             placeholder="••••••"
             type={showPw ? 'text' : 'password'}
+            autoComplete="new-password"
             required
             className="w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10" 
           />
@@ -418,6 +424,7 @@ function WorkerLogin({ onSocialClick, socialData, onClearSocialData }) {
           onChange={(e) => setLinkCode(e.target.value)}
           placeholder="GO-XXXXXX"
           type="text"
+          autoComplete="off"
           required
           className="w-full bg-brand-50 border border-brand-500/30 rounded-xl px-4 py-2.5 text-sm text-brand-750 placeholder:text-brand-400/70 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-black text-center tracking-wider" 
         />
@@ -630,6 +637,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@empresa.com"
             type="email"
+            autoComplete="email"
             required
             readOnly={!!socialAutofill}
             className={clsx(
@@ -647,6 +655,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
             onChange={(e) => setPass(e.target.value)}
             placeholder="Introduce la contraseña"
             type={showPw ? 'text' : 'password'}
+            autoComplete="current-password"
             required
             readOnly={!!socialAutofill}
             className={clsx(

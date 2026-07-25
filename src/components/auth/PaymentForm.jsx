@@ -68,26 +68,26 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
           <div>
             <label htmlFor={`${idPrefix}-number`} className="text-[11px] text-muted-500 font-bold mb-0.5 block">Número de tarjeta</label>
             <input id={`${idPrefix}-number`} name="cardNumber" value={card.number} onChange={(e) => handleCard('number', formatCard(e.target.value))}
-              placeholder="1234 5678 9012 3456" maxLength={19}
+              placeholder="1234 5678 9012 3456" maxLength={19} autoComplete="cc-number"
               className="w-full bg-surface-900 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-mono" />
           </div>
           <div>
             <label htmlFor={`${idPrefix}-name`} className="text-[11px] text-muted-500 font-bold mb-0.5 block">Nombre en la tarjeta</label>
             <input id={`${idPrefix}-name`} name="cardName" value={card.name} onChange={(e) => handleCard('name', e.target.value)}
-              placeholder="Nombre en la tarjeta"
+              placeholder="Nombre en la tarjeta" autoComplete="cc-name"
               className="w-full bg-surface-900 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label htmlFor={`${idPrefix}-expiry`} className="text-[11px] text-muted-500 font-bold mb-0.5 block">Vencimiento</label>
               <input id={`${idPrefix}-expiry`} name="cardExpiry" value={card.expiry} onChange={(e) => handleCard('expiry', e.target.value)}
-                placeholder="MM/AA" maxLength={5}
+                placeholder="MM/AA" maxLength={5} autoComplete="cc-exp"
                 className="w-full bg-surface-900 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
             </div>
             <div>
               <label htmlFor={`${idPrefix}-cvv`} className="text-[11px] text-muted-500 font-bold mb-0.5 block">CVV</label>
               <input id={`${idPrefix}-cvv`} name="cardCvv" value={card.cvv} onChange={(e) => handleCard('cvv', e.target.value.replace(/\D/g, '').slice(0, 3))}
-                placeholder="123" type="password" maxLength={3}
+                placeholder="123" type="password" maxLength={3} autoComplete="cc-csc"
                 className="w-full bg-surface-900 border border-subtle rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
             </div>
           </div>
