@@ -1109,7 +1109,7 @@ export default function Auth() {
   }, [])
 
   return (
-    <div className="h-screen w-full bg-[#08080c] text-foreground flex overflow-hidden p-3 sm:p-5 lg:p-6 select-none relative">
+    <div className="h-screen w-full bg-[#0e0e17] text-foreground flex overflow-hidden p-3 sm:p-5 lg:p-6 select-none relative">
       {/* Background Ambient Glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7B39ED]/10 rounded-full blur-[160px] animate-pulse-slow" />
