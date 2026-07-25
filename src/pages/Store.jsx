@@ -431,7 +431,7 @@ export default function Store() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-container flex flex-col gap-6 h-full pb-16">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-container flex flex-col gap-4 h-full overflow-hidden">
       
       {/* ─── Header Row ─── */}
       <div className="border-b border-subtle pb-4 shrink-0">
@@ -498,7 +498,7 @@ export default function Store() {
 
 
       {/* ─── Tab Content Area ─── */}
-      <div className="flex-1">
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden no-scrollbar">
         <AnimatePresence mode="wait">
           
           {/* 1. DASHBOARD TAB */}
