@@ -47,12 +47,12 @@ const itemVariants = {
   }
 }
 
-function Section({ icon: Icon, title, desc, children, defaultOpen = false, variants }) {
+function Section({ icon: iconName, title, desc, children, defaultOpen = false, variants }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <motion.div variants={variants} className="bg-surface-800 border border-subtle rounded-3xl overflow-hidden">
       <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400 shrink-0"><Icon size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400 shrink-0"><Icon name={iconName} size={16} /></div>
         <div className="flex-1 text-left">
           <p className="text-sm font-semibold text-brand-600 dark:text-white">{title}</p>
           <p className="text-xs text-muted-400">{desc}</p>
@@ -116,7 +116,7 @@ function ProfileSection({ user, updateProfile, variants }) {
   }
 
   return (
-    <Section icon={User} title="Perfil de usuario" desc="Nombre, foto y datos de contacto" defaultOpen variants={variants}>
+    <Section icon="User" title="Perfil de usuario" desc="Nombre, foto y datos de contacto" defaultOpen variants={variants}>
       {/* Avatar / Logo */}
       <div className="flex items-center gap-4">
         <div className="relative">
@@ -190,7 +190,7 @@ function NotificationsSection({ variants }) {
   ]
 
   return (
-    <Section icon={Bell} title="Notificaciones" desc="Email, push y recordatorios de cobro" variants={variants}>
+    <Section icon="Bell" title="Notificaciones" desc="Email, push y recordatorios de cobro" variants={variants}>
       <div className="space-y-1">
         {items.map(({ key, label, desc }) => (
           <div key={key} className="flex items-center justify-between py-2.5 border-b border-subtle last:border-0">
