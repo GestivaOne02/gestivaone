@@ -714,10 +714,41 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
           type="submit"
           onClick={submit}
           disabled={loading}
-          className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold transition-colors shadow-glow-sm"
+          className="w-full py-3 rounded-xl bg-[#7B39ED] hover:bg-[#6929d9] disabled:opacity-60 text-white text-sm font-bold transition-all shadow-md hover:scale-[1.01]"
         >
           {loading ? 'Ingresando...' : 'Iniciar sesión'}
         </button>
+
+        {/* Google OAuth Login Button */}
+        {!socialAutofill && (
+          <div className="pt-2">
+            <div className="flex items-center gap-3 py-2">
+              <div className="flex-1 h-px bg-subtle" />
+              <span className="text-[10px] font-black text-muted-500 uppercase tracking-widest">O ingresar con</span>
+              <div className="flex-1 h-px bg-subtle" />
+            </div>
+
+            <button
+              type="button"
+              onClick={async () => {
+                const signInWithGoogle = useAuthStore.getState().signInWithGoogle
+                const res = await signInWithGoogle()
+                if (res && !res.success) {
+                  toast.error(res.error || 'Error al conectar con Google')
+                }
+              }}
+              className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 bg-surface-900 border border-subtle hover:border-surface-400 rounded-xl text-xs font-bold text-foreground transition-all hover:scale-[1.01] shadow-sm cursor-pointer"
+            >
+              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69a5.74 5.74 0 0 1-2.5 3.77v3.13h4.03c2.36-2.17 3.52-5.38 3.52-8.75z" />
+                <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-4.03-3.13c-1.12.75-2.55 1.19-3.93 1.19-3.03 0-5.6-2.05-6.52-4.82H1.31v3.2A11.99 11.99 0 0 0 12 24z" />
+                <path fill="#FBBC05" d="M5.48 14.33A7.16 7.16 0 0 1 5 12c0-.82.15-1.62.42-2.38V6.42H1.31A11.99 11.99 0 0 0 0 12c0 2.24.62 4.33 1.69 6.13l3.79-3.8z" />
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.22 0 12 0A11.99 11.99 0 0 0 1.31 6.42l3.79 3.8c.92-2.77 3.49-4.82 6.9-4.82z" />
+              </svg>
+              <span>Continuar con Google</span>
+            </button>
+          </div>
+        )}
       </form>
     </div>
   )
@@ -1013,11 +1044,11 @@ export default function Auth() {
 
 
   const handleClearWorkerSocialData = () => {
-    setWorkerSocialData(null)
+    setWorkerSocialData && setWorkerSocialData(null)
   }
 
   const handleClearRegisterSocialData = () => {
-    setRegisterSocialData(null)
+    setRegisterSocialData && setRegisterSocialData(null)
     setRegStep('plan')
   }
 
@@ -1033,52 +1064,121 @@ export default function Auth() {
     } else if (mode === 'login') {
       setTab('login')
     } else if (mode === 'confirm_email') {
-      // Handle magic link confirmation
       toast.success('¡Correo confirmado! Iniciando sesión...')
-      // The session should already be established by Supabase
     }
   }, [])
 
   return (
-    <div className="h-screen bg-surface-900 flex overflow-hidden">
-      {/* Form panel */}
-      <div className={clsx(
-        "flex-1 flex flex-col items-center p-3 sm:p-6 overflow-y-auto relative h-full",
-        (tab === 'register' && regStep === 'plan') ? "justify-start sm:py-12 py-6" : "justify-center"
-      )}>
-        {/* Ambient Background Elements (wrapped to prevent overflow/scrollbars) */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="absolute inset-0 bg-[radial-gradient(rgba(124,58,237,0.03)_1.5px,transparent_1.5px)] [background-size:32px_32px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-600/5 rounded-full blur-[140px] animate-pulse-slow" />
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/8 rounded-full blur-[100px]" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-700/4 rounded-full blur-[120px]" />
-        </div>
+    <div className="h-screen w-full bg-[#08080c] text-foreground flex overflow-hidden p-3 sm:p-5 lg:p-6 select-none relative">
+      {/* Background Ambient Glow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7B39ED]/10 rounded-full blur-[160px] animate-pulse-slow" />
+        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-[#7B39ED]/5 rounded-full blur-[140px]" />
+      </div>
 
-        <div className={clsx(
-          "w-full relative z-10 transition-all duration-500",
-          (tab === 'register' && regStep === 'plan') ? "max-w-[1400px]" : "max-w-md"
-        )}>
-          {/* Main logo */}
-          <Link to="/" className="flex items-center gap-2.5 justify-center mb-4 sm:mb-6 hover:opacity-90 transition-opacity">
+      {/* ─── LEFT SHOWCASE CONTAINER (Visible on Login / Worker tabs) ─── */}
+      {tab !== 'register' && (
+        <div className="hidden lg:flex flex-1 flex-col justify-between rounded-[2.5rem] bg-gradient-to-b from-[#1c1236] via-[#0f0921] to-[#070412] border border-purple-500/20 shadow-2xl p-8 xl:p-12 relative overflow-hidden h-full z-10 transition-all duration-500">
+          {/* Ambient inner glow */}
+          <div className="absolute -top-32 -left-32 w-80 h-80 bg-[#7B39ED]/20 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+          {/* Top Logo */}
+          <div className="flex items-center gap-3 relative z-10">
+            <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+              <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-9 w-auto" />
+              <span className="font-black text-white text-xl tracking-tight">GestivaOne</span>
+            </Link>
+          </div>
+
+          {/* Center Content */}
+          <div className="max-w-lg space-y-6 relative z-10 my-auto">
+            <span className="text-[10px] font-black uppercase tracking-widest text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30 inline-block">
+              Gestión Comercial Inteligente
+            </span>
+
+            <h1 className="text-3xl xl:text-4xl font-black text-white leading-tight tracking-tight">
+              La plataforma comercial <br />
+              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-300 bg-clip-text text-transparent">
+                que tu empresa merece
+              </span>
+            </h1>
+
+            <p className="text-xs xl:text-sm text-purple-200/70 leading-relaxed font-medium">
+              Controla inventario en tiempo real, emite facturación electrónica cumpliendo con la DIAN y toma decisiones estratégicas en una sola pantalla.
+            </p>
+
+            {/* Feature Steps Indicator (Inspired by reference image) */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <div className="w-8 h-8 rounded-xl bg-[#7B39ED] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-md shadow-[#7B39ED]/30">
+                  1
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Facturación Electrónica Instantánea</h4>
+                  <p className="text-[10px] text-purple-200/60">Facturación directa a la DIAN en segundos</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-400/30 text-purple-300 font-extrabold text-xs flex items-center justify-center shrink-0">
+                  2
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Gestión de Inventario Pro</h4>
+                  <p className="text-[10px] text-purple-200/60">Alertas de stock crítico y reabastecimiento</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-400/30 text-purple-300 font-extrabold text-xs flex items-center justify-center shrink-0">
+                  3
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Reportes & Analíticas en Tiempo Real</h4>
+                  <p className="text-[10px] text-purple-200/60">KPIs de ventas y flujo de caja diario</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer branding */}
+          <div className="flex items-center justify-between border-t border-white/10 pt-4 text-[10px] text-purple-200/50 relative z-10">
+            <span>© 2026 GestivaOne.</span>
+            <span className="font-semibold text-purple-300">Diseño Industrial Premium</span>
+          </div>
+        </div>
+      )}
+
+      {/* ─── RIGHT SIDE PANEL / MAIN FORM CONTAINER ─── */}
+      <div className={clsx(
+        "flex-1 flex flex-col items-center justify-center relative z-10 h-full overflow-y-auto no-scrollbar transition-all duration-500",
+        tab === 'register' ? "w-full max-w-[1400px] mx-auto px-4 py-8" : "w-full lg:w-[480px] xl:w-[520px] shrink-0 px-4 sm:px-8 py-6"
+      )}>
+        {/* Mobile Header Logo or Register Header Logo */}
+        <div className={clsx("items-center gap-2.5 justify-center mb-6", tab === 'register' ? "flex" : "flex lg:hidden")}>
+          <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
             <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
             <span className="font-black text-[#7B39ED] text-xl tracking-tight">GestivaOne</span>
           </Link>
+        </div>
 
-          {/* Tab switcher */}
-          <div className="flex bg-surface-800 border border-subtle rounded-2xl p-1 mb-3.5 sm:mb-4 relative shadow-glow-sm">
+        <div className="w-full max-w-md my-auto space-y-5">
+          {/* Top Tab Switcher: Ingresar | Registrarse | Soy Trabajador */}
+          <div className="flex bg-surface-800 border border-subtle rounded-2xl p-1 relative shadow-glow-sm">
             {TABS.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
                 className={clsx(
-                  'flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors relative z-10',
-                  tab === t.id ? 'text-white' : 'text-muted-400 hover:text-neutral-900 dark:hover:text-muted-200'
+                  'flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors relative z-10 cursor-pointer',
+                  tab === t.id ? 'text-white' : 'text-muted-400 hover:text-white'
                 )}
               >
                 {tab === t.id && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-brand-600 rounded-xl shadow-glow-sm"
+                    className="absolute inset-0 bg-[#7B39ED] rounded-xl shadow-md"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -1087,26 +1187,26 @@ export default function Auth() {
             ))}
           </div>
 
-          {/* Form card - with relative positioning for button overlay */}
-          <div className="relative bg-surface-800 border border-subtle rounded-2xl p-4 sm:p-5 shadow-modal">
-            {/* Home button - positioned near top left */}
+          {/* Form Card */}
+          <div className="relative bg-surface-800 border border-subtle rounded-3xl p-6 sm:p-8 shadow-2xl">
+            {/* Home button overlay */}
             <motion.button
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               onClick={() => window.location.href = '/'}
-              className="absolute -top-4 -left-4 w-10 h-10 bg-surface-800 border border-subtle rounded-full flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-surface-700 hover:text-black dark:hover:text-white transition-colors group z-20 text-muted-400 shadow-sm"
+              className="absolute -top-3 -left-3 w-9 h-9 bg-surface-800 border border-subtle rounded-full flex items-center justify-center text-muted-400 hover:text-white hover:border-[#7B39ED] transition-all shadow-md z-20 cursor-pointer"
               title="Volver al inicio"
             >
-              <Icon name="Home" size={18} className="transition-colors"  />
+              <Icon name="Home" size={16} />
             </motion.button>
 
             <AnimatePresence mode="wait">
               <motion.div
                 key={tab}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.18 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
               >
                 {tab === 'login' && (
                   <LoginForm
@@ -1134,7 +1234,6 @@ export default function Auth() {
           </div>
         </div>
       </div>
-
     </div>
   )
 }
