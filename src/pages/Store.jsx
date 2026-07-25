@@ -118,22 +118,24 @@ export default function Store() {
           setFreeShippingThreshold(ship.free_threshold || 0)
         }
 
-        // 2. Fetch Store Invoices
+        // 2. Fetch Store Invoices (limited for performance)
         const { data: invList } = await supabase
           .from('invoices')
           .select('*')
           .eq('company_id', user.companyId)
           .eq('source', 'store')
           .order('created_at', { ascending: false })
+          .limit(50)
         
         if (invList) setInvoices(invList)
 
-        // 3. Fetch Store Products
+        // 3. Fetch Store Products (limited for performance)
         const { data: prodList } = await supabase
           .from('products')
           .select('*')
           .eq('company_id', user.companyId)
           .order('created_at', { ascending: false })
+          .limit(50)
         
         if (prodList) setProductsList(prodList)
       } catch (err) {
@@ -165,7 +167,7 @@ export default function Store() {
       const storeSettings = {
         accent_color: accentColor,
         whatsapp_contact: whatsappContact,
-        seo_description: seoDescription,
+        seo_description: seoDescription?.replace(/<[^>]*>?/gm, '').trim() || '',
         banner_url: bannerUrl,
         payment_methods: {
           cod: codEnabled,
@@ -173,8 +175,8 @@ export default function Store() {
           bank_details: bankDetails
         },
         shipping: {
-          fee: Number(shippingFee),
-          free_threshold: Number(freeShippingThreshold)
+          fee: Math.max(0, Number(shippingFee) || 0),
+          free_threshold: Math.max(0, Number(freeShippingThreshold) || 0)
         }
       }
 
@@ -316,33 +318,47 @@ export default function Store() {
     }
   }
 
-  // Toggle show in store or featured state of a product directly
+  // Toggle show in store or featured state of a product directly (with optimistic rollback)
   const handleProductToggle = async (productId, field, currentVal) => {
+    const newVal = !currentVal
+    // Optimistic UI update
+    setProductsList(prev => prev.map(p => p.id === productId ? { ...p, [field]: newVal } : p))
     try {
-      const newVal = !currentVal
       const { error } = await supabase
         .from('products')
         .update({ [field]: newVal })
         .eq('id', productId)
 
       if (error) throw error
-
-      setProductsList(prev => prev.map(p => p.id === productId ? { ...p, [field]: newVal } : p))
       toast.success('Producto actualizado en vivo.')
     } catch (err) {
+      // Rollback on error
+      setProductsList(prev => prev.map(p => p.id === productId ? { ...p, [field]: currentVal } : p))
       toast.error('Error al actualizar el producto: ' + err.message)
     }
   }
 
   // Save inline edited product store details (price & discount)
   const handleSaveProductStoreInfo = async (productId) => {
+    const parsedPrice = Number(editPrice)
+    if (isNaN(parsedPrice) || parsedPrice < 0) {
+      toast.error('El precio debe ser un número mayor o igual a 0.')
+      return
+    }
+
+    const parsedDiscountValue = editDiscountType ? Number(editDiscountValue) : null
+    if (editDiscountType === 'percentage' && (parsedDiscountValue < 0 || parsedDiscountValue > 100)) {
+      toast.error('El porcentaje de descuento debe estar entre 0 y 100.')
+      return
+    }
+
     try {
       const { error } = await supabase
         .from('products')
         .update({
-          price: Number(editPrice),
+          price: parsedPrice,
           discount_type: editDiscountType || null,
-          discount_value: editDiscountType ? Number(editDiscountValue) : null
+          discount_value: parsedDiscountValue
         })
         .eq('id', productId)
 
@@ -350,9 +366,9 @@ export default function Store() {
 
       setProductsList(prev => prev.map(p => p.id === productId ? {
         ...p,
-        price: Number(editPrice),
+        price: parsedPrice,
         discount_type: editDiscountType || null,
-        discount_value: editDiscountType ? Number(editDiscountValue) : null
+        discount_value: parsedDiscountValue
       } : p))
 
       setEditingProductId(null)
@@ -362,8 +378,11 @@ export default function Store() {
     }
   }
 
-  // Update order status directly
+  // Update order status directly (with optimistic rollback)
   const handleOrderStatusChange = async (orderId, newStatus) => {
+    const previousStatus = invoices.find(inv => inv.id === orderId)?.payment_status
+    // Optimistic UI update
+    setInvoices(prev => prev.map(inv => inv.id === orderId ? { ...inv, payment_status: newStatus } : inv))
     try {
       const { error } = await supabase
         .from('invoices')
@@ -371,10 +390,12 @@ export default function Store() {
         .eq('id', orderId)
 
       if (error) throw error
-
-      setInvoices(prev => prev.map(inv => inv.id === orderId ? { ...inv, payment_status: newStatus } : inv))
       toast.success('Estado del pedido actualizado.')
     } catch (err) {
+      // Rollback on error
+      if (previousStatus) {
+        setInvoices(prev => prev.map(inv => inv.id === orderId ? { ...inv, payment_status: previousStatus } : inv))
+      }
       toast.error('Error al actualizar el pedido: ' + err.message)
     }
   }
@@ -423,7 +444,7 @@ export default function Store() {
         </div>
         {storeSlug && (
           <a
-            href={`https://gestivaone-store.vercel.app/${storeSlug}`}
+            href={`${import.meta.env.VITE_STORE_PUBLIC_URL || 'https://gestivaone-store.vercel.app'}/${storeSlug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600/10 hover:bg-brand-600/20 border border-brand-500/30 text-brand-400 text-xs font-bold rounded-xl transition-all"

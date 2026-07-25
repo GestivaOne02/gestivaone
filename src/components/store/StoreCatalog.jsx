@@ -139,6 +139,7 @@ export default function StoreCatalog({
                       <span className="absolute left-3 top-2.5 text-[10px] text-muted-400 font-bold">$</span>
                       <input
                         type="number"
+                        min="0"
                         value={editPrice}
                         onChange={(e) => setEditPrice(Number(e.target.value))}
                         className="bg-black/40 border border-white/5 rounded-xl pl-6 pr-3 py-2 text-xs text-white w-32 focus:outline-none focus:border-brand-500"
@@ -197,6 +198,8 @@ export default function StoreCatalog({
                       {editDiscountType && (
                         <input
                           type="number"
+                          min="0"
+                          max={editDiscountType === 'percentage' ? 100 : undefined}
                           value={editDiscountValue || ''}
                           onChange={(e) => setEditDiscountValue(Number(e.target.value))}
                           placeholder="Valor"

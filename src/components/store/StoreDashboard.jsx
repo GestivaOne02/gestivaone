@@ -67,14 +67,11 @@ export default function StoreDashboard({
             ========================================== */}
         <motion.div 
           layoutId="master-switch"
-          onClick={() => setStoreEnabled(!storeEnabled)}
-          whileHover={{ scale: 0.98 }}
-          whileTap={{ scale: 0.95 }}
           className={clsx(
-            "md:col-span-6 lg:col-span-8 row-span-2 rounded-[2rem] p-8 border cursor-pointer flex flex-col justify-between relative overflow-hidden transition-all duration-700",
+            "md:col-span-6 lg:col-span-8 row-span-2 rounded-[2rem] p-8 border flex flex-col justify-between relative overflow-hidden transition-all duration-700",
             storeEnabled 
               ? "bg-black/40 border-brand-500/30 shadow-[0_0_40px_rgba(var(--color-brand-500),0.15)] backdrop-blur-3xl" 
-              : "bg-surface-900/40 border-white/5 backdrop-blur-xl hover:bg-surface-800/40"
+              : "bg-surface-900/40 border-white/5 backdrop-blur-xl"
           )}
         >
           {/* Subtle grid pattern inside */}
@@ -88,16 +85,23 @@ export default function StoreDashboard({
               {storeEnabled ? <Icon name="Sparkles" size={24}  /> : <Icon name="ZapOff" size={24}  />}
             </div>
             
-            {/* Status indicator pill */}
-            <div className={clsx(
-              "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 border transition-all duration-500",
-              storeEnabled 
-                ? "bg-brand-500/10 border-brand-500/20 text-brand-400 shadow-[0_0_15px_rgba(var(--color-brand-500),0.2)]" 
-                : "bg-white/5 border-white/10 text-muted-500"
-            )}>
-              <div className={clsx("w-1.5 h-1.5 rounded-full", storeEnabled && "bg-brand-400 animate-pulse")} />
-              {storeEnabled ? 'Live System' : 'Offline'}
-            </div>
+            {/* Dedicated Switch button (isolated from card background) */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={storeEnabled}
+              aria-label="Encender o apagar el canal de ventas online"
+              onClick={() => setStoreEnabled(!storeEnabled)}
+              className={clsx(
+                "px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.15em] flex items-center gap-2.5 border transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95",
+                storeEnabled 
+                  ? "bg-brand-500/20 border-brand-500/40 text-brand-300 shadow-[0_0_15px_rgba(var(--color-brand-500),0.3)]" 
+                  : "bg-white/10 border-white/20 text-muted-300 hover:bg-white/15"
+              )}
+            >
+              <div className={clsx("w-2 h-2 rounded-full transition-colors", storeEnabled ? "bg-brand-400 animate-pulse" : "bg-muted-500")} />
+              <span>{storeEnabled ? 'Live System (On)' : 'Offline (Off)'}</span>
+            </button>
           </div>
 
           <div className="relative z-10">
@@ -105,16 +109,16 @@ export default function StoreDashboard({
               layout="position"
               className={clsx(
                 "text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter leading-none transition-colors duration-500",
-                storeEnabled ? "text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-brand-400" : "text-muted-600"
+                storeEnabled ? "text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-brand-400" : "text-muted-500"
               )}
             >
               {storeEnabled ? 'Online.' : 'Standby.'}
             </motion.h2>
             <p className={clsx(
-              "mt-4 text-sm max-w-md font-medium transition-colors duration-500",
-              storeEnabled ? "text-brand-100/60" : "text-muted-500/50"
+              "mt-4 text-sm max-w-md font-medium transition-colors duration-500 leading-relaxed",
+              storeEnabled ? "text-brand-100/90" : "text-muted-300/80"
             )}>
-              {storeEnabled ? 'El motor de la tienda está activo, recibiendo tráfico y procesando transacciones.' : 'El catálogo está oculto. Toca para encender el sistema.'}
+              {storeEnabled ? 'El motor de la tienda está activo, recibiendo tráfico y procesando transacciones.' : 'El catálogo está oculto. Usa el interruptor para publicar el sistema.'}
             </p>
           </div>
         </motion.div>
