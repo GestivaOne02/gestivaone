@@ -627,60 +627,88 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
 
   return (
     <div className="space-y-4">
-      <form action="#" onSubmit={submit} className="space-y-3 sm:space-y-4">
-        <div>
-          <label htmlFor="login-email" className="text-xs font-bold text-muted-600 mb-1 block">Correo electrónico</label>
-          <input
-            id="login-email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="tu@empresa.com"
-            type="email"
-            autoComplete="email"
-            required
-            readOnly={!!socialAutofill}
-            className={clsx(
-              "w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30",
-              socialAutofill && "opacity-75 cursor-not-allowed bg-surface-800"
-            )}
-          />
+      {/* Form Header Avatar & Title */}
+      <div className="flex items-center gap-3.5 pb-1">
+        <div className="w-11 h-11 rounded-2xl bg-[#7B39ED]/15 border border-[#7B39ED]/30 flex items-center justify-center shrink-0">
+          <span className="font-black text-[#7B39ED] text-lg">G</span>
         </div>
-        <div className="relative">
-          <label htmlFor="login-pass" className="text-xs font-bold text-muted-600 mb-1 block font-medium">Contraseña <span className="text-danger-500">*</span></label>
-          <input
-            id="login-pass"
-            name="password"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-            placeholder="Introduce la contraseña"
-            type={showPw ? 'text' : 'password'}
-            autoComplete="current-password"
-            required
-            readOnly={!!socialAutofill}
-            className={clsx(
-              "w-full bg-surface-900 border border-subtle rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 pr-10",
-              socialAutofill && "opacity-75 cursor-not-allowed bg-surface-800 font-mono tracking-widest"
-            )}
-          />
-          {!socialAutofill && (
-            <button
-              type="button"
-              onMouseDown={() => setShowPw(true)}
-              onMouseUp={() => setShowPw(false)}
-              onMouseLeave={() => setShowPw(false)}
-              onTouchStart={() => setShowPw(true)}
-              onTouchEnd={() => setShowPw(false)}
-              className="absolute right-3 bottom-2.5 text-muted-400 hover:text-foreground"
-            >
-              {showPw ? <Icon name="EyeOff" size={15}  /> : <Icon name="Eye" size={15}  />}
-            </button>
-          )}
+        <div>
+          <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight leading-none">
+            Bienvenido de nuevo
+          </h3>
+          <p className="text-xs text-muted-500 font-medium mt-1">
+            Ingresa a tu cuenta para continuar
+          </p>
+        </div>
+      </div>
+
+      <form action="#" onSubmit={submit} className="space-y-3.5">
+        {/* Email Field with Mail Icon */}
+        <div>
+          <label htmlFor="login-email" className="text-xs font-bold text-muted-600 mb-1 block">
+            Correo electrónico
+          </label>
+          <div className="relative">
+            <Icon name="Mail" size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-400 pointer-events-none" />
+            <input
+              id="login-email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="randymendozasalas42@gmail.com"
+              type="email"
+              autoComplete="email"
+              required
+              readOnly={!!socialAutofill}
+              className={clsx(
+                "w-full bg-surface-900 border border-subtle rounded-2xl pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-[#7B39ED]/30 focus:border-[#7B39ED] transition-all",
+                socialAutofill && "opacity-75 cursor-not-allowed bg-surface-800"
+              )}
+            />
+          </div>
         </div>
 
-        {/* Remember me checkbox */}
+        {/* Password Field with Lock Icon & Eye toggle */}
+        <div>
+          <label htmlFor="login-pass" className="text-xs font-bold text-muted-600 mb-1 block">
+            Contraseña <span className="text-danger-500">*</span>
+          </label>
+          <div className="relative">
+            <Icon name="Lock" size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-400 pointer-events-none" />
+            <input
+              id="login-pass"
+              name="password"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              placeholder="••••••••••••"
+              type={showPw ? 'text' : 'password'}
+              autoComplete="current-password"
+              required
+              readOnly={!!socialAutofill}
+              className={clsx(
+                "w-full bg-surface-900 border border-subtle rounded-2xl pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-[#7B39ED]/30 focus:border-[#7B39ED] transition-all",
+                socialAutofill && "opacity-75 cursor-not-allowed bg-surface-800 font-mono tracking-widest"
+              )}
+            />
+            {!socialAutofill && (
+              <button
+                type="button"
+                onMouseDown={() => setShowPw(true)}
+                onMouseUp={() => setShowPw(false)}
+                onMouseLeave={() => setShowPw(false)}
+                onTouchStart={() => setShowPw(true)}
+                onTouchEnd={() => setShowPw(false)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-400 hover:text-foreground cursor-pointer"
+              >
+                {showPw ? <Icon name="EyeOff" size={16} /> : <Icon name="Eye" size={16} />}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Remember me checkbox & reset link */}
         {!socialAutofill && (
-          <div className="flex items-center justify-between pb-1 select-none">
+          <div className="flex items-center justify-between pt-0.5 pb-0.5 select-none">
             <label htmlFor="login-remember-me" className="flex items-center gap-2.5 cursor-pointer group">
               <input
                 id="login-remember-me"
@@ -691,40 +719,42 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
                 className="sr-only"
               />
               <div className={clsx(
-                'w-[18px] h-[18px] rounded border flex items-center justify-center transition-all',
+                'w-[18px] h-[18px] rounded-md border flex items-center justify-center transition-all',
                 rememberMe
-                  ? 'bg-amber-500 border-amber-500 text-white'
-                  : 'border-subtle bg-surface-900 group-hover:border-surface-400'
+                  ? 'bg-[#7B39ED] border-[#7B39ED] text-white'
+                  : 'border-subtle bg-surface-900 group-hover:border-[#7B39ED]'
               )}>
-                {rememberMe && <Icon name="Check" size={12} strokeWidth={3} className="text-white animate-scale-up"  />}
+                {rememberMe && <Icon name="Check" size={12} strokeWidth={3} className="text-white" />}
               </div>
               <span className="text-xs font-bold text-muted-500 group-hover:text-foreground transition-colors">Acuérdate de mí</span>
             </label>
             <button
               type="button"
               onClick={sendPasswordReset}
-              className="text-xs font-bold text-brand-500 hover:text-brand-400 transition-colors"
+              className="text-xs font-bold text-[#7B39ED] hover:underline transition-all cursor-pointer"
             >
-              Cambiar contraseña
+              ¿Olvidaste tu contraseña?
             </button>
           </div>
         )}
 
+        {/* Primary Login Button with Arrow */}
         <button
           type="submit"
           onClick={submit}
           disabled={loading}
-          className="w-full py-3 rounded-xl bg-[#7B39ED] hover:bg-[#6929d9] disabled:opacity-60 text-white text-sm font-bold transition-all shadow-md hover:scale-[1.01]"
+          className="w-full py-3 px-4 rounded-2xl bg-[#7B39ED] hover:bg-[#6929d9] disabled:opacity-60 text-white text-sm font-bold transition-all shadow-md hover:scale-[1.01] flex items-center justify-center gap-2 cursor-pointer"
         >
-          {loading ? 'Ingresando...' : 'Iniciar sesión'}
+          <span>{loading ? 'Ingresando...' : 'Iniciar sesión'}</span>
+          <Icon name="ArrowRight" size={16} />
         </button>
 
         {/* Google OAuth Login Button */}
         {!socialAutofill && (
-          <div className="pt-2">
-            <div className="flex items-center gap-3 py-2">
+          <div className="pt-1">
+            <div className="flex items-center gap-3 py-1.5">
               <div className="flex-1 h-px bg-subtle" />
-              <span className="text-[10px] font-black text-muted-500 uppercase tracking-widest">O ingresar con</span>
+              <span className="text-[10px] font-black text-muted-500 uppercase tracking-widest">O INGRESAR CON</span>
               <div className="flex-1 h-px bg-subtle" />
             </div>
 
@@ -737,7 +767,7 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
                   toast.error(res.error || 'Error al conectar con Google')
                 }
               }}
-              className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 bg-surface-900 border border-subtle hover:border-surface-400 rounded-xl text-xs font-bold text-foreground transition-all hover:scale-[1.01] shadow-sm cursor-pointer"
+              className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 bg-surface-900 border border-subtle hover:border-surface-400 rounded-2xl text-xs font-bold text-foreground transition-all hover:scale-[1.01] shadow-sm cursor-pointer"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69a5.74 5.74 0 0 1-2.5 3.77v3.13h4.03c2.36-2.17 3.52-5.38 3.52-8.75z" />
@@ -750,6 +780,16 @@ function LoginForm({ socialAutofill, onClearAutofill }) {
           </div>
         )}
       </form>
+
+      {/* Security Banner Note */}
+      <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#7B39ED]/10 border border-[#7B39ED]/20 text-xs text-purple-300 font-medium">
+        <div className="w-7 h-7 rounded-xl bg-[#7B39ED]/20 flex items-center justify-center shrink-0 text-[#7B39ED]">
+          <Icon name="ShieldCheck" size={16} />
+        </div>
+        <p className="text-[11px] leading-tight text-purple-200/80 font-semibold">
+          Tu información está protegida con encriptación de nivel bancario.
+        </p>
+      </div>
     </div>
   )
 }
@@ -870,9 +910,9 @@ function RegisterFlow({ step, setStep, onSocialClick, socialData, onClearSocialD
 
 // ── Main Auth page ────────────────────────────────────────────
 const TABS = [
-  { id: 'login', label: 'Ingresar' },
-  { id: 'register', label: 'Registrarse' },
-  { id: 'worker', label: 'Soy Trabajador' },
+  { id: 'login', label: 'Ingresar', icon: 'LogIn' },
+  { id: 'register', label: 'Registrarse', icon: 'UserPlus' },
+  { id: 'worker', label: 'Soy trabajador', icon: 'Briefcase' }
 ]
 
 function SocialAuthModal({ isOpen, onClose, provider, action, onConfirm }) {
@@ -1078,74 +1118,177 @@ export default function Auth() {
 
       {/* ─── LEFT SHOWCASE CONTAINER (Visible on Login / Worker tabs) ─── */}
       {tab !== 'register' && (
-        <div className="hidden lg:flex flex-1 flex-col justify-between rounded-[2.5rem] bg-gradient-to-b from-[#1c1236] via-[#0f0921] to-[#070412] border border-purple-500/20 shadow-2xl p-8 xl:p-12 relative overflow-hidden h-full z-10 transition-all duration-500">
+        <div className="hidden lg:flex flex-1 flex-col justify-between rounded-[2.5rem] bg-gradient-to-b from-[#140b2e] via-[#0f0724] to-[#070314] border border-purple-500/20 shadow-2xl p-8 xl:p-10 relative overflow-hidden h-full z-10 transition-all duration-500 select-none">
           {/* Ambient inner glow */}
           <div className="absolute -top-32 -left-32 w-80 h-80 bg-[#7B39ED]/20 rounded-full blur-[100px] pointer-events-none" />
-          <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-600/15 rounded-full blur-[130px] pointer-events-none" />
 
-          {/* Top Logo */}
-          <div className="flex items-center gap-3 relative z-10">
+          {/* Top Header Bar */}
+          <div className="flex items-center justify-between relative z-10">
             <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
               <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-9 w-auto" />
               <span className="font-black text-white text-xl tracking-tight">GestivaOne</span>
             </Link>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-purple-200/80 backdrop-blur-md">
+              <Icon name="Shield" size={13} className="text-purple-400" />
+              <span>Plataforma 100% segura</span>
+            </div>
           </div>
 
-          {/* Center Content */}
-          <div className="max-w-lg space-y-6 relative z-10 my-auto">
-            <span className="text-[10px] font-black uppercase tracking-widest text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full border border-purple-500/30 inline-block">
-              Gestión Comercial Inteligente
-            </span>
-
-            <h1 className="text-3xl xl:text-4xl font-black text-white leading-tight tracking-tight">
-              La plataforma comercial <br />
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-300 bg-clip-text text-transparent">
-                que tu empresa merece
+          {/* Center Content: Two Columns (Left Feature Cards + Right Dashboard Mockup) */}
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-center relative z-10 my-auto py-4">
+            {/* Left Col: Hero text + Feature Cards */}
+            <div className="xl:col-span-6 space-y-5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-purple-300 bg-purple-500/20 px-3.5 py-1.5 rounded-full border border-purple-500/30 inline-flex items-center gap-1.5">
+                <Icon name="Sparkles" size={12} className="text-purple-300" />
+                <span>Gestión Comercial Inteligente</span>
               </span>
-            </h1>
 
-            <p className="text-xs xl:text-sm text-purple-200/70 leading-relaxed font-medium">
-              Controla inventario en tiempo real, emite facturación electrónica cumpliendo con la DIAN y toma decisiones estratégicas en una sola pantalla.
-            </p>
+              <h1 className="text-2xl xl:text-3xl font-black text-white leading-tight tracking-tight">
+                La plataforma comercial <br />
+                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-300 bg-clip-text text-transparent">
+                  que tu empresa merece
+                </span>
+              </h1>
 
-            {/* Feature Steps Indicator (Inspired by reference image) */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <div className="w-8 h-8 rounded-xl bg-[#7B39ED] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-md shadow-[#7B39ED]/30">
-                  1
+              <p className="text-xs text-purple-200/70 leading-relaxed font-medium">
+                Controla inventario en tiempo real, emite facturación electrónica cumpliendo con la DIAN y toma decisiones estratégicas en una sola pantalla.
+              </p>
+
+              {/* 3 Interactive Feature Cards */}
+              <div className="space-y-2.5 pt-1">
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#7B39ED] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#7B39ED]/30">
+                      <Icon name="Zap" size={16} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white leading-tight">Facturación Electrónica Instantánea</h4>
+                      <p className="text-[10px] text-purple-200/60 mt-0.5">Facturación directa a la DIAN en segundos</p>
+                    </div>
+                  </div>
+                  <Icon name="ChevronRight" size={14} className="text-purple-400 group-hover:translate-x-1 transition-transform" />
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white">Facturación Electrónica Instantánea</h4>
-                  <p className="text-[10px] text-purple-200/60">Facturación directa a la DIAN en segundos</p>
+
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#7B39ED]/30 border border-[#7B39ED]/40 text-purple-300 flex items-center justify-center shrink-0">
+                      <Icon name="Package" size={16} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white leading-tight">Gestión de Inventario Pro</h4>
+                      <p className="text-[10px] text-purple-200/60 mt-0.5">Alertas de stock crítico y reabastecimiento</p>
+                    </div>
+                  </div>
+                  <Icon name="ChevronRight" size={14} className="text-purple-400 group-hover:translate-x-1 transition-transform" />
+                </div>
+
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#7B39ED]/30 border border-[#7B39ED]/40 text-purple-300 flex items-center justify-center shrink-0">
+                      <Icon name="BarChart3" size={16} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white leading-tight">Reportes & Analíticas en Tiempo Real</h4>
+                      <p className="text-[10px] text-purple-200/60 mt-0.5">KPIs de ventas y flujo de caja diario</p>
+                    </div>
+                  </div>
+                  <Icon name="ChevronRight" size={14} className="text-purple-400 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-400/30 text-purple-300 font-extrabold text-xs flex items-center justify-center shrink-0">
-                  2
+            {/* Right Col: Dashboard Mockup Preview Card */}
+            <div className="hidden xl:block xl:col-span-6">
+              <div className="rounded-2xl bg-[#170e33]/90 border border-purple-500/20 p-4 shadow-2xl space-y-3 backdrop-blur-xl relative overflow-hidden">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-[#7B39ED] flex items-center justify-center text-white text-xs font-bold">
+                      G
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white leading-none">¡Hola, María! 👋</h4>
+                      <p className="text-[9px] text-purple-200/50 mt-0.5">Aquí tienes un resumen de tu negocio hoy</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white">Gestión de Inventario Pro</h4>
-                  <p className="text-[10px] text-purple-200/60">Alertas de stock crítico y reabastecimiento</p>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-400/30 text-purple-300 font-extrabold text-xs flex items-center justify-center shrink-0">
-                  3
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <span className="text-[9px] text-purple-200/60 font-semibold block">Ventas del día</span>
+                    <span className="text-sm font-black text-white block mt-0.5">$ 12.458.000</span>
+                    <span className="text-[8px] text-emerald-400 font-bold block mt-0.5">▲ +12.8% vs ayer</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <span className="text-[9px] text-purple-200/60 font-semibold block">Pedidos</span>
+                    <span className="text-sm font-black text-white block mt-0.5">128</span>
+                    <span className="text-[8px] text-emerald-400 font-bold block mt-0.5">▲ +8.3% vs ayer</span>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white">Reportes & Analíticas en Tiempo Real</h4>
-                  <p className="text-[10px] text-purple-200/60">KPIs de ventas y flujo de caja diario</p>
+
+                {/* Sales Chart Mockup */}
+                <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
+                  <div className="flex items-center justify-between text-[9px]">
+                    <span className="text-purple-200/60 font-semibold">Ventas últimos 7 días</span>
+                    <span className="text-white font-bold">$ 12.458.000</span>
+                  </div>
+                  <svg className="w-full h-12 text-[#7B39ED]" viewBox="0 0 200 50">
+                    <path
+                      d="M0 40 Q 30 10, 60 30 T 120 15 T 180 35 T 200 20 L 200 50 L 0 50 Z"
+                      fill="currentColor"
+                      fillOpacity="0.2"
+                    />
+                    <path
+                      d="M0 40 Q 30 10, 60 30 T 120 15 T 180 35 T 200 20"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    />
+                  </svg>
+                </div>
+
+                {/* Products list */}
+                <div className="space-y-1.5">
+                  <span className="text-[9px] text-purple-200/60 font-semibold block">Productos más vendidos</span>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/5 text-[10px]">
+                    <span className="text-white font-medium">Auriculares Inalámbricos</span>
+                    <span className="text-purple-300 font-bold">42 uds</span>
+                  </div>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/5 text-[10px]">
+                    <span className="text-white font-medium">Smartwatch Pro</span>
+                    <span className="text-purple-300 font-bold">28 uds</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Footer branding */}
-          <div className="flex items-center justify-between border-t border-white/10 pt-4 text-[10px] text-purple-200/50 relative z-10">
-            <span>© 2026 GestivaOne.</span>
-            <span className="font-semibold text-purple-300">Diseño Industrial Premium</span>
+          {/* Bottom Bar: Trust Badges & Footer */}
+          <div className="space-y-3 relative z-10 pt-2 border-t border-white/10">
+            <div className="flex items-center justify-between text-[10px] text-purple-200/70 font-semibold px-1">
+              <div className="flex items-center gap-1.5">
+                <Icon name="ShieldCheck" size={13} className="text-purple-400" />
+                <span>Cumple con la DIAN</span>
+              </div>
+              <div className="h-3 w-px bg-white/10" />
+              <div className="flex items-center gap-1.5">
+                <Icon name="Cloud" size={13} className="text-purple-400" />
+                <span>Datos en la nube</span>
+              </div>
+              <div className="h-3 w-px bg-white/10" />
+              <div className="flex items-center gap-1.5">
+                <Icon name="Headphones" size={13} className="text-purple-400" />
+                <span>Soporte 24/7</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[10px] text-purple-200/40">
+              <div className="flex items-center gap-1.5">
+                <Icon name="Lock" size={11} />
+                <span>© 2026 GestivaOne.</span>
+              </div>
+              <span className="font-semibold text-purple-300/80">Diseño Industrial Premium</span>
+            </div>
           </div>
         </div>
       )}
@@ -1174,7 +1317,7 @@ export default function Auth() {
                 key={t.id}
                 onClick={() => setTab(t.id)}
                 className={clsx(
-                  'flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors relative z-10 cursor-pointer',
+                  'flex-1 py-2.5 px-2 text-xs font-bold tracking-tight rounded-xl transition-colors relative z-10 cursor-pointer flex items-center justify-center gap-1.5',
                   tab === t.id ? 'text-white' : 'text-muted-400 hover:text-white'
                 )}
               >
@@ -1185,6 +1328,7 @@ export default function Auth() {
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
+                {t.icon && <Icon name={t.icon} size={14} className="relative z-10" />}
                 <span className="relative z-10">{t.label}</span>
               </button>
             ))}
