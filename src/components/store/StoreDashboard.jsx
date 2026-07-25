@@ -229,52 +229,6 @@ export default function StoreDashboard({
 
       </div>
 
-      {/* ==========================================
-          4. FLOATING BOTTOM DOCK MENU (Alineado perfectamente al centro)
-          ========================================== */}
-      <div className="fixed bottom-5 left-0 right-0 z-50 flex items-center justify-center px-4 pointer-events-none">
-        <motion.div 
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, type: 'spring', damping: 20 }}
-          className="flex items-center justify-center gap-1 sm:gap-2 px-4 sm:px-6 py-2 rounded-full bg-white/95 dark:bg-slate-950/95 border border-subtle backdrop-blur-2xl shadow-2xl pointer-events-auto max-w-full overflow-x-auto no-scrollbar"
-        >
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: 'LayoutGrid' },
-            { id: 'orders', label: 'Pedidos', icon: 'FileText' },
-            { id: 'catalog', label: 'Catálogo', icon: 'Package' },
-            { id: 'appearance', label: 'Apariencia', icon: 'Palette' }
-          ].map(item => {
-            const active = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className="flex flex-col items-center gap-1 px-3 sm:px-4 py-1.5 rounded-2xl relative transition-all cursor-pointer group shrink-0"
-              >
-                <Icon 
-                  name={item.icon} 
-                  size={18} 
-                  className={active ? "text-brand-500 dark:text-purple-400" : "text-muted-400 group-hover:text-foreground"} 
-                />
-                <span className={clsx(
-                  "text-[10px] font-bold leading-none",
-                  active ? "text-brand-500 dark:text-purple-400" : "text-muted-400 group-hover:text-foreground"
-                )}>
-                  {item.label}
-                </span>
-                {active && (
-                  <motion.div 
-                    layoutId="dock-active-line"
-                    className="absolute -bottom-1 w-6 h-0.5 rounded-full bg-brand-500 dark:bg-purple-400" 
-                  />
-                )}
-              </button>
-            )
-          })}
-        </motion.div>
-      </div>
-
     </motion.div>
   );
 }
