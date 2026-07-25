@@ -199,7 +199,7 @@ export default function Landing() {
               exit={{ opacity: 0, y: 6, scale: 0.98 }}
               transition={{ duration: 0.2 }}
               onMouseLeave={() => setShowFeaturesMenu(false)}
-              className="absolute top-full inset-x-0 mx-auto w-full max-w-5xl px-4 sm:px-6 z-50 pointer-events-auto"
+              className="absolute top-full inset-x-0 mx-auto w-full max-w-5xl px-4 sm:px-6 z-50 pointer-events-auto mt-3.5"
             >
               <div className="bg-white dark:bg-surface-800 border border-gray-200/90 dark:border-subtle rounded-3xl shadow-2xl p-5 sm:p-6 md:p-8 backdrop-blur-2xl max-h-[80vh] overflow-y-auto no-scrollbar">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-left">
