@@ -443,8 +443,8 @@ export default function Store() {
         </p>
       </div>
 
-      {/* ─── Top Navigation Cards (Cuadro Azul: Fondo Blanco, Sin Borde, Hover/Selección Morado Gestiva) ─── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 shrink-0 select-none">
+      {/* ─── Top Navigation Cards (Responsive Scroll on mobile, Grid on desktop) ─── */}
+      <div className="flex overflow-x-auto sm:grid sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 shrink-0 select-none pb-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         {[
           { id: 'dashboard', label: 'Dashboard', desc: 'Métricas y Estado', icon: 'LayoutDashboard' },
           { id: 'appearance', label: 'Apariencia', desc: 'Logo y Branding', icon: 'Palette' },
@@ -459,7 +459,7 @@ export default function Store() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={clsx(
-                'flex flex-col items-start justify-between p-4 rounded-2xl transition-all cursor-pointer relative overflow-hidden group text-left min-h-[95px] border-2',
+                'flex flex-col items-start justify-between p-3.5 sm:p-4 rounded-2xl transition-all cursor-pointer relative overflow-hidden group text-left min-h-[90px] sm:min-h-[95px] min-w-[135px] sm:min-w-0 border-2 shrink-0 sm:shrink',
                 active
                   ? 'bg-white dark:bg-surface-800 border-brand-500 dark:border-brand-400'
                   : 'bg-white dark:bg-surface-800 border-transparent hover:border-brand-500 dark:hover:border-brand-400'
@@ -467,12 +467,12 @@ export default function Store() {
             >
               <div className="flex items-center justify-between w-full mb-2">
                 <div className={clsx(
-                  "p-2.5 rounded-xl transition-colors",
+                  "p-2 sm:p-2.5 rounded-xl transition-colors",
                   active
                     ? "bg-brand-500/10 text-brand-500"
                     : "bg-surface-100 dark:bg-surface-700 text-muted-400 group-hover:text-brand-500 group-hover:bg-brand-500/10"
                 )}>
-                  <Icon name={tab.icon} size={18} />
+                  <Icon name={tab.icon} size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </div>
                 {active && (
                   <div className="w-4 h-4 rounded-full bg-brand-500 text-white flex items-center justify-center shrink-0">
@@ -487,7 +487,7 @@ export default function Store() {
                 )}>
                   {tab.label}
                 </span>
-                <span className="text-[10px] text-muted-400 block mt-0.5 font-medium truncate">
+                <span className="text-[10px] text-muted-400 block mt-0.5 font-medium truncate max-w-[110px] sm:max-w-none">
                   {tab.desc}
                 </span>
               </div>

@@ -98,7 +98,7 @@ export default function StoreDashboard({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* STANDBY HERO CARD */}
-        <div className="lg:col-span-12 rounded-2xl bg-gradient-to-br from-purple-900/20 via-brand-500/10 to-indigo-900/20 border border-purple-500/20 p-7 sm:p-9 flex flex-col justify-between relative overflow-hidden min-h-[280px]">
+        <div className="lg:col-span-12 rounded-2xl bg-gradient-to-br from-purple-900/20 via-brand-500/10 to-indigo-900/20 border border-purple-500/20 p-5 sm:p-9 flex flex-col justify-between relative overflow-hidden min-h-[240px] sm:min-h-[280px]">
           
           {/* Header Label */}
           <div className="flex items-center justify-between z-10">
@@ -108,8 +108,8 @@ export default function StoreDashboard({
           </div>
 
           {/* Center Main Message */}
-          <div className="my-6 z-10 max-w-xl">
-            <h2 className="text-4xl sm:text-5xl font-black text-foreground dark:text-white tracking-tight mb-2">
+          <div className="my-4 sm:my-6 z-10 max-w-xl">
+            <h2 className="text-3xl sm:text-5xl font-black text-foreground dark:text-white tracking-tight mb-2">
               {storeEnabled ? 'Tienda Activa.' : 'Standby.'}
             </h2>
             <p className="text-xs sm:text-sm text-muted-400 font-medium leading-relaxed">
@@ -120,11 +120,11 @@ export default function StoreDashboard({
           </div>
 
           {/* Action Button & Live Preview Link */}
-          <div className="flex flex-wrap items-center gap-3 z-10">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 z-10">
             <button
               onClick={() => setStoreEnabled(!storeEnabled)}
               className={clsx(
-                "px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2 cursor-pointer transform active:scale-95",
+                "px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer transform active:scale-95",
                 storeEnabled
                   ? "bg-rose-500 hover:bg-rose-600 text-white"
                   : "bg-brand-500 hover:bg-brand-600 text-white"
@@ -139,7 +139,7 @@ export default function StoreDashboard({
                 href={publicUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-3.5 rounded-2xl bg-surface-800/80 hover:bg-surface-700 border border-subtle text-foreground dark:text-white text-xs font-bold transition-all flex items-center gap-2"
+                className="px-5 py-3 sm:py-3.5 rounded-2xl bg-surface-800/80 hover:bg-surface-700 border border-subtle text-foreground dark:text-white text-xs font-bold transition-all flex items-center justify-center gap-2"
               >
                 <span>Ver preview</span>
                 <Icon name="ExternalLink" size={13} className="text-muted-400" />
@@ -172,10 +172,10 @@ export default function StoreDashboard({
         {/* ==========================================
             LOG DE PEDIDOS BANNER (Sin background en el gráfico, integrado a la card)
             ========================================== */}
-        <div className="lg:col-span-12 rounded-2xl bg-slate-950 border border-slate-800 text-white p-7 flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden">
+        <div className="lg:col-span-12 rounded-2xl bg-slate-950 border border-slate-800 text-white p-5 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8 relative overflow-hidden">
           
           {/* Left Info Column */}
-          <div className="flex flex-col justify-center min-w-[220px] gap-3 shrink-0">
+          <div className="flex flex-col justify-center min-w-[200px] gap-2.5 sm:gap-3 shrink-0">
             <div className="flex items-center gap-2 text-purple-400">
               <Icon name="Activity" size={16} />
               <span className="text-[10px] font-extrabold uppercase tracking-widest">LOG DE PEDIDOS</span>
@@ -183,7 +183,7 @@ export default function StoreDashboard({
 
             {/* Pedidos Totales */}
             <div>
-              <div className="text-4xl font-black tracking-tight text-white">{invoices.length}</div>
+              <div className="text-3xl sm:text-4xl font-black tracking-tight text-white">{invoices.length}</div>
               <div className="text-xs text-slate-400 font-medium">Pedidos Totales</div>
             </div>
 
@@ -192,7 +192,7 @@ export default function StoreDashboard({
             {/* Total Generado por la Tienda */}
             <div>
               <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">TOTAL GENERADO</div>
-              <div className="text-2xl font-black text-emerald-400 tracking-tight">{formatCOP(totalRevenue)}</div>
+              <div className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight">{formatCOP(totalRevenue)}</div>
             </div>
 
             {/* Mejor Mes */}
@@ -203,13 +203,13 @@ export default function StoreDashboard({
           </div>
 
           {/* CENTER / RIGHT GRAPHIC (Gráfico de Líneas estilo Imagen 2 - Sin background, integrado a la card) */}
-          <div className="flex-1 w-full flex flex-col justify-between min-h-[190px]">
-            <div className="flex items-center justify-between mb-3 border-b border-slate-800/50 pb-2">
+          <div className="flex-1 w-full flex flex-col justify-between min-h-[180px] sm:min-h-[190px]">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-800/50 pb-2">
               <div className="flex items-center gap-2">
                 <Icon name="TrendingUp" size={16} className="text-purple-400" />
                 <span className="text-xs font-bold text-slate-200">Actividad de Pedidos (Últimos 7 días)</span>
               </div>
-              <div className="flex items-center gap-4 text-[10px] font-bold">
+              <div className="flex items-center gap-3 text-[10px] font-bold">
                 <span className="flex items-center gap-1 text-purple-400">
                   <span className="w-2 h-2 rounded-full bg-purple-500" />
                   Pedidos

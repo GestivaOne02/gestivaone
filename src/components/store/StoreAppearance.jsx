@@ -20,7 +20,7 @@ export default function StoreAppearance({
       className="grid grid-cols-1 lg:grid-cols-5 gap-6"
     >
       {/* Form Panel */}
-      <div className="lg:col-span-3 bg-white/5 border border-white/10 backdrop-blur-2xl p-6 rounded-[2rem] flex flex-col gap-6 relative overflow-hidden">
+      <div className="lg:col-span-3 bg-white/5 border border-white/10 backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col gap-6 relative overflow-hidden">
         <div>
           <h3 className="text-lg font-bold text-white">Identidad de Marca</h3>
           <p className="text-xs text-muted-400 mt-1">Configura los elementos visuales públicos de tu e-commerce.</p>
@@ -140,7 +140,7 @@ export default function StoreAppearance({
 
       {/* Right Mockup Preview Panel */}
       <div className="lg:col-span-2 flex flex-col justify-start">
-        <div className="bg-white/5 border border-white/10 backdrop-blur-2xl p-6 rounded-[2rem] flex flex-col gap-4 select-none relative overflow-hidden h-full min-h-[480px]">
+        <div className="bg-white/5 border border-white/10 backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col gap-4 select-none relative overflow-hidden h-full min-h-[420px] sm:min-h-[480px]">
           <div className="text-xs font-bold text-muted-400 uppercase tracking-widest border-b border-white/5 pb-3">Vista Previa Móvil</div>
           
           <div className="flex-1 flex items-center justify-center py-4">

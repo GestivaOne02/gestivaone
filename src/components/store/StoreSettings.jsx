@@ -20,7 +20,7 @@ export default function StoreSettings({
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Options (Image 2 List Toggle Style) */}
-        <div className="bg-surface-800/80 border border-subtle backdrop-blur-2xl p-6 rounded-[2rem] flex flex-col gap-6 shadow-sm">
+        <div className="bg-surface-800/80 border border-subtle backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col gap-6 shadow-sm">
           <div>
             <h3 className="text-base font-bold text-foreground dark:text-white">Métodos de Pago</h3>
             <p className="text-xs text-muted-400 mt-1">Opciones activas para los compradores en el checkout.</p>
@@ -117,7 +117,7 @@ export default function StoreSettings({
         </div>
 
         {/* Shipping Rules */}
-        <div className="bg-surface-800/80 border border-subtle backdrop-blur-2xl p-6 rounded-[2rem] flex flex-col gap-6 shadow-sm">
+        <div className="bg-surface-800/80 border border-subtle backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col gap-6 shadow-sm">
           <div>
             <h3 className="text-base font-bold text-foreground dark:text-white">Logística & Tarifas de Envío</h3>
             <p className="text-xs text-muted-400 mt-1">Configura las reglas de flete y promociones de envío gratis.</p>

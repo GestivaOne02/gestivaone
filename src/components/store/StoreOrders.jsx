@@ -41,7 +41,7 @@ export default function StoreOrders({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="bg-white/5 border border-white/10 backdrop-blur-2xl p-6 rounded-[2rem] flex flex-col gap-6"
+      className="bg-white/5 border border-white/10 backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col gap-5 sm:gap-6"
     >
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -51,7 +51,7 @@ export default function StoreOrders({
         </div>
 
         {/* Search */}
-        <div className="relative max-w-xs w-full">
+        <div className="relative w-full md:max-w-xs">
           <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-500"  />
           <input
             type="text"
@@ -75,7 +75,7 @@ export default function StoreOrders({
             key={tab.id}
             onClick={() => setStatusFilter(tab.id)}
             className={clsx(
-              "px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap",
+              "px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap cursor-pointer",
               statusFilter === tab.id
                 ? "bg-white text-black border-white"
                 : "bg-white/5 border-white/5 text-muted-400 hover:text-white hover:bg-white/10"
@@ -87,7 +87,7 @@ export default function StoreOrders({
       </div>
 
       {/* Orders Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredOrders.map(inv => {
           const details = inv.delivery_details || {};
           const customerPhone = details.phone || inv.client_name;
@@ -97,7 +97,7 @@ export default function StoreOrders({
           return (
             <div 
               key={inv.id} 
-              className="bg-black/20 border border-white/5 rounded-3xl p-5 flex flex-col justify-between gap-5 hover:border-white/10 transition-all group"
+              className="bg-black/20 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-5 flex flex-col justify-between gap-5 hover:border-white/10 transition-all group"
             >
               <div className="flex flex-col gap-3">
                 {/* Header info */}

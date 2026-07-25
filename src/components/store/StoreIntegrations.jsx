@@ -31,7 +31,7 @@ export default function StoreIntegrations({
       className="flex flex-col gap-6"
     >
       {/* Integrations Header */}
-      <div className="bg-white/5 border border-white/10 backdrop-blur-2xl p-6 rounded-[2rem] flex items-start gap-4 relative overflow-hidden">
+      <div className="bg-white/5 border border-white/10 backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex items-start gap-4 relative overflow-hidden">
         <div className="w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 shrink-0">
           <Icon name="PlugZap" size={20}  />
         </div>
@@ -44,7 +44,7 @@ export default function StoreIntegrations({
       </div>
 
       {/* Dropi Integration Panel */}
-      <div className="bg-white/5 border border-white/10 backdrop-blur-2xl p-6 rounded-[2rem] flex flex-col gap-6">
+      <div className="bg-white/5 border border-white/10 backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 shrink-0">

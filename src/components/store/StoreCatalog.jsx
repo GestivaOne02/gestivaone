@@ -42,7 +42,7 @@ export default function StoreCatalog({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="bg-white/5 border border-white/10 backdrop-blur-2xl p-6 rounded-[2rem] flex flex-col gap-6"
+      className="bg-white/5 border border-white/10 backdrop-blur-2xl p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] flex flex-col gap-5 sm:gap-6"
     >
       {/* Header and Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -52,7 +52,7 @@ export default function StoreCatalog({
         </div>
 
         {/* Search */}
-        <div className="relative max-w-xs w-full">
+        <div className="relative w-full md:max-w-xs">
           <Icon name="Search" size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-500"  />
           <input
             type="text"
