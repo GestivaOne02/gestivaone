@@ -546,6 +546,7 @@ export default function Store() {
               invoices={invoices}
               setActiveTab={setActiveTab}
               storeSlug={storeSlug}
+              activeTab={activeTab}
             />
           )}
 

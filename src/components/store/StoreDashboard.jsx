@@ -11,7 +11,8 @@ export default function StoreDashboard({
   setStoreEnabled, 
   invoices, 
   setActiveTab,
-  storeSlug
+  storeSlug,
+  activeTab = 'dashboard'
 }) {
   
   // Recent activity list
