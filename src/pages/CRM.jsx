@@ -196,8 +196,8 @@ function ClientDetail({ client, onBack, invoices, activities }) {
       {/* Tabs */}
       <div className="flex gap-1 mb-3 border-b border-subtle pb-2">
         {[
-          { id: 'overview', label: 'Historial de Compras', icon: ShoppingCart },
-          { id: 'activity', label: 'Actividades', icon: Activity },
+          { id: 'overview', label: 'Historial de Compras', iconName: 'ShoppingCart' },
+          { id: 'activity', label: 'Actividades', iconName: 'Activity' },
         ].map((t) => (
           <button
             key={t.id}
@@ -208,7 +208,7 @@ function ClientDetail({ client, onBack, invoices, activities }) {
                 : 'text-muted-400 hover:text-foreground hover:bg-surface-700/60'
             }`}
           >
-            <t.icon size={13} />
+            <Icon name={t.iconName} size={13} />
             {t.label}
           </button>
         ))}

@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
-
 import clsx from 'clsx'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 /**
  * SortFilterBar
@@ -21,21 +20,21 @@ export default function SortFilterBar({
   letters = [],
 }) {
   const MODES = [
-    { key: 'recent', icon: Clock,    label: 'Recientes' },
-    { key: 'id',     icon: Hash,     label: 'Por #' },
-    { key: 'letter', icon: AlignLeft, label: 'A–Z' },
+    { key: 'recent', iconName: 'Clock',     label: 'Recientes' },
+    { key: 'id',     iconName: 'Hash',      label: 'Por #' },
+    { key: 'letter', iconName: 'AlignLeft', label: 'A–Z' },
   ]
 
   return (
     <div className="flex flex-col gap-2">
       {/* Mode pills */}
       <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar -mx-1 px-1">
-        {MODES.map(({ key, icon: Icon, label }) => {
+        {MODES.map(({ key, iconName, label }) => {
           const active = sortMode === key
           return (
             <button
               key={key}
-              onClick={() => onSortChange(key)}
+              onClick={() => onSortChange?.(key)}
               className={clsx(
                 'relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors shrink-0 border',
                 active
@@ -43,7 +42,7 @@ export default function SortFilterBar({
                   : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground hover:border-surface-500'
               )}
             >
-              <Icon size={12} />
+              <Icon name={iconName} size={12} />
               {label}
               {active && (
                 <div
@@ -58,38 +57,33 @@ export default function SortFilterBar({
 
       {/* Letter strip — only shows when mode === 'letter' */}
       {sortMode === 'letter' && letters.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="flex gap-1 overflow-x-auto no-scrollbar pb-0.5 -mx-1 px-1"
-        >
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 px-0.5">
           <button
-            onClick={() => onLetterChange(null)}
+            onClick={() => onLetterChange?.(null)}
             className={clsx(
-              'w-7 h-7 rounded-md text-[11px] font-black shrink-0 transition-colors border',
-              !activeLetter
-                ? 'bg-brand-600 border-brand-500 text-white'
-                : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground'
+              'px-2 py-0.5 rounded text-[11px] font-bold transition-colors shrink-0',
+              activeLetter === null
+                ? 'bg-brand-500 text-white'
+                : 'bg-surface-700 text-muted-400 hover:text-foreground'
             )}
           >
-            ∗
+            Todos
           </button>
-          {letters.map((letter) => (
+          {letters.map((lettr) => (
             <button
-              key={letter}
-              onClick={() => onLetterChange(activeLetter === letter ? null : letter)}
+              key={lettr}
+              onClick={() => onLetterChange?.(lettr)}
               className={clsx(
-                'w-7 h-7 rounded-md text-[11px] font-black shrink-0 transition-colors border uppercase',
-                activeLetter === letter
-                  ? 'bg-brand-600 border-brand-500 text-white'
-                  : 'bg-surface-700/50 border-subtle text-muted-400 hover:text-foreground'
+                'w-6 h-6 rounded flex items-center justify-center text-[11px] font-bold transition-colors shrink-0',
+                activeLetter === lettr
+                  ? 'bg-brand-500 text-white'
+                  : 'bg-surface-700 text-muted-400 hover:text-foreground'
               )}
             >
-              {letter}
+              {lettr}
             </button>
           ))}
-        </motion.div>
+        </div>
       )}
     </div>
   )

@@ -185,7 +185,7 @@ export default function Settings() {
       {/* ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ Theme Section ●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬●ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-5 shadow-glow-sm">
         <SectionTitle
-          icon={Moon}
+          icon="Moon"
           title="Apariencia"
           desc="Elige entre modo oscuro, claro, o deja que el sistema decida automáticamente"
         />
@@ -194,25 +194,25 @@ export default function Settings() {
           {[
             {
               value: 'dark',
-              icon: Moon,
+              iconName: 'Moon',
               label: 'Oscuro',
               desc: 'Siempre oscuro',
             },
             {
               value: 'light',
-              icon: Sun,
+              iconName: 'Sun',
               label: 'Claro',
               desc: 'Siempre claro',
             },
             {
               value: 'system',
-              icon: Monitor,
+              iconName: 'Monitor',
               label: 'Sistema',
               desc: window.matchMedia('(prefers-color-scheme: dark)').matches
                 ? 'Tu sistema usa oscuro'
                 : 'Tu sistema usa claro',
             },
-          ].map(({ value, icon: Icon, label, desc }) => {
+          ].map(({ value, iconName, label, desc }) => {
             const active = theme === value
             return (
               <button
@@ -229,7 +229,7 @@ export default function Settings() {
                   'p-2.5 rounded-xl transition-colors',
                   active ? 'bg-brand-500/20 text-brand-300' : 'bg-surface-600 text-muted-400'
                 )}>
-                  <Icon size={18} />
+                  <Icon name={iconName} size={18} />
                 </div>
                 <div>
                   <p className={clsx('text-sm font-semibold', active ? 'text-foreground font-bold' : 'text-muted-400')}>
@@ -750,12 +750,12 @@ function ExportBlock() {
   }
 
   const exports = [
-    { key: 'invPdf',  label: 'Facturas PDF',     icon: FileText,        fn: () => exportInvoicesPDF(invoices, company) },
-    { key: 'invXls',  label: 'Facturas Excel',   icon: FileSpreadsheet, fn: () => exportInvoicesExcel(invoices, company) },
-    { key: 'cliPdf',  label: 'Clientes PDF',     icon: FileText,        fn: () => exportClientsPDF(clients, company) },
-    { key: 'cliXls',  label: 'Clientes Excel',   icon: FileSpreadsheet, fn: () => exportClientsExcel(clients, company) },
-    { key: 'prodPdf', label: 'Inventario PDF',   icon: FileText,        fn: () => exportProductsPDF(products, company) },
-    { key: 'prodXls', label: 'Inventario Excel', icon: FileSpreadsheet, fn: () => exportProductsExcel(products, company) },
+    { key: 'invPdf',  label: 'Facturas PDF',     iconName: 'FileText',        fn: () => exportInvoicesPDF(invoices, company) },
+    { key: 'invXls',  label: 'Facturas Excel',   iconName: 'FileSpreadsheet', fn: () => exportInvoicesExcel(invoices, company) },
+    { key: 'cliPdf',  label: 'Clientes PDF',     iconName: 'FileText',        fn: () => exportClientsPDF(clients, company) },
+    { key: 'cliXls',  label: 'Clientes Excel',   iconName: 'FileSpreadsheet', fn: () => exportClientsExcel(clients, company) },
+    { key: 'prodPdf', label: 'Inventario PDF',   iconName: 'FileText',        fn: () => exportProductsPDF(products, company) },
+    { key: 'prodXls', label: 'Inventario Excel', iconName: 'FileSpreadsheet', fn: () => exportProductsExcel(products, company) },
   ]
 
   if (!plan.hasReports) {
@@ -777,9 +777,9 @@ function ExportBlock() {
 
   return (
     <section className="bg-surface-800 border border-subtle rounded-3xl p-6 space-y-4 shadow-glow-sm">
-      <SectionTitle icon={Download} title="Exportar a PDF / Excel" desc="Descarga reportes de facturas, clientes e inventario" />
+      <SectionTitle icon="Download" title="Exportar a PDF / Excel" desc="Descarga reportes de facturas, clientes e inventario" />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-        {exports.map(({ key, label, icon: Icon, fn }) => (
+        {exports.map(({ key, label, iconName, fn }) => (
           <button key={key} onClick={() => run(key, fn)} disabled={loading[key]}
             className={clsx(
               'flex items-center gap-2 px-3 py-2.5 rounded-xl border border-subtle text-xs font-semibold transition-all',
@@ -788,7 +788,7 @@ function ExportBlock() {
                 : 'bg-success-900/10 text-success-400 hover:bg-success-900/20 border-success-500/20',
               loading[key] && 'opacity-60 cursor-not-allowed'
             )}>
-            {loading[key] ? <Icon name="Loader2" size={13} className="animate-spin"  /> : <Icon size={13} />}
+            {loading[key] ? <Icon name="Loader2" size={13} className="animate-spin" /> : <Icon name={iconName} size={13} />}
             {loading[key] ? 'Generando...' : label}
           </button>
         ))}
