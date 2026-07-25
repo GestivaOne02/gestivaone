@@ -433,26 +433,52 @@ export default function Store() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page-container flex flex-col gap-6 h-full pb-16">
       
-      {/* ─── Header Row ─── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-subtle pb-4 shrink-0">
-        <div>
-          <div className="flex items-center gap-2">
-            <Icon name="Store" className="w-6 h-6 text-brand-400"  />
-            <h1 className="text-xl font-black text-foreground uppercase tracking-tight">Canal de Ventas: Online Store</h1>
+      {/* ─── Header Row (Exact Screenshot Style) ─── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-subtle pb-4 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-500 flex items-center justify-center shadow-sm shrink-0">
+            <Icon name="Store" size={20} />
           </div>
-          <p className="text-xs text-muted-400 mt-1">Configura tu e-commerce, revisa métricas en vivo y gestiona los pedidos contra entrega.</p>
+          <div>
+            <h1 className="text-xl font-extrabold text-foreground dark:text-white tracking-tight">
+              Canal de Ventas: Online Store
+            </h1>
+            <p className="text-xs text-muted-400 mt-0.5">
+              Configura tu e-commerce, revisa métricas en vivo y gestiona los pedidos contra entrega.
+            </p>
+          </div>
         </div>
-        {storeSlug && (
-          <a
-            href={`${import.meta.env.VITE_STORE_PUBLIC_URL || 'https://gestivaone-store.vercel.app'}/${storeSlug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600/10 hover:bg-brand-600/20 border border-brand-500/30 text-brand-400 text-xs font-bold rounded-xl transition-all"
-          >
-            <span>Ver mi tienda pública</span>
-            <Icon name="ExternalLink" size={12}  />
-          </a>
-        )}
+
+        {/* Right Header Action Bar */}
+        <div className="flex items-center gap-3 self-end md:self-auto">
+          {/* Notification bell button */}
+          <button className="w-9 h-9 rounded-2xl bg-surface-800 border border-subtle text-muted-300 hover:text-foreground flex items-center justify-center relative transition-all cursor-pointer">
+            <Icon name="Bell" size={16} />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500" />
+          </button>
+
+          {/* Help question mark button */}
+          <button className="w-9 h-9 rounded-2xl bg-surface-800 border border-subtle text-muted-300 hover:text-foreground flex items-center justify-center transition-all cursor-pointer">
+            <Icon name="HelpCircle" size={16} />
+          </button>
+
+          {/* Channel Status Pill Dropdown */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-surface-800 border border-subtle text-xs font-bold text-foreground dark:text-white shadow-sm cursor-pointer hover:bg-surface-700/50 transition-all">
+            <div className="w-6 h-6 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center">
+              <Icon name="Store" size={13} />
+            </div>
+            <div className="flex flex-col text-left leading-tight">
+              <span className="text-[11px] font-bold">Online Store</span>
+              <span className="text-[9px] font-semibold flex items-center gap-1">
+                <span className={clsx("w-1.5 h-1.5 rounded-full", storeEnabled ? "bg-emerald-500" : "bg-muted-500")} />
+                <span className={storeEnabled ? "text-emerald-500" : "text-muted-400"}>
+                  {storeEnabled ? 'Activo' : 'Inactivo'}
+                </span>
+              </span>
+            </div>
+            <Icon name="ChevronDown" size={13} className="text-muted-400 ml-1" />
+          </div>
+        </div>
       </div>
 
       {/* ─── Airbnb/Apple Inspired Navigation Cards (Image 2 Inspiration) ─── */}
@@ -519,6 +545,7 @@ export default function Store() {
               setStoreEnabled={setStoreEnabled}
               invoices={invoices}
               setActiveTab={setActiveTab}
+              storeSlug={storeSlug}
             />
           )}
 

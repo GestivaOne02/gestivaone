@@ -10,12 +10,11 @@ export default function StoreDashboard({
   storeEnabled, 
   setStoreEnabled, 
   invoices, 
-  setActiveTab 
+  setActiveTab,
+  storeSlug
 }) {
   
-  // ==========================================
-  // RECENT ACTIVITY LOG
-  // ==========================================
+  // Recent activity list
   const recentActivity = useMemo(() => {
     const invoiceEvents = invoices.slice(0, 4).map(inv => ({
       id: `inv-${inv.id}`,
@@ -37,203 +36,252 @@ export default function StoreDashboard({
     return `${Math.floor(hours / 24)}d`;
   };
 
+  const publicUrl = `${import.meta.env.VITE_STORE_PUBLIC_URL || 'https://gestivaone-store.vercel.app'}/${storeSlug || ''}`;
+
   return (
     <motion.div 
-      key="dashboard-ultra-premium" 
-      initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }} 
-      animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} 
-      exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }} 
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="flex flex-col gap-4 relative w-full pb-20"
+      key="dashboard-redesign-exact" 
+      initial={{ opacity: 0, y: 10 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      exit={{ opacity: 0, y: -10 }} 
+      className="flex flex-col gap-6 relative w-full pb-24"
     >
       
-      {/* Ambient Background Glow when Store is Enabled */}
-      <AnimatePresence>
-        {storeEnabled && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-brand-500 rounded-full blur-[120px] pointer-events-none z-0"
-          />
-        )}
-      </AnimatePresence>
-
-      <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4 auto-rows-[160px] relative z-10">
+      {/* ─── Main Bento Layout ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* ==========================================
-            MASTER SWITCH (BENTO: Large Hero)
+            1. HERO MASTER SWITCH CARD (Left Large Bento)
             ========================================== */}
-        <motion.div 
-          layoutId="master-switch"
+        <div 
           className={clsx(
-            "md:col-span-6 lg:col-span-8 row-span-2 rounded-[2rem] p-8 border flex flex-col justify-between relative overflow-hidden transition-all duration-700",
+            "lg:col-span-8 rounded-[2.5rem] p-8 border flex flex-col justify-between relative overflow-hidden transition-all duration-700 min-h-[340px]",
             storeEnabled 
-              ? "bg-black/40 border-brand-500/30 shadow-[0_0_40px_rgba(var(--color-brand-500),0.15)] backdrop-blur-3xl" 
-              : "bg-surface-900/40 border-white/5 backdrop-blur-xl"
+              ? "bg-gradient-to-br from-purple-900/40 via-indigo-950/30 to-surface-900 border-purple-500/30 shadow-xl" 
+              : "bg-gradient-to-br from-purple-50/40 via-indigo-50/20 to-surface-800/40 dark:from-purple-950/20 dark:to-surface-900 border-subtle"
           )}
         >
-          {/* Subtle grid pattern inside */}
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />
-          
-          <div className="flex items-center justify-between relative z-10">
+          {/* Background Ambient Glow */}
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-brand-500/15 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Top Status Indicators */}
+          <div className="flex items-center gap-3 relative z-10">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-400">
+              ESTADO DEL CANAL
+            </span>
             <div className={clsx(
-              "w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-500",
-              storeEnabled ? "bg-brand-500/20 text-brand-400" : "bg-white/5 text-muted-500"
+              "px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm transition-all",
+              storeEnabled 
+                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" 
+                : "bg-surface-700/60 border-subtle text-muted-400"
             )}>
-              {storeEnabled ? <Icon name="Sparkles" size={24}  /> : <Icon name="ZapOff" size={24}  />}
+              <span className={clsx("w-2 h-2 rounded-full", storeEnabled ? "bg-emerald-400 animate-pulse" : "bg-muted-500")} />
+              <span>{storeEnabled ? '● LIVE SYSTEM (ON)' : '● OFFLINE (OFF)'}</span>
             </div>
-            
-            {/* Dedicated Switch button (isolated from card background) */}
-            <button
-              type="button"
-              role="switch"
-              aria-checked={storeEnabled}
-              aria-label="Encender o apagar el canal de ventas online"
-              onClick={() => setStoreEnabled(!storeEnabled)}
-              className={clsx(
-                "px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.15em] flex items-center gap-2.5 border transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95",
-                storeEnabled 
-                  ? "bg-brand-500/20 border-brand-500/40 text-brand-300 shadow-[0_0_15px_rgba(var(--color-brand-500),0.3)]" 
-                  : "bg-white/10 border-white/20 text-muted-300 hover:bg-white/15"
-              )}
-            >
-              <div className={clsx("w-2 h-2 rounded-full transition-colors", storeEnabled ? "bg-brand-400 animate-pulse" : "bg-muted-500")} />
-              <span>{storeEnabled ? 'Live System (On)' : 'Offline (Off)'}</span>
-            </button>
           </div>
 
-          <div className="relative z-10">
+          {/* Main Headline & Subtitle */}
+          <div className="relative z-10 my-6 max-w-lg">
             <motion.h2 
               layout="position"
               className={clsx(
-                "text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter leading-none transition-colors duration-500",
-                storeEnabled ? "text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-brand-400" : "text-muted-500"
+                "text-5xl sm:text-6xl font-black tracking-tighter leading-none transition-colors",
+                storeEnabled 
+                  ? "text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-brand-300" 
+                  : "text-foreground dark:text-white"
               )}
             >
               {storeEnabled ? 'Online.' : 'Standby.'}
             </motion.h2>
-            <p className={clsx(
-              "mt-4 text-sm max-w-md font-medium transition-colors duration-500 leading-relaxed",
-              storeEnabled ? "text-brand-100/90" : "text-muted-300/80"
-            )}>
-              {storeEnabled ? 'El motor de la tienda está activo, recibiendo tráfico y procesando transacciones.' : 'El catálogo está oculto. Usa el interruptor para publicar el sistema.'}
+            <p className="mt-3 text-xs sm:text-sm text-muted-400 font-medium leading-relaxed">
+              {storeEnabled 
+                ? 'El motor de la tienda está activo, recibiendo tráfico y procesando transacciones.' 
+                : 'El catálogo está oculto. Usa el interruptor para publicar el sistema.'}
             </p>
           </div>
-        </motion.div>
 
-        {/* ==========================================
-            TODAY'S REVENUE (BENTO: Medium)
-            ========================================== */}
-        <div className="md:col-span-3 lg:col-span-4 row-span-1 rounded-[2rem] bg-surface-900/40 border border-white/5 backdrop-blur-xl p-6 flex flex-col justify-between relative overflow-hidden group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-500 font-bold uppercase tracking-widest">Ingresos Hoy</span>
-            <Icon name="TrendingUp" size={14} className="text-muted-600 group-hover:text-brand-400 transition-colors"  />
-          </div>
-          <div>
-            <div className="text-3xl sm:text-4xl font-black text-white tracking-tighter">
-              {formatCOP(metrics.salesSumToday)}
-            </div>
-            <div className="text-xs text-muted-500 font-medium mt-1">
-              {metrics.ordersCountToday} transacciones
-            </div>
-          </div>
-        </div>
+          {/* Action Buttons Row */}
+          <div className="flex flex-wrap items-center gap-3 relative z-10">
+            <button
+              type="button"
+              onClick={() => setStoreEnabled(!storeEnabled)}
+              className={clsx(
+                "px-6 py-3 rounded-2xl text-xs font-black transition-all flex items-center gap-2.5 shadow-lg cursor-pointer transform hover:scale-[1.02] active:scale-95",
+                storeEnabled
+                  ? "bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shadow-amber-500/20"
+                  : "bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white shadow-brand-500/25"
+              )}
+            >
+              <Icon name={storeEnabled ? "Power" : "Sparkles"} size={16} />
+              <span>{storeEnabled ? 'Desactivar tienda' : 'Publicar tienda'}</span>
+            </button>
 
-        {/* ==========================================
-            CATALOG STATUS (BENTO: Medium)
-            ========================================== */}
-        <div className="md:col-span-3 lg:col-span-4 row-span-1 rounded-[2rem] bg-surface-900/40 border border-white/5 backdrop-blur-xl p-6 flex flex-col justify-between relative overflow-hidden group">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-500 font-bold uppercase tracking-widest">Catálogo</span>
-            <Icon name="Package" size={14} className="text-muted-600 group-hover:text-brand-400 transition-colors"  />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-3xl font-black text-white tracking-tighter">{metrics.activeProducts}</div>
-              <div className="text-[10px] text-muted-500 font-medium">Activos</div>
-            </div>
-            <div>
-              <div className={clsx("text-3xl font-black tracking-tighter", metrics.outOfStock > 0 ? "text-danger-400" : "text-white")}>
-                {metrics.outOfStock}
-              </div>
-              <div className="text-[10px] text-muted-500 font-medium">Agotados</div>
-            </div>
-          </div>
-        </div>
-
-        {/* ==========================================
-            ACTIVITY TERMINAL (BENTO: Tall)
-            ========================================== */}
-        <div className="md:col-span-6 lg:col-span-12 row-span-1 rounded-[2rem] bg-black/60 border border-white/5 backdrop-blur-2xl p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden">
-          <div className="flex flex-col justify-center min-w-[120px]">
-             <div className="flex items-center gap-2 mb-1">
-                <Icon name="Activity" size={12} className="text-brand-500"  />
-                <span className="text-[10px] text-brand-500/80 font-bold uppercase tracking-widest">Log</span>
-             </div>
-             <div className="text-2xl font-black text-white tracking-tighter">{invoices.length}</div>
-             <div className="text-[10px] text-muted-500 font-medium">Pedidos Totales</div>
-          </div>
-          
-          <div className="w-full sm:w-px h-px sm:h-full bg-white/5 shrink-0" />
-
-          <div className="flex-1 flex gap-6 overflow-x-auto no-scrollbar scroll-smooth">
-            {recentActivity.length === 0 ? (
-              <div className="text-xs font-mono text-muted-600 flex items-center h-full">
-                [ ] Esperando transacciones...
-              </div>
-            ) : (
-              recentActivity.map((event) => (
-                <div key={event.id} className="flex flex-col justify-center shrink-0 min-w-[140px]">
-                  <div className="text-[10px] font-mono text-muted-500 mb-1">{event.time.split('T')[0]} • {getTimeAgo(event.time)}</div>
-                  <div className="text-sm font-bold text-white truncate">{event.value}</div>
-                  <div className="text-xs font-medium text-muted-400 truncate">{event.title}</div>
-                </div>
-              ))
+            {storeSlug && (
+              <a
+                href={publicUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-2xl bg-surface-800/80 hover:bg-surface-700 border border-subtle text-foreground dark:text-white text-xs font-bold transition-all flex items-center gap-2 shadow-sm"
+              >
+                <span>Ver preview</span>
+                <Icon name="ExternalLink" size={13} className="text-muted-400" />
+              </a>
             )}
           </div>
+
+          {/* Right 3D Illustration Vector (Exact Graphic Representation) */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:block opacity-90 transform translate-x-4">
+            <div className="relative w-56 h-56 flex items-center justify-center">
+              <div className="w-48 h-36 rounded-3xl bg-gradient-to-br from-brand-500/20 via-purple-600/30 to-indigo-500/20 border border-purple-400/30 shadow-2xl flex flex-col justify-between p-4 backdrop-blur-md transform rotate-3">
+                <div className="flex items-center justify-between border-b border-purple-400/20 pb-2">
+                  <div className="flex gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-400/50" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-400/30" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-400/20" />
+                  </div>
+                  <div className="text-[10px] font-bold text-purple-300">Storefront</div>
+                </div>
+                <div className="flex items-center justify-center my-auto">
+                  <div className="w-14 h-14 rounded-2xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-300 shadow-inner">
+                    <Icon name={storeEnabled ? "Store" : "EyeOff"} size={28} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* ==========================================
+            RIGHT SIDE STAT CARDS (2 Cards)
+            ========================================== */}
+        <div className="lg:col-span-4 flex flex-col gap-5">
+          
+          {/* INGRESOS HOY CARD */}
+          <div className="rounded-[2.5rem] bg-surface-800/70 border border-subtle backdrop-blur-xl p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] text-muted-400 font-bold uppercase tracking-widest">INGRESOS HOY</span>
+              </div>
+              <div className="text-3xl font-extrabold text-foreground dark:text-white tracking-tight">
+                {formatCOP(metrics.salesSumToday)}
+              </div>
+              <div className="text-xs text-muted-400 font-medium mt-1">
+                {metrics.ordersCountToday} transacciones
+              </div>
+            </div>
+
+            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center shrink-0 shadow-sm">
+              <Icon name="TrendingUp" size={24} />
+            </div>
+          </div>
+
+          {/* CATÁLOGO CARD */}
+          <div className="rounded-[2.5rem] bg-surface-800/70 border border-subtle backdrop-blur-xl p-6 flex items-center justify-between shadow-sm relative overflow-hidden group">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] text-muted-400 font-bold uppercase tracking-widest">CATÁLOGO</span>
+              </div>
+              <div className="flex items-center gap-6">
+                <div>
+                  <div className="text-2xl font-extrabold text-foreground dark:text-white tracking-tight">{metrics.activeProducts}</div>
+                  <div className="text-[10px] text-muted-400 font-bold">Activos</div>
+                </div>
+                <div className="w-px h-8 bg-subtle" />
+                <div>
+                  <div className={clsx("text-2xl font-extrabold tracking-tight", metrics.outOfStock > 0 ? "text-rose-400" : "text-foreground dark:text-white")}>
+                    {metrics.outOfStock}
+                  </div>
+                  <div className="text-[10px] text-muted-400 font-bold">Agotados</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center shrink-0 shadow-sm">
+              <Icon name="Package" size={24} />
+            </div>
+          </div>
+
+        </div>
+
+        {/* ==========================================
+            3. LOG DE PEDIDOS BANNER (Wide Bottom Card)
+            ========================================== */}
+        <div className="lg:col-span-12 rounded-[2.5rem] bg-slate-900 border border-slate-800 text-white p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden shadow-xl">
+          
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+            {/* Left Counter */}
+            <div className="flex flex-col justify-center min-w-[120px]">
+              <div className="flex items-center gap-2 mb-1 text-brand-400">
+                <Icon name="Activity" size={14} />
+                <span className="text-[10px] font-bold uppercase tracking-widest">LOG DE PEDIDOS</span>
+              </div>
+              <div className="text-4xl font-extrabold tracking-tight text-white">{invoices.length}</div>
+              <div className="text-xs text-slate-400 font-medium">Pedidos Totales</div>
+            </div>
+
+            <div className="hidden sm:block w-px h-12 bg-slate-800" />
+
+            {/* Center Console Line */}
+            <div className="font-mono text-xs text-purple-300/80 bg-slate-950/60 border border-slate-800/80 rounded-2xl px-5 py-3.5 flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
+              <span>[. ] Esperando transacciones...</span>
+            </div>
+          </div>
+
+          {/* Right 3D Tray Icon */}
+          <div className="w-16 h-16 rounded-3xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 shrink-0 self-end sm:self-auto shadow-inner">
+            <Icon name="Inbox" size={30} />
+          </div>
+        </div>
+
       </div>
 
       {/* ==========================================
-          THE DOCK (Floating Quick Actions)
+          4. FLOATING BOTTOM DOCK MENU (Exact Dock in Image)
           ========================================== */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, type: 'spring', damping: 20 }}
-          className="flex items-center gap-2 p-2 rounded-full bg-black/80 border border-white/10 backdrop-blur-2xl shadow-2xl"
+          transition={{ delay: 0.2, type: 'spring', damping: 20 }}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-surface-900/90 dark:bg-slate-950/90 border border-subtle backdrop-blur-2xl shadow-2xl"
         >
-          <DockItem icon={<Icon name="LayoutGrid" size={18}  />} label="Catálogo" onClick={() => setActiveTab('catalog')} />
-          <DockItem icon={<Icon name="FileText" size={18}  />} label="Pedidos" onClick={() => setActiveTab('orders')} />
-          <div className="w-px h-8 bg-white/10 mx-1" />
-          <DockItem icon={<Icon name="CreditCard" size={18}  />} label="Pagos" onClick={() => setActiveTab('settings')} />
-          <DockItem icon={<Icon name="Store" size={18}  />} label="Apariencia" onClick={() => setActiveTab('appearance')} />
+          {[
+            { id: 'dashboard', label: 'Dashboard', icon: 'LayoutGrid' },
+            { id: 'orders', label: 'Pedidos', icon: 'FileText' },
+            { id: 'catalog', label: 'Catálogo', icon: 'Package' },
+            { id: 'appearance', label: 'Apariencia', icon: 'Palette' }
+          ].map(item => {
+            const active = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className="flex flex-col items-center gap-1 px-4 py-1.5 rounded-2xl relative transition-all cursor-pointer group"
+              >
+                <Icon 
+                  name={item.icon} 
+                  size={18} 
+                  className={active ? "text-brand-500 dark:text-purple-400" : "text-muted-400 group-hover:text-foreground"} 
+                />
+                <span className={clsx(
+                  "text-[10px] font-bold leading-none",
+                  active ? "text-brand-500 dark:text-purple-400" : "text-muted-400 group-hover:text-foreground"
+                )}>
+                  {item.label}
+                </span>
+                {active && (
+                  <motion.div 
+                    layoutId="dock-active-line"
+                    className="absolute -bottom-1 w-6 h-0.5 rounded-full bg-brand-500 dark:bg-purple-400" 
+                  />
+                )}
+              </button>
+            )
+          })}
         </motion.div>
       </div>
 
     </motion.div>
-  );
-}
-
-// Subcomponent for The Dock
-function DockItem({ icon, label, onClick }) {
-  return (
-    <motion.button
-      whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.1)' }}
-      whileTap={{ scale: 0.95 }}
-      onClick={onClick}
-      className="group relative flex items-center justify-center w-12 h-12 rounded-full text-muted-400 hover:text-white transition-colors"
-    >
-      {icon}
-      
-      {/* Tooltip */}
-      <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-white text-black text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-        {label}
-      </div>
-    </motion.button>
   );
 }
