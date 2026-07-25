@@ -56,13 +56,8 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
                 'flex flex-col items-center gap-1 py-2 rounded-xl border-2 text-xs font-medium transition-all',
                 method === id ? 'border-brand-500 bg-brand-600/10 text-brand-300' : 'border-subtle bg-surface-700 text-muted-400 hover:border-surface-300'
               )}>
-<<<<<<< HEAD
-              <Icon name={iconName} size={14} />
-              {label}
-=======
               <Icon name={iconName} size={16} />
               <span>{label}</span>
->>>>>>> 65a5e02 (fix(ui): fix undefined Check, CreditCard, Building and Smartphone icon references in Badge and PaymentForm)
             </button>
           ))}
         </div>
