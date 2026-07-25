@@ -276,7 +276,7 @@ export default function Settings() {
 
       {/* ● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ WhatsApp ● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬● ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ */}
       <IntegrationBlock
-        icon={MessageSquare}
+        icon="MessageSquare"
         title="WhatsApp Business"
         desc="Envía notificaciones de cobro por WhatsApp"
         enabledKey="whatsapp"
@@ -623,7 +623,7 @@ function Toggle({ checked, onChange }) {
   )
 }
 
-function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
+function IntegrationBlock({ icon: iconName, title, desc, enabledKey, children }) {
   const cfg     = useSettingsStore(s => s[enabledKey])
   const setCfg  = useSettingsStore(s => s[`set${enabledKey.charAt(0).toUpperCase() + enabledKey.slice(1)}`])
   const [open, setOpen] = useState(false)
@@ -634,7 +634,7 @@ function IntegrationBlock({ icon: Icon, title, desc, enabledKey, children }) {
     >
       <div onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-3 p-5 hover:bg-surface-700/40 transition-colors cursor-pointer select-none">
-        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon size={16} /></div>
+        <div className="p-2 rounded-xl bg-surface-700 text-muted-400"><Icon name={iconName} size={16} /></div>
         <div className="flex-1 text-left">
           <p className="text-sm font-semibold text-foreground">{title}</p>
           <p className="text-xs text-muted-400">{desc}</p>
