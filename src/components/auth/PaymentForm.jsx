@@ -1,13 +1,12 @@
 import { useState, useId } from 'react'
-
 import { PLANS } from '@/store/useAuthStore'
 import clsx from 'clsx'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 const METHODS = [
   { id: 'card',   label: 'Tarjeta',  iconName: 'CreditCard' },
-  { id: 'pse',    label: 'PSE',      iconName: 'Building'   },
-  { id: 'nequi',  label: 'Nequi',    iconName: 'Smartphone' },
+  { id: 'pse',    label: 'PSE',      iconName: 'Landmark'   },
+  { id: 'nequi',  label: 'Nequi',    iconName: 'Phone' },
 ]
 
 function formatCard(v) {
@@ -17,7 +16,7 @@ function formatCard(v) {
 export default function PaymentForm({ plan, onSubmit, loading }) {
   const [method, setMethod] = useState('card')
   const idPrefix = useId()
-  const [card, setCard]     = useState({ number: '', expiry: '', cvv: '', name: '' })
+  const [card, setCard] = useState({ number: '', expiry: '', cvv: '', name: '' })
   const planData = PLANS[plan]
 
   const handleCard = (k, v) => setCard((c) => ({ ...c, [k]: v }))
@@ -57,8 +56,13 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
                 'flex flex-col items-center gap-1 py-2 rounded-xl border-2 text-xs font-medium transition-all',
                 method === id ? 'border-brand-500 bg-brand-600/10 text-brand-300' : 'border-subtle bg-surface-700 text-muted-400 hover:border-surface-300'
               )}>
+<<<<<<< HEAD
               <Icon name={iconName} size={14} />
               {label}
+=======
+              <Icon name={iconName} size={16} />
+              <span>{label}</span>
+>>>>>>> 65a5e02 (fix(ui): fix undefined Check, CreditCard, Building and Smartphone icon references in Badge and PaymentForm)
             </button>
           ))}
         </div>
@@ -97,7 +101,7 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
 
       {method === 'pse' && (
         <div className="bg-surface-900 border border-subtle rounded-xl p-4 text-center">
-          <Icon name="Building" size={32} className="text-brand-400 mx-auto mb-2"  />
+          <Icon name="Landmark" size={32} className="text-brand-400 mx-auto mb-2" />
           <p className="text-sm text-foreground font-bold">Pago por PSE</p>
           <p className="text-xs text-muted-400 mt-1">Serás redirigido a tu banco para completar el pago de forma segura.</p>
         </div>
@@ -111,12 +115,12 @@ export default function PaymentForm({ plan, onSubmit, loading }) {
       )}
 
       <div className="flex items-center gap-2 text-[11px] text-muted-400">
-        <Icon name="Lock" size={11}  /> Pago seguro con cifrado SSL de 256 bits
+        <Icon name="Lock" size={11} /> Pago seguro con cifrado SSL de 256 bits
       </div>
 
       <button type="submit" disabled={loading}
         className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2">
-        {loading ? 'Procesando...' : <><Icon name="Check" size={14}  /> Completar registro</>}
+        {loading ? 'Procesando...' : <><Icon name="Check" size={14} /> Completar registro</>}
       </button>
     </form>
   )

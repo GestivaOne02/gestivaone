@@ -1,13 +1,12 @@
-
 import clsx from 'clsx'
-import Icon from '@/components/ui/Icon';
+import Icon from '@/components/ui/Icon'
 
 // Icon-only colors for status mode
 const statusIcons = {
-  paid:    { Icon: Check,         color: 'text-success-500' },
-  pending: { Icon: Clock,         color: 'text-warning-500' },
-  overdue: { Icon: AlertTriangle, color: 'text-danger-500'  },
-  default: { Icon: HelpCircle,    color: 'text-muted-400'   },
+  paid:    { iconName: 'Check',         color: 'text-success-500' },
+  pending: { iconName: 'Clock',         color: 'text-warning-500' },
+  overdue: { iconName: 'AlertTriangle', color: 'text-danger-500'  },
+  default: { iconName: 'HelpCircle',    color: 'text-muted-400'   },
 }
 
 // Pill styles for variant/label mode
@@ -24,10 +23,10 @@ const variantStyles = {
 export default function Badge({ status, variant, label, children, className }) {
   // Status mode → solo icono, sin fondo
   if (status) {
-    const { Icon, color } = statusIcons[status] ?? statusIcons.default
+    const { iconName, color } = statusIcons[status] ?? statusIcons.default
     return (
       <span className={clsx('inline-flex items-center shrink-0', color, className)} title={status}>
-        <Icon size={15} className="stroke-[2.5]" />
+        <Icon name={iconName} size={15} className="stroke-[2.5]" />
       </span>
     )
   }
