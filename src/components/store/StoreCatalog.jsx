@@ -64,27 +64,41 @@ export default function StoreCatalog({
         </div>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Filter Chips (Image 2 Amenities Pill Style) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar select-none">
         {[
           { id: 'all', label: 'Todos los productos', count: productsList.length },
           { id: 'active', label: 'Visibles en Tienda', count: productsList.filter(p => p.show_in_store).length },
           { id: 'featured', label: 'Destacados', count: productsList.filter(p => p.featured).length },
           { id: 'outOfStock', label: 'Sin Inventario', count: productsList.filter(p => (!p.stock || p.stock <= 0) && p.unit !== 'ILIMITADO').length }
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setFilterTab(tab.id)}
-            className={clsx(
-              "px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap",
-              filterTab === tab.id
-                ? "bg-white text-black border-white"
-                : "bg-white/5 border-white/5 text-muted-400 hover:text-white hover:bg-white/10"
-            )}
-          >
-            {tab.label} <span className="ml-1 opacity-60 text-[10px]">{tab.count}</span>
-          </button>
-        ))}
+        ].map(tab => {
+          const active = filterTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setFilterTab(tab.id)}
+              className={clsx(
+                "px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-sm",
+                active
+                  ? "bg-foreground text-background border-foreground dark:bg-white dark:text-slate-900 dark:border-white font-black"
+                  : "bg-surface-800/80 border-subtle text-muted-300 hover:text-foreground hover:bg-surface-700/60"
+              )}
+            >
+              {active && (
+                <span className="w-4 h-4 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold">
+                  ✓
+                </span>
+              )}
+              <span>{tab.label}</span>
+              <span className={clsx(
+                "px-2 py-0.5 rounded-full text-[10px] font-bold",
+                active ? "bg-black/10" : "bg-surface-700 text-muted-400"
+              )}>
+                {tab.count}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {/* Modern Catalog Grid/Table */}

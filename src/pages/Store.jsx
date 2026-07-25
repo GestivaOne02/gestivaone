@@ -455,15 +455,15 @@ export default function Store() {
         )}
       </div>
 
-      {/* ─── Menu Navigation Tabs ─── */}
-      <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b border-subtle/50 no-scrollbar select-none shrink-0">
+      {/* ─── Airbnb/Apple Inspired Navigation Cards (Image 2 Inspiration) ─── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 shrink-0 select-none">
         {[
-          { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
-          { id: 'appearance', label: 'Apariencia & Preview', icon: 'Palette' },
-          { id: 'catalog', label: 'Catálogo Store', icon: 'Package' },
-          { id: 'orders', label: 'Pedidos Recibidos', icon: 'Receipt' },
-          { id: 'settings', label: 'Pagos & Envíos', icon: 'Settings' },
-          { id: 'integrations', label: 'Integraciones', icon: 'PlugZap' }
+          { id: 'dashboard', label: 'Dashboard', desc: 'Métricas y Estado', icon: 'LayoutDashboard' },
+          { id: 'appearance', label: 'Apariencia', desc: 'Logo y Branding', icon: 'Palette' },
+          { id: 'catalog', label: 'Catálogo', desc: 'Precios y Stock', icon: 'Package' },
+          { id: 'orders', label: 'Pedidos', desc: 'Contra Entrega', icon: 'Receipt' },
+          { id: 'settings', label: 'Pagos & Envíos', desc: 'Tarifas y Bancos', icon: 'Settings' },
+          { id: 'integrations', label: 'Integraciones', desc: 'Dropi & Logistics', icon: 'PlugZap' }
         ].map(tab => {
           const active = activeTab === tab.id
           return (
@@ -471,14 +471,36 @@ export default function Store() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={clsx(
-                'flex items-center gap-2 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 shrink-0 cursor-pointer',
+                'flex flex-col items-start justify-between p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden group text-left min-h-[90px]',
                 active
-                  ? 'border-brand-500 text-brand-400 bg-brand-500/5'
-                  : 'border-transparent text-muted-400 hover:text-foreground hover:bg-surface-800/40'
+                  ? 'bg-surface-800 border-foreground dark:border-white shadow-md ring-2 ring-brand-500/20'
+                  : 'bg-surface-900/60 border-subtle hover:border-muted-400 hover:bg-surface-800/40'
               )}
             >
-              <Icon name={tab.icon} size={14} />
-              <span>{tab.label}</span>
+              <div className="flex items-center justify-between w-full mb-2">
+                <div className={clsx(
+                  "p-2 rounded-xl border transition-colors",
+                  active
+                    ? "bg-brand-500/10 border-brand-500/30 text-brand-400"
+                    : "bg-surface-800 border-subtle text-muted-400 group-hover:text-foreground"
+                )}>
+                  <Icon name={tab.icon} size={18} />
+                </div>
+                {active && (
+                  <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+                )}
+              </div>
+              <div>
+                <span className={clsx(
+                  "text-xs font-bold block leading-tight",
+                  active ? "text-foreground dark:text-white" : "text-muted-300 group-hover:text-foreground"
+                )}>
+                  {tab.label}
+                </span>
+                <span className="text-[10px] text-muted-400 block mt-0.5 font-medium truncate">
+                  {tab.desc}
+                </span>
+              </div>
             </button>
           )
         })}
