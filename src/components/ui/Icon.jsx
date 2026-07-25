@@ -1,3 +1,4 @@
+import React from 'react';
 import { icons } from "./icons";
 
 export default function Icon({
@@ -5,34 +6,35 @@ export default function Icon({
   size = 24,
   color = "currentColor",
   className = "",
-  sx = {},
+  strokeWidth = 2,
   style = {},
-  strokeWidth,
-  stroke,
-  fill,
+  sx = {},
   ...props
 }) {
   if (!name) return null;
 
-  const MaterialIcon = icons[name];
+  const Component = icons[name];
 
-  if (!MaterialIcon) {
+  if (!Component) {
     console.warn(`[Icon] Icon with name "${name}" not found in icons registry.`);
     return null;
   }
 
-  const combinedSx = {
-    fontSize: typeof size === 'number' ? `${size}px` : size,
-    color: color !== "currentColor" ? color : "inherit",
-    verticalAlign: 'middle',
-    ...sx
+  // Handle both standard inline styles and legacy sx object
+  const combinedStyle = {
+    ...style,
+    ...(sx.color ? { color: sx.color } : {}),
   };
 
+  const computedSize = typeof size === 'number' ? size : parseInt(size) || 24;
+
   return (
-    <MaterialIcon
+    <Component
+      size={computedSize}
+      color={color}
+      strokeWidth={strokeWidth}
       className={className}
-      style={style}
-      sx={combinedSx}
+      style={combinedStyle}
       {...props}
     />
   );
