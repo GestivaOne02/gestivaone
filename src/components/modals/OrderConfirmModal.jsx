@@ -32,9 +32,9 @@ const TAX_RATES = {
 }
 
 const TYPES = [
-  { id: 'immediate', label: 'Inmediato', icon: Zap, desc: 'Pago recibido ahora', color: 'text-success-400' },
-  { id: 'pending', label: 'Pendiente', icon: Clock, desc: 'Pago por confirmar', color: 'text-warning-400' },
-  { id: 'scheduled', label: 'Programado', icon: CalendarDays, desc: 'Seleccionar fecha de cobro', color: 'text-brand-400' },
+  { id: 'immediate', label: 'Inmediato', iconName: 'Zap', desc: 'Pago recibido ahora', color: 'text-success-400' },
+  { id: 'pending', label: 'Pendiente', iconName: 'Clock', desc: 'Pago por confirmar', color: 'text-warning-400' },
+  { id: 'scheduled', label: 'Programado', iconName: 'Clock', desc: 'Seleccionar fecha de cobro', color: 'text-brand-400' },
 ]
 
 export default function OrderConfirmModal({ open }) {
@@ -225,7 +225,7 @@ export default function OrderConfirmModal({ open }) {
             <div className="space-y-2">
               <p className="text-xs font-medium text-muted-500 uppercase tracking-wide">Tipo de Pago</p>
               <div className="flex flex-col gap-2">
-                {TYPES.map(({ id, label, icon: Icon, desc, color }) => (
+                {TYPES.map(({ id, label, iconName, desc, color }) => (
                   <button
                     key={id}
                     type="button"
@@ -237,13 +237,13 @@ export default function OrderConfirmModal({ open }) {
                         : 'border-subtle bg-surface-700 hover:border-surface-300'
                     )}
                   >
-                    <Icon size={18} className={paymentType === id ? color : 'text-muted-400'} />
+                    <Icon name={iconName} size={18} className={paymentType === id ? color : 'text-muted-400'} />
                     <div>
                       <p className={clsx('text-sm font-semibold', paymentType === id ? 'text-brand-600 dark:text-white' : 'text-muted-400')}>{label}</p>
                       <p className="text-xs text-muted-400">{desc}</p>
                     </div>
                     {paymentType === id && (
-                      <Icon name="CheckCircle" size={16} className="ml-auto text-brand-400"  />
+                      <Icon name="CheckCircle" size={16} className="ml-auto text-brand-400" />
                     )}
                   </button>
                 ))}
