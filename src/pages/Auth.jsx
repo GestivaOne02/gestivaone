@@ -1152,20 +1152,23 @@ export default function Auth() {
 
       {/* ─── RIGHT SIDE PANEL / MAIN FORM CONTAINER ─── */}
       <div className={clsx(
-        "flex-1 flex flex-col items-center justify-center relative z-10 h-full overflow-y-auto no-scrollbar transition-all duration-500",
-        tab === 'register' ? "w-full max-w-[1400px] mx-auto px-4 py-8" : "w-full lg:w-[480px] xl:w-[520px] shrink-0 px-4 sm:px-8 py-6"
+        "flex-1 flex flex-col items-center justify-start sm:justify-center relative z-10 h-full overflow-y-auto no-scrollbar transition-all duration-500",
+        tab === 'register' ? "w-full max-w-[1400px] mx-auto px-2 sm:px-6 py-4 sm:py-8" : "w-full lg:w-[480px] xl:w-[520px] shrink-0 px-4 sm:px-8 py-6"
       )}>
         {/* Mobile Header Logo or Register Header Logo */}
-        <div className={clsx("items-center gap-2.5 justify-center mb-6", tab === 'register' ? "flex" : "flex lg:hidden")}>
+        <div className={clsx("items-center gap-2.5 justify-center mb-4 sm:mb-6", tab === 'register' ? "flex" : "flex lg:hidden")}>
           <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
             <img src="/images/gestivaOneIcon.svg" alt="GestivaOne Logo" className="h-8 w-auto" />
             <span className="font-black text-[#7B39ED] text-xl tracking-tight">GestivaOne</span>
           </Link>
         </div>
 
-        <div className="w-full max-w-md my-auto space-y-5">
+        <div className={clsx(
+          "w-full space-y-4 transition-all duration-300",
+          tab === 'register' ? "max-w-6xl mx-auto my-auto" : "max-w-md my-auto"
+        )}>
           {/* Top Tab Switcher: Ingresar | Registrarse | Soy Trabajador */}
-          <div className="flex bg-surface-800 border border-subtle rounded-2xl p-1 relative shadow-glow-sm">
+          <div className="flex bg-surface-800 border border-subtle rounded-2xl p-1 relative shadow-glow-sm max-w-md mx-auto">
             {TABS.map((t) => (
               <button
                 key={t.id}
@@ -1188,7 +1191,12 @@ export default function Auth() {
           </div>
 
           {/* Form Card */}
-          <div className="relative bg-surface-800 border border-subtle rounded-3xl p-6 sm:p-8 shadow-2xl">
+          <div className={clsx(
+            "relative bg-surface-800 border border-subtle rounded-3xl transition-all duration-300 shadow-2xl",
+            tab === 'register' 
+              ? (regStep === 'plan' ? "p-4 sm:p-6 md:p-8 w-full max-w-6xl mx-auto" : "p-4 sm:p-6 md:p-8 w-full max-w-xl mx-auto") 
+              : "p-6 sm:p-8 w-full max-w-md mx-auto"
+          )}>
             {/* Home button overlay */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
