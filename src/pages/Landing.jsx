@@ -58,7 +58,7 @@ export default function Landing() {
       <SEOHead />
 
       {/* ─── STICKY HEADER ─── */}
-      <header className="sticky top-0 z-50 bg-white/95 dark:bg-surface-900/95 backdrop-blur-xl border-b border-gray-200/80 dark:border-subtle shadow-sm transition-colors duration-200 relative">
+      <header className="sticky top-0 z-50 liquid-glass-header transition-all duration-300 relative">
         {/* Tier 1: Logo centered at the top */}
         <div className="border-b border-gray-100 dark:border-subtle py-3 px-4 sm:px-8 flex items-center justify-between relative">
           {/* Apps Menu Dropdown Trigger (Left) */}

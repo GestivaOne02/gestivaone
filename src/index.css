@@ -52,15 +52,17 @@
    GLASS HEADER & THEME ADAPTIVE CONTRAST
 ═══════════════════════════════════════════════ */
 .liquid-glass-header {
-  background: rgba(10, 10, 15, 0.88);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 10, 15, 0.78) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.12) !important;
 }
 
 :root:not(.dark) .liquid-glass-header {
-  background: rgba(255, 255, 255, 0.92);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06), inset 0 1px 0 0 rgba(255, 255, 255, 0.9) !important;
 }
 
 /* ─── LIGHT MODE ─── */
